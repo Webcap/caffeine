@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:login/provider/internet_provider.dart';
 import 'package:login/provider/sign_in_provider.dart';
+import 'package:login/screens/home_screen.dart';
 import 'package:login/utils/config.dart';
+import 'package:login/utils/next_screen.dart';
+import 'package:login/utils/snackbar.dart';
 import 'package:provider/provider.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 
@@ -131,8 +134,44 @@ class _LoginScreenState extends State<LoginScreen> {
     // internet provider
     final ip = context.read<InternetProvider>();
     await ip.checkInternetConnection();
-    if(ip.hasInternet == false){
-      
+    if (ip.hasInternet == false) {
+      openSnackbar(context, "Check your internet connection", Colors.red);
+      googleController.reset();
+    } else {
+      await sp.signInWithGoogle().then((value) {
+        if (sp.hasError == true) {
+          openSnackbar(context, sp.errorCode.toString(), Colors.red);
+          googleController.reset();
+        } else {
+          // checking DB to see if User exists
+          sp.checkuserExists().then((value) async {
+            if (value == true) {
+              //exists
+              await sp.getUserDataFromFirestore(sp.uid).then((value) => sp
+                  .saveDatatoSharedPreferences()
+                  .then((value) => sp.setSignIn().then((value) {
+                        googleController.success();
+                        handleAfterSignIn();
+                      })));
+            } else {
+              //does not exists
+              sp.saveDatatoFirestore().then((value) => sp
+                  .saveDatatoSharedPreferences()
+                  .then((value) => sp.setSignIn().then((value) {
+                        googleController.success();
+                        handleAfterSignIn();
+                      })));
+            }
+          });
+        }
+      });
     }
+  }
+
+  // handle after signin
+  handleAfterSignIn() {
+    Future.delayed(const Duration(milliseconds: 1000)).then((value) {
+      nextScreenReplace(context, HomeScreen());
+    });
   }
 }
