@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "617240649682",
+    "project_id": "webcap-media",
+    "storage_bucket": "webcap-media.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:617240649682:android:2f80661543e1b1d42cf20b",
+        "android_client_info": {
+          "package_name": "com.webcap.login"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "617240649682-i59i0eos7q52k7llb2v4p40t7m26oepc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.webcap.login",
+            "certificate_hash": "8b8fe3046085e48a1d0e42b070b0c21f61ae51e3"
+          }
+        },
+        {
+          "client_id": "617240649682-i20lc2ujp5c9abnovq6nqk5toulikiu6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCcrF-n9SAcJ85MO_n54OzHrNEnGNbjTaY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "617240649682-i20lc2ujp5c9abnovq6nqk5toulikiu6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
