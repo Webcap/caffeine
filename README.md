@@ -1,6 +1,6 @@
 # login
 
-A new Flutter project.
+Example app of Flutter Auth, coded October 2022
 
 ## Getting Started
 
