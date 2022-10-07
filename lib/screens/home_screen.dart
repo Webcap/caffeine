@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:login/provider/sign_in_provider.dart';
+import 'package:login/screens/dash_screen.dart';
 import 'package:login/screens/login_screen.dart';
 import 'package:login/utils/next_screen.dart';
 import 'package:provider/provider.dart';
@@ -73,6 +74,15 @@ class _HomeScreenState extends State<HomeScreen> {
               )
             ],
           ),
+          SizedBox(height: 20,),
+          ElevatedButton(
+              onPressed: () {
+                sp.userSignOut();
+                nextScreenReplace(context, dash_screen());
+              },
+              child: Text("New Dash")
+            ),
+          SizedBox(height: 10,),
           ElevatedButton(
               onPressed: () {
                 sp.userSignOut();

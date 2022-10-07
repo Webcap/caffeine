@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:login/provider/internet_provider.dart';
 import 'package:login/provider/sign_in_provider.dart';
+import 'package:login/screens/dash_screen.dart';
 import 'package:login/screens/home_screen.dart';
 import 'package:login/utils/config.dart';
 import 'package:login/utils/next_screen.dart';
@@ -49,11 +50,11 @@ class _LoginScreenState extends State<LoginScreen> {
                     const SizedBox(
                       height: 20,
                     ),
-                    const Text("Welcome to Whatever",
+                    const Text("Welcome to That TV App",
                         style: TextStyle(
                             fontSize: 25, fontWeight: FontWeight.w500)),
                     Text(
-                      "Flutter auth with Provider",
+                      "Secret TV club for the elites",
                       style: TextStyle(fontSize: 15, color: Colors.grey[600]),
                     )
                   ],
@@ -98,7 +99,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   RoundedLoadingButton(
                       controller: facebookController,
-                      onPressed: () {},
+                      onPressed: () {
+                        nextScreenReplace(context, dash_screen());
+                      },
                       successColor: Colors.blue,
                       width: MediaQuery.of(context).size.width * 0.80,
                       elevation: 0,

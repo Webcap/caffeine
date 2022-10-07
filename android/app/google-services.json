@@ -41,6 +41,43 @@
           ]
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:617240649682:android:983435b945c123ed2cf20b",
+        "android_client_info": {
+          "package_name": "com.webcap.thattvapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "617240649682-9polrd25p4fprjpkgfk492kqvs77rur6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.webcap.thattvapp",
+            "certificate_hash": "8b8fe3046085e48a1d0e42b070b0c21f61ae51e3"
+          }
+        },
+        {
+          "client_id": "617240649682-i20lc2ujp5c9abnovq6nqk5toulikiu6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCcrF-n9SAcJ85MO_n54OzHrNEnGNbjTaY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "617240649682-i20lc2ujp5c9abnovq6nqk5toulikiu6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
     }
   ],
   "configuration_version": "1"
