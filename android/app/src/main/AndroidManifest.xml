@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.webcap.login">
    <application
-        android:label="login"
+        android:label="That TV App"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
