@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:login/screens/movie_screen.dart';
+import 'package:login/utils/next_screen.dart';
 
 class NewMoviesWidget extends StatelessWidget {
   const NewMoviesWidget({Key? key}) : super(key: key);
@@ -36,9 +38,11 @@ class NewMoviesWidget extends StatelessWidget {
             scrollDirection: Axis.horizontal,
             child: Row(
               children: [
-                for(int i=1; i<8; i++)
+                for(int i=1; i<11; i++)
                 InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    nextScreen(context, movie_screen());
+                  },
                   child: Container(
                     width: 190,
                     height: 300,

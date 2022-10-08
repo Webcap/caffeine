@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:login/screens/categories_screen.dart';
+import 'package:login/screens/dash_screen.dart';
+import 'package:login/utils/next_screen.dart';
 
 class CustomNavBar extends StatelessWidget {
   const CustomNavBar({Key? key}) : super(key: key);
@@ -16,7 +19,9 @@ class CustomNavBar extends StatelessWidget {
           )),
       child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
         InkWell(
-          onTap: () {},
+          onTap: () {
+            nextScreen(context, dash_screen());
+          },
           child: Icon(
             Icons.home,
             size: 35,
@@ -24,7 +29,9 @@ class CustomNavBar extends StatelessWidget {
           ),
         ),
         InkWell(
-          onTap: () {},
+          onTap: () {
+            nextScreen(context, category_screen());
+          },
           child: Icon(
             Icons.category,
             size: 35,

@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:login/provider/movie_provider.dart';
 import 'package:login/provider/sign_in_provider.dart';
+import 'package:login/utils/movies_api.dart';
 import 'package:login/widgets/custom_navbar.dart';
+import 'package:login/widgets/customgridview.dart';
+import 'package:login/widgets/namebar.dart';
 import 'package:login/widgets/new_movie_widgets.dart';
 import 'package:login/widgets/upcoming_widget.dart';
 import 'package:provider/provider.dart';
@@ -13,10 +17,12 @@ class dash_screen extends StatefulWidget {
 }
 
 class _dash_screenState extends State<dash_screen> {
-  
   Future getData() async {
     final sp = context.read<SignInProvider>();
+    final mp = context.read<MovieProvider>();
+
     sp.getDataFromSharedPreferences();
+    //mp.fetchTrendingMovieData();
   }
 
   @override
@@ -40,31 +46,26 @@ class _dash_screenState extends State<dash_screen> {
                   horizontal: 10,
                 ),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children:[
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children:[
-                        Text(
-                          "Hello ${sp.name}",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 28,
-                            fontWeight: FontWeight.w500
-                          )
-                        ),
-                        Text("What are we watching?",
-                        style: TextStyle(
-                            color: Colors.white54,
-                        ))
-                      ]
-                    ),
-                    CircleAvatar(
-                      backgroundImage: NetworkImage("${sp.imageUrl}"),
-                      radius: 30,
-                    ),
-                  ]
-                ),
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text("Hello ${sp.name}",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 28,
+                                    fontWeight: FontWeight.w500)),
+                            Text("What are we watching?",
+                                style: TextStyle(
+                                  color: Colors.white54,
+                                ))
+                          ]),
+                      CircleAvatar(
+                        backgroundImage: NetworkImage("${sp.imageUrl}"),
+                        radius: 30,
+                      ),
+                    ]),
               ),
               Container(
                 height: 60,
@@ -77,8 +78,8 @@ class _dash_screenState extends State<dash_screen> {
                 child: Row(
                   children: [
                     Icon(
-                      Icons.search, 
-                      color: Colors.white54, 
+                      Icons.search,
+                      color: Colors.white54,
                       size: 30,
                     ),
                     Container(
@@ -96,9 +97,18 @@ class _dash_screenState extends State<dash_screen> {
                   ],
                 ),
               ),
-              SizedBox(height: 30,),
-              UpcomingWidget(),
-              SizedBox(height: 40,),
+              SizedBox(
+                height: 30,
+              ),
+              //UpcomingWidget(),
+              Namebar(
+                  namebar: 'Trending Movies',
+                  navigate: GridViewDatamovie(
+                    futre: moviesApi().getTrendingAll(),
+                  )),
+              SizedBox(
+                height: 40,
+              ),
               NewMoviesWidget(),
             ],
           ),
