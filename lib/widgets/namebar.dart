@@ -18,8 +18,8 @@ class Namebar extends StatelessWidget {
           child: Text(
             namebar,
             style: TextStyle(
-              fontSize: 23,
-              fontWeight: FontWeight.w300,
+              fontSize: 25,
+              fontWeight: FontWeight.w500,
               color: uppermodecolor,
             ),
           ),
@@ -34,9 +34,9 @@ class Namebar extends StatelessWidget {
             child: Text(
               'see all',
               style: TextStyle(
-                  fontSize: 20,
-                  color: uppermodecolor,
-                  fontWeight: FontWeight.w200),
+                  fontSize: 16,
+                  color: Colors.white54,
+                  fontWeight: FontWeight.w500),
             )),
       ],
     );

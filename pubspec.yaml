@@ -37,6 +37,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_facebook_auth: ^4.4.1+1
+  flutter_launcher_icons: ^0.10.0
   font_awesome_flutter: ^10.2.1
   google_sign_in: ^5.4.2
   http: ^0.13.5

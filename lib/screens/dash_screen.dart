@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:login/provider/movie_provider.dart';
 import 'package:login/provider/sign_in_provider.dart';
 import 'package:login/utils/movies_api.dart';
 import 'package:login/widgets/custom_navbar.dart';
 import 'package:login/widgets/customgridview.dart';
+import 'package:login/widgets/listviewmoviedata.dart';
 import 'package:login/widgets/namebar.dart';
 import 'package:login/widgets/new_movie_widgets.dart';
 import 'package:login/widgets/upcoming_widget.dart';
@@ -19,10 +19,9 @@ class dash_screen extends StatefulWidget {
 class _dash_screenState extends State<dash_screen> {
   Future getData() async {
     final sp = context.read<SignInProvider>();
-    final mp = context.read<MovieProvider>();
+
 
     sp.getDataFromSharedPreferences();
-    //mp.fetchTrendingMovieData();
   }
 
   @override
@@ -102,10 +101,14 @@ class _dash_screenState extends State<dash_screen> {
               ),
               //UpcomingWidget(),
               Namebar(
-                  namebar: 'Trending Movies',
-                  navigate: GridViewDatamovie(
-                    futre: moviesApi().getTrendingAll(),
-                  )),
+                namebar: 'Trending Movies',
+                navigate: GridViewDatamovie(
+                  futre: moviesApi().getTrendingAll(),
+                ),
+              ),
+              ListViewDatamovie(
+                futre: moviesApi().getTrendingAll(),
+              ),
               SizedBox(
                 height: 40,
               ),

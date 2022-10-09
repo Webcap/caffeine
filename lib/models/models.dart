@@ -129,7 +129,7 @@ class Moviedetail {
   List<Genres>? genres;
   String? homepage;
   int? id;
-  int? imdbId;
+  String? imdbId;
   String? originalLanguage;
   String? originalTitle;
   String? overview;
@@ -137,7 +137,7 @@ class Moviedetail {
   String? posterPath;
   String? releaseDate;
   int? revenue;
-  String? runtime;
+  int? runtime;
   String? status;
   String? tagline;
   String? title;
@@ -155,6 +155,7 @@ class Moviedetail {
       this.originalLanguage,
       this.originalTitle,
       this.overview,
+      this.popularity,
       this.posterPath,
       this.releaseDate,
       this.revenue,
@@ -194,7 +195,7 @@ class Moviedetail {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
+    final Map<String, dynamic> data = new Map<String, dynamic>();
     data['adult'] = this.adult;
     data['backdrop_path'] = this.backdropPath;
     data['budget'] = this.budget;

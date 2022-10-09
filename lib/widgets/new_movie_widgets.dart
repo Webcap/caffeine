@@ -22,7 +22,7 @@ class NewMoviesWidget extends StatelessWidget {
                     fontWeight: FontWeight.w500),
               ),
               Text(
-                "See All",
+                "see all",
                 style: TextStyle(
                     color: Colors.white54,
                     fontSize: 16,

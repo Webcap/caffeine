@@ -7,17 +7,17 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:617240649682:android:2f80661543e1b1d42cf20b",
+        "mobilesdk_app_id": "1:617240649682:android:30b0bc05d8820e232cf20b",
         "android_client_info": {
-          "package_name": "com.webcap.login"
+          "package_name": "com.webcap.caffiene"
         }
       },
       "oauth_client": [
         {
-          "client_id": "617240649682-i59i0eos7q52k7llb2v4p40t7m26oepc.apps.googleusercontent.com",
+          "client_id": "617240649682-eht08g40063otcvp8ocfesb2ivbng49u.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.webcap.login",
+            "package_name": "com.webcap.caffiene",
             "certificate_hash": "8b8fe3046085e48a1d0e42b070b0c21f61ae51e3"
           }
         },
@@ -44,17 +44,17 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:617240649682:android:983435b945c123ed2cf20b",
+        "mobilesdk_app_id": "1:617240649682:android:2f80661543e1b1d42cf20b",
         "android_client_info": {
-          "package_name": "com.webcap.thattvapp"
+          "package_name": "com.webcap.login"
         }
       },
       "oauth_client": [
         {
-          "client_id": "617240649682-9polrd25p4fprjpkgfk492kqvs77rur6.apps.googleusercontent.com",
+          "client_id": "617240649682-i59i0eos7q52k7llb2v4p40t7m26oepc.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.webcap.thattvapp",
+            "package_name": "com.webcap.login",
             "certificate_hash": "8b8fe3046085e48a1d0e42b070b0c21f61ae51e3"
           }
         },

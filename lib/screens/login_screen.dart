@@ -28,7 +28,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      backgroundColor: Colors.white,
+      backgroundColor: Color(0xFFea575e),
       body: SafeArea(
         child: Padding(
           padding:
@@ -50,7 +50,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     const SizedBox(
                       height: 20,
                     ),
-                    const Text("Welcome to That TV App",
+                    const Text("Welcome to caffeiene",
                         style: TextStyle(
                             fontSize: 25, fontWeight: FontWeight.w500)),
                     Text(
@@ -75,19 +75,19 @@ class _LoginScreenState extends State<LoginScreen> {
                       width: MediaQuery.of(context).size.width * 0.80,
                       elevation: 0,
                       borderRadius: 25,
-                      color: Colors.red,
+                      color: Colors.white,
                       child: Wrap(
                         children: const [
                           Icon(
                             FontAwesomeIcons.google,
                             size: 20,
-                            color: Colors.white,
+                            color: Colors.red,
                           ),
                           SizedBox(width: 15),
                           Text("Sign in with Google",
                               style: TextStyle(
                                   fontSize: 15,
-                                  color: Colors.white,
+                                  color: Colors.red,
                                   fontWeight: FontWeight.w500))
                         ],
                       )),
