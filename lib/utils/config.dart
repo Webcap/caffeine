@@ -14,3 +14,5 @@ const List<String> backimage = [
 late Color uppermodecolor = darkmode;
 late String selectedbackimg = backimage[1];
 late Color oppositecolor = Colors.black;
+
+const String currentAppVersion = '1.0.0';

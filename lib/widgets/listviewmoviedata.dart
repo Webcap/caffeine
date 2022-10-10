@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:login/screens/movie_screen.dart';
+import 'package:login/screens/movie_details_screen.dart';
 import 'package:login/widgets/moviedetails.dart';
 
 class ListViewDatamovie extends StatelessWidget {
@@ -26,7 +28,7 @@ class ListViewDatamovie extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => MovieDescription(id: snapshot.data[index].id,)),
+                            builder: (context) => moviedetails(id: snapshot.data[index].id,)),
                       );
                     },
                     child: Container(

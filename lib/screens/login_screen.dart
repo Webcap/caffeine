@@ -55,7 +55,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             fontSize: 25, fontWeight: FontWeight.w500)),
                     Text(
                       "Secret TV club for the elites",
-                      style: TextStyle(fontSize: 15, color: Colors.grey[600]),
+                      style: TextStyle(fontSize: 15, color: Colors.white),
                     )
                   ],
                 ),

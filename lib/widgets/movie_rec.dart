@@ -18,7 +18,7 @@ class _MovieRecommendWidgetState extends State<MovieRecommendWidget> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "More Like Blonde",
+                "Reccomended",
                 style: TextStyle(
                     color: Colors.white,
                     fontSize: 22,
