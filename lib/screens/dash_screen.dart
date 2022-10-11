@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:login/provider/sign_in_provider.dart';
-import 'package:login/utils/movies_api.dart';
+import 'package:login/api/movies_api.dart';
 import 'package:login/widgets/custom_navbar.dart';
 import 'package:login/widgets/customgridview.dart';
 import 'package:login/widgets/listviewmoviedata.dart';

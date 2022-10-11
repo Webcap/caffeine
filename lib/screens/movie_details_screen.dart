@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:login/screens/movie_source_screen.dart';
-import 'package:login/utils/movies_api.dart';
+import 'package:login/api/movies_api.dart';
 import 'package:login/widgets/movie_page_buttons.dart';
 import 'package:login/widgets/movie_rec.dart';
+import 'package:login/widgets/watch_now_button.dart';
 
 class moviedetails extends StatelessWidget {
   final int id;
+  
   const moviedetails({Key? key, required this.id}) : super(key: key);
 
   @override
@@ -51,7 +53,6 @@ class moviedetails extends StatelessWidget {
                                 size: 30,
                               ),
                             ),
-
                             InkWell(
                               onTap: () {},
                               child: Icon(
@@ -69,54 +70,56 @@ class moviedetails extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Container(
-                            decoration:  BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(20),
-                              child: Image.network('https://image.tmdb.org/t/p/w500/${snapshot.data.posterPath}',
-                                height: 250,
-                                width: 180
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
                               ),
-                            )
-                          ),
-                          Container(
-                            margin: EdgeInsets.only(right: 50, top: 70),
-                            height: 80,
-                            width: 80,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(40),
-                              color: Colors.red,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.red.withOpacity(0.5),
-                                  blurRadius: 8,
-                                  spreadRadius: 2
-                                )
-                              ]
-                            ),
-                            child: Icon(
-                              Icons.play_arrow,
-                              size: 60,
-                            ),
-                          )
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(20),
+                                child: Image.network(
+                                    'https://image.tmdb.org/t/p/w500/${snapshot.data.posterPath}',
+                                    height: 250,
+                                    width: 180),
+                              )),
+                          // InkWell(
+                          //   onTap: () {},
+                          //   child: Container(
+                          //     margin: EdgeInsets.only(right: 50, top: 70),
+                          //     height: 80,
+                          //     width: 80,
+                          //     decoration: BoxDecoration(
+                          //       borderRadius: BorderRadius.circular(40),
+                          //       color: Colors.red,
+                          //       boxShadow: [
+                          //         BoxShadow(
+                          //           color: Colors.red.withOpacity(0.5),
+                          //           blurRadius: 8,
+                          //           spreadRadius: 2
+                          //         )
+                          //       ]
+                          //     ),
+                          //     child: Icon(
+                          //       Icons.play_arrow,
+                          //       size: 60,
+                          //     ),
+                          //   ),
+                          // )
                         ],
                       ),
                     ),
                     SizedBox(height: 30),
                     MoviePageButtons(),
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 10, vertical: 20),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             "${snapshot.data.title}",
                             style: TextStyle(
-                              fontSize: 22,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w500
-                            ),
+                                fontSize: 22,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w500),
                           ),
                           SizedBox(height: 15),
                           Text(
@@ -130,9 +133,17 @@ class moviedetails extends StatelessWidget {
                         ],
                       ),
                     ),
-                    SizedBox(height: 10,),
+                    SizedBox(
+                      height: 10,
+                    ),
 
-                    movieSourceSelect(),
+                    WatchNowButton(
+                        movieId: id,
+                        movieName: "${snapshot.data.title}",
+                        api: Endpoints.
+                    ),
+
+                    //movieSourceSelect(),
                     SizedBox(height: 10),
                     MovieRecommendWidget()
                   ]),

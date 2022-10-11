@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:login/provider/internet_provider.dart';
+import 'package:login/provider/mixpanel_provider.dart';
 import 'package:login/provider/sign_in_provider.dart';
 import 'package:login/screens/splash_screens.dart';
 import 'package:provider/provider.dart';
@@ -20,6 +21,7 @@ class myApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: ((context)=> SignInProvider())),
+        ChangeNotifierProvider(create: ((context)=> MixpanelProvider())),
         ChangeNotifierProvider(create: ((context) => InternetProvider())),
       ],
       child: MaterialApp(
