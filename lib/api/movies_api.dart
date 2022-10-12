@@ -69,6 +69,19 @@ class moviesApi {
     }
   }
 
+  Future<Moviedetail> fetchMovieDetails(String api) async {
+    Moviedetail movieDetails;
+    var res = await http
+        .get(Uri.parse(api))
+        .timeout(const Duration(seconds: 10), onTimeout: () {
+      return http.Response('Error', 408);
+    }).onError((error, stackTrace) => http.Response('Error', 408));
+    var decodeRes = jsonDecode(res.body);
+    movieDetails = Moviedetail.fromJson(decodeRes);
+    return movieDetails;
+  }
+
+
   Future<Moviedetail> getMovieDetail(String id) async {
     try {
       final url = '$baseUrl/movie/$id?$apiKey';

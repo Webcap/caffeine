@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:login/models/models.dart';
 import 'package:login/provider/mixpanel_provider.dart';
-import 'package:login/screens/movie_source_screen.dart';
-import 'package:login/screens/movie_video_loader.dart';
+import 'package:login/screens/movie_screens/movie_source_screen.dart';
+import 'package:login/screens/movie_screens/movie_video_loader.dart';
 import 'package:provider/provider.dart';
+import 'package:login/api/movies_api.dart';
 
 class WatchNowButton extends StatefulWidget {
   const WatchNowButton(
-      {Key? key, required this.movieId, this.movieName, this.api})
+      {Key? key, required this.movieId, this.movieName, this.movieImdbId, this.api})
       : super(key: key);
   final String? movieName;
+  final int? movieImdbId;
   final int movieId;
   final String? api;
 
@@ -33,11 +35,11 @@ class _WatchNowButtonState extends State<WatchNowButton> {
       required String videoTitle,
       required String movieName,
       required String id,
-      required String adult}) {
+      }) {
     showModalBottomSheet(
         context: context,
         builder: (builder) {
-          final mixpanel = Provider.of<MixpanelProvider>(context).mixpanel;
+          //final mixpanel = Provider.of<MixpanelProvider>(context).mixpanel;
           return Container(
               color: const Color(0xFFFFFFFF),
               child: SingleChildScrollView(
@@ -58,19 +60,17 @@ class _WatchNowButtonState extends State<WatchNowButton> {
                       padding: const EdgeInsets.all(30.0),
                       child: GestureDetector(
                         onTap: () {
-                          mixpanel
-                              .track('Most viewed movie pages', properties: {
-                            'Movie name': movieName,
-                            'Movie id': id,
-                            'Is Movie adult?': adult,
-                          });
+                          // mixpanel
+                          //     .track('Most viewed movie pages', properties: {
+                          //   'Movie name': movieName,
+                          //   'Movie id': id,
+                          // });
 
                           Navigator.pushReplacement(context,
                               MaterialPageRoute(builder: ((context) {
                             return MovieVideoLoader(
                               imdbID: imdbId,
                               videoTitle: videoTitle,
-                              isDark: isDark,
                             );
                           })));
                         },
@@ -92,12 +92,11 @@ class _WatchNowButtonState extends State<WatchNowButton> {
                       padding: const EdgeInsets.all(30.0),
                       child: GestureDetector(
                         onTap: () {
-                          mixpanel
-                              .track('Most viewed movie pages', properties: {
-                            'Movie name': movieName,
-                            'Movie id': id,
-                            'Is Movie adult?': adult,
-                          });
+                          // mixpanel
+                          //     .track('Most viewed movie pages', properties: {
+                          //   'Movie name': movieName,
+                          //   'Movie id': id,
+                          // });
                           Navigator.pushReplacement(context,
                               MaterialPageRoute(builder: ((context) {
                             return MovieStreamSelect(
@@ -140,7 +139,7 @@ class _WatchNowButtonState extends State<WatchNowButton> {
             isVisible = true;
             buttonWidth = 170;
           });
-          await fetchMovieDetails(widget.api!).then((value) {
+          await moviesApi().fetchMovieDetails(widget.api!).then((value) {
             setState(() {
               movieDetails = value;
             });
@@ -150,11 +149,10 @@ class _WatchNowButtonState extends State<WatchNowButton> {
             buttonWidth = 150;
           });
           streamSelectBottomSheet(
-              imdbId: movieDetails!.imdbId,
+              imdbId: movieDetails!.imdbId.toString(),
               mediaType: 'movie',
               videoTitle: movieDetails!.originalTitle!,
               movieName: movieDetails!.originalTitle!,
-              adult: movieDetails!.isAdult!.toString(),
               id: movieDetails!.id!.toString());
 
           // THE LINES BELOW ARE CONMMENTED OUT FOR A REASON FIND OUT LATER

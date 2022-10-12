@@ -1,21 +1,39 @@
 import 'package:flutter/material.dart';
-import 'package:login/screens/movie_source_screen.dart';
+import 'package:login/api/endpoints.dart';
+import 'package:login/models/models.dart';
+import 'package:login/provider/mixpanel_provider.dart';
+import 'package:login/screens/movie_screens/movie_source_screen.dart';
 import 'package:login/api/movies_api.dart';
 import 'package:login/widgets/movie_page_buttons.dart';
 import 'package:login/widgets/movie_rec.dart';
 import 'package:login/widgets/watch_now_button.dart';
+import 'package:provider/provider.dart';
 
-class moviedetails extends StatelessWidget {
+class moviedetails extends StatefulWidget {
   final int id;
-  
-  const moviedetails({Key? key, required this.id}) : super(key: key);
+  final title;
+  const moviedetails({required this.id, this.title, Key? key}) : super(key: key);
+
+  @override
+  State<moviedetails> createState() => _moviedetailsState();
+}
+
+class _moviedetailsState extends State<moviedetails> {
+  // void mixpanelUpload(BuildContext context) {
+  //   final mixpanel =
+  //       Provider.of<MixpanelProvider>(context, listen: false).mixpanel;
+  //   mixpanel.track('Most viewed movie pages', properties: {
+  //     'Movie name': '${widget.title}',
+  //     'Movie id': '${widget.id}',
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xff292837),
       body: FutureBuilder(
-        future: moviesApi().getMovieDetail(id.toString()),
+        future: moviesApi().getMovieDetail(widget.id.toString()),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasData) {
             return Stack(
@@ -138,9 +156,9 @@ class moviedetails extends StatelessWidget {
                     ),
 
                     WatchNowButton(
-                        movieId: id,
-                        movieName: "${snapshot.data.title}",
-                        api: Endpoints.
+                      movieId: widget.id,
+                      movieName: "${snapshot.data.title}",
+                      api: Endpoints.movieDetailsUrl(widget.id),
                     ),
 
                     //movieSourceSelect(),

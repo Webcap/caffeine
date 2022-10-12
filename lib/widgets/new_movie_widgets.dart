@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:login/screens/movie_screen.dart';
+import 'package:login/screens/movie_screens/movie_screen.dart';
 import 'package:login/utils/next_screen.dart';
 
 class NewMoviesWidget extends StatelessWidget {

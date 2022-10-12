@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:login/screens/movie_stream.dart';
+import 'package:login/screens/movie_screens/movie_stream.dart';
 
 class StreamListWidget extends StatelessWidget {
   final String streamName;

@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 
 class MovieVideoLoader extends StatefulWidget {
   const MovieVideoLoader({
-    
-    super.key
-  });
+    Key? key,
+    required this.imdbID,
+    required this.videoTitle,
+  }) : super(key: key);
+  
+  final String imdbID;
+  final String videoTitle;
 
   @override
   State<MovieVideoLoader> createState() => _MovieVideoLoaderState();
