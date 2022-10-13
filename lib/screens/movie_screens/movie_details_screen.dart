@@ -8,6 +8,7 @@ import 'package:login/widgets/movie_page_buttons.dart';
 import 'package:login/widgets/movie_rec.dart';
 import 'package:login/widgets/watch_now_button.dart';
 import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
 
 class moviedetails extends StatefulWidget {
   final int id;
@@ -98,29 +99,32 @@ class _moviedetailsState extends State<moviedetails> {
                                     height: 250,
                                     width: 180),
                               )),
-                          // InkWell(
-                          //   onTap: () {},
-                          //   child: Container(
-                          //     margin: EdgeInsets.only(right: 50, top: 70),
-                          //     height: 80,
-                          //     width: 80,
-                          //     decoration: BoxDecoration(
-                          //       borderRadius: BorderRadius.circular(40),
-                          //       color: Colors.red,
-                          //       boxShadow: [
-                          //         BoxShadow(
-                          //           color: Colors.red.withOpacity(0.5),
-                          //           blurRadius: 8,
-                          //           spreadRadius: 2
-                          //         )
-                          //       ]
-                          //     ),
-                          //     child: Icon(
-                          //       Icons.play_arrow,
-                          //       size: 60,
-                          //     ),
-                          //   ),
-                          // )
+                                  InkWell(
+                                    onTap: () {},
+                                    child: Container(
+                                      margin: EdgeInsets.only(right: 90, top: 20),
+                                      height: 80,
+                                      width: 80,
+                                      // decoration: BoxDecoration(
+                                      //   borderRadius: BorderRadius.circular(40),
+                                      //   color: Colors.red,
+                                      //   boxShadow: [
+                                      //     BoxShadow(
+                                      //       color: Colors.red.withOpacity(0.5),
+                                      //       blurRadius: 8,
+                                      //       spreadRadius: 2
+                                      //     )
+                                      //   ]
+                                      // ),
+                                      // child: Icon(
+                                      //   Icons.play_arrow,
+                                      //   size: 60,
+                                      // ),
+                                      child: Text(
+                                        "Yoyoyo"
+                                      ),
+                                    ),
+                                  )
                         ],
                       ),
                     ),
@@ -147,7 +151,16 @@ class _moviedetailsState extends State<moviedetails> {
                               color: Colors.white,
                             ),
                             textAlign: TextAlign.justify,
-                          )
+                          ),
+                          SizedBox(height: 10),
+                          Text(
+                            'Release Date: ${DateTime.parse(snapshot.data.releaseDate).day} ${DateFormat("MMMM").format(DateTime.parse(snapshot.data.releaseDate))}, ${DateTime.parse(snapshot.data.releaseDate).year}',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w500
+                            ),
+                          ),
                         ],
                       ),
                     ),
