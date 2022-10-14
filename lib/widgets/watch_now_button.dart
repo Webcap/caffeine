@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:login/models/models.dart';
+import 'package:login/models/movie_models.dart';
 import 'package:login/provider/mixpanel_provider.dart';
 import 'package:login/screens/movie_screens/movie_source_screen.dart';
-import 'package:login/screens/movie_screens/movie_video_loader.dart';
+import 'package:login/screens/movie_screens/widgets/movie_video_loader.dart';
 import 'package:provider/provider.dart';
 import 'package:login/api/movies_api.dart';
 

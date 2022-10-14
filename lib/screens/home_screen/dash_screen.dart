@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:login/provider/sign_in_provider.dart';
 import 'package:login/api/movies_api.dart';
+import 'package:login/screens/movie_screens/widgets/discover_movies.dart';
 import 'package:login/widgets/custom_navbar.dart';
 import 'package:login/widgets/customgridview.dart';
 import 'package:login/widgets/listviewmoviedata.dart';
@@ -118,6 +119,32 @@ class _dash_screenState extends State<dash_screen> {
         ),
       ),
       bottomNavigationBar: CustomNavBar(),
+    );
+  }
+}
+
+class MainMoviesDisplay extends StatefulWidget {
+  const MainMoviesDisplay({Key? key}) : super(key: key);
+
+  @override
+  State<MainMoviesDisplay> createState() => _MainMoviesDisplayState();
+}
+
+class _MainMoviesDisplayState extends State<MainMoviesDisplay> {
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: ListView(
+        children: [
+          DiscoverMovies(),
+        ],
+      )
     );
   }
 }

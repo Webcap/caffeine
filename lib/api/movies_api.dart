@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:login/models/httpresponce.dart';
-import 'package:login/models/models.dart';
+import 'package:login/models/movie_models.dart';
 
 class moviesApi {
   final Dio _dio = Dio();
@@ -80,6 +80,19 @@ class moviesApi {
     movieDetails = Moviedetail.fromJson(decodeRes);
     return movieDetails;
   }
+
+  Future<List<Movie>> fetchMovies(String api) async {
+    MovieList movieList;
+    var res = await http
+        .get(Uri.parse(api))
+        .timeout(const Duration(seconds: 10), onTimeout: () {
+      return http.Response('Error', 408);
+    }).onError((error, stackTrace) => http.Response('Error', 408));
+    var decodeRes = jsonDecode(res.body);
+    movieList = MovieList.fromJson(decodeRes);
+    return movieList.movies ?? [];
+  }
+  
 
 
   Future<Moviedetail> getMovieDetail(String id) async {
