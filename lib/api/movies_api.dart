@@ -3,9 +3,12 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
+import 'package:login/models/credits.dart';
 import 'package:login/models/genres.dart';
 import 'package:login/models/httpresponce.dart';
+import 'package:login/models/images.dart';
 import 'package:login/models/movie_models.dart';
+import 'package:login/models/person.dart';
 
 class moviesApi {
   final Dio _dio = Dio();
@@ -53,6 +56,43 @@ class moviesApi {
 
   //   }
   // }
+
+  Future<Credits> fetchCredits(String api) async {
+    Credits credits;
+    var res = await http
+        .get(Uri.parse(api))
+        .timeout(const Duration(seconds: 10), onTimeout: () {
+      return http.Response('Error', 408);
+    }).onError((error, stackTrace) => http.Response('Error', 408));
+    var decodeRes = jsonDecode(res.body);
+    credits = Credits.fromJson(decodeRes);
+    return credits;
+  }
+
+  Future<List<Movie>> fetchPersonMovies(String api) async {
+    PersonMoviesList personMoviesList;
+    var res = await http
+        .get(Uri.parse(api))
+        .timeout(const Duration(seconds: 10), onTimeout: () {
+      return http.Response('Error', 408);
+    }).onError((error, stackTrace) => http.Response('Error', 408));
+    var decodeRes = jsonDecode(res.body);
+    personMoviesList = PersonMoviesList.fromJson(decodeRes);
+    return personMoviesList.movies ?? [];
+  }
+
+
+  Future<PersonImages> fetchPersonImages(String api) async {
+    PersonImages personImages;
+    var res = await http
+        .get(Uri.parse(api))
+        .timeout(const Duration(seconds: 10), onTimeout: () {
+      return http.Response('Error', 408);
+    }).onError((error, stackTrace) => http.Response('Error', 408));
+    var decodeRes = jsonDecode(res.body);
+    personImages = PersonImages.fromJson(decodeRes);
+    return personImages;
+  }
 
   Future<List<Mixed>> getTrendingAll() async {
     print("about to get all data");
@@ -106,6 +146,18 @@ class moviesApi {
     return movieList.movies ?? [];
   }
   
+  Future<PersonDetails> fetchPersonDetails(String api) async {
+    PersonDetails personDetails;
+    var res = await http
+        .get(Uri.parse(api))
+        .timeout(const Duration(seconds: 10), onTimeout: () {
+      return http.Response('Error', 408);
+    }).onError((error, stackTrace) => http.Response('Error', 408));
+    var decodeRes = jsonDecode(res.body);
+    personDetails = PersonDetails.fromJson(decodeRes);
+    return personDetails;
+  }
+
 
 
   Future<Moviedetail> getMovieDetail(String id) async {

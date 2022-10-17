@@ -7,6 +7,7 @@ import 'package:login/provider/mixpanel_provider.dart';
 import 'package:login/screens/movie_screens/movie_source_screen.dart';
 import 'package:login/api/movies_api.dart';
 import 'package:login/screens/movie_screens/widgets/genre_list_grid.dart';
+import 'package:login/screens/movie_screens/widgets/scrolling_artist.dart';
 import 'package:login/utils/config.dart';
 import 'package:login/widgets/movie_page_buttons.dart';
 import 'package:login/widgets/movie_rec.dart';
@@ -417,11 +418,11 @@ class MovieDetailPageState extends State<MovieDetailPage>
                                                       Endpoints.movieDetailsUrl(
                                                           widget.movie.id!),
                                                 ),
-                                                // ScrollingArtists(
-                                                //   api: Endpoints.getCreditsUrl(
-                                                //       widget.movie.id!),
-                                                //   title: 'Cast',
-                                                // ),
+                                                ScrollingArtists(
+                                                  api: Endpoints.getCreditsUrl(
+                                                      widget.movie.id!),
+                                                  title: 'Cast',
+                                                ),
                                                 // MovieImagesDisplay(
                                                 //   title: 'Images',
                                                 //   api: Endpoints.getImages(

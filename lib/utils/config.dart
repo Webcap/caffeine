@@ -47,3 +47,19 @@ const kTextHeaderStyle = TextStyle(
   //fontFamily: 'PoppinsSB',
   fontSize: 22,
 );
+
+const kTextSmallBodyStyle = TextStyle(
+  fontFamily: 'Poppins',
+  fontSize: 17,
+  overflow: TextOverflow.ellipsis,
+);
+
+const kTextSmallAboutBodyStyle = TextStyle(
+  fontFamily: 'Poppins',
+  fontSize: 14,
+  overflow: TextOverflow.ellipsis,
+);
+
+const kTableLeftStyle =
+    TextStyle(overflow: TextOverflow.ellipsis, fontWeight: FontWeight.bold);
+
