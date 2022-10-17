@@ -31,10 +31,19 @@ late Color uppermodecolor = darkmode;
 late String selectedbackimg = backimage[1];
 late Color oppositecolor = Colors.black;
 
+const maincolor = Color(0xFFFea575e);
+const maincolor2 = Color(0xFFF371124);
+const maincolor3 = Color(0xFFF832f3c);
+
+const kTextSmallHeaderStyle = TextStyle(
+  fontFamily: 'PoppinsSB',
+  fontSize: 17,
+  overflow: TextOverflow.ellipsis,
+);
+
 const String currentAppVersion = '1.0.0';
 
 const kTextHeaderStyle = TextStyle(
   //fontFamily: 'PoppinsSB',
   fontSize: 22,
 );
-

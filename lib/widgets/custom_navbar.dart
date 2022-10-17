@@ -20,7 +20,7 @@ class CustomNavBar extends StatelessWidget {
       child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
         InkWell(
           onTap: () {
-            nextScreen(context, dash_screen());
+           // nextScreen(context, dash_screen());
           },
           child: Icon(
             Icons.home,

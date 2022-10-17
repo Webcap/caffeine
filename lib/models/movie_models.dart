@@ -1,3 +1,5 @@
+import 'package:login/models/genres.dart';
+
 class MovieList {
   int? page;
   int? totalMovies;
@@ -94,49 +96,42 @@ class Mixed {
     return data;
   }
 }
-
-class Genres {
-  int? id;
-  String? name;
-
-  Genres({this.id, this.name});
-
-  Genres.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    name = json['name'];
-  }
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
-    data['id'] = this.id;
-    data['name'] = this.name;
-    return data;
-  }
-}
-
 class Movie {
   bool? adult;
+  int? voteCount;
   String? backdropPath;
   int? id;
   String? title;
+  num? voteAverage;
   String? originalLanguage;
   String? originalTitle;
+  String? releaseDate;
   String? posterPath;
+  String? overview;
 
   Movie(
       {this.adult,
       this.backdropPath,
       this.id,
       this.title,
+      this.voteAverage,
+      this.voteCount,
+      this.overview,
+      this.releaseDate,
       this.originalLanguage,
       this.originalTitle,
       this.posterPath});
 
   Movie.fromJson(Map<String, dynamic> json) {
+    voteCount = json['vote_count'];
     adult = json['adult'];
     backdropPath = json['backdrop_path'];
     id = json['id'];
     title = json['title'];
+    voteAverage = json['vote_average'];
     originalLanguage = json['original_language'];
+    releaseDate = json['release_date'];
+    overview = json['overview'];
     originalTitle = json['original_title'];
     posterPath = json['poster_path'];
   }
@@ -146,10 +141,14 @@ class Movie {
     data['adult'] = this.adult;
     data['backdrop_path'] = this.backdropPath;
     data['id'] = this.id;
+    data['vote_count'] = this.voteCount;
     data['title'] = this.title;
+    data['vote_average'] = voteAverage;
     data['original_language'] = this.originalLanguage;
     data['original_title'] = this.originalTitle;
     data['poster_path'] = this.posterPath;
+    data['overview'] = this.overview;
+    data['release_date'] = this.releaseDate;
     return data;
   }
 }

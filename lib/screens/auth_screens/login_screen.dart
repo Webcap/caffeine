@@ -100,7 +100,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   RoundedLoadingButton(
                       controller: facebookController,
                       onPressed: () {
-                        nextScreenReplace(context, dash_screen());
+                        
                       },
                       successColor: Colors.blue,
                       width: MediaQuery.of(context).size.width * 0.80,

@@ -77,8 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
           SizedBox(height: 20,),
           ElevatedButton(
               onPressed: () {
-                sp.userSignOut();
-                nextScreenReplace(context, dash_screen());
+                nextScreenReplace(context, caffieneHomePage());
               },
               child: Text("New Dash")
             ),

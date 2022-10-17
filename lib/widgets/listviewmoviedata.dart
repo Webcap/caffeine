@@ -25,11 +25,11 @@ class ListViewDatamovie extends StatelessWidget {
                 itemBuilder: (context, index) {
                   return InkWell(
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => moviedetails(id: snapshot.data[index].id,)),
-                      );
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //       builder: (context) => moviedetails(id: snapshot.data[index].id,)),
+                      // );
                     },
                     child: Container(
                       width: 115,

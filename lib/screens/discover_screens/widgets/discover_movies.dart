@@ -1,11 +1,11 @@
-import 'package:carousel_slider/carousel_slider.dart';
-import 'package:flutter/material.dart';
-import 'package:login/api/movies_api.dart';
-import 'package:login/models/dropdown_select.dart';
-import 'package:login/models/filter_chip.dart';
-import 'package:login/models/movie_models.dart';
-import 'package:login/screens/movie_screens/widgets/movie_details_screen.dart';
-import 'package:login/utils/config.dart';
+// import 'package:carousel_slider/carousel_slider.dart';
+// import 'package:flutter/material.dart';
+// import 'package:login/api/movies_api.dart';
+// import 'package:login/models/dropdown_select.dart';
+// import 'package:login/models/filter_chip.dart';
+// import 'package:login/models/movie_models.dart';
+// import 'package:login/screens/movie_screens/widgets/movie_details_screen.dart';
+// import 'package:login/utils/config.dart';
 
 // class DiscoverMovies extends StatefulWidget {
 //   const DiscoverMovies({super.key});

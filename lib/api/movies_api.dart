@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
+import 'package:login/models/genres.dart';
 import 'package:login/models/httpresponce.dart';
 import 'package:login/models/movie_models.dart';
 
@@ -11,6 +12,18 @@ class moviesApi {
 
   final String baseUrl = 'https://api.themoviedb.org/3';
   final String apiKey = 'api_key=b9c827ddc7e3741ed414d8731814ecc9';
+
+  Future<List<Genres>> fetchGenre(String api) async {
+    GenreList newGenreList;
+    var res = await http
+        .get(Uri.parse(api))
+        .timeout(const Duration(seconds: 10), onTimeout: () {
+      return http.Response('Error', 408);
+    }).onError((error, stackTrace) => http.Response('Error', 408));
+    var decodeRes = jsonDecode(res.body);
+    newGenreList = GenreList.fromJson(decodeRes);
+    return newGenreList.genre ?? [];
+  }
 
   // Future<HTTPResponse<List<Mixed>>> getTrendingAll() async {
   //   final url = '$baseUrl/trending/all/week?$apiKey';
