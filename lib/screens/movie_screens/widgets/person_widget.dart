@@ -109,23 +109,23 @@ class _PersonImagesDisplayState extends State<PersonImagesDisplay>
                                                   (context, imageProvider) =>
                                                       GestureDetector(
                                                 onTap: () {
-                                                  Navigator.push(context,
-                                                      MaterialPageRoute(
-                                                          builder: ((context) {
-                                                    return HeroPhotoView(
-                                                      imageProvider:
-                                                          imageProvider,
-                                                      currentIndex: index,
-                                                      heroId:
-                                                          TMDB_BASE_IMAGE_URL +
-                                                              imageQuality +
-                                                              personImages!
-                                                                  .profile![
-                                                                      index]
-                                                                  .filePath!,
-                                                      name: widget.personName,
-                                                    );
-                                                  })));
+                                                  // Navigator.push(context,
+                                                  //     MaterialPageRoute(
+                                                  //         builder: ((context) {
+                                                  //   return HeroPhotoView(
+                                                  //     imageProvider:
+                                                  //         imageProvider,
+                                                  //     currentIndex: index,
+                                                  //     heroId:
+                                                  //         TMDB_BASE_IMAGE_URL +
+                                                  //             imageQuality +
+                                                  //             personImages!
+                                                  //                 .profile![
+                                                  //                     index]
+                                                  //                 .filePath!,
+                                                  //     name: widget.personName,
+                                                  //   );
+                                                  // })));
                                                 },
                                                 child: Container(
                                                   decoration: BoxDecoration(

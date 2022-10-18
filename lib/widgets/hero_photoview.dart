@@ -1,48 +1,58 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:login/models/images.dart';
+import 'package:login/provider/imagequality_provider.dart';
+import 'package:login/utils/config.dart';
 import 'dart:isolate';
 import 'dart:ui';
 
 import 'package:photo_view/photo_view.dart';
+import 'package:photo_view/photo_view_gallery.dart';
+import 'package:provider/provider.dart';
 
 class HeroPhotoView extends StatefulWidget {
   const HeroPhotoView(
-      {required this.imageProvider,
-      required this.currentIndex,
-      required this.name,
-      required this.heroId,
+      {required this.imageType,
+      this.name,
+      this.stills,
+      this.posters,
+      this.backdrops,
       Key? key})
       : super(key: key);
-  final ImageProvider imageProvider;
-  final String heroId;
-  final int currentIndex;
-  final String name;
+  final List<Backdrops>? backdrops;
+  final List<Posters>? posters;
+  final List<Stills>? stills;
+  final String? name;
+  final String imageType;
 
   @override
   State<HeroPhotoView> createState() => _HeroPhotoViewState();
 }
 
 class _HeroPhotoViewState extends State<HeroPhotoView> {
-  final ReceivePort _port = ReceivePort();
+  int currentIndex = 0;
+
+  void onPageChanged(int index) {
+    setState(() {
+      currentIndex = index;
+    });
+  }
 
   // Future<String> createFolder(
   //     String cinemaxFolderName,
   //     String imageTypeFolderName,
   //     String posterFolder,
-  //     String stillFolder,
-  //     String personImageFolder) async {
+  //     String stillFolder) async {
   //   final cinefolderName = cinemaxFolderName;
   //   final imagefolderName = imageTypeFolderName;
   //   final posterFolderName = posterFolder;
   //   final stillFolderName = stillFolder;
-  //   final personImageFolderName = personImageFolder;
   //   final cinemaxPath = Directory("storage/emulated/0/$cinefolderName");
   //   final imageTypePath =
   //       Directory("storage/emulated/0/Cinemax/$imagefolderName");
   //   final posterPath =
   //       Directory("storage/emulated/0/Cinemax/$posterFolderName");
   //   final stillPath = Directory("storage/emulated/0/Cinemax/$stillFolderName");
-  //   final personImagePath =
-  //       Directory("storage/emulated/0/Cinemax/$personImageFolderName");
   //   var storageStatus = await Permission.storage.status;
   //   var externalStatus = await Permission.manageExternalStorage.status;
   //   var mediaStatus = await Permission.accessMediaLocation.status;
@@ -59,60 +69,31 @@ class _HeroPhotoViewState extends State<HeroPhotoView> {
   //     imageTypePath.create();
   //     posterPath.create();
   //     stillPath.create();
-  //     personImagePath.create();
   //     return cinemaxPath.path;
   //   } else {
   //     cinemaxPath.create();
   //     posterPath.create();
   //     imageTypePath.create();
   //     stillPath.create();
-  //     personImagePath.create();
   //     return cinemaxPath.path;
   //   }
   // }
-
-  // @pragma('vm:entry-point')
-  // static void downloadCallback(
-  //     String id, DownloadTaskStatus status, int progress) {
-  //   final SendPort send =
-  //       IsolateNameServer.lookupPortByName('downloader_send_port')!;
-  //   send.send([id, status, progress]);
-  // }
-
-  @override
-  void initState() {
-    super.initState();
-
-    // IsolateNameServer.registerPortWithName(
-    //     _port.sendPort, 'downloader_send_port');
-    // _port.listen((dynamic data) {
-    //   String id = data[0];
-    //   DownloadTaskStatus status = data[1];
-    //   int progress = data[2];
-    //   setState(() {});
-    // });
-
-    // FlutterDownloader.registerCallback(downloadCallback);
-  }
-
-  @override
-  void dispose() {
-    IsolateNameServer.removePortNameMapping('downloader_send_port');
-    super.dispose();
-  }
 
   // void _download(String url, String currentIndex, bool isDark) async {
   //   final status = await Permission.storage.request();
   //   // final status2 = await Permission.accessMediaLocation.request();
 
   //   if (status.isGranted) {
-  //     await createFolder(
-  //         'Cinemax', 'Backdrops', 'Posters', 'Stills', 'Person Images');
+  //     await createFolder('Cinemax', 'Backdrops', 'Posters', 'Stills');
   //     await FlutterDownloader.enqueue(
   //       url: url,
-  //       fileName: '${widget.name}_$currentIndex.jpg',
+  //       fileName: '${widget.name}_${widget.imageType}_$currentIndex.jpg',
   //       headers: {}, // optional: header send with url (auth token etc)
-  //       savedDir: '/storage/emulated/0/Cinemax/Person Images/',
+  //       savedDir: widget.imageType == 'backdrop'
+  //           ? '/storage/emulated/0/Cinemax/Backdrops/'
+  //           : widget.imageType == 'poster'
+  //               ? '/storage/emulated/0/Cinemax/Stills/'
+  //               : '/storage/emulated/0/Cinemax/Posters/',
   //       showNotification:
   //           true, // show download progress in status bar (for Android)
   //       openFileFromNotification:
@@ -131,54 +112,126 @@ class _HeroPhotoViewState extends State<HeroPhotoView> {
   //   }
   // }
 
+  final ReceivePort _port = ReceivePort();
+
+  // @pragma('vm:entry-point')
+  // static void downloadCallback(
+  //     String id, DownloadTaskStatus status, int progress) {
+  //   final SendPort send =
+  //       IsolateNameServer.lookupPortByName('downloader_send_port')!;
+  //   send.send([id, status, progress]);
+  // }
+
+  @override
+  void initState() {
+    // IsolateNameServer.registerPortWithName(
+    //     _port.sendPort, 'downloader_send_port');
+    // _port.listen((dynamic data) {
+    //   String id = data[0];
+    //   DownloadTaskStatus status = data[1];
+    //   int progress = data[2];
+    //   setState(() {});
+    // });
+
+    // FlutterDownloader.registerCallback(downloadCallback);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    //final isDark = Provider.of<DarkthemeProvider>(context).darktheme;
-    return SafeArea(
-      child: Scaffold(
-          appBar: AppBar(
-            title: Text(widget.name.endsWith('s')
-                ? '${widget.name}\' image'
-                : '${widget.name}\'s image'),
+    final imageQuality =
+        Provider.of<ImagequalityProvider>(context).imageQuality;
+    // final isDark = Provider.of<DarkthemeProvider>(context).darktheme;
+    return Scaffold(
+      appBar: AppBar(
+          title: Text(widget.imageType == 'backdrop'
+              ? '${currentIndex + 1} / ${widget.backdrops!.length}'
+              : widget.imageType == 'still'
+                  ? '${currentIndex + 1} / ${widget.stills!.length}'
+                  : '${currentIndex + 1} / ${widget.posters!.length}'),
+          actions: [
+            IconButton(
+              onPressed: () async {
+                // _download(
+                //     widget.imageType == 'backdrop'
+                //         ? TMDB_BASE_IMAGE_URL +
+                //             imageQuality +
+                //             widget.backdrops![currentIndex].filePath!
+                //         : widget.imageType == 'poster'
+                //             ? TMDB_BASE_IMAGE_URL +
+                //                 imageQuality +
+                //                 widget.posters![currentIndex].posterPath!
+                //             : TMDB_BASE_IMAGE_URL +
+                //                 imageQuality +
+                //                 widget.stills![currentIndex].stillPath!,
+                //     '${currentIndex + 1}',
+                //     isDark);
+              },
+              icon: const Icon(Icons.download),
+            )
+          ]),
+      body: Container(
+          child: Stack(alignment: Alignment.bottomRight, children: [
+        PhotoViewGallery.builder(
+          allowImplicitScrolling: true,
+          backgroundDecoration: BoxDecoration(
+            color:const Color(0xFFFFFFFF),
           ),
-          body: Column(
-            children: [
-              Expanded(
-                flex: 10,
-                child: PhotoView(
-                  imageProvider: widget.imageProvider,
-                  backgroundDecoration: BoxDecoration(
-                    color: const Color(0xFFFFFFFF),
-                  ),
-                  enableRotation: true,
-                  heroAttributes: PhotoViewHeroAttributes(tag: widget.heroId),
+          gaplessPlayback: true,
+          wantKeepAlive: true,
+          enableRotation: true,
+          scrollPhysics: const BouncingScrollPhysics(),
+          builder: (BuildContext context, int index) {
+            return PhotoViewGalleryPageOptions(
+              imageProvider: CachedNetworkImageProvider(
+                widget.imageType == 'backdrop'
+                    ? TMDB_BASE_IMAGE_URL +
+                        imageQuality +
+                        widget.backdrops![currentIndex].filePath!
+                    : widget.imageType == 'poster'
+                        ? TMDB_BASE_IMAGE_URL +
+                            imageQuality +
+                            widget.posters![currentIndex].posterPath!
+                        : TMDB_BASE_IMAGE_URL +
+                            imageQuality +
+                            widget.stills![currentIndex].stillPath!,
+              ),
+              initialScale: PhotoViewComputedScale.contained * 0.95,
+            );
+          },
+          itemCount: widget.imageType == 'backdrop'
+              ? widget.backdrops!.length
+              : widget.imageType == 'poster'
+                  ? widget.posters!.length
+                  : widget.stills!.length,
+          onPageChanged: onPageChanged,
+          loadingBuilder: (context, event) => Container(
+            color: const Color(0xFFFFFFFF),
+            child: Center(
+              child: SizedBox(
+                width: 50.0,
+                height: 50.0,
+                child: CircularProgressIndicator(
+                  value: event == null
+                      ? 0
+                      : event.cumulativeBytesLoaded / event.expectedTotalBytes!,
                 ),
               ),
-              // Expanded(
-              //   child: ElevatedButton(
-              //     onPressed: () async {
-              //       _download(
-              //           widget.heroId, '${widget.currentIndex + 1}', isDark);
-              //     },
-              //     style: ButtonStyle(
-              //         minimumSize: MaterialStateProperty.all(
-              //             const Size(double.infinity, 50)),
-              //         backgroundColor:
-              //             MaterialStateProperty.all(const Color(0xFFF57C00))),
-              //     child: Row(
-              //       mainAxisAlignment: MainAxisAlignment.center,
-              //       children: const [
-              //         Padding(
-              //           padding: EdgeInsets.only(right: 8.0),
-              //           child: Icon(Icons.save),
-              //         ),
-              //         Text('DOWNLOAD'),
-              //       ],
-              //     ),
-              //   ),
-              // ),
-            ],
-          )),
+            ),
+          ),
+        ),
+        Container(
+          padding: const EdgeInsets.all(20.0),
+          child: Text(
+            "Image ${currentIndex + 1}",
+            style: TextStyle(
+              color:Colors.black,
+              fontSize: 17.0,
+              decoration: null,
+            ),
+          ),
+        )
+      ])),
     );
   }
 }

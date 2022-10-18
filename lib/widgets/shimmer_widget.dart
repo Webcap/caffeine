@@ -205,8 +205,8 @@ Widget genreListGridShimmer() => Shimmer.fromColors(
     );
 
 Widget detailGenreShimmer() => Shimmer.fromColors(
-      baseColor:Colors.grey.shade800,
-      highlightColor:Colors.grey.shade100,
+      baseColor: Colors.grey.shade800,
+      highlightColor: Colors.grey.shade100,
       direction: ShimmerDirection.ltr,
       child: ListView.builder(
         shrinkWrap: true,
@@ -224,8 +224,7 @@ Widget detailGenreShimmer() => Shimmer.fromColors(
             label: const Text(
               'Placeholder',
             ),
-            backgroundColor:
-                const Color(0xFFDFDEDE),
+            backgroundColor: const Color(0xFFDFDEDE),
           ),
         ),
       ),
@@ -283,9 +282,8 @@ Widget detailCastShimmer() => Column(
       children: <Widget>[
         Expanded(
           child: Shimmer.fromColors(
-            baseColor:Colors.grey.shade300,
-            highlightColor:
-               Colors.grey.shade100,
+            baseColor: Colors.grey.shade300,
+            highlightColor: Colors.grey.shade100,
             direction: ShimmerDirection.ltr,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
@@ -412,8 +410,8 @@ Widget detailCastImageShimmer() => Shimmer.fromColors(
     ));
 
 Widget detailImageImageSimmer() => Shimmer.fromColors(
-    baseColor:Colors.grey.shade300,
-    highlightColor:Colors.grey.shade100,
+    baseColor: Colors.grey.shade300,
+    highlightColor: Colors.grey.shade100,
     direction: ShimmerDirection.ltr,
     child: Container(
       decoration: BoxDecoration(
@@ -423,8 +421,8 @@ Widget detailImageImageSimmer() => Shimmer.fromColors(
 Widget detailVideoShimmer() => SizedBox(
       width: double.infinity,
       child: Shimmer.fromColors(
-        baseColor:Colors.grey.shade300,
-        highlightColor:Colors.grey.shade100,
+        baseColor: Colors.grey.shade300,
+        highlightColor: Colors.grey.shade100,
         direction: ShimmerDirection.ltr,
         child: CarouselSlider.builder(
           options: CarouselOptions(
@@ -466,15 +464,14 @@ Widget detailVideoShimmer() => SizedBox(
           itemCount: 5,
         ),
       ),
-);
+    );
 
 Widget personImageShimmer() => Row(
       children: [
         Expanded(
           child: Shimmer.fromColors(
             baseColor: Colors.grey.shade300,
-            highlightColor:
-                 Colors.grey.shade100,
+            highlightColor: Colors.grey.shade100,
             direction: ShimmerDirection.ltr,
             child: ListView.builder(
               physics: const BouncingScrollPhysics(),
@@ -519,7 +516,7 @@ Widget personAboutSimmer() => Column(
         ),
         Shimmer.fromColors(
           baseColor: Colors.grey.shade300,
-          highlightColor:Colors.grey.shade100,
+          highlightColor: Colors.grey.shade100,
           direction: ShimmerDirection.ltr,
           child: Column(
             children: [
@@ -567,9 +564,8 @@ Widget personMoviesAndTVShowShimmer() => Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Shimmer.fromColors(
-              baseColor:Colors.grey.shade300,
-              highlightColor:
-                  Colors.grey.shade100,
+              baseColor: Colors.grey.shade300,
+              highlightColor: Colors.grey.shade100,
               direction: ShimmerDirection.ltr,
               child: Padding(
                   padding: const EdgeInsets.all(10.0),
@@ -589,10 +585,8 @@ Widget personMoviesAndTVShowShimmer() => Column(
               children: [
                 Expanded(
                   child: Shimmer.fromColors(
-                    baseColor:
-                       Colors.grey.shade300,
-                    highlightColor:
-                       Colors.grey.shade100,
+                    baseColor: Colors.grey.shade300,
+                    highlightColor: Colors.grey.shade100,
                     direction: ShimmerDirection.ltr,
                     child: GridView.builder(
                         gridDelegate:
@@ -646,8 +640,16 @@ Widget personMoviesAndTVShowShimmer() => Column(
       ],
     );
 
-Widget personDetailInfoTableShimmer() =>
-    DataTable(dataRowHeight: 40, columns: [
+Widget detailVideoImageShimmer() => Shimmer.fromColors(
+    baseColor: Colors.grey.shade300,
+    highlightColor: Colors.grey.shade100,
+    direction: ShimmerDirection.ltr,
+    child: Container(
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8.0), color: Colors.white),
+    ));
+
+Widget personDetailInfoTableShimmer() => DataTable(dataRowHeight: 40, columns: [
       DataColumn(label: detailInfoTableItemShimmer()),
       DataColumn(label: detailInfoTableItemShimmer()),
     ], rows: [
@@ -671,3 +673,322 @@ Widget detailInfoTableItemShimmer() => Shimmer.fromColors(
         width: 75,
       ),
     );
+
+Widget socialMediaShimmer() => Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        color: const Color(0xFFDFDEDE),
+      ),
+      child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          itemCount: 3,
+          itemBuilder: (BuildContext context, int index) {
+            return Shimmer.fromColors(
+              baseColor: Colors.grey.shade300,
+              highlightColor: Colors.grey.shade100,
+              direction: ShimmerDirection.ltr,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  width: 40,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10.0),
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            );
+          }),
+    );
+
+Widget detailInfoTableShimmer() => DataTable(dataRowHeight: 40, columns: [
+      // const DataColumn(
+      //     label: Text(
+      //   'Original Title',
+      //   style: TextStyle(overflow: TextOverflow.ellipsis),
+      // )),
+      DataColumn(label: detailInfoTableItemShimmer()),
+      DataColumn(label: detailInfoTableItemShimmer()),
+    ], rows: [
+      DataRow(cells: [
+        DataCell(detailInfoTableItemShimmer()),
+        DataCell(detailInfoTableItemShimmer()),
+      ]),
+      DataRow(cells: [
+        DataCell(detailInfoTableItemShimmer()),
+        DataCell(detailInfoTableItemShimmer()),
+      ]),
+      DataRow(cells: [
+        DataCell(detailInfoTableItemShimmer()),
+        DataCell(SizedBox(
+            height: 20, width: 200, child: detailInfoTableItemShimmer())),
+      ]),
+      DataRow(cells: [
+        DataCell(detailInfoTableItemShimmer()),
+        DataCell(detailInfoTableItemShimmer()),
+      ]),
+      DataRow(cells: [
+        DataCell(detailInfoTableItemShimmer()),
+        DataCell(detailInfoTableItemShimmer()),
+      ]),
+      DataRow(cells: [
+        DataCell(detailInfoTableItemShimmer()),
+        DataCell(detailInfoTableItemShimmer()),
+      ]),
+      DataRow(cells: [
+        DataCell(detailInfoTableItemShimmer()),
+        DataCell(SizedBox(
+                height: 20, width: 200, child: detailInfoTableItemShimmer())
+            // movieDetails!.productionCompanies!.isEmpty
+            //     ? const Text('-')
+            //     : Text(
+            //         movieDetails!.productionCompanies![0].name!),
+            ),
+      ]),
+      DataRow(cells: [
+        DataCell(detailInfoTableItemShimmer()),
+        DataCell(SizedBox(
+                height: 20, width: 200, child: detailInfoTableItemShimmer())
+            // movieDetails!.productionCompanies!.isEmpty
+            //     ? const Text('-')
+            //     : Text(
+            //         movieDetails!.productionCountries![0].name!),
+            ),
+      ]),
+    ]);
+
+Widget castAndCrewTabImageShimmer() => Shimmer.fromColors(
+    baseColor: Colors.grey.shade300,
+    highlightColor: Colors.grey.shade100,
+    direction: ShimmerDirection.ltr,
+    child: Container(
+      width: 80.0,
+      height: 80.0,
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(100.0), color: Colors.white),
+    ));
+
+Widget movieCastAndCrewTabShimmer() => Container(
+    color: const Color(0xFFFFFFFF),
+    child: ListView.builder(
+        itemCount: 10,
+        scrollDirection: Axis.vertical,
+        itemBuilder: (BuildContext context, int index) {
+          return Container(
+            color: const Color(0xFFFFFFFF),
+            child: Shimmer.fromColors(
+              baseColor: Colors.grey.shade300,
+              highlightColor: Colors.grey.shade100,
+              direction: ShimmerDirection.ltr,
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  top: 0.0,
+                  bottom: 5.0,
+                  left: 10,
+                ),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(right: 20.0, left: 10),
+                          child: SizedBox(
+                            height: 80,
+                            width: 80,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(100.0),
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 8.0),
+                                child: Container(
+                                  width: 150,
+                                  height: 20,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              Container(
+                                width: 100,
+                                height: 20,
+                                color: Colors.white,
+                              ),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                    Divider(
+                      color: Colors.white54,
+                      thickness: 1,
+                      endIndent: 20,
+                      indent: 10,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        }));
+
+Widget detailsRecommendationsAndSimilarShimmer(scrollController, isLoading) =>
+    Column(
+      children: [
+        Expanded(
+          child: ListView.builder(
+              controller: scrollController,
+              physics: const BouncingScrollPhysics(),
+              itemCount: 10,
+              itemBuilder: (BuildContext context, int index) {
+                return Container(
+                  color: const Color(0xFFFFFFFF),
+                  child: Shimmer.fromColors(
+                    baseColor: Colors.grey.shade300,
+                    highlightColor: Colors.grey.shade100,
+                    direction: ShimmerDirection.ltr,
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                        top: 0.0,
+                        bottom: 3.0,
+                        left: 10,
+                      ),
+                      child: Column(
+                        children: [
+                          Row(
+                            // crossAxisAlignment:
+                            //     CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(right: 10.0),
+                                child: SizedBox(
+                                  width: 85,
+                                  height: 130,
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                        borderRadius:
+                                            BorderRadius.circular(10.0),
+                                        color: Colors.white),
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding:
+                                          const EdgeInsets.only(bottom: 8.0),
+                                      child: Container(
+                                          height: 20,
+                                          width: 150,
+                                          color: Colors.white),
+                                    ),
+                                    Row(
+                                      children: <Widget>[
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(right: 1.0),
+                                          child: Container(
+                                            height: 20,
+                                            width: 20,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                        Container(
+                                            height: 20,
+                                            width: 30,
+                                            color: Colors.white),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                          Divider(
+                            color: Colors.white54,
+                            thickness: 1,
+                            endIndent: 20,
+                            indent: 10,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              }),
+        ),
+        Visibility(
+            visible: isLoading,
+            child: const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Center(child: CircularProgressIndicator()),
+            )),
+      ],
+    );
+
+Widget recommendationAndSimilarTabImageShimmer() => Shimmer.fromColors(
+    baseColor:Colors.grey.shade300,
+    highlightColor:Colors.grey.shade100,
+    direction: ShimmerDirection.ltr,
+    child: Container(
+      width: 85.0,
+      height: 130.0,
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10.0), color: Colors.white),
+    ));
+
+Widget discoverMoviesAndTVShimmer() => Column(
+      mainAxisSize: MainAxisSize.max,
+      children: <Widget>[
+        Expanded(
+          child: Shimmer.fromColors(
+            baseColor:Colors.grey.shade300,
+            highlightColor:
+                Colors.grey.shade100,
+            direction: ShimmerDirection.ltr,
+            child: CarouselSlider.builder(
+              options: CarouselOptions(
+                disableCenter: true,
+                viewportFraction: 0.6,
+                enlargeCenterPage: true,
+                autoPlay: true,
+              ),
+              itemBuilder: (context, index, pageViewIndex) => Container(
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8.0),
+                    color: Colors.white),
+              ),
+              itemCount: 10,
+            ),
+          ),
+        ),
+        Shimmer.fromColors(
+          baseColor: Colors.grey.shade300,
+          highlightColor:Colors.grey.shade100,
+          child: Container(
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8.0), color: Colors.white),
+          ),
+        )
+      ],
+    );
+
+    Widget discoverImageShimmer() => Shimmer.fromColors(
+      direction: ShimmerDirection.ltr,
+      baseColor:Colors.grey.shade300,
+      highlightColor:Colors.grey.shade100,
+      child: Container(
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8.0), color: Colors.white),
+      ),
+    );
+

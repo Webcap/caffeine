@@ -162,7 +162,7 @@ class _MainMoviesDisplayState extends State<MainMoviesDisplay> {
     return Container(
         child: ListView(
       children: [
-        //DiscoverMovies(),
+        DiscoverMovies(),
         ScrollingMovies(
           title: 'Popular',
           api: Endpoints.popularMoviesUrl(1),

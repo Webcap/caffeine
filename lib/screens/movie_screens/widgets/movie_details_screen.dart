@@ -6,7 +6,14 @@ import 'package:login/provider/imagequality_provider.dart';
 import 'package:login/provider/mixpanel_provider.dart';
 import 'package:login/screens/movie_screens/movie_source_screen.dart';
 import 'package:login/api/movies_api.dart';
+import 'package:login/screens/movie_screens/widgets/cast_tab_widget.dart';
+import 'package:login/screens/movie_screens/widgets/collecrions_widget.dart';
 import 'package:login/screens/movie_screens/widgets/genre_list_grid.dart';
+import 'package:login/screens/movie_screens/widgets/movie_image_display.dart';
+import 'package:login/screens/movie_screens/widgets/movie_info_tab.dart';
+import 'package:login/screens/movie_screens/widgets/movie_social_links.dart';
+import 'package:login/screens/movie_screens/widgets/movie_video_display.dart';
+import 'package:login/screens/movie_screens/widgets/reccomend.dart';
 import 'package:login/screens/movie_screens/widgets/scrolling_artist.dart';
 import 'package:login/utils/config.dart';
 import 'package:login/widgets/movie_page_buttons.dart';
@@ -15,7 +22,6 @@ import 'package:login/widgets/watch_now_button.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:readmore/readmore.dart';
-
 
 class MovieDetailPage extends StatefulWidget {
   final Movie movie;
@@ -136,8 +142,7 @@ class MovieDetailPageState extends State<MovieDetailPage>
                         borderRadius: BorderRadius.circular(50.0),
                         color: Colors.white38),
                     child: IconButton(
-                      icon: const Icon(Icons.arrow_back,
-                          color: maincolor),
+                      icon: const Icon(Icons.arrow_back, color: maincolor),
                       onPressed: () {
                         Navigator.pop(context);
                       },
@@ -145,14 +150,12 @@ class MovieDetailPageState extends State<MovieDetailPage>
                   ),
                 ),
                 actions: [
-                  // GestureDetector(
-                  //   child: WatchProvidersButton(
-                  //     api: Endpoints.getMovieWatchProviders(widget.movie.id!),
-                  //     onTap: () {
-                  //       modalBottomSheetMenu();
-                  //     },
-                  //   ),
-                  // ),
+                  GestureDetector(
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 25),
+                      child: Icon(Icons.cast, size: 30,),
+                    ),
+                  ),
                 ],
               ),
               Expanded(
@@ -284,13 +287,13 @@ class MovieDetailPageState extends State<MovieDetailPage>
                                       child: Text('Cast',
                                           style: TextStyle(
                                               fontFamily: 'Poppins',
-                                              color:Colors.black)),
+                                              color: Colors.black)),
                                     ),
                                     Tab(
                                       child: Text('Crew',
                                           style: TextStyle(
                                               fontFamily: 'Poppins',
-                                              color:Colors.black)),
+                                              color: Colors.black)),
                                     ),
                                     Tab(
                                       child: Text('Recommendations',
@@ -423,64 +426,56 @@ class MovieDetailPageState extends State<MovieDetailPage>
                                                       widget.movie.id!),
                                                   title: 'Cast',
                                                 ),
-                                                // MovieImagesDisplay(
-                                                //   title: 'Images',
-                                                //   api: Endpoints.getImages(
-                                                //       widget.movie.id!),
-                                                //   name: widget
-                                                //       .movie.originalTitle,
-                                                // ),
-                                                // MovieVideosDisplay(
-                                                //   api: Endpoints.getVideos(
-                                                //       widget.movie.id!),
-                                                //   title: 'Videos',
-                                                // ),
-                                                // MovieSocialLinks(
-                                                //   api: Endpoints
-                                                //       .getExternalLinksForMovie(
-                                                //     widget.movie.id!,
-                                                //   ),
-                                                // ),
-                                                // BelongsToCollectionWidget(
-                                                //   api:
-                                                //       Endpoints.movieDetailsUrl(
-                                                //           widget.movie.id!),
-                                                // ),
-                                                // MovieInfoTable(
-                                                //   api:
-                                                //       Endpoints.movieDetailsUrl(
-                                                //           widget.movie.id!),
-                                                // ),
+                                                MovieImagesDisplay(
+                                                  title: 'Images',
+                                                  api: Endpoints.getImages(
+                                                      widget.movie.id!),
+                                                  name: widget
+                                                      .movie.originalTitle,
+                                                ),
+                                                MovieVideosDisplay(
+                                                  api: Endpoints.getVideos(
+                                                      widget.movie.id!),
+                                                  title: 'Videos',
+                                                ),
+                                                MovieSocialLinks(
+                                                  api: Endpoints
+                                                      .getExternalLinksForMovie(
+                                                    widget.movie.id!,
+                                                  ),
+                                                ),
+                                                BelongsToCollectionWidget(
+                                                  api:
+                                                      Endpoints.movieDetailsUrl(
+                                                          widget.movie.id!),
+                                                ),
+                                                MovieInfoTable(
+                                                  api:
+                                                      Endpoints.movieDetailsUrl(
+                                                          widget.movie.id!),
+                                                ),
                                               ],
                                             ),
                                           ),
                                         ),
-                                        // CastTab(
-                                        //   api: Endpoints.getCreditsUrl(
-                                        //       widget.movie.id!),
-                                        // ),
-                                        // CrewTab(
-                                        //   api: Endpoints.getCreditsUrl(
-                                        //       widget.movie.id!),
-                                        // ),
-                                        // MovieRecommendationsTab(
-                                        //   includeAdult:
-                                        //       Provider.of<AdultmodeProvider>(
-                                        //               context)
-                                        //           .isAdult,
-                                        //   api:
-                                        //       Endpoints.getMovieRecommendations(
-                                        //           widget.movie.id!, 1),
-                                        //   movieId: widget.movie.id!,
-                                        // ),
-                                        // SimilarMoviesTab(
-                                        //     includeAdult:
-                                        //         Provider.of<AdultmodeProvider>(
-                                        //                 context)
-                                        //             .isAdult,
-                                        //     movieId: widget.movie.id!,
-                                        //     api: Endpoints.getSimilarMovies(
-                                        //         widget.movie.id!, 1)),
+                                        CastTab(
+                                          api: Endpoints.getCreditsUrl(
+                                              widget.movie.id!),
+                                        ),
+                                        CrewTab(
+                                          api: Endpoints.getCreditsUrl(
+                                              widget.movie.id!),
+                                        ),
+                                        MovieRecommendationsTab(
+                                          api:
+                                              Endpoints.getMovieRecommendations(
+                                                  widget.movie.id!, 1),
+                                          movieId: widget.movie.id!,
+                                        ),
+                                        SimilarMoviesTab(
+                                            movieId: widget.movie.id!,
+                                            api: Endpoints.getSimilarMovies(
+                                                widget.movie.id!, 1)),
                                       ],
                                     ),
                                   ),

@@ -9,7 +9,6 @@ import 'package:login/provider/sign_in_provider.dart';
 import 'package:login/api/movies_api.dart';
 import 'package:login/screens/discover_screens/discovery_screen.dart';
 import 'package:login/screens/movie_screens/movie_screen.dart';
-import 'package:login/screens/discover_screens/widgets/discover_movies.dart';
 import 'package:login/screens/tv_screens/tv_screen.dart';
 import 'package:login/utils/config.dart';
 import 'package:login/widgets/custom_navbar.dart';
