@@ -1,31 +1,33 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:login/api/movies_api.dart';
+import 'package:login/api/tv_api.dart';
 import 'package:login/models/dropdown_select.dart';
 import 'package:login/models/filter_chip.dart';
-import 'package:login/models/movie_models.dart';
+import 'package:login/models/tv.dart';
 import 'package:login/provider/imagequality_provider.dart';
-import 'package:login/screens/movie_screens/movie_details_screen.dart';
+import 'package:login/screens/tv_screens/tv_detail_page.dart';
 import 'package:login/utils/config.dart';
 import 'package:login/widgets/shimmer_widget.dart';
 import 'package:provider/provider.dart';
 
-class DiscoverMovies extends StatefulWidget {
-  const DiscoverMovies({Key? key,})
-      : super(key: key);
+class DiscoverTV extends StatefulWidget {
+  final bool includeAdult;
+  const DiscoverTV({required this.includeAdult, Key? key}) : super(key: key);
   @override
-  DiscoverMoviesState createState() => DiscoverMoviesState();
+  DiscoverTVState createState() => DiscoverTVState();
 }
 
-class DiscoverMoviesState extends State<DiscoverMovies>
+class DiscoverTVState extends State<DiscoverTV>
     with AutomaticKeepAliveClientMixin {
-  List<Movie>? moviesList;
   late double deviceHeight;
+  late double deviceWidth;
+  late double deviceAspectRatio;
+  List<TV>? tvList;
   bool requestFailed = false;
   YearDropdownData yearDropdownData = YearDropdownData();
-  MovieGenreFilterChipData movieGenreFilterChipData =
-      MovieGenreFilterChipData();
+  TVGenreFilterChipData tvGenreFilterChipData = TVGenreFilterChipData();
+
   @override
   void initState() {
     super.initState();
@@ -34,22 +36,20 @@ class DiscoverMoviesState extends State<DiscoverMovies>
 
   void getData() {
     List<String> years = yearDropdownData.yearsList.getRange(1, 24).toList();
-    List<MovieGenreFilterChipWidget> genres =
-        movieGenreFilterChipData.movieGenreFilterdata;
+    List<TVGenreFilterChipWidget> genres = tvGenreFilterChipData.tvGenreList;
     years.shuffle();
     genres.shuffle();
-    moviesApi().fetchMovies(
-            '$TMDB_API_BASE_URL/discover/movie?api_key=$TMDB_API_KEY&sort_by=popularity.desc&watch_region=US&include_adult=false&primary_release_year=${years.first}&with_genres=${genres.first.genreValue}')
+    tvApi().fetchTV('$TMDB_API_BASE_URL/discover/tv?api_key=$TMDB_API_KEY&sort_by=popularity.desc&watch_region=US&first_air_date_year=${years.first}&with_genres=${genres.first.genreValue}')
         .then((value) {
       setState(() {
-        moviesList = value;
+        tvList = value;
       });
     });
     Future.delayed(const Duration(seconds: 11), () {
-      if (moviesList == null) {
+      if (tvList == null) {
         setState(() {
           requestFailed = true;
-          moviesList = [];
+          tvList = [];
         });
       }
     });
@@ -70,7 +70,7 @@ class DiscoverMoviesState extends State<DiscoverMovies>
             Padding(
               padding: EdgeInsets.all(8.0),
               child: Text(
-                'Featured movies',
+                'Featured TV shows',
                 style: kTextHeaderStyle,
               ),
             ),
@@ -79,8 +79,7 @@ class DiscoverMoviesState extends State<DiscoverMovies>
         SizedBox(
           width: double.infinity,
           height: 350,
-          // height: deviceHeight * 0.417,
-          child: moviesList == null
+          child: tvList == null
               ? discoverMoviesAndTVShimmer()
               : requestFailed == true
                   ? retryWidget()
@@ -99,13 +98,12 @@ class DiscoverMoviesState extends State<DiscoverMovies>
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => MovieDetailPage(
-                                          movie: moviesList![index],
-                                          heroId:
-                                              '${moviesList![index].id}discover')));
+                                      builder: (context) => TVDetailPage(
+                                          tvSeries: tvList![index],
+                                          heroId: '${tvList![index].id}')));
                             },
                             child: Hero(
-                              tag: '${moviesList![index].id}discover',
+                              tag: '${tvList![index].id}',
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(8.0),
                                 child: CachedNetworkImage(
@@ -115,12 +113,11 @@ class DiscoverMoviesState extends State<DiscoverMovies>
                                   fadeInDuration:
                                       const Duration(milliseconds: 700),
                                   fadeInCurve: Curves.easeIn,
-                                  imageUrl:
-                                      moviesList![index].posterPath == null
-                                          ? ''
-                                          : TMDB_BASE_IMAGE_URL +
-                                              imageQuality +
-                                              moviesList![index].posterPath!,
+                                  imageUrl: tvList![index].posterPath == null
+                                      ? ''
+                                      : TMDB_BASE_IMAGE_URL +
+                                          imageQuality +
+                                          tvList![index].posterPath!,
                                   imageBuilder: (context, imageProvider) =>
                                       Container(
                                     decoration: BoxDecoration(
@@ -143,7 +140,7 @@ class DiscoverMoviesState extends State<DiscoverMovies>
                           ),
                         );
                       },
-                      itemCount: moviesList!.length,
+                      itemCount: tvList!.length,
                     ),
         ),
       ],
@@ -175,7 +172,7 @@ class DiscoverMoviesState extends State<DiscoverMovies>
               onPressed: () {
                 setState(() {
                   requestFailed = false;
-                  moviesList = null;
+                  tvList = null;
                 });
                 getData();
               },

@@ -79,6 +79,24 @@ flutter:
   assets:
     - assets/
     - assets/images/
+    
+  fonts:
+    - family: Poppins
+      fonts:
+        - asset: assets/fonts/poppins/Poppins-Regular.ttf
+    - family: PoppinsBold
+      fonts:
+        - asset: assets/fonts/poppins/Poppins-Bold.ttf
+    - family: PoppinsSB
+      fonts:
+        - asset: assets/fonts/poppins/Poppins-SemiBold.ttf
+    - family: SocialIcons
+      fonts:
+        - asset: assets/fonts/SocialIcons.ttf
+    - family: IMdb
+      fonts:
+        - asset: assets/fonts/imdb.ttf
+
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
   # For details regarding adding assets from package dependencies, see

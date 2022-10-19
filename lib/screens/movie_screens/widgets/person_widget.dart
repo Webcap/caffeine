@@ -8,7 +8,7 @@ import 'package:login/models/person.dart';
 import 'package:intl/intl.dart';
 import 'package:login/models/tv.dart';
 import 'package:login/provider/imagequality_provider.dart';
-import 'package:login/screens/movie_screens/widgets/movie_details_screen.dart';
+import 'package:login/screens/movie_screens/movie_details_screen.dart';
 import 'package:login/utils/config.dart';
 import 'package:login/widgets/hero_photoview.dart';
 import 'package:login/widgets/shimmer_widget.dart';

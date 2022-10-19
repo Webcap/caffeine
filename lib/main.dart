@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:login/provider/adultmode_provider.dart';
 import 'package:login/provider/default_home_provider.dart';
 import 'package:login/provider/imagequality_provider.dart';
 import 'package:login/provider/internet_provider.dart';
@@ -32,6 +33,7 @@ class _caffeineState extends State<caffeine>
   MixpanelProvider mixpanelProvider = MixpanelProvider();
   ImagequalityProvider imagequalityProvider = ImagequalityProvider();
   DefaultHomeProvider defaultHomeProvider = DefaultHomeProvider();
+  AdultmodeProvider adultmodeProvider = AdultmodeProvider();
   late Mixpanel mixpanel;
 
   // void firstTimeCheck() async {
@@ -61,6 +63,12 @@ class _caffeineState extends State<caffeine>
         await imagequalityProvider.imagePreferences.getImageQuality();
   }
 
+  
+  void getCurrentAdultMode() async {
+    adultmodeProvider.isAdult =
+        await adultmodeProvider.adultModePreferences.getAdultMode();
+  }
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -68,17 +76,19 @@ class _caffeineState extends State<caffeine>
         ChangeNotifierProvider(create: ((context) => SignInProvider())),
         ChangeNotifierProvider(create: ((context) => MixpanelProvider())),
         ChangeNotifierProvider(create: ((context) => InternetProvider())),
+        ChangeNotifierProvider(create: ((context) => AdultmodeProvider())),
         ChangeNotifierProvider(create: ((context) => DefaultHomeProvider())),
         ChangeNotifierProvider(create: ((context) => ImagequalityProvider())),
       ],
-      child: Consumer5<SignInProvider, ImagequalityProvider, MixpanelProvider, InternetProvider,
-              DefaultHomeProvider>(
+      child: Consumer6<SignInProvider, ImagequalityProvider, MixpanelProvider, InternetProvider,
+              DefaultHomeProvider, AdultmodeProvider>(
           builder: (context, 
             SignInProvider, 
             mixpanelProvider, 
             internetProvider,
             defaultHomeProvider,
-            ImagequalityProvider, 
+            ImagequalityProvider,
+            AdultmodeProvider, 
             snapshot) {
         return MaterialApp(
           home: SplashScreen(),

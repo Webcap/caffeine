@@ -185,18 +185,18 @@ class _caffieneHomePageState extends State<caffieneHomePage>
                 ),
               ),
               actions: [
-                IconButton(
-                    onPressed: () {
-                      // showSearch(
-                      //     context: context,
-                      //     delegate: Search(
-                      //         mixpanel: mixpanel,
-                      //         includeAdult: Provider.of<AdultmodeProvider>(
-                      //                 context,
-                      //                 listen: false)
-                      //             .isAdult));
-                    },
-                    icon: const Icon(Icons.search)),
+                // IconButton(
+                //     onPressed: () {
+                //       showSearch(
+                //           context: context,
+                //           delegate: Search(
+                //               mixpanel: mixpanel,
+                //               includeAdult: Provider.of<AdultmodeProvider>(
+                //                       context,
+                //                       listen: false)
+                //                   .isAdult));
+                //     },
+                //     icon: const Icon(Icons.search)),
               ],
             ),
             bottomNavigationBar: Container(
