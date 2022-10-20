@@ -100,7 +100,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   RoundedLoadingButton(
                       controller: facebookController,
                       onPressed: () {
-                        
+                        nextScreenReplace(context, caffieneHomePage());
                       },
                       successColor: Colors.blue,
                       width: MediaQuery.of(context).size.width * 0.80,
@@ -174,7 +174,7 @@ class _LoginScreenState extends State<LoginScreen> {
   // handle after signin
   handleAfterSignIn() {
     Future.delayed(const Duration(milliseconds: 1000)).then((value) {
-      nextScreenReplace(context, HomeScreen());
+      nextScreenReplace(context, caffieneHomePage());
     });
   }
 }

@@ -15,8 +15,8 @@ import 'package:login/models/tv.dart';
 import 'package:login/models/videos.dart';
 import 'package:login/provider/adultmode_provider.dart';
 import 'package:login/provider/imagequality_provider.dart';
-import 'package:login/screens/movie_screens/widgets/cast_details.dart';
-import 'package:login/screens/movie_screens/widgets/crew_detail.dart';
+import 'package:login/screens/movie_screens/cast_details.dart';
+import 'package:login/screens/movie_screens/crew_detail.dart';
 import 'package:login/screens/movie_screens/widgets/movie_social_links.dart';
 import 'package:login/screens/tv_screens/episode_detail_page.dart';
 import 'package:login/screens/tv_screens/seasons_detail.dart';
@@ -187,7 +187,7 @@ class TVStreamingServicesWidget extends StatelessWidget {
           height: 60,
           width: 200,
           decoration: BoxDecoration(
-              color: maincolor2,
+              color: maincolor3,
               borderRadius: BorderRadius.circular(15)),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,

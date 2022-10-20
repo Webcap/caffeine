@@ -27,6 +27,7 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  another_tv_remote: ^0.0.1
   cached_network_image: ^3.2.2
   carousel_slider: ^4.1.1
   change_app_package_name: ^1.1.0
@@ -34,7 +35,9 @@ dependencies:
   cloud_firestore: ^3.5.0
   connectivity_plus: ^2.3.8
   cupertino_icons: ^1.0.2
+  device_info_plus: ^7.0.0
   dio: ^4.0.6
+  dpad_container: ^1.0.1
   firebase_auth: ^3.11.1
   firebase_core: ^1.24.0
   flutter:
@@ -57,6 +60,7 @@ dependencies:
   rounded_loading_button: ^2.1.0
   shared_preferences: ^2.0.15
   shimmer: ^2.0.0
+  sizer: ^2.0.15
   url_launcher: ^6.1.6
   video_player: ^2.4.7
   web_scraper: ^0.1.4
@@ -79,7 +83,7 @@ flutter:
   assets:
     - assets/
     - assets/images/
-    
+
   fonts:
     - family: Poppins
       fonts:
@@ -96,7 +100,6 @@ flutter:
     - family: IMdb
       fonts:
         - asset: assets/fonts/imdb.ttf
-
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
   # For details regarding adding assets from package dependencies, see

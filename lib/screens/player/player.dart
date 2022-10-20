@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:login/utils/config.dart';
 import 'package:pod_player/pod_player.dart';
 import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
@@ -60,10 +61,10 @@ class _PlayerState extends State<Player> {
                         left: 20,
                         right: 20,
                       ),
-                playingBarColor: Colors.orange,
-                circleHandlerColor: Colors.orange,
+                playingBarColor: maincolor,
+                circleHandlerColor: maincolor,
                 backgroundColor: Colors.blueGrey,
-                bufferedBarColor: Colors.orangeAccent,
+                bufferedBarColor: maincolor2,
                 alwaysVisibleCircleHandler: false,
               ),
             ),

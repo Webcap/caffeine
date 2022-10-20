@@ -145,10 +145,18 @@ class _caffieneHomePageState extends State<caffieneHomePage>
     with SingleTickerProviderStateMixin {
   late int _selectedIndex;
 
+  Future getData() async {
+    final sp = context.read<SignInProvider>();
+    sp.getDataFromSharedPreferences();
+  }
+
+
   @override
   void initState() {
-    defHome();
+    
     super.initState();
+    defHome();
+    getData();
   }
 
   void defHome() {
@@ -161,6 +169,7 @@ class _caffieneHomePageState extends State<caffieneHomePage>
 
   @override
   Widget build(BuildContext context) {
+    final sp = context.watch<SignInProvider>();
     // final isDark = Provider.of<DarkthemeProvider>(context).darktheme;
     //final mixpanel = Provider.of<MixpanelProvider>(context).mixpanel;
 

@@ -3,6 +3,7 @@ import 'package:login/models/movie_models.dart';
 import 'package:login/provider/mixpanel_provider.dart';
 import 'package:login/screens/movie_screens/movie_source_screen.dart';
 import 'package:login/screens/movie_screens/widgets/movie_video_loader.dart';
+import 'package:login/utils/config.dart';
 import 'package:provider/provider.dart';
 import 'package:login/api/movies_api.dart';
 
@@ -52,7 +53,7 @@ class _WatchNowButtonState extends State<WatchNowButton> {
                         padding: EdgeInsets.all(8.0),
                         child: Text(
                           'Watch with:',
-                          //style: kTextSmallHeaderStyle,
+                          style: kTextSmallHeaderStyle,
                         ),
                       ),
                     ),
@@ -76,12 +77,12 @@ class _WatchNowButtonState extends State<WatchNowButton> {
                         },
                         child: Container(
                           decoration: BoxDecoration(
-                              color: const Color(0xFFF57C00),
+                              color: maincolor,
                               borderRadius: BorderRadius.circular(10)),
                           child: const Padding(
                             padding: EdgeInsets.all(20.0),
                             child: Text(
-                              'Cinemax player. AD free, highly recommended, but without subtitles',
+                              'caffeine player, no subtitles (reccomended)',
                               textAlign: TextAlign.center,
                             ),
                           ),
@@ -108,7 +109,7 @@ class _WatchNowButtonState extends State<WatchNowButton> {
                         },
                         child: Container(
                           decoration: BoxDecoration(
-                              color: const Color(0xFFF57C00),
+                              color: maincolor,
                               borderRadius: BorderRadius.circular(10)),
                           child: const Padding(
                             padding: EdgeInsets.all(20.0),

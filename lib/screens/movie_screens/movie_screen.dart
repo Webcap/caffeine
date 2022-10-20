@@ -6,7 +6,7 @@ import 'package:login/screens/movie_screens/widgets/movies_from_watch_providers.
 import 'package:login/widgets/custom_navbar.dart';
 import 'package:login/widgets/movie_page_buttons.dart';
 import 'package:login/widgets/movie_rec.dart';
-import 'package:login/widgets/scrolling_widget.dart';
+import 'package:login/screens/movie_screens/widgets/scrolling_widget.dart';
 
 // class movie_screen extends StatefulWidget {
 //   const movie_screen({Key? key}) : super(key: key);

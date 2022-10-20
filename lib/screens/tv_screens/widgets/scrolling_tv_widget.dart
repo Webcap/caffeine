@@ -8,7 +8,7 @@ import 'package:login/models/credits.dart';
 import 'package:login/models/tv.dart';
 import 'package:http/http.dart' as http;
 import 'package:login/provider/imagequality_provider.dart';
-import 'package:login/screens/movie_screens/widgets/cast_details.dart';
+import 'package:login/screens/movie_screens/cast_details.dart';
 import 'package:login/screens/tv_screens/guest_star_dets.dart';
 import 'package:login/screens/tv_screens/tv_detail_page.dart';
 import 'package:login/screens/tv_screens/widgets/created_by_widget.dart';

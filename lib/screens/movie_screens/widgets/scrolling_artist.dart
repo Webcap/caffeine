@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:login/api/movies_api.dart';
 import 'package:login/models/credits.dart';
 import 'package:login/provider/imagequality_provider.dart';
-import 'package:login/screens/movie_screens/widgets/cast_details.dart';
+import 'package:login/screens/movie_screens/cast_details.dart';
 import 'package:login/utils/config.dart';
 import 'package:login/widgets/shimmer_widget.dart';
 import 'package:provider/provider.dart';

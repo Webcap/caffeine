@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:login/screens/categories_screen.dart';
 import 'package:login/screens/home_screen/dash_screen.dart';
 import 'package:login/utils/next_screen.dart';
 
@@ -28,16 +27,16 @@ class CustomNavBar extends StatelessWidget {
             color: Colors.white,
           ),
         ),
-        InkWell(
-          onTap: () {
-            nextScreen(context, category_screen());
-          },
-          child: Icon(
-            Icons.category,
-            size: 35,
-            color: Colors.white,
-          ),
-        ),
+        // InkWell(
+        //   onTap: () {
+        //     nextScreen(context, category_screen());
+        //   },
+        //   child: Icon(
+        //     Icons.category,
+        //     size: 35,
+        //     color: Colors.white,
+        //   ),
+        // ),
         InkWell(
           onTap: () {},
           child: Icon(

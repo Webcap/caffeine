@@ -117,7 +117,7 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
                 padding: EdgeInsets.only(top: 8.0),
                 child: Text(
                   'Initializing player',
-                  //style: kTextSmallHeaderStyle,
+                  style: kTextSmallHeaderStyle,
                 ),
               )
             ],

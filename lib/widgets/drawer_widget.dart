@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:login/provider/sign_in_provider.dart';
 import 'package:login/screens/auth_screens/login_screen.dart';
+import 'package:login/screens/settings/settings.dart';
 import 'package:login/utils/config.dart';
 import 'package:login/utils/next_screen.dart';
 import 'package:provider/provider.dart';
@@ -75,10 +76,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                   ),
                   title: const Text('Settings'),
                   onTap: () {
-                    // Navigator.push(context,
-                    //     MaterialPageRoute(builder: ((context) {
-                    //   return const Settings();
-                    // })));
+                    nextScreen(context, Settings());
                   },
                 ),
                 ListTile(

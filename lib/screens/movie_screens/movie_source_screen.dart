@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:login/screens/movie_screens/movie_stream.dart';
+import 'package:login/utils/config.dart';
 import 'package:login/widgets/stream_list_widget.dart';
 
 class MovieStreamSelect extends StatefulWidget {
@@ -27,6 +28,7 @@ class _MovieStreamSelectState extends State<MovieStreamSelect> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: maincolor2,
         title: Text(
           'Watch: ${widget.movieName}',
         ),
@@ -52,7 +54,7 @@ class _MovieStreamSelectState extends State<MovieStreamSelect> {
                       Column(
                         children: [
                           StreamListWidget(
-                            streamName: 'Stream one (multiple player options)',
+                            streamName: '2embed',
                             streamLink:
                                 'https://2embed.biz/embed/movie?tmdb=${widget.movieId}',
                             movieName: widget.movieName,
@@ -61,7 +63,7 @@ class _MovieStreamSelectState extends State<MovieStreamSelect> {
                             visible: widget.movieImdbId == null ? false : true,
                             child: StreamListWidget(
                               streamName:
-                                  'Stream two (multiple player options)',
+                                  '123Movie',
                               streamLink:
                                   'https://api.123movie.cc/imdb.php?imdb=${widget.movieImdbId}&server=vcu',
                               movieName: widget.movieName,
@@ -69,64 +71,64 @@ class _MovieStreamSelectState extends State<MovieStreamSelect> {
                           ),
                           StreamListWidget(
                             streamName:
-                                'Stream three (multiple player options)',
+                                '2embed (multiple player options)',
                             streamLink:
                                 'https://www.2embed.to/embed/tmdb/movie?id=${widget.movieId}',
                             movieName: widget.movieName,
                           ),
                           StreamListWidget(
-                            streamName: 'Stream four (multiple player options)',
+                            streamName: 'onionflix (multiple player options)',
                             streamLink:
                                 'https://onionflix.org/embed/movie?tmdb=${widget.movieId}',
                             movieName: widget.movieName,
                           ),
                           StreamListWidget(
-                            streamName: 'Stream five (multiple player options)',
+                            streamName: 'smashystream (multiple player options)',
                             streamLink:
                                 'https://hub.smashystream.com/embed/movie?tmdb=${widget.movieId}',
                             movieName: widget.movieName,
                           ),
                           StreamListWidget(
-                            streamName: 'Stream six (multiple player options)',
+                            streamName: 'embedworld (multiple player options)',
                             streamLink:
                                 'https://embedworld.xyz/public/embed/movie?tmdb=${widget.movieId}',
                             movieName: widget.movieName,
                           ),
                           StreamListWidget(
                             streamName:
-                                'Stream seven (multiple player options)',
+                                'cinedb (multiple player options)',
                             streamLink:
                                 'https://cinedb.top/embed/movie?tmdb=${widget.movieId}',
                             movieName: widget.movieName,
                           ),
                           StreamListWidget(
                             streamName:
-                                'Stream eight (multiple player options)',
+                                'fembed (multiple player options)',
                             streamLink:
                                 'https://fembed.ro/embed/movie?tmdb=${widget.movieId}',
                             movieName: widget.movieName,
                           ),
                           StreamListWidget(
-                            streamName: 'Stream nine (multiple player options)',
+                            streamName: 'moviehab (multiple player options)',
                             streamLink:
                                 'https://moviehab.com/embed/movie?tmdb=${widget.movieId}',
                             movieName: widget.movieName,
                           ),
                           StreamListWidget(
-                            streamName: 'Stream ten (multiple player options)',
+                            streamName: 'vidsrc.me (multiple player options)',
                             streamLink:
                                 'https://vidsrc.me/embed/${widget.movieId}/',
                             movieName: widget.movieName,
                           ),
                           StreamListWidget(
-                            streamName: 'Stream eleven (360p)',
+                            streamName: 'databasegdriveplayer (360p)',
                             streamLink:
                                 'https://databasegdriveplayer.co/player.php?tmdb=${widget.movieId}',
                             movieName: widget.movieName,
                           ),
                           StreamListWidget(
                             streamName:
-                                'Stream twelve (multiple player options)',
+                                'openvids (multiple player options)',
                             streamLink:
                                 'https://openvids.io/tmdb/movie/${widget.movieId}',
                             movieName: widget.movieName,
