@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:login/provider/adultmode_provider.dart';
 import 'package:login/provider/default_home_provider.dart';
 import 'package:login/provider/imagequality_provider.dart';
 import 'package:login/provider/internet_provider.dart';
@@ -9,6 +10,7 @@ import 'package:login/provider/sign_in_provider.dart';
 import 'package:login/api/movies_api.dart';
 import 'package:login/screens/discover_screens/discovery_screen.dart';
 import 'package:login/screens/movie_screens/movie_screen.dart';
+import 'package:login/screens/search/search_view.dart';
 import 'package:login/screens/tv_screens/tv_screen.dart';
 import 'package:login/utils/config.dart';
 import 'package:login/widgets/custom_navbar.dart';
@@ -194,18 +196,18 @@ class _caffieneHomePageState extends State<caffieneHomePage>
                 ),
               ),
               actions: [
-                // IconButton(
-                //     onPressed: () {
-                //       showSearch(
-                //           context: context,
-                //           delegate: Search(
-                //               mixpanel: mixpanel,
-                //               includeAdult: Provider.of<AdultmodeProvider>(
-                //                       context,
-                //                       listen: false)
-                //                   .isAdult));
-                //     },
-                //     icon: const Icon(Icons.search)),
+                IconButton(
+                    onPressed: () {
+                      showSearch(
+                          context: context,
+                          delegate: Search(
+                              // mixpanel: mixpanel,
+                              includeAdult: Provider.of<AdultmodeProvider>(
+                                      context,
+                                      listen: false)
+                                  .isAdult));
+                    },
+                    icon: const Icon(Icons.search)),
               ],
             ),
             bottomNavigationBar: Container(

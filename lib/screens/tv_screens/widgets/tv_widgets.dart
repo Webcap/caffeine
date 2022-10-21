@@ -1075,7 +1075,7 @@ class EpisodeListWidgetState extends State<EpisodeListWidget>
                             ),
                           ),
                           const Divider(
-                            color: Color(0xFFF57C00),
+                            color: maincolor,
                             thickness: 1.5,
                             endIndent: 30,
                             indent: 5,
@@ -1246,7 +1246,7 @@ class EpisodeListWidgetState extends State<EpisodeListWidget>
                                       ],
                                     ),
                                     const Divider(
-                                      color: Color(0xFFF57C00),
+                                      color: maincolor,
                                       thickness: 1.5,
                                       endIndent: 30,
                                       indent: 5,
@@ -1325,7 +1325,7 @@ class TopButtonState extends State<TopButton> {
             shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                 RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(5.0),
-                    side: const BorderSide(color: Color(0xFFF57C00))))),
+                    side: const BorderSide(color: maincolor)))),
         onPressed: () {
           Navigator.pop(context);
         },

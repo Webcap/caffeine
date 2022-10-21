@@ -34,6 +34,7 @@ late Color oppositecolor = Colors.black;
 const maincolor = Color(0xFFFea575e);
 const maincolor2 = Color(0xFFF371124);
 const maincolor3 = Color(0xFFF832f3c);
+const maincolor4 = Color(0xFFF501b2c);
 
 const kTextSmallHeaderStyle = TextStyle(
   fontFamily: 'PoppinsSB',

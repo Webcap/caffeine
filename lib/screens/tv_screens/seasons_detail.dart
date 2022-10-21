@@ -137,7 +137,7 @@ class SeasonsDetailState extends State<SeasonsDetail>
                   child: Container(
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(50.0),
-                        color:Colors.white38),
+                        color: Colors.white38),
                     child: IconButton(
                       icon: const Icon(
                         Icons.arrow_back,
@@ -172,7 +172,7 @@ class SeasonsDetailState extends State<SeasonsDetail>
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8.0),
                             ),
-                            color:const Color(0xFFDFDEDE),
+                            color: const Color(0xFFDFDEDE),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -205,7 +205,7 @@ class SeasonsDetailState extends State<SeasonsDetail>
                                                 widget.tvDetails.originalTitle!,
                                                 style: TextStyle(
                                                     fontSize: 15,
-                                                    color:Colors.black54),
+                                                    color: Colors.black54),
                                               ),
                                             ],
                                           ),
@@ -223,28 +223,28 @@ class SeasonsDetailState extends State<SeasonsDetail>
                                     labelColor: Colors.white,
                                     tabs: [
                                       Tab(
-                                        child: Text('About',
-                                            style: TextStyle(
-                                                fontFamily: 'Poppins',
-                                                color:Colors.black)),
-                                      ),
-                                      Tab(
                                         child: Text('Episodes',
                                             style: TextStyle(
                                                 fontFamily: 'Poppins',
-                                                color:Colors.black)),
+                                                color: Colors.black)),
+                                      ),
+                                      Tab(
+                                        child: Text('About',
+                                            style: TextStyle(
+                                                fontFamily: 'Poppins',
+                                                color: Colors.black)),
                                       ),
                                       Tab(
                                         child: Text('Cast',
                                             style: TextStyle(
                                                 fontFamily: 'Poppins',
-                                                color:Colors.black)),
+                                                color: Colors.black)),
                                       ),
                                       Tab(
                                         child: Text('Crew',
                                             style: TextStyle(
                                                 fontFamily: 'Poppins',
-                                                color:Colors.black)),
+                                                color: Colors.black)),
                                       ),
                                     ],
                                     controller: tabController,
@@ -259,9 +259,17 @@ class SeasonsDetailState extends State<SeasonsDetail>
                                       physics: const PageScrollPhysics(),
                                       controller: tabController,
                                       children: [
+                                        EpisodeListWidget(
+                                          adult: widget.adult,
+                                          seriesName: widget.seriesName,
+                                          tvId: widget.tvDetails.id,
+                                          api: Endpoints.getSeasonDetails(
+                                              widget.tvDetails.id!,
+                                              widget.seasons.seasonNumber!),
+                                        ),
                                         SingleChildScrollView(
                                           child: Container(
-                                            color:const Color(0xFFFFFFFF),
+                                            color: const Color(0xFFFFFFFF),
                                             child: Column(
                                               children: <Widget>[
                                                 Row(
@@ -361,14 +369,7 @@ class SeasonsDetailState extends State<SeasonsDetail>
                                             ),
                                           ),
                                         ),
-                                        EpisodeListWidget(
-                                          adult: widget.adult,
-                                          seriesName: widget.seriesName,
-                                          tvId: widget.tvDetails.id,
-                                          api: Endpoints.getSeasonDetails(
-                                              widget.tvDetails.id!,
-                                              widget.seasons.seasonNumber!),
-                                        ),
+                                        
                                         TVCastTab(
                                           api: Endpoints
                                               .getFullTVSeasonCreditsUrl(
