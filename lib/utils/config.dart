@@ -49,6 +49,12 @@ const kTextHeaderStyle = TextStyle(
   fontSize: 22,
 );
 
+const kTextHeaderStyleTV = TextStyle(
+  fontFamily: 'PoppinsSB',
+  fontSize: 30,
+  color: Colors.white,
+);
+
 const kTextSmallBodyStyle = TextStyle(
   fontFamily: 'Poppins',
   fontSize: 17,

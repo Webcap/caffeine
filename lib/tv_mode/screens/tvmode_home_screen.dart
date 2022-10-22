@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
-import 'package:login/tv_mode/widget/movieTabs.dart';
+import 'package:login/tv_mode/widget/homeTab.dart';
 import 'package:login/utils/config.dart';
 
 class tvModeHome extends StatefulWidget {
@@ -26,7 +26,7 @@ class _tvModeHomeState extends State<tvModeHome> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2,
+      length: 3,
       child: Shortcuts(
         shortcuts: <LogicalKeySet, Intent>{
           LogicalKeySet(LogicalKeyboardKey.select): const ActivateIntent(),
@@ -45,8 +45,9 @@ class _tvModeHomeState extends State<tvModeHome> {
                   isScrollable: true,
                   indicatorColor: Color.fromARGB(255, 255, 60, 70),
                   tabs: <Widget>[
+                    Tab(text: 'Home'),
                     Tab(text: 'Movies'),
-                    Tab(text: 'Manga'),
+                    Tab(text: 'TV Shows'),
                   ],
                 )
               ],
@@ -57,7 +58,7 @@ class _tvModeHomeState extends State<tvModeHome> {
               padding: const EdgeInsets.all(15.0),
               child: TabBarView(
                 children: <Widget>[
-                  movieTab(),
+                  homeTab(),
                   // tvTab(),
                 ],
               ),

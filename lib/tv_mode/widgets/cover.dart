@@ -3,24 +3,21 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:login/api/movies_api.dart';
 import 'package:login/models/movie_models.dart';
+import 'package:login/provider/imagequality_provider.dart';
+import 'package:login/tv_mode/widgets/poster.dart';
 import 'package:login/utils/config.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 
 class Cover extends StatefulWidget {
-  final String api, title;
-  final dynamic discoverType;
-  final bool isTrending;
   const Cover({
     Key? key,
-    required this.api,
-    required this.title,
-    this.discoverType,
-    required this.isTrending,
+    required this.item,
     required this.onTap,
     required this.onFocus,
   }) : super(key: key);
 
+  final Movie item;
   final Function onTap;
   final Function onFocus;
 
@@ -32,53 +29,7 @@ class _CoverState extends State<Cover> with SingleTickerProviderStateMixin {
   late FocusNode _node;
   late AnimationController _controller;
   late Animation<double> _animation;
-  List<Movie>? moviesList;
   int _focusAlpha = 100;
-  final ScrollController _scrollController = ScrollController();
-
-  int pageNum = 2;
-  bool isLoading = false;
-  bool requestFailed = false;
-
-  Future<String> getMoreData() async {
-    _scrollController.addListener(() async {
-      if (_scrollController.position.pixels ==
-          _scrollController.position.maxScrollExtent) {
-        setState(() {
-          isLoading = true;
-        });
-        if (widget.isTrending == false) {
-          var response = await http.get(
-            Uri.parse(
-                "$TMDB_API_BASE_URL/movie/${widget.discoverType}?api_key=$TMDB_API_KEY&include_adult=false&page=$pageNum"),
-          );
-          setState(() {
-            pageNum++;
-            isLoading = false;
-            var newlistMovies = (json.decode(response.body)['results'] as List)
-                .map((i) => Movie.fromJson(i))
-                .toList();
-            moviesList!.addAll(newlistMovies);
-          });
-        } else if (widget.isTrending == true) {
-          var response = await http.get(
-            Uri.parse(
-                "$TMDB_API_BASE_URL/trending/movie/week?api_key=$TMDB_API_KEY&language=en-US&include_adult=false&page=$pageNum"),
-          );
-          setState(() {
-            pageNum++;
-            isLoading = false;
-            var newlistMovies = (json.decode(response.body)['results'] as List)
-                .map((i) => Movie.fromJson(i))
-                .toList();
-            moviesList!.addAll(newlistMovies);
-          });
-        }
-      }
-    });
-
-    return "success";
-  }
 
   late Widget image;
 
@@ -91,32 +42,15 @@ class _CoverState extends State<Cover> with SingleTickerProviderStateMixin {
         vsync: this,
         lowerBound: 0.9,
         upperBound: 1);
-    _animation = CurvedAnimation(parent: _controller, curve: Curves.easeIn);
-    getMoreData();
+    _animation =
+        CurvedAnimation(parent: _controller, curve: Cubic(0.0, 0, 0.0, 0.0));
     super.initState();
-  }
-
-  void getData() {
-    moviesApi().fetchMovies('${widget.api}&include_adult=false').then((value) {
-      setState(() {
-        moviesList = value;
-      });
-    });
-    Future.delayed(const Duration(seconds: 11), () {
-      if (moviesList == null) {
-        setState(() {
-          requestFailed = true;
-          moviesList = [];
-        });
-      }
-    });
   }
 
   @override
   void dispose() {
     _controller.dispose();
     _node.dispose();
-    _scrollController.dispose();
     super.dispose();
   }
 
@@ -138,22 +72,6 @@ class _CoverState extends State<Cover> with SingleTickerProviderStateMixin {
     }
   }
 
-  // void _openDetails() {
-  //   Navigator.push(context, MaterialPageRoute(builder: (context) => DetailPage(widget.item)));
-  // }
-
-  // bool _onKey(FocusNode node, RawKeyEvent event) {
-  //   if(event is RawKeyDownEvent) {
-  //     if(event.logicalKey == LogicalKeyboardKey.select || event.logicalKey == LogicalKeyboardKey.enter) {
-  //       _onTap();
-  //       return true;
-  //     } else {
-  //       return false;
-  //     }
-  //   }
-  //   return false;
-  // }
-
   @override
   Widget build(BuildContext context) {
     return RawMaterialButton(
@@ -163,16 +81,6 @@ class _CoverState extends State<Cover> with SingleTickerProviderStateMixin {
       focusElevation: 0,
       child: buildCover(context),
     );
-
-    // return Focus(
-    //     focusNode: _node,
-    //     onKey: _onKey,
-    //     child: Builder(
-    //       builder: (context) {
-    //         return buildCover(context);
-    //       }
-    //     ),
-    // );
   }
 
   Widget buildCover(BuildContext context) {
@@ -184,7 +92,21 @@ class _CoverState extends State<Cover> with SingleTickerProviderStateMixin {
         child: Column(
           children: <Widget>[
             Container(
-              child: Text("hey"),
+              //child: buildPosterImage(context),
+              child: Stack(children: <Widget>[
+                Poster(widget.item),
+                new Container(
+                  // child: Text(
+                  //   widget.item.genres.map((e) => e.name).join("\n"),
+                  //   style: TextStyle(
+                  //       color: Color.fromARGB(255, 255, 180, 10), fontSize: 9),
+                  // ),
+                  padding: EdgeInsets.fromLTRB(2, 0, 2, 2),
+                  decoration: BoxDecoration(
+                    color: Colors.black87,
+                  ),
+                ),
+              ]),
               decoration: BoxDecoration(boxShadow: [
                 BoxShadow(
                   color: Colors.black.withAlpha(_focusAlpha),
@@ -195,85 +117,19 @@ class _CoverState extends State<Cover> with SingleTickerProviderStateMixin {
             ),
             SizedBox(height: 5),
             Align(
-              // child: Text(
-              //   widget.item.title,
-              //   maxLines: 1,
-              //   style: TextStyle(color: Colors.white),
-              // ),
-              alignment: Alignment.topLeft,
-            ),
+                child: Text(widget.item.title.toString(),
+                    maxLines: 2,
+                    style: TextStyle(color: Colors.white, fontSize: 12)),
+                alignment: Alignment.center),
             Align(
-              // child: Text(widget.item.year.toString(),
-              //     style: TextStyle(
-              //         color: Color.fromARGB(70, 255, 255, 255), fontSize: 10)),
-              // alignment: Alignment.topLeft,
-            ),
+                // child: AddotionalInfo(
+                //     Icons.star,
+                //     Color.fromARGB(70, 255, 255, 255),
+                //     "${widget.item.imdbRating}, ${widget.item.year}"),
+                alignment: Alignment.center),
           ],
         ),
       ),
     );
   }
-
-  // FutureProvider<FanartItem> buildPosterImage(BuildContext context) {
-  //   return FutureProvider<FanartItem>(
-  //     create: (_) => Provider.of<FanartService>(context).getImages(widget.item),
-  //     child: Consumer<FanartItem>(
-  //       builder: (context, fanart, _) {
-  //         if (fanart != null && fanart.poster != null) {
-  //           widget.item.fanart = fanart;
-  //           return FadeInImage.memoryNetwork(
-  //             placeholder: kTransparentImage,
-  //             image: widget.item.fanart.poster,
-  //             fit: BoxFit.fill,
-  //           );
-  //         } else {
-  //           return Image.memory(kTransparentImage, fit: BoxFit.fill);
-  //           // return Image.memory(kTransparentImage);
-  //         }
-  //       },
-  //     ),
-  //   );
-  // }
 }
-
-//   Widget CoverListView(BuildContext context, String endpoint) {
-//     return FutureProvider<List<TraktModel>>(
-//       create: (_) {
-//         switch (endpoint) {
-//           case 'movies':
-//             return Provider.of<TraktService>(context).getMovies(6);
-//           case 'shows':
-//             return Provider.of<TraktService>(context).getShows(6);
-//         }
-//       },
-//       child: Consumer<List<TraktModel>>(
-//         builder: (context, items, _) {
-//           if (items != null) {
-//             return OrientationBuilder(builder: (context, orientation) {
-//               int itemCount = orientation == Orientation.landscape ? 3 : 6;
-//               return GridView.builder(
-//                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-//                     crossAxisCount: itemCount, childAspectRatio: 0.55),
-//                 itemCount: itemCount,
-//                 shrinkWrap: true,
-//                 itemBuilder: (BuildContext context, int index) {
-//                   TraktModel item = items[index];
-//                   return Cover(
-//                     item: item,
-//                     onTap: () {
-//                       Navigator.push(
-//                           context,
-//                           MaterialPageRoute(
-//                               builder: (context) => DetailPage(item)));
-//                     },
-//                   );
-//                 },
-//               );
-//             });
-//           }
-//           return Text('loading');
-//         },
-//       ),
-//     );
-//   }
-// }

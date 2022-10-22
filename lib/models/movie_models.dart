@@ -156,6 +156,7 @@ class Movie {
   int? id;
   String? title;
   num? voteAverage;
+  
   String? originalLanguage;
   String? originalTitle;
   String? releaseDate;
