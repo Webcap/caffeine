@@ -8,6 +8,7 @@ import 'package:login/screens/home_screen/dash_screen.dart';
 import 'package:login/screens/home_screen/home_screen.dart';
 import 'package:login/screens/auth_screens/login_screen.dart';
 import 'package:login/tv_mode/tv_mode_home.dart';
+import 'package:login/ui/auth/login_page/login_page.dart';
 import 'package:login/utils/config.dart';
 import 'package:login/utils/next_screen.dart';
 import 'package:provider/provider.dart';
@@ -45,10 +46,12 @@ class _SplashScreenState extends State<SplashScreen> {
           androidInfo.systemFeatures.contains('android.software.leanback');
       print(isAndroidTV);
       if (isAndroidTV == true) {
+
+        // IF TV DO THIS
         print("do nothingh");
         Timer(const Duration(seconds: 2), () {
           sp.isSignedIn == false
-              ? nextScreen(context, LoginScreen())
+              ? nextScreen(context, LoginPage())
               : nextScreen(context, tvModeMain());
         });
       } else {

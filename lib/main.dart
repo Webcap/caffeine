@@ -12,6 +12,7 @@ import 'package:login/provider/sign_in_provider.dart';
 import 'package:login/provider/tv_mode_provider.dart';
 import 'package:login/screens/auth_screens/splash_screens.dart';
 import 'package:login/tv_mode/tv_mode_home.dart';
+import 'package:login/ui/auth/login_page/login_page.dart';
 import 'package:login/utils/next_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -128,6 +129,9 @@ class _caffeineState extends State<caffeine>
             child: MaterialApp(
               home: SplashScreen(),
               debugShowCheckedModeBanner: false,
+              routes: {
+                "/login": (context) => LoginPage(),
+              },
             ));
       }),
       // child: MaterialApp(
