@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:login/tv_mode/screens/tvmode_home_screen.dart';
+import 'package:login/ui/home/tvmode_home_screen.dart';
 
 class tvModeMain extends StatelessWidget {
   const tvModeMain({super.key});

@@ -1,22 +1,23 @@
 import 'dart:convert';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:login/api/movies_api.dart';
 import 'package:login/models/movie_models.dart';
 import 'package:login/provider/imagequality_provider.dart';
-import 'package:login/screens/movie_screens/widgets/main_movie_list.dart';
 import 'package:login/screens/movie_screens/movie_details_screen.dart';
+import 'package:login/screens/movie_screens/widgets/main_movie_list.dart';
 import 'package:login/utils/config.dart';
+import 'package:http/http.dart' as http;
 import 'package:login/widgets/shimmer_widget.dart';
 import 'package:provider/provider.dart';
-import 'package:http/http.dart' as http;
 
-class ScrollingMovies extends StatefulWidget {
+class ScrollingMoviesTVMode extends StatefulWidget {
   final String api, title;
   final dynamic discoverType;
   final bool isTrending;
 
-  const ScrollingMovies({
+  const ScrollingMoviesTVMode({
     Key? key,
     required this.api,
     required this.title,
@@ -24,14 +25,15 @@ class ScrollingMovies extends StatefulWidget {
     required this.isTrending,
   }) : super(key: key);
   @override
-  ScrollingMoviesState createState() => ScrollingMoviesState();
+  ScrollingMoviesTVModeState createState() => ScrollingMoviesTVModeState();
 }
 
-class ScrollingMoviesState extends State<ScrollingMovies>
+class ScrollingMoviesTVModeState extends State<ScrollingMoviesTVMode>
     with AutomaticKeepAliveClientMixin {
   late int index;
   List<Movie>? moviesList;
   final ScrollController _scrollController = ScrollController();
+
 
   int pageNum = 2;
   bool isLoading = false;
@@ -84,6 +86,7 @@ class ScrollingMoviesState extends State<ScrollingMovies>
     getMoreData();
   }
 
+
   void getData() {
     moviesApi().fetchMovies('${widget.api}&include_adult=false').then((value) {
       setState(() {
@@ -120,7 +123,7 @@ class ScrollingMoviesState extends State<ScrollingMovies>
               padding: const EdgeInsets.all(8.0),
               child: Text(
                 widget.title,
-                style: kTextHeaderStyle,
+                style: kTextHeaderStyleTV,
               ),
             ),
             Padding(
@@ -138,15 +141,13 @@ class ScrollingMoviesState extends State<ScrollingMovies>
                     }));
                   },
                   style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all(const Color(0x26F57C00)),
+                      backgroundColor: MaterialStateProperty.all(maincolor4),
                       maximumSize:
                           MaterialStateProperty.all(const Size(200, 60)),
                       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20.0),
-                              side:
-                                  const BorderSide(color: Color(0xFFF57C00))))),
+                              side: const BorderSide(color: maincolor)))),
                   child: const Padding(
                     padding: EdgeInsets.only(left: 8.0, right: 8.0),
                     child: Text('View all'),
@@ -180,8 +181,7 @@ class ScrollingMoviesState extends State<ScrollingMovies>
                                             builder: (context) => MovieDetailPage(
                                                 movie: moviesList![index],
                                                 heroId:
-                                                    '${moviesList![index].id}${widget.title}'
-                                                )));
+                                                    '${moviesList![index].id}${widget.title}')));
                                   },
                                   child: SizedBox(
                                     width: 100,
@@ -259,6 +259,9 @@ class ScrollingMoviesState extends State<ScrollingMovies>
                                               maxLines: 2,
                                               textAlign: TextAlign.center,
                                               overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                  fontSize: 15,
+                                                  color: Colors.white),
                                             ),
                                           ),
                                         )
@@ -328,5 +331,3 @@ class ScrollingMoviesState extends State<ScrollingMovies>
   @override
   bool get wantKeepAlive => true;
 }
-
-

@@ -7,7 +7,7 @@ import 'package:login/key_code.dart';
 import 'package:login/provider/internet_provider.dart';
 import 'package:login/provider/sign_in_provider.dart';
 import 'package:login/screens/home_screen/dash_screen.dart';
-import 'package:login/tv_mode/screens/tvmode_home_screen.dart';
+import 'package:login/ui/home/tvmode_home_screen.dart';
 import 'package:login/utils/next_screen.dart';
 import 'package:login/utils/snackbar.dart';
 import 'package:provider/provider.dart';
@@ -20,6 +20,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  Null focusNode = null;
   FocusNode main_focus_node = FocusNode();
   FocusNode username_focus_node = FocusNode();
   FocusNode password_focus_node = FocusNode();

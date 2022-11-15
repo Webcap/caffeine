@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -10,22 +11,43 @@ import 'package:login/provider/imagequality_provider.dart';
 import 'package:login/provider/internet_provider.dart';
 import 'package:login/provider/sign_in_provider.dart';
 import 'package:login/provider/tv_mode_provider.dart';
-import 'package:login/screens/auth_screens/splash_screens.dart';
-import 'package:login/tv_mode/tv_mode_home.dart';
-import 'package:login/ui/auth/login_page/login_page.dart';
+import 'package:login/ui/auth/splash/splash_screens.dart';
+import 'package:login/ui/home/tv_mode_main.dart';
+import 'package:login/ui/auth/login_page/login_page_TV.dart';
 import 'package:login/utils/next_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+SignInProvider signInProvider = SignInProvider();
+tvModeProvider tvmodeProvider = tvModeProvider();
+InternetProvider internetProvider = InternetProvider();
+ImagequalityProvider imagequalityProvider = ImagequalityProvider();
+DefaultHomeProvider defaultHomeProvider = DefaultHomeProvider();
+AdultmodeProvider adultmodeProvider = AdultmodeProvider();
+
+extension Precision on double {
+  double toPrecision(int fractionDigits) {
+    num mod = pow(10, fractionDigits.toDouble());
+    return ((this * mod).round().toDouble() / mod);
+  }
+}
 
 void main() async {
   //initialize app
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(const caffeine());
+  await imagequalityProvider.getCurrentImageQuality();
+  runApp(caffeine(
+    image: imagequalityProvider,
+  ));
 }
 
 class caffeine extends StatefulWidget {
-  const caffeine({super.key});
+  const caffeine({
+    required this.image,
+    Key? key,
+  }) : super(key: key);
+  final ImagequalityProvider image;
 
   @override
   State<caffeine> createState() => _caffeineState();
@@ -35,12 +57,6 @@ class _caffeineState extends State<caffeine>
     with ChangeNotifier, WidgetsBindingObserver {
   bool? isFirstLaunch;
   bool? isAndroidTV;
-  SignInProvider signInProvider = SignInProvider();
-  tvModeProvider tvmodeProvider = tvModeProvider();
-  InternetProvider internetProvider = InternetProvider();
-  ImagequalityProvider imagequalityProvider = ImagequalityProvider();
-  DefaultHomeProvider defaultHomeProvider = DefaultHomeProvider();
-  AdultmodeProvider adultmodeProvider = AdultmodeProvider();
   static final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
 
   // void firstTimeCheck() async {
@@ -77,8 +93,6 @@ class _caffeineState extends State<caffeine>
     //   }
     // });
   }
-
-  
 
   void getTVModeStats() async {
     tvmodeProvider.tvModeValue =
