@@ -8,7 +8,6 @@ import 'package:login/screens/home_screen/dash_screen.dart';
 import 'package:login/screens/home_screen/home_screen.dart';
 import 'package:login/screens/auth_screens/login_screen.dart';
 import 'package:login/ui/auth/splash/tv_splash.dart';
-import 'package:login/ui/home/tv_mode_main.dart';
 import 'package:login/ui/auth/login_page/login_page_TV.dart';
 import 'package:login/utils/config.dart';
 import 'package:login/utils/next_screen.dart';
@@ -28,13 +27,6 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     loadInfo();
-
-    // create a timer for 2 secs
-    // Timer(const Duration(seconds: 2), () {
-    //   sp.isSignedIn == false
-    //       ? nextScreen(context, LoginScreen())
-    //       : nextScreen(context, caffieneHomePage());
-    // });
   }
 
   void loadInfo() async {

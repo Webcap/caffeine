@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:login/provider/sign_in_provider.dart';
 import 'package:login/ui/home/tvHomeScreen.dart';
-import 'package:login/ui/home/tv_mode_main.dart';
 import 'package:login/utils/config.dart';
 import 'package:login/utils/next_screen.dart';
 import 'package:provider/provider.dart';

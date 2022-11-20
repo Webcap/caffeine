@@ -12,7 +12,6 @@ import 'package:login/provider/internet_provider.dart';
 import 'package:login/provider/sign_in_provider.dart';
 import 'package:login/provider/tv_mode_provider.dart';
 import 'package:login/ui/auth/splash/splash_screens.dart';
-import 'package:login/ui/home/tv_mode_main.dart';
 import 'package:login/ui/auth/login_page/login_page_TV.dart';
 import 'package:login/utils/next_screen.dart';
 import 'package:provider/provider.dart';
@@ -74,24 +73,6 @@ class _caffeineState extends State<caffeine>
   void initState() {
     super.initState();
     getCurrentDefaultScreen();
-    // initPlatformState();
-
-    // AnotherTvRemote.getTvRemoteEvents().listen((event) {
-    //   print("Received event: $event");
-    //   if (event.action == KeyAction.down) {
-    //     if (event.type == KeyType.dPadDown) {
-    //       // _listController.animateTo(_listController.position.pixels + 100,
-    //       //     duration: const Duration(microseconds: 100),
-    //       //     curve: Curves.easeIn);
-    //     } else if (event.type == KeyType.dPadUp) {
-    //       // _listController.animateTo(_listController.position.pixels - 100,
-    //       //     duration: const Duration(microseconds: 100),
-    //       //     curve: Curves.easeIn);
-    //     } else if (event.type == KeyType.ok) {
-
-    //     }
-    //   }
-    // });
   }
 
   void getTVModeStats() async {
@@ -148,10 +129,6 @@ class _caffeineState extends State<caffeine>
               },
             ));
       }),
-      // child: MaterialApp(
-      //   home: SplashScreen(),
-      //   debugShowCheckedModeBanner: false,
-      // ),
     );
   }
 }

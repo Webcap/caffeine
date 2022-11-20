@@ -5,11 +5,15 @@ import 'package:image_fade/image_fade.dart';
 import 'package:login/models/genres.dart';
 import 'package:login/models/poster.dart';
 import 'package:login/models/slide.dart';
+import 'package:login/models/channel.dart' as model;
 import 'package:login/key_code.dart';
+import 'package:login/screens/discover_screens/widgets/discover_movies_widget.dart';
 import 'package:login/ui/home/home_loading_widget.dart';
-import 'package:login/ui/home/tv_mode_main.dart';
+import 'package:login/ui/home/tvmode_home_screen.dart';
+import 'package:login/ui/home/widgets/discover_movie_widget_tvMode.dart';
 import 'package:login/ui/movie/movies_widget.dart';
 import 'package:login/widgets/navigation_widget.dart';
+import 'package:login/ui/home/widgets/slide_widget.dart';
 import 'package:need_resume/need_resume.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -24,6 +28,7 @@ class tvHomeScreen extends StatefulWidget {
 class _tvHomeScreenState extends ResumableState<tvHomeScreen> {
   List<Genre> genres = [];
   List<Slide> slides = [];
+  List<model.Channel> channels = [];
 
   int postx = 1;
   int posty = -2;
@@ -36,6 +41,7 @@ class _tvHomeScreenState extends ResumableState<tvHomeScreen> {
   List<int> _counts_x_line_saver = [];
   FocusNode home_focus_node = FocusNode();
   late Poster selected_poster;
+  late model.Channel selected_channel;
 
   List<Poster> postersList = [];
 
@@ -264,20 +270,20 @@ class _tvHomeScreenState extends ResumableState<tvHomeScreen> {
                 ),
               ),
             ),
-            // if (_visibile_success)
-            //   SlideWidget(
-            //       poster: selected_poster,
-            //       channel: selected_channel,
-            //       posty: posty,
-            //       postx: postx,
-            //       carouselController: _carouselController,
-            //       side_current: side_current,
-            //       slides: slides,
-            //       move: (value) {
-            //         setState(() {
-            //           side_current = value;
-            //         });
-            //       }),
+            DiscoverMoviesTVMode(),
+              // SlideWidget(
+              //     poster: selected_poster,
+              //     channel: selected_channel,
+              //     posty: posty,
+              //     postx: postx,
+              //     carouselController: _carouselController,
+              //     side_current: side_current,
+              //     slides: slides,
+              //     move: (value) {
+              //       setState(() {
+              //         side_current = value;
+              //       });
+              //     }),
             if (_visibile_loading) HomeLoadingWidget(),
             if (_visibile_error) _tryAgainWidget(),
             if (_visibile_success)
@@ -301,35 +307,37 @@ class _tvHomeScreenState extends ResumableState<tvHomeScreen> {
                       scrollDirection: Axis.vertical,
                       itemScrollController: _scrollController,
                       itemBuilder: (context, jndex) {
-                        if (genres[jndex] == null) {
-                          return ChannelsWidget(
-                              jndex: jndex,
-                              postx: postx,
-                              posty: posty,
-                              scrollController: _scrollControllers[jndex],
-                              size: 15,
-                              title: "TV Channels",
-                              channels: channels);
-                        } else {
-                          return MoviesWidget(
-                              jndex: jndex,
-                              posty: posty,
-                              postx: postx,
-                              scrollController: _scrollControllers[jndex],
-                              title: genres[jndex].title,
-                              posters: genres[jndex].posters, size: 50,);
-                        }
+                        return Text("data");
+                        // if (genres[jndex] == null) {
+                        //   return ChannelsWidget(
+                        //       jndex: jndex,
+                        //       postx: postx,
+                        //       posty: posty,
+                        //       scrollController: _scrollControllers[jndex],
+                        //       size: 15,
+                        //       title: "TV Channels",
+                        //       channels: channels);
+                        // } else {
+                        //   return MoviesWidget(
+                        //       jndex: jndex,
+                        //       posty: posty,
+                        //       postx: postx,
+                        //       scrollController: _scrollControllers[jndex],
+                        //       title: genres[jndex].title,
+                        //       posters: genres[jndex].posters,
+                        //       size: 50,);
+                        // }
                       },
                     ),
                   ),
                 ),
               ),
             NavigationWidget(
-                postx: postx,
-                posty: posty,
-                selectedItem: 1,
-                image: image,
-                ),
+              postx: postx,
+              posty: posty,
+              selectedItem: 1,
+              image: image,
+            ),
           ],
         ),
       ),
@@ -340,9 +348,9 @@ class _tvHomeScreenState extends ResumableState<tvHomeScreen> {
     if (posty < 0 && slides.length > 0)
       return ImageFade(
           image: NetworkImage(slides[side_current].image), fit: BoxFit.cover);
-    // if (posty == 0 && channels.length > 0)
-    //   return ImageFade(
-    //       image: NetworkImage(channels[postx].image), fit: BoxFit.cover);
+    if (posty == 0 && channels.length > 0)
+      return ImageFade(
+          image: NetworkImage(channels[postx].image), fit: BoxFit.cover);
     if (posty > 0 && genres.length > 0)
       return ImageFade(
           image: NetworkImage(genres[posty].posters![postx].cover),
@@ -364,7 +372,7 @@ class _tvHomeScreenState extends ResumableState<tvHomeScreen> {
         curve: Curves.easeInOutQuart);
   }
 
-    void _showLoading() {
+  void _showLoading() {
     setState(() {
       _visibile_loading = true;
       _visibile_error = false;
@@ -393,7 +401,7 @@ class _tvHomeScreenState extends ResumableState<tvHomeScreen> {
       Navigator.push(
         context,
         PageRouteBuilder(
-          pageBuilder: (context, animation1, animation2) => tvModeMain(),
+          pageBuilder: (context, animation1, animation2) => tvHomeScreen(),
           transitionDuration: Duration(seconds: 0),
         ),
       );
@@ -500,7 +508,6 @@ class _tvHomeScreenState extends ResumableState<tvHomeScreen> {
       ),
     );
   }
-  
 }
 
 class MyBehavior extends ScrollBehavior {
