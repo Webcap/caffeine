@@ -17,8 +17,13 @@ import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class DiscoverMoviesTVMode extends StatefulWidget {
-  const DiscoverMoviesTVMode({
+  int posty;
+  int postx;
+
+  DiscoverMoviesTVMode({
     Key? key,
+    required this.posty,
+    required this.postx,
   }) : super(key: key);
   @override
   DiscoverMoviesTVModeState createState() => DiscoverMoviesTVModeState();
@@ -98,52 +103,94 @@ class DiscoverMoviesTVModeState extends State<DiscoverMoviesTVMode>
                             (BuildContext context, int index, pageViewIndex) {
                           return Container(
                             child: GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => MovieDetailPage(
-                                            movie: moviesList![index],
-                                            heroId:
-                                                '${moviesList![index].id}discover')));
-                              },
-                              child: Hero(
-                                tag: '${moviesList![index].id}discover',
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                  child: CachedNetworkImage(
-                                    fadeOutDuration:
-                                        const Duration(milliseconds: 300),
-                                    fadeOutCurve: Curves.easeOut,
-                                    fadeInDuration:
-                                        const Duration(milliseconds: 700),
-                                    fadeInCurve: Curves.easeIn,
-                                    imageUrl: moviesList![index].backdropPath ==
-                                            null
-                                        ? ''
-                                        : TMDB_BASE_IMAGE_URL +
-                                            imageQuality +
-                                            moviesList![index].backdropPath!,
-                                    imageBuilder: (context, imageProvider) =>
-                                        Container(
-                                      decoration: BoxDecoration(
-                                        image: DecorationImage(
-                                          image: imageProvider,
-                                          fit: BoxFit.cover,
-                                        ),
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => MovieDetailPage(
+                                              movie: moviesList![index],
+                                              heroId:
+                                                  '${moviesList![index].id}discover')));
+                                },
+                                child: Stack(
+                                  children: [
+                                    AnimatedPositioned(
+                                      top: (widget.posty < 0) ? 40 : 30,
+                                      left: 0,
+                                      right: 0,
+                                      height: (widget.posty < 0)
+                                          ? (MediaQuery.of(context)
+                                                      .size
+                                                      .height /
+                                                  2) -
+                                              5
+                                          : (MediaQuery.of(context)
+                                                      .size
+                                                      .height /
+                                                  2) -
+                                              45,
+                                      duration: Duration(microseconds: 200),
+                                      child: Container(
+                                        height: (widget.posty < 0)
+                                            ? (MediaQuery.of(context)
+                                                        .size
+                                                        .height /
+                                                    2) -
+                                                5
+                                            : (MediaQuery.of(context)
+                                                        .size
+                                                        .height /
+                                                    2) -
+                                                45,
+                                        child: Stack(children: [
+                                          Hero(
+                                            tag:
+                                                '${moviesList![index].id}discover',
+                                            child: ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
+                                              child: CachedNetworkImage(
+                                                fadeOutDuration: const Duration(
+                                                    milliseconds: 300),
+                                                fadeOutCurve: Curves.easeOut,
+                                                fadeInDuration: const Duration(
+                                                    milliseconds: 700),
+                                                fadeInCurve: Curves.easeIn,
+                                                imageUrl: moviesList![index]
+                                                            .backdropPath ==
+                                                        null
+                                                    ? ''
+                                                    : TMDB_BASE_IMAGE_URL +
+                                                        imageQuality +
+                                                        moviesList![index]
+                                                            .backdropPath!,
+                                                imageBuilder:
+                                                    (context, imageProvider) =>
+                                                        Container(
+                                                  decoration: BoxDecoration(
+                                                    image: DecorationImage(
+                                                      image: imageProvider,
+                                                      fit: BoxFit.cover,
+                                                    ),
+                                                  ),
+                                                ),
+                                                placeholder: (context, url) =>
+                                                    discoverImageShimmer(),
+                                                errorWidget:
+                                                    (context, url, error) =>
+                                                        Image.asset(
+                                                  'assets/images/na_logo.png',
+                                                  fit: BoxFit.cover,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          Text(moviesList![index].title!, style: TextStyle(color: Colors.white),)
+                                        ]),
                                       ),
                                     ),
-                                    placeholder: (context, url) =>
-                                        discoverImageShimmer(),
-                                    errorWidget: (context, url, error) =>
-                                        Image.asset(
-                                      'assets/images/na_logo.png',
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
+                                  ],
+                                )),
                           );
                         },
                         itemCount: moviesList!.length,

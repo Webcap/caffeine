@@ -59,7 +59,7 @@ class _NavigationWidgetState extends ResumableState<NavigationWidget> {
                           width: 100,
                           child: Padding(
                             padding: const EdgeInsets.all(0.0),
-                            child:  Image.asset("assets/images/logo.png"),
+                            child:  Image.asset("assets/logo.png"),
                           ),
                         ),
                         SizedBox(width: 15),
