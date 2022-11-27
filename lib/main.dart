@@ -116,18 +116,13 @@ class _caffeineState extends State<caffeine>
               ImagequalityProvider,
               AdultmodeProvider,
               snapshot) {
-        return Shortcuts(
-            shortcuts: <LogicalKeySet, Intent>{
-              LogicalKeySet(LogicalKeyboardKey.select): const ActivateIntent(),
-              LogicalKeySet(LogicalKeyboardKey.enter): const ActivateIntent(),
-            },
-            child: MaterialApp(
-              home: SplashScreen(),
-              debugShowCheckedModeBanner: false,
-              routes: {
-                "/login": (context) => LoginPage(),
-              },
-            ));
+        return MaterialApp(
+          home: SplashScreen(),
+          debugShowCheckedModeBanner: false,
+          routes: {
+            "/login": (context) => LoginPage(),
+          },
+        );
       }),
     );
   }

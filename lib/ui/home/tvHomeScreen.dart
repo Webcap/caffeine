@@ -101,7 +101,7 @@ class _tvHomeScreenState extends ResumableState<tvHomeScreen> {
                 }
                 if (_visibile_error) {
                   if (posty == -2) {
-                    print("playing sound ");
+                    print("up ");
                   } else if (posty == -1) {
                     posty--;
                     postx = 0;
