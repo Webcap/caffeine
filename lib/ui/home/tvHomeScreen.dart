@@ -95,19 +95,19 @@ class _tvHomeScreenState extends ResumableState<tvHomeScreen> {
                 // _goToChannelDetail();
                 break;
               case KEY_UP:
-                if (_visibile_loading) {
-                  print("playing sound ");
-                  break;
-                }
-                if (_visibile_error) {
-                  if (posty == -2) {
-                    print("up ");
-                  } else if (posty == -1) {
-                    posty--;
-                    postx = 0;
-                  }
-                  break;
-                }
+                // if (_visibile_loading) {
+                //   print("playing sound ");
+                //   break;
+                // }
+                // if (_visibile_error) {
+                //   if (posty == -2) {
+                //     print("up ");
+                //   } else if (posty == -1) {
+                //     posty--;
+                //     postx = 0;
+                //   }
+                //   break;
+                // }
                 if (posty == -2) {
                   print("playing sound ");
                 } else if (posty == -1) {
@@ -200,6 +200,9 @@ class _tvHomeScreenState extends ResumableState<tvHomeScreen> {
               default:
                 break;
             }
+            setState(() {
+              
+            });
           }
         },
         child: Stack(
@@ -271,6 +274,9 @@ class _tvHomeScreenState extends ResumableState<tvHomeScreen> {
                 ),
               ),
             ),
+
+            // Main View 
+            
             DiscoverMoviesTVMode(
               postx: postx,
               posty: posty,

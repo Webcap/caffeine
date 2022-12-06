@@ -45,7 +45,7 @@ class _SplashScreenState extends State<SplashScreen> {
         Timer(const Duration(seconds: 1), () {
           nextScreen(context, Splash());
           // sp.isSignedIn == false
-          //     ? nextScreen(context, Splash()) // todo: change this to LoginPage()
+          //     ? nextScreen(context, LoginPage()) // todo: change this to LoginPage()
           //     : nextScreen(context, tvModeMain());
         });
       } else {
