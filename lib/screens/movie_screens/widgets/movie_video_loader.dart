@@ -49,7 +49,7 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
         )
         .then((value) => value.redirects[0].location);
     if (completem3u8.host.isEmpty) {
-      //  SnackBar(content: Text('The video couldn\'t be found on the server :('));
+      SnackBar(content: Text('The video couldn\'t be found on the server :('));
       Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(
