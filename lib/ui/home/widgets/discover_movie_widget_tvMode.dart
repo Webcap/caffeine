@@ -19,11 +19,13 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 class DiscoverMoviesTVMode extends StatefulWidget {
   int posty;
   int postx;
+  CarouselController carouselController;
 
   DiscoverMoviesTVMode({
     Key? key,
     required this.posty,
     required this.postx,
+    required this.carouselController,
   }) : super(key: key);
   @override
   DiscoverMoviesTVModeState createState() => DiscoverMoviesTVModeState();
@@ -75,20 +77,65 @@ class DiscoverMoviesTVModeState extends State<DiscoverMoviesTVMode>
         Provider.of<ImagequalityProvider>(context).imageQuality;
     // final isDark = Provider.of<DarkthemeProvider>(context).darktheme;
     return AnimatedPositioned(
-      top: (widget.posty < 0)? 70 : 40,
-      left: 0,
-      right: 0,
-      height: (widget.posty < 0) ? (MediaQuery.of(context).size.height / 2)-5 : (MediaQuery.of(context).size.height /2) -45, 
-      duration: Duration(milliseconds: 200),
-      child: Container(
-        height: (widget.posty < 0) ? (MediaQuery.of(context).size.height /2) -5 : (MediaQuery.of(context).size.height /2) - 45,
-        child: Stack(
-          children: [
-            
-          ],
-        ),
-      )
-    );
+        top: (widget.posty < 0) ? 70 : 40,
+        left: 0,
+        right: 0,
+        height: (widget.posty < 0)
+            ? (MediaQuery.of(context).size.height / 2) - 5
+            : (MediaQuery.of(context).size.height / 2) - 45,
+        duration: Duration(milliseconds: 200),
+        child: Container(
+          height: (widget.posty < 0)
+              ? (MediaQuery.of(context).size.height / 2) - 5
+              : (MediaQuery.of(context).size.height / 2) - 45,
+          child: Stack(
+            children: [
+              // slider position bubble
+              Positioned(
+                bottom: 10,
+                right: 50,
+                child: AnimatedOpacity(
+                  opacity: (widget.posty < 0) ? 1 : 0,
+                  duration: Duration(milliseconds: 200),
+                  child: AnimatedSmoothIndicator(
+                    activeIndex: 0,
+                    count: 5,
+                    effect: ExpandingDotsEffect(
+                        dotHeight: 7,
+                        dotWidth: 7,
+                        dotColor: Colors.white24,
+                        activeDotColor: Colors.purple),
+                  ),
+                ),
+              ),
+              AnimatedOpacity(
+                opacity: (widget.posty < 0) ? 1 : 0,
+                duration: Duration(milliseconds: 200),
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  child: CarouselSlider.builder(
+                    itemCount: 5,
+                    carouselController: widget.carouselController,
+                    options: CarouselOptions(
+                        autoPlay: true,
+                        viewportFraction: 1,
+                        onPageChanged: (index, reason) {
+                          // setState(() {
+                          //   widget.side_current = index;
+                          // });
+                          // widget.move(index);
+                        }),
+                    itemBuilder: (ctx, index, realIdx) {
+                      return Text("fuck youuuu", style: TextStyle(color: Colors.white),);
+                      // return SlideItemWidget(
+                      //     index: index, slide: widget.slides[index]);
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ));
   }
 
   Widget retryWidget() {

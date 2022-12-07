@@ -9,6 +9,7 @@ import 'package:login/models/slide.dart';
 import 'package:login/models/channel.dart' as model;
 import 'package:login/key_code.dart';
 import 'package:login/screens/discover_screens/widgets/discover_movies_widget.dart';
+import 'package:login/screens/settings/settings.dart';
 import 'package:login/ui/home/widgets/home_loading_widget.dart';
 import 'package:login/ui/home/widgets/discover_movie_widget_tvMode.dart';
 import 'package:login/ui/movie/movies_widget.dart';
@@ -88,7 +89,7 @@ class _tvHomeScreenState extends ResumableState<tvHomeScreen> {
                 // _goToSeries();
                 // _goToChannels();
                 // _goToMyList();
-                // _goToSettings();
+                _goToSettings();
                 // _goToProfile();
                 // _tryAgain();
                 // _goToMovieDetail();
@@ -200,9 +201,7 @@ class _tvHomeScreenState extends ResumableState<tvHomeScreen> {
               default:
                 break;
             }
-            setState(() {
-              
-            });
+            setState(() {});
           }
         },
         child: Stack(
@@ -275,11 +274,12 @@ class _tvHomeScreenState extends ResumableState<tvHomeScreen> {
               ),
             ),
 
-            // Main View 
-            
+            // Main View
+
             DiscoverMoviesTVMode(
               postx: postx,
               posty: posty,
+              carouselController: _carouselController,
             ),
             // SlideWidget(
             //     poster: selected_poster,
@@ -424,6 +424,19 @@ class _tvHomeScreenState extends ResumableState<tvHomeScreen> {
         context,
         PageRouteBuilder(
           pageBuilder: (context, animation1, animation2) => tvHomeScreen(),
+          transitionDuration: Duration(seconds: 0),
+        ),
+      );
+      FocusScope.of(context).requestFocus(null);
+    }
+  }
+
+  void _goToSettings() {
+    if (posty == -2 && postx == 6) {
+      Navigator.push(
+        context,
+        PageRouteBuilder(
+          pageBuilder: (context, animation1, animation2) => Settings(),
           transitionDuration: Duration(seconds: 0),
         ),
       );
