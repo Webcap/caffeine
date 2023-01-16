@@ -2,14 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:login/models/movie_models.dart';
 import 'package:login/provider/mixpanel_provider.dart';
 import 'package:login/screens/movie_screens/movie_source_screen.dart';
+import 'package:login/screens/movie_screens/movie_stream.dart';
 import 'package:login/screens/movie_screens/widgets/movie_video_loader.dart';
 import 'package:login/utils/config.dart';
+import 'package:login/utils/next_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:login/api/movies_api.dart';
 
 class WatchNowButton extends StatefulWidget {
   const WatchNowButton(
-      {Key? key, required this.movieId, this.movieName, this.movieImdbId, this.api})
+      {Key? key,
+      required this.movieId,
+      this.movieName,
+      this.movieImdbId,
+      this.api})
       : super(key: key);
   final String? movieName;
   final int? movieImdbId;
@@ -29,103 +35,104 @@ class _WatchNowButtonState extends State<WatchNowButton> {
   void initState() {
     super.initState();
   }
+  // disabled for now
 
-  void streamSelectBottomSheet(
-      {required String mediaType,
-      required String imdbId,
-      required String videoTitle,
-      required String movieName,
-      required String id,
-      }) {
-    showModalBottomSheet(
-        context: context,
-        builder: (builder) {
-          //final mixpanel = Provider.of<MixpanelProvider>(context).mixpanel;
-          return Container(
-              color: const Color(0xFFFFFFFF),
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const Center(
-                      child: Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text(
-                          'Watch with:',
-                          style: kTextSmallHeaderStyle,
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(30.0),
-                      child: GestureDetector(
-                        onTap: () {
-                          // mixpanel
-                          //     .track('Most viewed movie pages', properties: {
-                          //   'Movie name': movieName,
-                          //   'Movie id': id,
-                          // });
+  // void streamSelectBottomSheet(
+  //     {required String mediaType,
+  //     required String imdbId,
+  //     required String videoTitle,
+  //     required String movieName,
+  //     required String id,
+  //     }) {
+  //   showModalBottomSheet(
+  //       context: context,
+  //       builder: (builder) {
+  //         //final mixpanel = Provider.of<MixpanelProvider>(context).mixpanel;
+  //         return Container(
+  //             color: const Color(0xFFFFFFFF),
+  //             child: SingleChildScrollView(
+  //               child: Column(
+  //                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  //                 crossAxisAlignment: CrossAxisAlignment.center,
+  //                 children: [
+  //                   const Center(
+  //                     child: Padding(
+  //                       padding: EdgeInsets.all(8.0),
+  //                       child: Text(
+  //                         'Watch with:',
+  //                         style: kTextSmallHeaderStyle,
+  //                       ),
+  //                     ),
+  //                   ),
+  //                   Padding(
+  //                     padding: const EdgeInsets.all(30.0),
+  //                     child: GestureDetector(
+  //                       onTap: () {
+  //                         // mixpanel
+  //                         //     .track('Most viewed movie pages', properties: {
+  //                         //   'Movie name': movieName,
+  //                         //   'Movie id': id,
+  //                         // });
 
-                          Navigator.pushReplacement(context,
-                              MaterialPageRoute(builder: ((context) {
-                            return MovieVideoLoader(
-                              imdbID: imdbId,
-                              videoTitle: videoTitle,
-                            );
-                          })));
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                              color: maincolor,
-                              borderRadius: BorderRadius.circular(10)),
-                          child: const Padding(
-                            padding: EdgeInsets.all(20.0),
-                            child: Text(
-                              'caffeine player, no subtitles (reccomended)',
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(30.0),
-                      child: GestureDetector(
-                        onTap: () {
-                          // mixpanel
-                          //     .track('Most viewed movie pages', properties: {
-                          //   'Movie name': movieName,
-                          //   'Movie id': id,
-                          // });
-                          Navigator.pushReplacement(context,
-                              MaterialPageRoute(builder: ((context) {
-                            return MovieStreamSelect(
-                              movieName: videoTitle,
-                              movieId: widget.movieId,
-                              movieImdbId: imdbId,
-                            );
-                          })));
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                              color: maincolor,
-                              borderRadius: BorderRadius.circular(10)),
-                          child: const Padding(
-                            padding: EdgeInsets.all(20.0),
-                            child: Text(
-                              '3rd party websites. With ADs, not recommended, with subtitles',
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-              ));
-        });
-  }
+  //                         Navigator.pushReplacement(context,
+  //                             MaterialPageRoute(builder: ((context) {
+  //                           return MovieVideoLoader(
+  //                             imdbID: imdbId,
+  //                             videoTitle: videoTitle,
+  //                           );
+  //                         })));
+  //                       },
+  //                       child: Container(
+  //                         decoration: BoxDecoration(
+  //                             color: maincolor,
+  //                             borderRadius: BorderRadius.circular(10)),
+  //                         child: const Padding(
+  //                           padding: EdgeInsets.all(20.0),
+  //                           child: Text(
+  //                             'caffeine player, no subtitles (reccomended)',
+  //                             textAlign: TextAlign.center,
+  //                           ),
+  //                         ),
+  //                       ),
+  //                     ),
+  //                   ),
+  //                   Padding(
+  //                     padding: const EdgeInsets.all(30.0),
+  //                     child: GestureDetector(
+  //                       onTap: () {
+  //                         // mixpanel
+  //                         //     .track('Most viewed movie pages', properties: {
+  //                         //   'Movie name': movieName,
+  //                         //   'Movie id': id,
+  //                         // });
+  //                         Navigator.pushReplacement(context,
+  //                             MaterialPageRoute(builder: ((context) {
+  //                           return MovieStreamSelect(
+  //                             movieName: videoTitle,
+  //                             movieId: widget.movieId,
+  //                             movieImdbId: imdbId,
+  //                           );
+  //                         })));
+  //                       },
+  //                       child: Container(
+  //                         decoration: BoxDecoration(
+  //                             color: maincolor,
+  //                             borderRadius: BorderRadius.circular(10)),
+  //                         child: const Padding(
+  //                           padding: EdgeInsets.all(20.0),
+  //                           child: Text(
+  //                             '3rd party websites. With ADs, not recommended, with subtitles',
+  //                             textAlign: TextAlign.center,
+  //                           ),
+  //                         ),
+  //                       ),
+  //                     ),
+  //                   )
+  //                 ],
+  //               ),
+  //             ));
+  //       });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -149,12 +156,12 @@ class _WatchNowButtonState extends State<WatchNowButton> {
             isVisible = false;
             buttonWidth = 150;
           });
-          streamSelectBottomSheet(
-              imdbId: movieDetails!.imdbId.toString(),
-              mediaType: 'movie',
-              videoTitle: movieDetails!.originalTitle!,
-              movieName: movieDetails!.originalTitle!,
-              id: movieDetails!.id!.toString());
+          // streamSelectBottomSheet(
+          //     imdbId: movieDetails!.imdbId.toString(),
+          //     mediaType: 'movie',
+          //     videoTitle: movieDetails!.originalTitle!,
+          //     movieName: movieDetails!.originalTitle!,
+          //     id: movieDetails!.id!.toString());
 
           // THE LINES BELOW ARE CONMMENTED OUT FOR A REASON FIND OUT LATER
 
@@ -165,6 +172,13 @@ class _WatchNowButtonState extends State<WatchNowButton> {
           //   //   videoTitle: movieDetails!.originalTitle!,
           //   // );
           // }));
+
+          Navigator.push(context, MaterialPageRoute(builder: (context) {
+            return MovieStream(
+                streamUrl:
+                    'https://www.2embed.to/embed/tmdb/movie?id=${widget.movieId}',
+                movieName: widget.movieName!);
+          }));
         },
         child: Row(
           children: [
