@@ -579,26 +579,7 @@ class EpisodeDetailPageState extends State<EpisodeDetailPage>
                                                         isVisible = false;
                                                         buttonWidth = 150;
                                                       });
-                                                      // streamSelectBottomSheet(
-                                                      //     mediaType: 'tv',
-                                                      //     imdbId: externalLinks!
-                                                      //         .imdbId!,
-                                                      //     videoTitle:
-                                                      //         '${widget.seriesName} ${widget.episodeList.seasonNumber! <= 9 ? 'S0${widget.episodeList.seasonNumber}' : 'S${widget.episodeList.seasonNumber}'} | '
-                                                      //         '${widget.episodeList.episodeNumber! <= 9 ? 'E0${widget.episodeList.episodeNumber}' : 'E${widget.episodeList.episodeNumber}'}, ${widget.episodeList.name}'
-                                                      //         '',
-                                                      //     episodeNumber: widget
-                                                      //         .episodeList
-                                                      //         .episodeNumber!,
-                                                      //     seasonNumber: widget
-                                                      //         .episodeList
-                                                      //         .seasonNumber!,
-                                                      //     tvId: widget.tvId!,
-                                                      //     episodeName: widget
-                                                      //         .episodeList
-                                                      //         .name!,
-                                                      //     tvSeriesName: widget
-                                                      //         .seriesName!);
+                                                      //  
                                                     },
                                                     child: Row(
                                                       children: [

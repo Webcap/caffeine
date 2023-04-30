@@ -14,6 +14,9 @@ const String TWITTER_BASE_URL = "https://twitter.com/";
 const String IMDB_BASE_URL = "https://imdb.com/title/";
 const String TWOEMBED_BASE_URL = "https://2embed.biz";
 const String CAFFEINE_UPDATE_URL = "coming soon";
+const String TAG_LINE1 = "Unlimted, for free, anytime on Caffiene";
+const String SIGN_IN = "Log In";
+const String SIGN_UP = "Sign Up";
 
 class Config {
   static final app_icon = "assets/logo.png";
@@ -67,6 +70,9 @@ const kTextSmallAboutBodyStyle = TextStyle(
   overflow: TextOverflow.ellipsis,
 );
 
+const kTextStyleColorBlack = TextStyle(color: Colors.black);
+
 const kTableLeftStyle =
     TextStyle(overflow: TextOverflow.ellipsis, fontWeight: FontWeight.bold);
 
+const String grid_landing_photo = "assets/images/grid_final.jpg";

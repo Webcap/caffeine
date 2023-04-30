@@ -11,6 +11,7 @@ import 'package:login/provider/imagequality_provider.dart';
 import 'package:login/provider/internet_provider.dart';
 import 'package:login/provider/sign_in_provider.dart';
 import 'package:login/provider/tv_mode_provider.dart';
+import 'package:login/screens/common/landing_screen.dart';
 import 'package:login/ui/auth/splash/splash_screens.dart';
 import 'package:login/ui/auth/login_page/login_page_TV.dart';
 import 'package:login/utils/next_screen.dart';
@@ -117,7 +118,7 @@ class _caffeineState extends State<caffeine>
               AdultmodeProvider,
               snapshot) {
         return MaterialApp(
-          home: SplashScreen(),
+          home: LandingScreen(),
           debugShowCheckedModeBanner: false,
           routes: {
             "/login": (context) => LoginPage(),
