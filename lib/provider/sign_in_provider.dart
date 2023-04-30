@@ -10,6 +10,7 @@ class SignInProvider extends ChangeNotifier {
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   final FacebookAuth facebookAuth = FacebookAuth.instance;
   final GoogleSignIn googleSignIn = GoogleSignIn();
+  var date = DateTime.now().toString();
 
   bool _isSignedIn = false;
   bool get isSignedIn => _isSignedIn;
@@ -128,6 +129,12 @@ class SignInProvider extends ChangeNotifier {
       "image_url": _imageUrl,
       "provider": _provider,
     });
+    await FirebaseFirestore.instance
+        .collection('usernames')
+        .doc(_email)
+        .set({'uname': _email, 'uid': _uid});
+    await FirebaseFirestore.instance.collection('users').doc(_uid).update({'joinedAt': date, 'createdAt': Timestamp.now()});
+    await FirebaseFirestore.instance.collection('bookmarks').doc(_uid).set({});
     notifyListeners();
   }
 

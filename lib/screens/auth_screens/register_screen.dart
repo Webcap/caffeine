@@ -96,6 +96,7 @@ class _SignupScreenState extends State<SignupScreen> {
             'profileId': selectedProfile,
             'username': _userName.trim().toLowerCase(),
             'verified': _isUserVerified,
+            'provider': 'email', 
             'joinedAt': date,
             'createdAt': Timestamp.now(),
           });
@@ -105,12 +106,12 @@ class _SignupScreenState extends State<SignupScreen> {
               .set({'uname': _userName.trim().toLowerCase(), 'uid': uid});
 
           await FirebaseFirestore.instance
-              .collection('bookmarks-v2.0')
+              .collection('bookmarks')
               .doc(uid)
               .set({});
 
           subscription = await FirebaseFirestore.instance
-              .collection('bookmarks-v2.0')
+              .collection('bookmarks')
               .doc(uid)
               .get();
 
@@ -118,7 +119,7 @@ class _SignupScreenState extends State<SignupScreen> {
 
           if (docData.containsKey('movies') == false) {
             await FirebaseFirestore.instance
-                .collection('bookmarks-v2.0')
+                .collection('bookmarks')
                 .doc(uid)
                 .update(
               {'movies': []},
@@ -127,7 +128,7 @@ class _SignupScreenState extends State<SignupScreen> {
 
           if (docData.containsKey('tvShows') == false) {
             await FirebaseFirestore.instance
-                .collection('bookmarks-v2.0')
+                .collection('bookmarks')
                 .doc(uid)
                 .update(
               {'tvShows': []},

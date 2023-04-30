@@ -22,6 +22,8 @@ import 'package:login/widgets/new_movie_widgets.dart';
 import 'package:login/widgets/upcoming_widget.dart';
 import 'package:provider/provider.dart';
 
+//MAIN HOMESCREEN
+
 // class dash_screen extends StatefulWidget {
 //   dash_screen({Key? key}) : super(key: key);
 
