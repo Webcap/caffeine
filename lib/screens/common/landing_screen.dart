@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:login/screens/auth_screens/login_screen.dart';
 import 'package:login/screens/auth_screens/login_screen_042023.dart';
+import 'package:login/screens/auth_screens/register_screen.dart';
 import 'package:login/ui/auth/login_page/login_page_TV.dart';
 import 'package:login/utils/config.dart';
 import 'package:login/utils/next_screen.dart';
@@ -178,7 +179,7 @@ class _LandingScreenState extends State<LandingScreen> {
                                 Colors.white)),
                         onPressed: () async {
                           //updateFirstRunData();
-                          nextScreen(context, LoginPage423());
+                          nextScreen(context, SignupScreen());
                         },
                         child: const Text(
                           SIGN_UP,

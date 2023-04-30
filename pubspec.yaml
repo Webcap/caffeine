@@ -92,6 +92,7 @@ flutter:
   assets:
     - assets/
     - assets/images/
+    - assets/images/profiles/
 
   fonts:
     - family: Poppins
