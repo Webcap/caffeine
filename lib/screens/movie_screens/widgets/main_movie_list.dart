@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:login/api/movies_api.dart';
 import 'package:login/models/movie_models.dart';
 import 'package:login/provider/imagequality_provider.dart';
+import 'package:login/provider/settings_provider.dart';
 import 'package:login/screens/movie_screens/movie_details_screen.dart';
 import 'package:login/utils/config.dart';
 import 'package:http/http.dart' as http;
@@ -102,8 +103,7 @@ class MainMoviesListState extends State<MainMoviesList> {
   Widget build(BuildContext context) {
     bool hasChange = false;
     bool isClicked = false;
-    final imageQuality =
-        Provider.of<ImagequalityProvider>(context).imageQuality;
+    final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: maincolor2,

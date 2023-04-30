@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:login/models/images.dart';
 import 'package:login/provider/imagequality_provider.dart';
+import 'package:login/provider/settings_provider.dart';
 import 'package:login/utils/config.dart';
 import 'dart:isolate';
 import 'dart:ui';
@@ -139,8 +140,7 @@ class _HeroPhotoViewState extends State<HeroPhotoView> {
 
   @override
   Widget build(BuildContext context) {
-    final imageQuality =
-        Provider.of<ImagequalityProvider>(context).imageQuality;
+    final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     // final isDark = Provider.of<DarkthemeProvider>(context).darktheme;
     return Scaffold(
       appBar: AppBar(
@@ -175,7 +175,7 @@ class _HeroPhotoViewState extends State<HeroPhotoView> {
         PhotoViewGallery.builder(
           allowImplicitScrolling: true,
           backgroundDecoration: BoxDecoration(
-            color:const Color(0xFFFFFFFF),
+            color: const Color(0xFFFFFFFF),
           ),
           gaplessPlayback: true,
           wantKeepAlive: true,
@@ -225,7 +225,7 @@ class _HeroPhotoViewState extends State<HeroPhotoView> {
           child: Text(
             "Image ${currentIndex + 1}",
             style: TextStyle(
-              color:Colors.black,
+              color: Colors.black,
               fontSize: 17.0,
               decoration: null,
             ),

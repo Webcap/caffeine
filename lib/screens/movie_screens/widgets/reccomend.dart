@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:login/api/movies_api.dart';
 import 'package:login/models/movie_models.dart';
 import 'package:login/provider/imagequality_provider.dart';
+import 'package:login/provider/settings_provider.dart';
 import 'package:login/screens/movie_screens/movie_details_screen.dart';
 import 'package:login/utils/config.dart';
 import 'package:http/http.dart' as http;
@@ -14,12 +15,11 @@ import 'package:provider/provider.dart';
 class MovieRecommendationsTab extends StatefulWidget {
   final String api;
   final int movieId;
-  const MovieRecommendationsTab(
-      {Key? key,
-      required this.api,
-      required this.movieId,
-})
-      : super(key: key);
+  const MovieRecommendationsTab({
+    Key? key,
+    required this.api,
+    required this.movieId,
+  }) : super(key: key);
 
   @override
   MovieRecommendationsTabState createState() => MovieRecommendationsTabState();
@@ -41,8 +41,7 @@ class MovieRecommendationsTabState extends State<MovieRecommendationsTab>
   }
 
   void getData() {
-    moviesApi().fetchMovies('${widget.api}&include_adult=false')
-        .then((value) {
+    moviesApi().fetchMovies('${widget.api}&include_adult=false').then((value) {
       setState(() {
         movieList = value;
       });
@@ -87,17 +86,15 @@ class MovieRecommendationsTabState extends State<MovieRecommendationsTab>
   Widget build(BuildContext context) {
     super.build(context);
     // final isDark = Provider.of<DarkthemeProvider>(context).darktheme;
-    final imageQuality =
-        Provider.of<ImagequalityProvider>(context).imageQuality;
+    final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     return movieList == null
         ? Container(
-            color:const Color(0xFFFFFFFF),
+            color: const Color(0xFFFFFFFF),
             child: detailsRecommendationsAndSimilarShimmer(
                 _scrollController, isLoading))
         : movieList!.isEmpty
             ? Container(
-                color:
-                  const Color(0xFFFFFFFF),
+                color: const Color(0xFFFFFFFF),
                 child: const Center(
                   child: Text(
                     'There are no recommendations available for this movie',
@@ -108,7 +105,7 @@ class MovieRecommendationsTabState extends State<MovieRecommendationsTab>
             : requestFailed == true
                 ? retryWidget()
                 : Container(
-                    color:const Color(0xFFFFFFFF),
+                    color: const Color(0xFFFFFFFF),
                     child: Column(
                       children: [
                         Expanded(
@@ -197,8 +194,7 @@ class MovieRecommendationsTabState extends State<MovieRecommendationsTab>
                                                               ),
                                                               placeholder: (context,
                                                                       url) =>
-                                                                  recommendationAndSimilarTabImageShimmer(
-                                                                      ),
+                                                                  recommendationAndSimilarTabImageShimmer(),
                                                               errorWidget: (context,
                                                                       url,
                                                                       error) =>
@@ -248,7 +244,7 @@ class MovieRecommendationsTabState extends State<MovieRecommendationsTab>
                                             ],
                                           ),
                                           Divider(
-                                            color:Colors.white54,
+                                            color: Colors.white54,
                                             thickness: 1,
                                             endIndent: 20,
                                             indent: 10,
@@ -274,7 +270,7 @@ class MovieRecommendationsTabState extends State<MovieRecommendationsTab>
     return Center(
       child: Container(
           width: double.infinity,
-          color:const Color(0xFFFFFFFF),
+          color: const Color(0xFFFFFFFF),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -316,12 +312,11 @@ class MovieRecommendationsTabState extends State<MovieRecommendationsTab>
 class SimilarMoviesTab extends StatefulWidget {
   final String api;
   final int movieId;
-  const SimilarMoviesTab(
-      {Key? key,
-      required this.api,
-      required this.movieId,
-})
-      : super(key: key);
+  const SimilarMoviesTab({
+    Key? key,
+    required this.api,
+    required this.movieId,
+  }) : super(key: key);
 
   @override
   SimilarMoviesTabState createState() => SimilarMoviesTabState();
@@ -343,8 +338,7 @@ class SimilarMoviesTabState extends State<SimilarMoviesTab>
   }
 
   void getData() {
-    moviesApi().fetchMovies('${widget.api}&include_adult=false')
-        .then((value) {
+    moviesApi().fetchMovies('${widget.api}&include_adult=false').then((value) {
       setState(() {
         movieList = value;
       });
@@ -389,17 +383,15 @@ class SimilarMoviesTabState extends State<SimilarMoviesTab>
   Widget build(BuildContext context) {
     super.build(context);
     // final isDark = Provider.of<DarkthemeProvider>(context).darktheme;
-    final imageQuality =
-        Provider.of<ImagequalityProvider>(context).imageQuality;
+    final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     return movieList == null
         ? Container(
-            color:const Color(0xFFFFFFFF),
+            color: const Color(0xFFFFFFFF),
             child: detailsRecommendationsAndSimilarShimmer(
                 _scrollController, isLoading))
         : movieList!.isEmpty
             ? Container(
-                color:
-                    const Color(0xFFFFFFFF),
+                color: const Color(0xFFFFFFFF),
                 child: const Center(
                   child: Text(
                     'There are no similars available for this movie',
@@ -410,7 +402,7 @@ class SimilarMoviesTabState extends State<SimilarMoviesTab>
             : requestFailed == true
                 ? retryWidget()
                 : Container(
-                    color:const Color(0xFFFFFFFF),
+                    color: const Color(0xFFFFFFFF),
                     child: Column(
                       children: [
                         Expanded(
@@ -499,8 +491,7 @@ class SimilarMoviesTabState extends State<SimilarMoviesTab>
                                                               ),
                                                               placeholder: (context,
                                                                       url) =>
-                                                                  recommendationAndSimilarTabImageShimmer(
-                                                                      ),
+                                                                  recommendationAndSimilarTabImageShimmer(),
                                                               errorWidget: (context,
                                                                       url,
                                                                       error) =>
@@ -550,7 +541,7 @@ class SimilarMoviesTabState extends State<SimilarMoviesTab>
                                             ],
                                           ),
                                           Divider(
-                                            color:Colors.white54,
+                                            color: Colors.white54,
                                             thickness: 1,
                                             endIndent: 20,
                                             indent: 10,

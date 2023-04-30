@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:login/api/endpoints.dart';
 import 'package:login/models/credits.dart';
 import 'package:login/provider/imagequality_provider.dart';
+import 'package:login/provider/settings_provider.dart';
 import 'package:login/screens/movie_screens/widgets/person_widget.dart';
 import 'package:login/screens/tv_screens/widgets/person_widget.dart';
 import 'package:login/utils/config.dart';
@@ -31,7 +32,7 @@ class GuestStarDetailPageState extends State<GuestStarDetailPage>
   void initState() {
     super.initState();
     tabController = TabController(length: 3, vsync: this);
-  //   mixpanelUpload(context);
+    //   mixpanelUpload(context);
   }
 
   // void mixpanelUpload(BuildContext context) {
@@ -47,8 +48,7 @@ class GuestStarDetailPageState extends State<GuestStarDetailPage>
   Widget build(BuildContext context) {
     super.build(context);
     // final isDark = Provider.of<DarkthemeProvider>(context).darktheme;
-    final imageQuality =
-        Provider.of<ImagequalityProvider>(context).imageQuality;
+    final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     return Scaffold(
       body: Stack(
         children: <Widget>[
@@ -170,19 +170,19 @@ class GuestStarDetailPageState extends State<GuestStarDetailPage>
                                       child: Text('About',
                                           style: TextStyle(
                                               fontFamily: 'Poppins',
-                                              color:Colors.black)),
+                                              color: Colors.black)),
                                     ),
                                     Tab(
                                       child: Text('Movies',
                                           style: TextStyle(
                                               fontFamily: 'Poppins',
-                                              color:Colors.black)),
+                                              color: Colors.black)),
                                     ),
                                     Tab(
                                       child: Text('TV Shows',
                                           style: TextStyle(
                                               fontFamily: 'Poppins',
-                                              color:Colors.black)),
+                                              color: Colors.black)),
                                     ),
                                   ],
                                   controller: tabController,
@@ -244,7 +244,6 @@ class GuestStarDetailPageState extends State<GuestStarDetailPage>
                                         Container(
                                           color: const Color(0xFFFFFFFF),
                                           child: PersonMovieListWidget(
-        
                                             api: Endpoints
                                                 .getMovieCreditsForPerson(
                                                     widget.cast!.id!),
@@ -253,7 +252,6 @@ class GuestStarDetailPageState extends State<GuestStarDetailPage>
                                         Container(
                                           color: const Color(0xFFFFFFFF),
                                           child: PersonTVListWidget(
-                                              
                                               api: Endpoints
                                                   .getTVCreditsForPerson(
                                                       widget.cast!.id!)),

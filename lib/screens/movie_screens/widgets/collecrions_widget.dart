@@ -4,6 +4,7 @@ import 'package:login/api/endpoints.dart';
 import 'package:login/api/movies_api.dart';
 import 'package:login/models/movie_models.dart';
 import 'package:login/provider/imagequality_provider.dart';
+import 'package:login/provider/settings_provider.dart';
 import 'package:login/screens/movie_screens/movie_details_screen.dart';
 import 'package:login/utils/config.dart';
 import 'package:provider/provider.dart';
@@ -38,9 +39,8 @@ class BelongsToCollectionWidgetState extends State<BelongsToCollectionWidget> {
     // final isDark = Provider.of<DarkthemeProvider>(context).darktheme;
     return belongsToCollection == null
         ? Shimmer.fromColors(
-            baseColor:Colors.grey.shade300,
-            highlightColor:
-                Colors.grey.shade100,
+            baseColor: Colors.grey.shade300,
+            highlightColor: Colors.grey.shade100,
             direction: ShimmerDirection.ltr,
             child: Padding(
               padding: const EdgeInsets.all(8),
@@ -179,9 +179,8 @@ class CollectionOverviewWidgetState extends State<CollectionOverviewWidget> {
     return Container(
       child: collectionDetails == null
           ? Shimmer.fromColors(
-              baseColor:Colors.grey.shade300,
-              highlightColor:
-                  Colors.grey.shade100,
+              baseColor: Colors.grey.shade300,
+              highlightColor: Colors.grey.shade100,
               direction: ShimmerDirection.ltr,
               child: Column(
                 children: [
@@ -207,7 +206,7 @@ class CollectionOverviewWidgetState extends State<CollectionOverviewWidget> {
     return Center(
       child: Container(
           width: double.infinity,
-          color:const Color(0xFFFFFFFF),
+          color: const Color(0xFFFFFFFF),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -267,8 +266,7 @@ class CollectionDetailsWidgetState extends State<CollectionDetailsWidget>
   Widget build(BuildContext context) {
     super.build(context);
     // final isDark = Provider.of<DarkthemeProvider>(context).darktheme;
-    final imageQuality =
-        Provider.of<ImagequalityProvider>(context).imageQuality;
+    final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     return Scaffold(
       body: Stack(
         children: <Widget>[
@@ -347,7 +345,7 @@ class CollectionDetailsWidgetState extends State<CollectionDetailsWidget>
                   child: Container(
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(50.0),
-                        color:Colors.white38),
+                        color: Colors.white38),
                     child: IconButton(
                       icon: const Icon(
                         Icons.arrow_back,
@@ -376,7 +374,7 @@ class CollectionDetailsWidgetState extends State<CollectionDetailsWidget>
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8.0),
                             ),
-                            color:const Color(0xFFFFFFFF),
+                            color: const Color(0xFFFFFFFF),
                             child: Column(
                               children: <Widget>[
                                 Padding(
@@ -546,8 +544,7 @@ class PartsListState extends State<PartsList> {
 
   @override
   Widget build(BuildContext context) {
-    final imageQuality =
-        Provider.of<ImagequalityProvider>(context).imageQuality;
+    final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     // final isDark = Provider.of<DarkthemeProvider>(context).darktheme;
     return Column(
       children: <Widget>[
@@ -571,8 +568,8 @@ class PartsListState extends State<PartsList> {
                   children: [
                     Expanded(
                       child: Shimmer.fromColors(
-                        baseColor:Colors.grey.shade300,
-                        highlightColor:Colors.grey.shade100,
+                        baseColor: Colors.grey.shade300,
+                        highlightColor: Colors.grey.shade100,
                         direction: ShimmerDirection.ltr,
                         child: ListView.builder(
                           physics: const BouncingScrollPhysics(),
@@ -741,7 +738,7 @@ class PartsListState extends State<PartsList> {
     return Center(
       child: Container(
           width: double.infinity,
-          color:const Color(0xFFFFFFFF),
+          color: const Color(0xFFFFFFFF),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

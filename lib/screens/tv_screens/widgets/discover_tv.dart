@@ -6,6 +6,7 @@ import 'package:login/models/dropdown_select.dart';
 import 'package:login/models/filter_chip.dart';
 import 'package:login/models/tv.dart';
 import 'package:login/provider/imagequality_provider.dart';
+import 'package:login/provider/settings_provider.dart';
 import 'package:login/screens/tv_screens/tv_detail_page.dart';
 import 'package:login/utils/config.dart';
 import 'package:login/widgets/shimmer_widget.dart';
@@ -60,7 +61,7 @@ class DiscoverTVState extends State<DiscoverTV>
     super.build(context);
     deviceHeight = MediaQuery.of(context).size.height;
     final imageQuality =
-        Provider.of<ImagequalityProvider>(context).imageQuality;
+        Provider.of<SettingsProvider>(context).imageQuality;
     // final isDark = Provider.of<DarkthemeProvider>(context).darktheme;
     return Column(
       children: <Widget>[

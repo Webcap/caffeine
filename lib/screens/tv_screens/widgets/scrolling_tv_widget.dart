@@ -5,9 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:login/api/movies_api.dart';
 import 'package:login/api/tv_api.dart';
 import 'package:login/models/credits.dart';
+import 'package:login/models/functions.dart';
 import 'package:login/models/tv.dart';
 import 'package:http/http.dart' as http;
 import 'package:login/provider/imagequality_provider.dart';
+import 'package:login/provider/settings_provider.dart';
 import 'package:login/screens/movie_screens/cast_details.dart';
 import 'package:login/screens/tv_screens/guest_star_dets.dart';
 import 'package:login/screens/tv_screens/tv_detail_page.dart';
@@ -39,70 +41,58 @@ class ScrollingTVState extends State<ScrollingTV>
   late int index;
   List<TV>? tvList;
   final ScrollController _scrollController = ScrollController();
-  bool requestFailed = false;
+  //bool requestFailed = false;
   int pageNum = 2;
   bool isLoading = false;
 
-  Future<String> getMoreData() async {
+  void getMoreData() async {
     _scrollController.addListener(() async {
       if (_scrollController.position.pixels ==
           _scrollController.position.maxScrollExtent) {
         setState(() {
           isLoading = true;
         });
-        if (widget.isTrending == false) {
-          var response = await http.get(
-            Uri.parse(
-                "$TMDB_API_BASE_URL/tv/${widget.discoverType}?api_key=$TMDB_API_KEY&include_adult=${widget.includeAdult}&page=$pageNum"),
-          );
-          setState(() {
-            pageNum++;
-            isLoading = false;
-            var newlistMovies = (json.decode(response.body)['results'] as List)
-                .map((i) => TV.fromJson(i))
-                .toList();
-            tvList!.addAll(newlistMovies);
-          });
-        } else if (widget.isTrending == true) {
-          var response = await http.get(
-            Uri.parse(
-                "$TMDB_API_BASE_URL/trending/tv/week?api_key=$TMDB_API_KEY&include_adult=${widget.includeAdult}language=en-US&include_adult=false&page=$pageNum"),
-          );
-          setState(() {
-            pageNum++;
-            isLoading = false;
-            var newlistMovies = (json.decode(response.body)['results'] as List)
-                .map((i) => TV.fromJson(i))
-                .toList();
-            tvList!.addAll(newlistMovies);
-          });
-        }
-      }
-    });
 
-    return "success";
-  }
-
-  void getData() {
-    tvApi().fetchTV('${widget.api}&include_adult=${widget.includeAdult}').then((value) {
-      setState(() {
-        tvList = value;
-      });
-    });
-    Future.delayed(const Duration(seconds: 11), () {
-      if (tvList == null) {
-        setState(() {
-          requestFailed = true;
-          tvList = [];
+        fetchTV('${widget.api}&page=$pageNum&include_adult=${widget.includeAdult}')
+            .then((value) {
+          if (mounted) {
+            setState(() {
+              tvList!.addAll(value);
+              isLoading = false;
+              pageNum++;
+            });
+          }
         });
       }
     });
   }
 
+  // void getData() {
+  //   tvApi().fetchTV('${widget.api}&include_adult=${widget.includeAdult}').then((value) {
+  //     setState(() {
+  //       tvList = value;
+  //     });
+  //   });
+  //   Future.delayed(const Duration(seconds: 11), () {
+  //     if (tvList == null) {
+  //       setState(() {
+  //         requestFailed = true;
+  //         tvList = [];
+  //       });
+  //     }
+  //   });
+  // }
+
   @override
   void initState() {
     super.initState();
-    getData();
+    fetchTV('${widget.api}&include_adult=${widget.includeAdult}').then((value) {
+      if (mounted) {
+        setState(() {
+          tvList = value;
+        });
+      }
+    });
     getMoreData();
   }
 
@@ -115,9 +105,8 @@ class ScrollingTVState extends State<ScrollingTV>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final imageQuality =
-        Provider.of<ImagequalityProvider>(context).imageQuality;
-    // final isDark = Provider.of<DarkthemeProvider>(context).darktheme;
+    final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
+    final isDark = Provider.of<SettingsProvider>(context).darktheme;
     return Column(
       children: <Widget>[
         Row(
@@ -145,15 +134,12 @@ class ScrollingTVState extends State<ScrollingTV>
                     }));
                   },
                   style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all(const Color(0x26F57C00)),
                       maximumSize:
                           MaterialStateProperty.all(const Size(200, 60)),
                       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20.0),
-                              side:
-                                  const BorderSide(color: Color(0xFFF57C00))))),
+                        borderRadius: BorderRadius.circular(20.0),
+                      ))),
                   child: const Padding(
                     padding: EdgeInsets.only(left: 8.0, right: 8.0),
                     child: Text('View all'),
@@ -165,47 +151,48 @@ class ScrollingTVState extends State<ScrollingTV>
           width: double.infinity,
           height: 250,
           child: tvList == null
-              ? scrollingMoviesAndTVShimmer()
-              : requestFailed == true
-                  ? retryWidget()
-                  : Row(
-                      children: [
-                        Expanded(
-                          child: ListView.builder(
-                            controller: _scrollController,
-                            physics: const BouncingScrollPhysics(),
-                            itemCount: tvList!.length,
-                            scrollDirection: Axis.horizontal,
-                            itemBuilder: (BuildContext context, int index) {
-                              return Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: GestureDetector(
-                                  onTap: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => TVDetailPage(
-                                                tvSeries: tvList![index],
-                                                heroId:
-                                                    '${tvList![index].id}${widget.title}')));
-                                  },
-                                  child: SizedBox(
-                                    width: 100,
-                                    child: Column(
-                                      children: <Widget>[
-                                        Expanded(
-                                          flex: 6,
-                                          child: Hero(
-                                            tag:
-                                                '${tvList![index].id}${widget.title}',
-                                            child: ClipRRect(
+              ? scrollingMoviesAndTVShimmer1(isDark)
+              : Row(
+                  children: [
+                    Expanded(
+                      child: ListView.builder(
+                        controller: _scrollController,
+                        physics: const BouncingScrollPhysics(),
+                        itemCount: tvList!.length,
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => TVDetailPage(
+                                            tvSeries: tvList![index],
+                                            heroId:
+                                                '${tvList![index].id}${widget.title}')));
+                              },
+                              child: SizedBox(
+                                width: 100,
+                                child: Column(
+                                  children: <Widget>[
+                                    Expanded(
+                                      flex: 6,
+                                      child: Hero(
+                                        tag:
+                                            '${tvList![index].id}${widget.title}',
+                                        child: Stack(
+                                          alignment: Alignment.center,
+                                          children: [
+                                            ClipRRect(
                                               borderRadius:
                                                   BorderRadius.circular(8.0),
                                               child: tvList![index]
                                                           .posterPath ==
                                                       null
                                                   ? Image.asset(
-                                                      'assets/images/na_logo.png',
+                                                      'assets/images/na_rect.png',
                                                       fit: BoxFit.cover,
                                                     )
                                                   : CachedNetworkImage(
@@ -244,90 +231,84 @@ class ScrollingTVState extends State<ScrollingTV>
                                                       ),
                                                       placeholder: (context,
                                                               url) =>
-                                                          scrollingImageShimmer(
-                                                              ),
+                                                          scrollingImageShimmer1(
+                                                              isDark),
                                                       errorWidget: (context,
                                                               url, error) =>
                                                           Image.asset(
-                                                        'assets/images/na_logo.png',
+                                                        'assets/images/na_rect.png',
                                                         fit: BoxFit.cover,
                                                       ),
                                                     ),
                                             ),
-                                          ),
-                                        ),
-                                        Expanded(
-                                          flex: 3,
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Text(
-                                              tvList![index].name!,
-                                              maxLines: 2,
-                                              textAlign: TextAlign.center,
-                                              overflow: TextOverflow.ellipsis,
+                                            Positioned(
+                                              top: 0,
+                                              left: 0,
+                                              child: Container(
+                                                margin: const EdgeInsets.all(3),
+                                                alignment: Alignment.topLeft,
+                                                width: 50,
+                                                height: 25,
+                                                decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8),
+                                                    color: isDark
+                                                        ? Colors.black45
+                                                        : Colors.white60),
+                                                child: Row(
+                                                  children: [
+                                                    const Icon(
+                                                      Icons.star,
+                                                    ),
+                                                    Text(tvList![index]
+                                                        .voteAverage!
+                                                        .toStringAsFixed(1))
+                                                  ],
+                                                ),
+                                              ),
                                             ),
-                                          ),
-                                        )
-                                      ],
+                                          ],
+                                        ),
+                                      ),
                                     ),
-                                  ),
+                                    Expanded(
+                                      flex: 3,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text(
+                                          tvList![index].name!,
+                                          maxLines: 2,
+                                          textAlign: TextAlign.center,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    )
+                                  ],
                                 ),
-                              );
-                            },
-                          ),
-                        ),
-                        Visibility(
-                          visible: isLoading,
-                          child: SizedBox(
-                            width: 110,
-                            child: horizontalLoadMoreShimmer(),
-                          ),
-                        ),
-                      ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
                     ),
+                    Visibility(
+                      visible: isLoading,
+                      child: SizedBox(
+                        width: 110,
+                        child: horizontalLoadMoreShimmer1(isDark),
+                      ),
+                    ),
+                  ],
+                ),
         ),
         Divider(
-          color:Colors.white54,
+          color: Colors.white54,
           thickness: 1,
           endIndent: 20,
           indent: 10,
         ),
       ],
-    );
-  }
-
-  Widget retryWidget() {
-    return Center(
-      child: Container(
-          child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Image.asset('assets/images/network-signal.png',
-              width: 60, height: 60),
-          const Padding(
-            padding: EdgeInsets.only(top: 8.0),
-            child: Text('Please connect to the Internet and try again',
-                textAlign: TextAlign.center),
-          ),
-          TextButton(
-              style: ButtonStyle(
-                  backgroundColor:
-                      MaterialStateProperty.all(const Color(0x0DF57C00)),
-                  maximumSize: MaterialStateProperty.all(const Size(200, 60)),
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5.0),
-                          side: const BorderSide(color: Color(0xFFF57C00))))),
-              onPressed: () {
-                setState(() {
-                  requestFailed = false;
-                  tvList = null;
-                });
-                getData();
-              },
-              child: const Text('Retry')),
-        ],
-      )),
     );
   }
 
@@ -363,8 +344,7 @@ class ScrollingTVArtistsState extends State<ScrollingTVArtists>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final imageQuality =
-        Provider.of<ImagequalityProvider>(context).imageQuality;
+    final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     // final isDark = Provider.of<DarkthemeProvider>(context).darktheme;
     return Column(
       children: <Widget>[
@@ -458,8 +438,7 @@ class ScrollingTVArtistsState extends State<ScrollingTVArtists>
                                                     ),
                                                   ),
                                                   placeholder: (context, url) =>
-                                                      detailCastImageShimmer(
-                                                          ),
+                                                      detailCastImageShimmer(),
                                                   errorWidget:
                                                       (context, url, error) =>
                                                           Image.asset(
@@ -528,8 +507,7 @@ class ScrollingTVCreatorsState extends State<ScrollingTVCreators>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final imageQuality =
-        Provider.of<ImagequalityProvider>(context).imageQuality;
+    final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     // final isDark = Provider.of<DarkthemeProvider>(context).darktheme;
     return Column(
       children: <Widget>[
@@ -621,8 +599,7 @@ class ScrollingTVCreatorsState extends State<ScrollingTVCreators>
                                                     ),
                                                   ),
                                                   placeholder: (context, url) =>
-                                                      detailCastImageShimmer(
-                                                          ),
+                                                      detailCastImageShimmer(),
                                                   errorWidget:
                                                       (context, url, error) =>
                                                           Image.asset(
@@ -688,8 +665,7 @@ class ScrollingTVEpisodeCastsState extends State<ScrollingTVEpisodeCasts>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final imageQuality =
-        Provider.of<ImagequalityProvider>(context).imageQuality;
+    final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     // final mixpanel = Provider.of<MixpanelProvider>(context).mixpanel;
     // final isDark = Provider.of<DarkthemeProvider>(context).darktheme;
     return Column(
@@ -795,8 +771,7 @@ class ScrollingTVEpisodeCastsState extends State<ScrollingTVEpisodeCasts>
                                                 ),
                                               ),
                                               placeholder: (context, url) =>
-                                                  detailCastImageShimmer(
-                                                      ),
+                                                  detailCastImageShimmer(),
                                               errorWidget:
                                                   (context, url, error) =>
                                                       Image.asset(
@@ -865,8 +840,7 @@ class ScrollingTVEpisodeGuestStarsState
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final imageQuality =
-        Provider.of<ImagequalityProvider>(context).imageQuality;
+    final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     //final mixpanel = Provider.of<MixpanelProvider>(context).mixpanel;
     return Column(
       children: <Widget>[

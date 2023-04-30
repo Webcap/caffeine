@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:login/api/movies_api.dart';
 import 'package:login/models/credits.dart';
 import 'package:login/provider/imagequality_provider.dart';
+import 'package:login/provider/settings_provider.dart';
 import 'package:login/screens/movie_screens/cast_details.dart';
 import 'package:login/utils/config.dart';
 import 'package:login/widgets/shimmer_widget.dart';
@@ -34,8 +35,7 @@ class ScrollingArtistsState extends State<ScrollingArtists> {
 
   @override
   Widget build(BuildContext context) {
-    final imageQuality =
-        Provider.of<ImagequalityProvider>(context).imageQuality;
+    final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     // final mixpanel = Provider.of<MixpanelProvider>(context).mixpanel;
     // final isDark = Provider.of<DarkthemeProvider>(context).darktheme;
     return Column(

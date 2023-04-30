@@ -8,6 +8,7 @@ import 'package:login/models/movie_models.dart';
 import 'package:login/models/person.dart';
 import 'package:login/models/tv.dart';
 import 'package:login/provider/imagequality_provider.dart';
+import 'package:login/provider/settings_provider.dart';
 import 'package:login/screens/movie_screens/movie_details_screen.dart';
 import 'package:login/screens/search/searched_person.dart';
 import 'package:login/screens/tv_screens/tv_detail_page.dart';
@@ -369,8 +370,7 @@ class Search extends SearchDelegate<String> {
   }
 
   Widget activeMovieSearch(List<Movie> moviesList, BuildContext context) {
-    final imageQuality =
-        Provider.of<ImagequalityProvider>(context).imageQuality;
+    final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     return Container(
         color: Colors.white,
         child: Column(
@@ -517,8 +517,7 @@ class Search extends SearchDelegate<String> {
   }
 
   Widget activeTVSearch(List<TV> tvList, BuildContext context) {
-    final imageQuality =
-        Provider.of<ImagequalityProvider>(context).imageQuality;
+    final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     return Container(
         color: Colors.white,
         child: Column(
@@ -658,8 +657,7 @@ class Search extends SearchDelegate<String> {
   }
 
   Widget activePersonSearch(List<Person>? personList, BuildContext context) {
-    final imageQuality =
-        Provider.of<ImagequalityProvider>(context).imageQuality;
+    final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     return Container(
         color: Colors.white,
         child: ListView.builder(

@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:retry/retry.dart';
 
 const String TMDB_API_BASE_URL = "https://api.themoviedb.org/3";
 String TMDB_API_KEY = 'b9c827ddc7e3741ed414d8731814ecc9';
@@ -17,6 +20,9 @@ const String CAFFEINE_UPDATE_URL = "coming soon";
 const String TAG_LINE1 = "Unlimted, for free, anytime on Caffiene";
 const String SIGN_IN = "Log In";
 const String SIGN_UP = "Sign Up";
+const String ERROROCCURRED = "an error has occurred";
+
+final client = HttpClient();
 
 class Config {
   static final app_icon = "assets/logo.png";
@@ -48,7 +54,7 @@ const kTextSmallHeaderStyle = TextStyle(
 const String currentAppVersion = '1.0.0';
 
 const kTextHeaderStyle = TextStyle(
-  //fontFamily: 'PoppinsSB',
+  fontFamily: 'PoppinsSB',
   fontSize: 22,
 );
 
@@ -76,3 +82,8 @@ const kTableLeftStyle =
     TextStyle(overflow: TextOverflow.ellipsis, fontWeight: FontWeight.bold);
 
 const String grid_landing_photo = "assets/images/grid_final.jpg";
+const retryOptions = RetryOptions(
+    maxDelay: Duration(milliseconds: 300),
+    delayFactor: Duration(seconds: 0),
+    maxAttempts: 100000);
+const timeOut = Duration(seconds: 10);

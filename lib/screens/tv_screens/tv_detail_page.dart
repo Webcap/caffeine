@@ -3,6 +3,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:login/provider/adultmode_provider.dart';
 import 'package:login/provider/imagequality_provider.dart';
+import 'package:login/provider/settings_provider.dart';
 import 'package:login/screens/tv_screens/widgets/scrolling_tv_widget.dart';
 import 'package:login/screens/tv_screens/widgets/tv_widgets.dart';
 import 'package:login/utils/config.dart';
@@ -55,8 +56,7 @@ class TVDetailPageState extends State<TVDetailPage>
   Widget build(BuildContext context) {
     super.build(context);
     // final isDark = Provider.of<DarkthemeProvider>(context).darktheme;
-    final imageQuality =
-        Provider.of<ImagequalityProvider>(context).imageQuality;
+    final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     return Scaffold(
       body: Stack(
         children: <Widget>[
@@ -133,7 +133,7 @@ class TVDetailPageState extends State<TVDetailPage>
                   child: Container(
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(50.0),
-                        color:Colors.white38),
+                        color: Colors.white38),
                     child: IconButton(
                       icon: const Icon(
                         Icons.arrow_back,
@@ -172,7 +172,7 @@ class TVDetailPageState extends State<TVDetailPage>
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8.0),
                             ),
-                            color:const Color(0xFFDFDEDE),
+                            color: const Color(0xFFDFDEDE),
                             child: Column(
                               children: <Widget>[
                                 Padding(
@@ -283,25 +283,25 @@ class TVDetailPageState extends State<TVDetailPage>
                                       child: Text('About',
                                           style: TextStyle(
                                               fontFamily: 'Poppins',
-                                              color:Colors.black)),
+                                              color: Colors.black)),
                                     ),
                                     Tab(
                                       child: Text('Seasons',
                                           style: TextStyle(
                                               fontFamily: 'Poppins',
-                                              color:Colors.black)),
+                                              color: Colors.black)),
                                     ),
                                     Tab(
                                       child: Text('Cast',
                                           style: TextStyle(
                                               fontFamily: 'Poppins',
-                                              color:Colors.black)),
+                                              color: Colors.black)),
                                     ),
                                     Tab(
                                       child: Text('Crew',
                                           style: TextStyle(
                                               fontFamily: 'Poppins',
-                                              color:Colors.black)),
+                                              color: Colors.black)),
                                     ),
                                     Tab(
                                       child: Text('Recommendations',
@@ -376,7 +376,7 @@ class TVDetailPageState extends State<TVDetailPage>
                                                               fontFamily:
                                                                   'Poppins'),
                                                           colorClickableText:
-                                                             maincolor2,
+                                                              maincolor2,
                                                           trimMode:
                                                               TrimMode.Line,
                                                           trimCollapsedText:
@@ -386,14 +386,16 @@ class TVDetailPageState extends State<TVDetailPage>
                                                           lessStyle:
                                                               const TextStyle(
                                                                   fontSize: 14,
-                                                                  color: maincolor2,
+                                                                  color:
+                                                                      maincolor2,
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .bold),
                                                           moreStyle:
                                                               const TextStyle(
                                                                   fontSize: 14,
-                                                                  color: maincolor2,
+                                                                  color:
+                                                                      maincolor2,
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .bold),

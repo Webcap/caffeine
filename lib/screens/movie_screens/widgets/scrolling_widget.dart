@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:login/api/movies_api.dart';
 import 'package:login/models/movie_models.dart';
 import 'package:login/provider/imagequality_provider.dart';
+import 'package:login/provider/settings_provider.dart';
 import 'package:login/screens/movie_screens/widgets/main_movie_list.dart';
 import 'package:login/screens/movie_screens/movie_details_screen.dart';
 import 'package:login/utils/config.dart';
@@ -109,8 +110,7 @@ class ScrollingMoviesState extends State<ScrollingMovies>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final imageQuality =
-        Provider.of<ImagequalityProvider>(context).imageQuality;
+    final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     return Column(
       children: <Widget>[
         Row(
@@ -180,8 +180,7 @@ class ScrollingMoviesState extends State<ScrollingMovies>
                                             builder: (context) => MovieDetailPage(
                                                 movie: moviesList![index],
                                                 heroId:
-                                                    '${moviesList![index].id}${widget.title}'
-                                                )));
+                                                    '${moviesList![index].id}${widget.title}')));
                                   },
                                   child: SizedBox(
                                     width: 100,
@@ -328,5 +327,3 @@ class ScrollingMoviesState extends State<ScrollingMovies>
   @override
   bool get wantKeepAlive => true;
 }
-
-

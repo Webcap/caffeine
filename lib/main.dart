@@ -2,52 +2,55 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:dynamic_color/dynamic_color.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:login/provider/adultmode_provider.dart';
-import 'package:login/provider/default_home_provider.dart';
-import 'package:login/provider/imagequality_provider.dart';
+
 import 'package:login/provider/internet_provider.dart';
+import 'package:login/provider/settings_provider.dart';
 import 'package:login/provider/sign_in_provider.dart';
 import 'package:login/provider/tv_mode_provider.dart';
+import 'package:login/screens/auth_screens/user_state.dart';
 import 'package:login/screens/common/landing_screen.dart';
-import 'package:login/ui/auth/splash/splash_screens.dart';
+
 import 'package:login/ui/auth/login_page/login_page_TV.dart';
-import 'package:login/utils/next_screen.dart';
+import 'package:login/utils/config.dart';
+import 'package:login/utils/theme_data.dart';
+
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-SignInProvider signInProvider = SignInProvider();
-tvModeProvider tvmodeProvider = tvModeProvider();
-InternetProvider internetProvider = InternetProvider();
-ImagequalityProvider imagequalityProvider = ImagequalityProvider();
-DefaultHomeProvider defaultHomeProvider = DefaultHomeProvider();
-AdultmodeProvider adultmodeProvider = AdultmodeProvider();
+SettingsProvider settingsProvider = SettingsProvider();
+final Future<FirebaseApp> _initialization = Firebase.initializeApp();
 
-extension Precision on double {
-  double toPrecision(int fractionDigits) {
-    num mod = pow(10, fractionDigits.toDouble());
-    return ((this * mod).round().toDouble() / mod);
-  }
-}
+// extension Precision on double {
+//   double toPrecision(int fractionDigits) {
+//     num mod = pow(10, fractionDigits.toDouble());
+//     return ((this * mod).round().toDouble() / mod);
+//   }
+// }
 
 void main() async {
   //initialize app
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  await imagequalityProvider.getCurrentImageQuality();
+  await settingsProvider.getCurrentThemeMode();
+  await settingsProvider.getCurrentMaterial3Mode();
+  await settingsProvider.getCurrentAdultMode();
+  await settingsProvider.getCurrentDefaultScreen();
+  await settingsProvider.getCurrentImageQuality();
+  await settingsProvider.getCurrentWatchCountry();
+  await settingsProvider.getCurrentViewType();
+  await _initialization;
+
   runApp(caffeine(
-    image: imagequalityProvider,
+    settingsProvider: settingsProvider,
   ));
 }
 
 class caffeine extends StatefulWidget {
-  const caffeine({
-    required this.image,
-    Key? key,
-  }) : super(key: key);
-  final ImagequalityProvider image;
+  const caffeine({required this.settingsProvider, Key? key}) : super(key: key);
+
+  final SettingsProvider settingsProvider;
 
   @override
   State<caffeine> createState() => _caffeineState();
@@ -73,58 +76,58 @@ class _caffeineState extends State<caffeine>
   @override
   void initState() {
     super.initState();
-    getCurrentDefaultScreen();
-  }
-
-  void getTVModeStats() async {
-    tvmodeProvider.tvModeValue =
-        await tvmodeProvider.tvModePref.getTVModeStatus();
-  }
-
-  void getCurrentDefaultScreen() async {
-    defaultHomeProvider.defaultValue =
-        await defaultHomeProvider.defaultHomePreferences.getDefaultHome();
-  }
-
-  void getCurrentImageQuality() async {
-    imagequalityProvider.imageQuality =
-        await imagequalityProvider.imagePreferences.getImageQuality();
-  }
-
-  void getCurrentAdultMode() async {
-    adultmodeProvider.isAdult =
-        await adultmodeProvider.adultModePreferences.getAdultMode();
   }
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: ((context) => SignInProvider())),
-        ChangeNotifierProvider(create: ((context) => tvModeProvider())),
-        ChangeNotifierProvider(create: ((context) => InternetProvider())),
-        ChangeNotifierProvider(create: ((context) => AdultmodeProvider())),
-        ChangeNotifierProvider(create: ((context) => DefaultHomeProvider())),
-        ChangeNotifierProvider(create: ((context) => ImagequalityProvider())),
-      ],
-      child: Consumer6<SignInProvider, ImagequalityProvider, tvModeProvider,
-              InternetProvider, DefaultHomeProvider, AdultmodeProvider>(
-          builder: (context,
-              SignInProvider,
-              tvModeProvider,
-              internetProvider,
-              defaultHomeProvider,
-              ImagequalityProvider,
-              AdultmodeProvider,
-              snapshot) {
-        return MaterialApp(
-          home: LandingScreen(),
-          debugShowCheckedModeBanner: false,
-          routes: {
-            "/login": (context) => LoginPage(),
-          },
-        );
-      }),
+    return FutureBuilder(
+      future: _initialization,
+      builder: (
+        context,
+        snapshot,
+      ) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const MaterialApp(
+              home: Scaffold(
+                body: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              ),
+            );
+          } else if (snapshot.hasError) {
+            const MaterialApp(
+              home: Scaffold(
+                body: Center(
+                  child: Text('Error occurred'),
+                ),
+              ),
+            );
+          }
+          return MultiProvider(
+              providers: [
+                ChangeNotifierProvider(create: (_) {
+                  return widget.settingsProvider;
+                })
+              ],
+              child: Consumer<SettingsProvider>(
+                  builder: (context, settingsProvider, snapshot) {
+                return DynamicColorBuilder(
+                  builder: (lightDynamic, darkDynamic) {
+                    return MaterialApp(
+                      debugShowCheckedModeBanner: false,
+                      title: 'Caffiene',
+                      theme: Styles.themeData(
+                          isDarkTheme: settingsProvider.darktheme,
+                          isM3Enabled: settingsProvider.isMaterial3Enabled,
+                          lightDynamicColor: lightDynamic,
+                          darkDynamicColor: darkDynamic,
+                          context: context),
+                      home: const UserState(),
+                    );
+                  },
+                );
+              }));
+        }
     );
   }
 }

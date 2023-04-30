@@ -7,6 +7,7 @@ import 'package:login/models/genres.dart';
 import 'package:login/models/movie_models.dart';
 import 'package:http/http.dart' as http;
 import 'package:login/provider/imagequality_provider.dart';
+import 'package:login/provider/settings_provider.dart';
 import 'package:login/utils/config.dart';
 import 'package:login/widgets/shimmer_widget.dart';
 import 'package:provider/provider.dart';
@@ -14,12 +15,11 @@ import 'package:provider/provider.dart';
 class ParticularGenreMovies extends StatefulWidget {
   final String api;
   final int genreId;
-  const ParticularGenreMovies(
-      {Key? key,
-      required this.api,
-      required this.genreId,
-      })
-      : super(key: key);
+  const ParticularGenreMovies({
+    Key? key,
+    required this.api,
+    required this.genreId,
+  }) : super(key: key);
   @override
   ParticularGenreMoviesState createState() => ParticularGenreMoviesState();
 }
@@ -87,8 +87,7 @@ class ParticularGenreMoviesState extends State<ParticularGenreMovies> {
 
   @override
   Widget build(BuildContext context) {
-    final imageQuality =
-        Provider.of<ImagequalityProvider>(context).imageQuality;
+    final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     return moviesList == null
         ? mainPageVerticalScrollShimmer(isLoading, _scrollController)
         : moviesList!.isEmpty

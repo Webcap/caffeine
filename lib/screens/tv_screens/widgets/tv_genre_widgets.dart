@@ -9,6 +9,7 @@ import 'package:login/models/genres.dart';
 import 'package:login/models/tv.dart';
 import 'package:login/provider/adultmode_provider.dart';
 import 'package:login/provider/imagequality_provider.dart';
+import 'package:login/provider/settings_provider.dart';
 import 'package:login/screens/tv_screens/tv_detail_page.dart';
 import 'package:login/utils/config.dart';
 import 'package:login/widgets/shimmer_widget.dart';
@@ -124,7 +125,7 @@ class TVGenreListGridState extends State<TVGenreListGrid>
 
   Widget retryWidget() {
     return Container(
-      color:const Color(0xFFF7F7F7),
+      color: const Color(0xFFF7F7F7),
       child: Center(
           child: Row(
         children: [
@@ -254,7 +255,9 @@ class ParticularGenreTVState extends State<ParticularGenreTV> {
   }
 
   void getData() {
-    tvApi().fetchTV('${widget.api}&include_adult=${widget.includeAdult}').then((value) {
+    tvApi()
+        .fetchTV('${widget.api}&include_adult=${widget.includeAdult}')
+        .then((value) {
       setState(() {
         tvList = value;
       });
@@ -272,17 +275,14 @@ class ParticularGenreTVState extends State<ParticularGenreTV> {
   @override
   Widget build(BuildContext context) {
     // final isDark = Provider.of<DarkthemeProvider>(context).darktheme;
-    final imageQuality =
-        Provider.of<ImagequalityProvider>(context).imageQuality;
+    final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     return tvList == null
         ? Container(
             color: const Color(0xFFFFFFFF),
-            child: mainPageVerticalScrollShimmer(
-                isLoading, _scrollController))
+            child: mainPageVerticalScrollShimmer(isLoading, _scrollController))
         : tvList!.isEmpty
             ? Container(
-                color:
-                  const Color(0xFFFFFFFF),
+                color: const Color(0xFFFFFFFF),
                 child: const Center(
                   child:
                       Text('Oops! TV series for this genre doesn\'t exist :('),
@@ -291,7 +291,7 @@ class ParticularGenreTVState extends State<ParticularGenreTV> {
             : requestFailed == true
                 ? retryWidget()
                 : Container(
-                    color:const Color(0xFFFFFFFF),
+                    color: const Color(0xFFFFFFFF),
                     child: Column(
                       children: [
                         Expanded(
@@ -384,10 +384,9 @@ class ParticularGenreTVState extends State<ParticularGenreTV> {
                                                                           ),
                                                                         ),
                                                                       ),
-                                                                      placeholder: (context,
-                                                                              url) =>
-                                                                          mainPageVerticalScrollImageShimmer(
-                                                                              ),
+                                                                      placeholder:
+                                                                          (context, url) =>
+                                                                              mainPageVerticalScrollImageShimmer(),
                                                                       errorWidget: (context,
                                                                               url,
                                                                               error) =>
@@ -443,7 +442,7 @@ class ParticularGenreTVState extends State<ParticularGenreTV> {
                                                     ],
                                                   ),
                                                   Divider(
-                                                    color:Colors.white54,
+                                                    color: Colors.white54,
                                                     thickness: 1,
                                                     endIndent: 20,
                                                     indent: 10,
@@ -473,7 +472,7 @@ class ParticularGenreTVState extends State<ParticularGenreTV> {
     return Center(
       child: Container(
           width: double.infinity,
-          color:const Color(0xFFFFFFFF),
+          color: const Color(0xFFFFFFFF),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -574,7 +573,7 @@ class TVGenreDisplayState extends State<TVGenreDisplay>
                                 style: const TextStyle(fontFamily: 'Poppins'),
                                 // style: widget.themeData.textTheme.bodyText1,
                               ),
-                              backgroundColor:const Color(0xFFDFDEDE),
+                              backgroundColor: const Color(0xFFDFDEDE),
                             ),
                           ),
                         );

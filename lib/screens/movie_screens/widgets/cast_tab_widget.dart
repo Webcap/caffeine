@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:login/api/movies_api.dart';
 import 'package:login/models/credits.dart';
 import 'package:login/provider/imagequality_provider.dart';
+import 'package:login/provider/settings_provider.dart';
 import 'package:login/screens/movie_screens/cast_details.dart';
 import 'package:login/screens/movie_screens/crew_detail.dart';
 import 'package:login/utils/config.dart';
@@ -48,14 +49,12 @@ class CastTabState extends State<CastTab>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final imageQuality =
-        Provider.of<ImagequalityProvider>(context).imageQuality;
+    final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     return credits == null
         ? movieCastAndCrewTabShimmer()
         : credits!.cast!.isEmpty
             ? Container(
-                color:
-                   const Color(0xFFFFFFFF),
+                color: const Color(0xFFFFFFFF),
                 child: const Center(
                   child: Text('There is no cast available for this movie'),
                 ),
@@ -145,8 +144,7 @@ class CastTabState extends State<CastTab>
                                                         ),
                                                         placeholder: (context,
                                                                 url) =>
-                                                            castAndCrewTabImageShimmer(
-                                                                ),
+                                                            castAndCrewTabImageShimmer(),
                                                         errorWidget: (context,
                                                                 url, error) =>
                                                             Image.asset(
@@ -179,7 +177,7 @@ class CastTabState extends State<CastTab>
                                       ],
                                     ),
                                     Divider(
-                                      color:Colors.white54,
+                                      color: Colors.white54,
                                       thickness: 1,
                                       endIndent: 20,
                                       indent: 10,
@@ -196,7 +194,7 @@ class CastTabState extends State<CastTab>
     return Center(
       child: Container(
           width: double.infinity,
-          color:const Color(0xFFFFFFFF),
+          color: const Color(0xFFFFFFFF),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -273,12 +271,10 @@ class CrewTabState extends State<CrewTab>
   Widget build(BuildContext context) {
     super.build(context);
     // final isDark = Provider.of<DarkthemeProvider>(context).darktheme;
-    final imageQuality =
-        Provider.of<ImagequalityProvider>(context).imageQuality;
+    final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     return credits == null
         ? Container(
-            color:const Color(0xFFFFFFFF),
-            child: movieCastAndCrewTabShimmer())
+            color: const Color(0xFFFFFFFF), child: movieCastAndCrewTabShimmer())
         : credits!.crew!.isEmpty
             ? Container(
                 color: const Color(0xFF202124),
@@ -290,8 +286,7 @@ class CrewTabState extends State<CrewTab>
             : requestFailed == true
                 ? retryWidget()
                 : Container(
-                    color: 
-                      const Color(0xFFFFFFFF),
+                    color: const Color(0xFFFFFFFF),
                     child: ListView.builder(
                         itemCount: credits!.crew!.length,
                         itemBuilder: (BuildContext context, int index) {
@@ -374,8 +369,7 @@ class CrewTabState extends State<CrewTab>
                                                         ),
                                                         placeholder: (context,
                                                                 url) =>
-                                                            castAndCrewTabImageShimmer(
-                                                                ),
+                                                            castAndCrewTabImageShimmer(),
                                                         errorWidget: (context,
                                                                 url, error) =>
                                                             Image.asset(
@@ -425,7 +419,7 @@ class CrewTabState extends State<CrewTab>
     return Center(
       child: Container(
           width: double.infinity,
-          color:const Color(0xFFFFFFFF),
+          color: const Color(0xFFFFFFFF),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:login/api/endpoints.dart';
 import 'package:login/models/tv.dart';
 import 'package:login/provider/imagequality_provider.dart';
+import 'package:login/provider/settings_provider.dart';
 import 'package:login/screens/tv_screens/widgets/scrolling_tv_widget.dart';
 import 'package:login/screens/tv_screens/widgets/tv_widgets.dart';
 import 'package:login/utils/config.dart';
@@ -59,8 +60,7 @@ class SeasonsDetailState extends State<SeasonsDetail>
   Widget build(BuildContext context) {
     super.build(context);
     // final isDark = Provider.of<DarkthemeProvider>(context).darktheme;
-    final imageQuality =
-        Provider.of<ImagequalityProvider>(context).imageQuality;
+    final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     return Scaffold(
       body: Stack(
         children: <Widget>[
@@ -369,7 +369,6 @@ class SeasonsDetailState extends State<SeasonsDetail>
                                             ),
                                           ),
                                         ),
-                                        
                                         TVCastTab(
                                           api: Endpoints
                                               .getFullTVSeasonCreditsUrl(

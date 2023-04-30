@@ -2,13 +2,64 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 
+Widget scrollingMoviesAndTVShimmer1(isDark) => Column(
+      mainAxisSize: MainAxisSize.max,
+      children: <Widget>[
+        Expanded(
+          child: Shimmer.fromColors(
+            baseColor: isDark ? Colors.grey.shade800 : Colors.grey.shade300,
+            highlightColor:
+                isDark ? Colors.grey.shade700 : Colors.grey.shade100,
+            direction: ShimmerDirection.ltr,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemBuilder: (context, index) => Padding(
+                padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 20.0),
+                child: SizedBox(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Expanded(
+                        flex: 5,
+                        child: Container(
+                          width: 100.0,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8.0),
+                              color: Colors.white),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 2,
+                        child: Padding(
+                          padding:
+                              const EdgeInsets.only(top: 8.0, bottom: 20.0),
+                          child: Container(
+                            width: 100.0,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5.0),
+                                color: Colors.white),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              itemCount: 10,
+            ),
+          ),
+        ),
+      ],
+    );
+
 Widget scrollingMoviesAndTVShimmer() => Column(
       mainAxisSize: MainAxisSize.max,
       children: <Widget>[
         Expanded(
           child: Shimmer.fromColors(
-            baseColor: Colors.grey.shade800,
-            highlightColor: Colors.grey.shade100,
+            baseColor:Colors.grey.shade300,
+            highlightColor:
+                Colors.grey.shade100,
             direction: ShimmerDirection.ltr,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
@@ -174,11 +225,21 @@ Widget mainPageVerticalScrollImageShimmer() => Shimmer.fromColors(
     ));
 
 Widget scrollingImageShimmer() => Shimmer.fromColors(
-    baseColor: Colors.grey.shade300,
-    highlightColor: Colors.grey.shade700,
+    baseColor:Colors.grey.shade300,
+    highlightColor: Colors.grey.shade100,
     direction: ShimmerDirection.ltr,
     child: Container(
-      width: 100.0,
+      width: 120.0,
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8.0), color: Colors.white),
+    ));
+
+Widget scrollingImageShimmer1(isDark) => Shimmer.fromColors(
+    baseColor: isDark ? Colors.grey.shade800 : Colors.grey.shade300,
+    highlightColor: isDark ? Colors.grey.shade700 : Colors.grey.shade100,
+    direction: ShimmerDirection.ltr,
+    child: Container(
+      width: 120.0,
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8.0), color: Colors.white),
     ));
@@ -230,6 +291,52 @@ Widget detailGenreShimmer() => Shimmer.fromColors(
       ),
     );
 
+Widget horizontalLoadMoreShimmer1(isDark) => Padding(
+      padding: const EdgeInsets.only(right: 8.0),
+      child: Shimmer.fromColors(
+        baseColor: isDark ? Colors.grey.shade800 : Colors.grey.shade300,
+        highlightColor: isDark ? Colors.grey.shade700 : Colors.grey.shade100,
+        direction: ShimmerDirection.ltr,
+        child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          itemBuilder: (context, index) => Padding(
+            padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 20.0),
+            child: SizedBox(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Expanded(
+                    flex: 5,
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 3.0),
+                      child: Container(
+                        width: 100.0,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8.0),
+                            color: Colors.white),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    flex: 2,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 8.0, bottom: 20.0),
+                      child: Container(
+                        width: 100.0,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5.0),
+                            color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          itemCount: 1,
+        ),
+      ),
+    );
 Widget horizontalLoadMoreShimmer() => Padding(
       padding: const EdgeInsets.only(right: 8.0),
       child: Shimmer.fromColors(
@@ -945,6 +1052,53 @@ Widget recommendationAndSimilarTabImageShimmer() => Shimmer.fromColors(
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10.0), color: Colors.white),
     ));
+
+
+    Widget discoverImageShimmer1(isDark) => Shimmer.fromColors(
+      direction: ShimmerDirection.ltr,
+      baseColor: isDark ? Colors.grey.shade800 : Colors.grey.shade300,
+      highlightColor: isDark ? Colors.grey.shade700 : Colors.grey.shade100,
+      child: Container(
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8.0), color: Colors.white),
+      ),
+    );
+
+    Widget discoverMoviesAndTVShimmer1(isDark) => Column(
+      mainAxisSize: MainAxisSize.max,
+      children: <Widget>[
+        Expanded(
+          child: Shimmer.fromColors(
+            baseColor: isDark ? Colors.grey.shade800 : Colors.grey.shade300,
+            highlightColor:
+                isDark ? Colors.grey.shade700 : Colors.grey.shade100,
+            direction: ShimmerDirection.ltr,
+            child: CarouselSlider.builder(
+              options: CarouselOptions(
+                disableCenter: true,
+                viewportFraction: 0.6,
+                enlargeCenterPage: true,
+                autoPlay: true,
+              ),
+              itemBuilder: (context, index, pageViewIndex) => Container(
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8.0),
+                    color: Colors.white),
+              ),
+              itemCount: 10,
+            ),
+          ),
+        ),
+        Shimmer.fromColors(
+          baseColor: isDark ? Colors.grey.shade800 : Colors.grey.shade300,
+          highlightColor: isDark ? Colors.grey.shade700 : Colors.grey.shade100,
+          child: Container(
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8.0), color: Colors.white),
+          ),
+        )
+      ],
+    );
 
 Widget discoverMoviesAndTVShimmer() => Column(
       mainAxisSize: MainAxisSize.max,

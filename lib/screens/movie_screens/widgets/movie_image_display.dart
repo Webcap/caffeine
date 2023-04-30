@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:login/api/movies_api.dart';
 import 'package:login/models/images.dart';
 import 'package:login/provider/imagequality_provider.dart';
+import 'package:login/provider/settings_provider.dart';
 import 'package:login/utils/config.dart';
 import 'package:login/widgets/hero_photoview.dart';
 import 'package:login/widgets/shimmer_widget.dart';
 import 'package:provider/provider.dart';
-
 
 class MovieImagesDisplay extends StatefulWidget {
   final String? api, title, name;
@@ -33,8 +33,7 @@ class MovieImagesState extends State<MovieImagesDisplay> {
 
   @override
   Widget build(BuildContext context) {
-    final imageQuality =
-        Provider.of<ImagequalityProvider>(context).imageQuality;
+    final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     // final isDark = Provider.of<DarkthemeProvider>(context).darktheme;
     return SizedBox(
       height: 220,
@@ -169,8 +168,7 @@ class MovieImagesState extends State<MovieImagesDisplay> {
                                                               ),
                                                               placeholder: (context,
                                                                       url) =>
-                                                                  detailImageImageSimmer(
-                                                                      ),
+                                                                  detailImageImageSimmer(),
                                                               errorWidget: (context,
                                                                       url,
                                                                       error) =>
@@ -300,8 +298,7 @@ class MovieImagesState extends State<MovieImagesDisplay> {
                                                               ),
                                                               placeholder: (context,
                                                                       url) =>
-                                                                  detailImageImageSimmer(
-                                                                      ),
+                                                                  detailImageImageSimmer(),
                                                               errorWidget: (context,
                                                                       url,
                                                                       error) =>

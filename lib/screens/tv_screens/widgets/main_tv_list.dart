@@ -6,6 +6,7 @@ import 'package:login/api/tv_api.dart';
 import 'package:login/models/tv.dart';
 import 'package:http/http.dart' as http;
 import 'package:login/provider/imagequality_provider.dart';
+import 'package:login/provider/settings_provider.dart';
 import 'package:login/utils/config.dart';
 import 'package:login/widgets/shimmer_widget.dart';
 import 'package:provider/provider.dart';
@@ -83,7 +84,9 @@ class MainTVListState extends State<MainTVList> {
   }
 
   void getData() {
-    tvApi().fetchTV('${widget.api}&include_adult=${widget.includeAdult}').then((value) {
+    tvApi()
+        .fetchTV('${widget.api}&include_adult=${widget.includeAdult}')
+        .then((value) {
       setState(() {
         tvList = value;
       });
@@ -101,8 +104,7 @@ class MainTVListState extends State<MainTVList> {
   @override
   Widget build(BuildContext context) {
     // final isDark = Provider.of<DarkthemeProvider>(context).darktheme;
-    final imageQuality =
-        Provider.of<ImagequalityProvider>(context).imageQuality;
+    final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     // final mixpanel = Provider.of<MixpanelProvider>(context).mixpanel;
     return Scaffold(
       appBar: AppBar(
@@ -110,12 +112,12 @@ class MainTVListState extends State<MainTVList> {
       ),
       body: tvList == null
           ? Container(
-              color:const Color(0xFFFFFFFF),
-              child: mainPageVerticalScrollShimmer(
-                   isLoading, _scrollController))
+              color: const Color(0xFFFFFFFF),
+              child:
+                  mainPageVerticalScrollShimmer(isLoading, _scrollController))
           : tvList!.isEmpty
               ? Container(
-                  color:const Color(0xFFFFFFFF),
+                  color: const Color(0xFFFFFFFF),
                   child: const Center(
                     child: Text('Oops! the TV shows don\'t exist :('),
                   ),
@@ -310,7 +312,7 @@ class MainTVListState extends State<MainTVList> {
 
   Widget retryWidget() {
     return Container(
-      color:const Color(0xFFF7F7F7),
+      color: const Color(0xFFF7F7F7),
       child: Center(
           child: Column(
         mainAxisAlignment: MainAxisAlignment.center,

@@ -15,6 +15,7 @@ import 'package:login/models/tv.dart';
 import 'package:login/models/videos.dart';
 import 'package:login/provider/adultmode_provider.dart';
 import 'package:login/provider/imagequality_provider.dart';
+import 'package:login/provider/settings_provider.dart';
 import 'package:login/screens/movie_screens/cast_details.dart';
 import 'package:login/screens/movie_screens/crew_detail.dart';
 import 'package:login/screens/movie_screens/widgets/movie_social_links.dart';
@@ -187,8 +188,7 @@ class TVStreamingServicesWidget extends StatelessWidget {
           height: 60,
           width: 200,
           decoration: BoxDecoration(
-              color: maincolor3,
-              borderRadius: BorderRadius.circular(15)),
+              color: maincolor3, borderRadius: BorderRadius.circular(15)),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -270,7 +270,9 @@ class ParticularStreamingServiceTVShowsState
   }
 
   void getData() {
-    tvApi().fetchTV('${widget.api}&include_adult=${widget.includeAdult}').then((value) {
+    tvApi()
+        .fetchTV('${widget.api}&include_adult=${widget.includeAdult}')
+        .then((value) {
       setState(() {
         tvList = value;
       });
@@ -288,17 +290,14 @@ class ParticularStreamingServiceTVShowsState
   @override
   Widget build(BuildContext context) {
     // final isDark = Provider.of<DarkthemeProvider>(context).darktheme;
-    final imageQuality =
-        Provider.of<ImagequalityProvider>(context).imageQuality;
+    final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     return tvList == null
         ? Container(
-            color:const Color(0xFFFFFFFF),
-            child: mainPageVerticalScrollShimmer(
-                isLoading, _scrollController))
+            color: const Color(0xFFFFFFFF),
+            child: mainPageVerticalScrollShimmer(isLoading, _scrollController))
         : tvList!.isEmpty
             ? Container(
-                color:
-                    const Color(0xFFFFFFFF),
+                color: const Color(0xFFFFFFFF),
                 child: const Center(
                   child: Text(
                       'Oops! TV shows for this watch provider doesn\'t exist :('),
@@ -335,7 +334,7 @@ class ParticularStreamingServiceTVShowsState
                                             // }));
                                           },
                                           child: Container(
-                                            color:const Color(0xFFFFFFFF),
+                                            color: const Color(0xFFFFFFFF),
                                             child: Padding(
                                               padding: const EdgeInsets.only(
                                                 top: 0.0,
@@ -401,10 +400,9 @@ class ParticularStreamingServiceTVShowsState
                                                                           ),
                                                                         ),
                                                                       ),
-                                                                      placeholder: (context,
-                                                                              url) =>
-                                                                          mainPageVerticalScrollImageShimmer(
-                                                                              ),
+                                                                      placeholder:
+                                                                          (context, url) =>
+                                                                              mainPageVerticalScrollImageShimmer(),
                                                                       errorWidget: (context,
                                                                               url,
                                                                               error) =>
@@ -460,7 +458,7 @@ class ParticularStreamingServiceTVShowsState
                                                     ],
                                                   ),
                                                   Divider(
-                                                    color:Colors.white54,
+                                                    color: Colors.white54,
                                                     thickness: 1,
                                                     endIndent: 20,
                                                     indent: 10,
@@ -490,7 +488,7 @@ class ParticularStreamingServiceTVShowsState
     return Center(
       child: Container(
           width: double.infinity,
-          color:const Color(0xFFFFFFFF),
+          color: const Color(0xFFFFFFFF),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -564,16 +562,13 @@ class TVEpisodeCastTabState extends State<TVEpisodeCastTab>
   Widget build(BuildContext context) {
     super.build(context);
     // final isDark = Provider.of<DarkthemeProvider>(context).darktheme;
-    final imageQuality =
-        Provider.of<ImagequalityProvider>(context).imageQuality;
+    final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     return credits == null
         ? Container(
-            color:const Color(0xFFFFFFFF),
-            child: movieCastAndCrewTabShimmer())
+            color: const Color(0xFFFFFFFF), child: movieCastAndCrewTabShimmer())
         : credits!.cast!.isEmpty
             ? Container(
-                color:
-                  const Color(0xFFFFFFFF),
+                color: const Color(0xFFFFFFFF),
                 child: const Center(
                   child: Text('No cast available :(',
                       style: kTextSmallHeaderStyle),
@@ -582,7 +577,7 @@ class TVEpisodeCastTabState extends State<TVEpisodeCastTab>
             : requestFailed == true
                 ? retryWidget()
                 : Container(
-                    color:const Color(0xFFFFFFFF),
+                    color: const Color(0xFFFFFFFF),
                     child: ListView.builder(
                         itemCount: credits!.cast!.length,
                         itemBuilder: (BuildContext context, int index) {
@@ -596,7 +591,7 @@ class TVEpisodeCastTabState extends State<TVEpisodeCastTab>
                               }));
                             },
                             child: Container(
-                              color:const Color(0xFFFFFFFF),
+                              color: const Color(0xFFFFFFFF),
                               child: Padding(
                                 padding: const EdgeInsets.only(
                                   top: 0.0,
@@ -664,8 +659,7 @@ class TVEpisodeCastTabState extends State<TVEpisodeCastTab>
                                                         ),
                                                         placeholder: (context,
                                                                 url) =>
-                                                            castAndCrewTabImageShimmer(
-                                                                ),
+                                                            castAndCrewTabImageShimmer(),
                                                         errorWidget: (context,
                                                                 url, error) =>
                                                             Image.asset(
@@ -728,7 +722,7 @@ class TVEpisodeCastTabState extends State<TVEpisodeCastTab>
     return Center(
       child: Container(
           width: double.infinity,
-          color:const Color(0xFFFFFFFF),
+          color: const Color(0xFFFFFFFF),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -801,8 +795,7 @@ class SeasonsListState extends State<SeasonsList> {
 
   @override
   Widget build(BuildContext context) {
-    final imageQuality =
-        Provider.of<ImagequalityProvider>(context).imageQuality;
+    final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     // final isDark = Provider.of<DarkthemeProvider>(context).darktheme;
     return Column(
       children: <Widget>[
@@ -910,8 +903,7 @@ class SeasonsListState extends State<SeasonsList> {
                                                       ),
                                                       placeholder: (context,
                                                               url) =>
-                                                          scrollingImageShimmer(
-                                                              ),
+                                                          scrollingImageShimmer(),
                                                       errorWidget: (context,
                                                               url, error) =>
                                                           Image.asset(
@@ -994,16 +986,15 @@ class EpisodeListWidgetState extends State<EpisodeListWidget>
   Widget build(BuildContext context) {
     super.build(context);
     // final isDark = Provider.of<DarkthemeProvider>(context).darktheme;
-    final imageQuality =
-        Provider.of<ImagequalityProvider>(context).imageQuality;
+    final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     return Container(
-        color:const Color(0xFFFFFFFF),
+        color: const Color(0xFFFFFFFF),
         child: tvDetails == null
             ? ListView.builder(
                 itemCount: 10,
                 itemBuilder: (BuildContext context, int index) {
                   return Container(
-                    color:const Color(0xFFFFFFFF),
+                    color: const Color(0xFFFFFFFF),
                     child: Padding(
                       padding: const EdgeInsets.only(
                         top: 0.0,
@@ -1013,8 +1004,8 @@ class EpisodeListWidgetState extends State<EpisodeListWidget>
                       child: Column(
                         children: [
                           Shimmer.fromColors(
-                            baseColor:Colors.grey.shade300,
-                            highlightColor:Colors.grey.shade100,
+                            baseColor: Colors.grey.shade300,
+                            highlightColor: Colors.grey.shade100,
                             direction: ShimmerDirection.ltr,
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -1108,7 +1099,7 @@ class EpisodeListWidgetState extends State<EpisodeListWidget>
                               }));
                             },
                             child: Container(
-                              color:const Color(0xFFFFFFFF),
+                              color: const Color(0xFFFFFFFF),
                               child: Padding(
                                 padding: const EdgeInsets.only(
                                   top: 0.0,
@@ -1180,11 +1171,10 @@ class EpisodeListWidgetState extends State<EpisodeListWidget>
                                                       placeholder: (context,
                                                               url) =>
                                                           Shimmer.fromColors(
-                                                        baseColor: 
-                                                           Colors
-                                                                .grey.shade300,
+                                                        baseColor: Colors
+                                                            .grey.shade300,
                                                         highlightColor: Colors
-                                                                .grey.shade100,
+                                                            .grey.shade100,
                                                         direction:
                                                             ShimmerDirection
                                                                 .ltr,
@@ -1224,7 +1214,7 @@ class EpisodeListWidgetState extends State<EpisodeListWidget>
                                                     ? 'Air date unknown'
                                                     : '${DateTime.parse(tvDetails!.episodes![index].airDate!).day} ${DateFormat("MMMM").format(DateTime.parse(tvDetails!.episodes![index].airDate!))}, ${DateTime.parse(tvDetails!.episodes![index].airDate!).year}',
                                                 style: TextStyle(
-                                                  color:Colors.black54,
+                                                  color: Colors.black54,
                                                 ),
                                               ),
                                               Row(children: [
@@ -1361,8 +1351,7 @@ class TVImagesDisplayState extends State<TVImagesDisplay> {
 
   @override
   Widget build(BuildContext context) {
-    final imageQuality =
-        Provider.of<ImagequalityProvider>(context).imageQuality;
+    final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     // final isDark = Provider.of<DarkthemeProvider>(context).darktheme;
     return SizedBox(
       height: 220,
@@ -1491,8 +1480,7 @@ class TVImagesDisplayState extends State<TVImagesDisplay> {
                                                             ),
                                                             placeholder: (context,
                                                                     url) =>
-                                                                detailImageImageSimmer(
-                                                                    ),
+                                                                detailImageImageSimmer(),
                                                             errorWidget:
                                                                 (context, url,
                                                                         error) =>
@@ -1619,8 +1607,7 @@ class TVImagesDisplayState extends State<TVImagesDisplay> {
                                                             ),
                                                             placeholder: (context,
                                                                     url) =>
-                                                                detailImageImageSimmer(
-                                                                    ),
+                                                                detailImageImageSimmer(),
                                                             errorWidget:
                                                                 (context, url,
                                                                         error) =>
@@ -1791,8 +1778,7 @@ class TVVideosDisplayState extends State<TVVideosDisplay> {
                                                     ),
                                                     placeholder: (context,
                                                             url) =>
-                                                        detailVideoImageShimmer(
-                                                            ),
+                                                        detailVideoImageShimmer(),
                                                     errorWidget:
                                                         (context, url, error) =>
                                                             Image.asset(
@@ -1898,7 +1884,7 @@ class TVSocialLinksState extends State<TVSocialLinks> {
                       : Container(
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8),
-                            color:const Color(0xFFDFDEDE),
+                            color: const Color(0xFFDFDEDE),
                           ),
                           child: ListView(
                             scrollDirection: Axis.horizontal,
@@ -2196,16 +2182,13 @@ class TVSeasonsTabState extends State<TVSeasonsTab>
   Widget build(BuildContext context) {
     // final isDark = Provider.of<DarkthemeProvider>(context).darktheme;
     super.build(context);
-    final imageQuality =
-        Provider.of<ImagequalityProvider>(context).imageQuality;
+    final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     return tvDetails == null
         ? Container(
-            color:const Color(0xFFFFFFFF),
-            child: tvDetailsSeasonsTabShimmer())
+            color: const Color(0xFFFFFFFF), child: tvDetailsSeasonsTabShimmer())
         : tvDetails!.seasons!.isEmpty
             ? Container(
-                color:
-                    const Color(0xFFFFFFFF),
+                color: const Color(0xFFFFFFFF),
                 child: const Center(
                   child: Text('There is no season available for this TV show',
                       style: kTextSmallHeaderStyle),
@@ -2214,7 +2197,7 @@ class TVSeasonsTabState extends State<TVSeasonsTab>
             : requestFailed == true
                 ? retryWidget()
                 : Container(
-                    color:const Color(0xFFFFFFFF),
+                    color: const Color(0xFFFFFFFF),
                     child: Column(
                       children: [
                         Expanded(
@@ -2237,7 +2220,7 @@ class TVSeasonsTabState extends State<TVSeasonsTab>
                                                     '${tvDetails!.seasons![index].seasonId}')));
                                   },
                                   child: Container(
-                                    color:const Color(0xFFFFFFFF),
+                                    color: const Color(0xFFFFFFFF),
                                     child: Padding(
                                       padding: const EdgeInsets.only(
                                         top: 0.0,
@@ -2309,8 +2292,7 @@ class TVSeasonsTabState extends State<TVSeasonsTab>
                                                               ),
                                                               placeholder: (context,
                                                                       url) =>
-                                                                  recommendationAndSimilarTabImageShimmer(
-                                                                      ),
+                                                                  recommendationAndSimilarTabImageShimmer(),
                                                               errorWidget: (context,
                                                                       url,
                                                                       error) =>
@@ -2345,7 +2327,7 @@ class TVSeasonsTabState extends State<TVSeasonsTab>
                                             ],
                                           ),
                                           Divider(
-                                            color:Colors.white54,
+                                            color: Colors.white54,
                                             thickness: 1,
                                             endIndent: 20,
                                             indent: 10,
@@ -2365,7 +2347,7 @@ class TVSeasonsTabState extends State<TVSeasonsTab>
     return Center(
       child: Container(
           width: double.infinity,
-          color:const Color(0xFFFFFFFF),
+          color: const Color(0xFFFFFFFF),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -2443,16 +2425,13 @@ class TVCastTabState extends State<TVCastTab>
   Widget build(BuildContext context) {
     super.build(context);
     // final isDark = Provider.of<DarkthemeProvider>(context).darktheme;
-    final imageQuality =
-        Provider.of<ImagequalityProvider>(context).imageQuality;
+    final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     return credits == null
         ? Container(
-            color: const Color(0xFFFFFFFF),
-            child: tvCastAndCrewTabShimmer())
+            color: const Color(0xFFFFFFFF), child: tvCastAndCrewTabShimmer())
         : credits!.cast!.isEmpty
             ? Container(
-                color:
-                    const Color(0xFFFFFFFF),
+                color: const Color(0xFFFFFFFF),
                 child: const Center(
                   child: Text(
                       'There is no data available for this TV show cast',
@@ -2462,7 +2441,7 @@ class TVCastTabState extends State<TVCastTab>
             : requestFailed == true
                 ? retryWidget()
                 : Container(
-                    color:const Color(0xFFFFFFFF),
+                    color: const Color(0xFFFFFFFF),
                     child: ListView.builder(
                         itemCount: credits!.cast!.length,
                         itemBuilder: (BuildContext context, int index) {
@@ -2476,7 +2455,7 @@ class TVCastTabState extends State<TVCastTab>
                               }));
                             },
                             child: Container(
-                              color:const Color(0xFFFFFFFF),
+                              color: const Color(0xFFFFFFFF),
                               child: Padding(
                                 padding: const EdgeInsets.only(
                                   top: 0.0,
@@ -2544,8 +2523,7 @@ class TVCastTabState extends State<TVCastTab>
                                                         ),
                                                         placeholder: (context,
                                                                 url) =>
-                                                            castAndCrewTabImageShimmer(
-                                                                ),
+                                                            castAndCrewTabImageShimmer(),
                                                         errorWidget: (context,
                                                                 url, error) =>
                                                             Image.asset(
@@ -2679,17 +2657,14 @@ class TVCrewTabState extends State<TVCrewTab>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final imageQuality =
-        Provider.of<ImagequalityProvider>(context).imageQuality;
+    final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     // final isDark = Provider.of<DarkthemeProvider>(context).darktheme;
     return credits == null
         ? Container(
-            color: const Color(0xFFFFFFFF),
-            child: movieCastAndCrewTabShimmer())
+            color: const Color(0xFFFFFFFF), child: movieCastAndCrewTabShimmer())
         : credits!.crew!.isEmpty
             ? Container(
-                color:
-                  const Color(0xFFFFFFFF),
+                color: const Color(0xFFFFFFFF),
                 child: const Center(
                   child: Text(
                       'There is no data available for this TV show cast',
@@ -2699,7 +2674,7 @@ class TVCrewTabState extends State<TVCrewTab>
             : requestFailed == true
                 ? retryWidget()
                 : Container(
-                    color:const Color(0xFFFFFFFF),
+                    color: const Color(0xFFFFFFFF),
                     child: ListView.builder(
                         itemCount: credits!.crew!.length,
                         itemBuilder: (BuildContext context, int index) {
@@ -2713,7 +2688,7 @@ class TVCrewTabState extends State<TVCrewTab>
                               }));
                             },
                             child: Container(
-                              color:const Color(0xFFFFFFFF),
+                              color: const Color(0xFFFFFFFF),
                               child: Padding(
                                 padding: const EdgeInsets.only(
                                   top: 0.0,
@@ -2781,8 +2756,7 @@ class TVCrewTabState extends State<TVCrewTab>
                                                         ),
                                                         placeholder: (context,
                                                                 url) =>
-                                                            castAndCrewTabImageShimmer(
-                                                                ),
+                                                            castAndCrewTabImageShimmer(),
                                                         errorWidget: (context,
                                                                 url, error) =>
                                                             Image.asset(
@@ -2815,7 +2789,7 @@ class TVCrewTabState extends State<TVCrewTab>
                                       ],
                                     ),
                                     Divider(
-                                      color:Colors.white54,
+                                      color: Colors.white54,
                                       thickness: 1,
                                       endIndent: 20,
                                       indent: 10,
@@ -2898,7 +2872,9 @@ class TVRecommendationsTabState extends State<TVRecommendationsTab>
   }
 
   void getData() {
-    tvApi().fetchTV('${widget.api}&include_adult=${widget.includeAdult}').then((value) {
+    tvApi()
+        .fetchTV('${widget.api}&include_adult=${widget.includeAdult}')
+        .then((value) {
       setState(() {
         tvList = value;
       });
@@ -2948,17 +2924,15 @@ class TVRecommendationsTabState extends State<TVRecommendationsTab>
   Widget build(BuildContext context) {
     super.build(context);
     // final isDark = Provider.of<DarkthemeProvider>(context).darktheme;
-    final imageQuality =
-        Provider.of<ImagequalityProvider>(context).imageQuality;
+    final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     return tvList == null
         ? Container(
-            color:const Color(0xFFFFFFFF),
+            color: const Color(0xFFFFFFFF),
             child: detailsRecommendationsAndSimilarShimmer(
                 _scrollController, isLoading))
         : tvList!.isEmpty
             ? Container(
-                color:
-                    const Color(0xFFFFFFFF),
+                color: const Color(0xFFFFFFFF),
                 child: const Padding(
                   padding: EdgeInsets.all(8.0),
                   child: Center(
@@ -2972,7 +2946,7 @@ class TVRecommendationsTabState extends State<TVRecommendationsTab>
             : requestFailed == true
                 ? retryWidget()
                 : Container(
-                    color:const Color(0xFFFFFFFF),
+                    color: const Color(0xFFFFFFFF),
                     child: Column(
                       children: [
                         Expanded(
@@ -3059,8 +3033,7 @@ class TVRecommendationsTabState extends State<TVRecommendationsTab>
                                                               ),
                                                               placeholder: (context,
                                                                       url) =>
-                                                                  recommendationAndSimilarTabImageShimmer(
-                                                                      ),
+                                                                  recommendationAndSimilarTabImageShimmer(),
                                                               errorWidget: (context,
                                                                       url,
                                                                       error) =>

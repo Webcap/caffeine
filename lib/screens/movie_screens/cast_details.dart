@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:login/api/endpoints.dart';
 import 'package:login/models/credits.dart';
 import 'package:login/provider/imagequality_provider.dart';
+import 'package:login/provider/settings_provider.dart';
 import 'package:login/screens/movie_screens/widgets/person_widget.dart';
 import 'package:login/utils/config.dart';
 import 'package:provider/provider.dart';
@@ -47,8 +48,7 @@ class CastDetailPageState extends State<CastDetailPage>
   Widget build(BuildContext context) {
     super.build(context);
     //final isDark = Provider.of<DarkthemeProvider>(context).darktheme;
-    final imageQuality =
-        Provider.of<ImagequalityProvider>(context).imageQuality;
+    final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     return Scaffold(
       body: Stack(
         children: <Widget>[

@@ -4,6 +4,7 @@ import 'package:login/api/endpoints.dart';
 import 'package:login/models/movie_models.dart';
 import 'package:login/provider/imagequality_provider.dart';
 import 'package:login/provider/mixpanel_provider.dart';
+import 'package:login/provider/settings_provider.dart';
 import 'package:login/screens/movie_screens/movie_source_screen.dart';
 import 'package:login/api/movies_api.dart';
 import 'package:login/screens/movie_screens/widgets/cast_tab_widget.dart';
@@ -61,8 +62,7 @@ class MovieDetailPageState extends State<MovieDetailPage>
 
   @override
   Widget build(BuildContext context) {
-    final imageQuality =
-        Provider.of<ImagequalityProvider>(context).imageQuality;
+    final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     super.build(context);
     return Scaffold(
       body: Stack(
@@ -153,7 +153,10 @@ class MovieDetailPageState extends State<MovieDetailPage>
                   GestureDetector(
                     child: Padding(
                       padding: const EdgeInsets.only(right: 25),
-                      child: Icon(Icons.cast, size: 30,),
+                      child: Icon(
+                        Icons.cast,
+                        size: 30,
+                      ),
                     ),
                   ),
                 ],

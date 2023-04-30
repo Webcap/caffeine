@@ -6,8 +6,10 @@ import 'package:login/provider/default_home_provider.dart';
 import 'package:login/provider/imagequality_provider.dart';
 import 'package:login/provider/internet_provider.dart';
 import 'package:login/provider/mixpanel_provider.dart';
+import 'package:login/provider/settings_provider.dart';
 import 'package:login/provider/sign_in_provider.dart';
 import 'package:login/api/movies_api.dart';
+import 'package:login/screens/auth_screens/profile_page.dart';
 import 'package:login/screens/discover_screens/discovery_screen.dart';
 import 'package:login/screens/movie_screens/movie_screen.dart';
 import 'package:login/screens/search/search_view.dart';
@@ -147,133 +149,113 @@ class caffieneHomePage extends StatefulWidget {
 
 class _caffieneHomePageState extends State<caffieneHomePage>
     with SingleTickerProviderStateMixin {
-  late int _selectedIndex;
-
-  Future getData() async {
-    final sp = context.read<SignInProvider>();
-    sp.getDataFromSharedPreferences();
-  }
-
+  late int selectedIndex;
 
   @override
   void initState() {
-    
     super.initState();
     defHome();
-    getData();
   }
 
   void defHome() {
     final defaultHome =
-        Provider.of<DefaultHomeProvider>(context, listen: false).defaultValue;
+        Provider.of<SettingsProvider>(context, listen: false).defaultValue;
     setState(() {
-      _selectedIndex = defaultHome;
+      selectedIndex = defaultHome;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final sp = context.watch<SignInProvider>();
-    // final isDark = Provider.of<DarkthemeProvider>(context).darktheme;
-    //final mixpanel = Provider.of<MixpanelProvider>(context).mixpanel;
-
-    return Provider.of<SignInProvider?>(context) == null ||
-            Provider.of<ImagequalityProvider?>(context) == null ||
-          //  Provider.of<MixpanelProvider?>(context)?.mixpanel == null ||
-            Provider.of<InternetProvider?>(context) == null ||
-            Provider.of<DefaultHomeProvider?>(context)?.defaultValue == null
-        ? const Scaffold(
-            body: Center(
-              child: CircularProgressIndicator(),
-            ),
-          )
-        : Scaffold(
-            drawer: const DrawerWidget(),
-            appBar: AppBar(
-              backgroundColor: maincolor,
-              title: const Text(
-                'Caffiene',
-                style: TextStyle(
-                  fontFamily: 'PoppinsSB',
-                ),
-              ),
-              actions: [
-                IconButton(
-                    onPressed: () {
-                      showSearch(
-                          context: context,
-                          delegate: Search(
-                              // mixpanel: mixpanel,
-                              includeAdult: Provider.of<AdultmodeProvider>(
-                                      context,
-                                      listen: false)
-                                  .isAdult));
-                    },
-                    icon: const Icon(Icons.search)),
-              ],
-            ),
-            bottomNavigationBar: Container(
-              decoration: BoxDecoration(
-                borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20)),
-                color: maincolor,
-                boxShadow: [
-                  BoxShadow(
-                    blurRadius: 20,
-                    color: Colors.black.withOpacity(.1),
-                  )
-                ],
-              ),
-              child: SafeArea(
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 15.0, vertical: 8),
-                  child: GNav(
-                    rippleColor: Colors.grey[300]!,
-                    hoverColor: Colors.grey[100]!,
-                    gap: 8,
-                    activeColor: Colors.black,
-                    iconSize: 24,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 12),
-                    duration: const Duration(milliseconds: 400),
-                    tabBackgroundColor: Colors.grey[100]!,
-                    color: Colors.black,
-                    tabs: const [
-                      GButton(
-                        icon: FontAwesomeIcons.clapperboard,
-                        text: 'Movies',
-                      ),
-                      GButton(
-                        icon: FontAwesomeIcons.tv,
-                        text: ' TV Shows',
-                      ),
-                      GButton(
-                        icon: FontAwesomeIcons.compass,
-                        text: 'Discover',
-                      ),
-                    ],
-                    selectedIndex: _selectedIndex,
-                    onTabChange: (index) {
-                      setState(() {
-                        _selectedIndex = index;
-                      });
-                    },
+    return Scaffold(
+      drawer: const DrawerWidget(),
+      appBar: AppBar(
+        elevation: 1,
+        title: const Text(
+          'caffiene',
+          style: TextStyle(fontFamily: 'PoppinsSB'),
+        ),
+        actions: [
+          IconButton(
+              onPressed: () {
+                showSearch(
+                    context: context,
+                    delegate: Search(
+                        includeAdult: Provider.of<SettingsProvider>(context,
+                                listen: false)
+                            .isAdult));
+              },
+              icon: const Icon(Icons.search))
+        ],
+      ),
+      bottomNavigationBar: Container(
+        child: Container(
+          decoration: BoxDecoration(
+              borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+              color: Theme.of(context).colorScheme.primary,
+              boxShadow: [
+                BoxShadow(blurRadius: 20, color: Colors.black.withOpacity(.1))
+              ]),
+          child: SafeArea(
+            child: Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 15.0, vertical: 8),
+              child: GNav(
+                rippleColor: Colors.grey[300]!,
+                hoverColor: Colors.grey[100]!,
+                gap: 8,
+                activeColor: Colors.black,
+                iconSize: 24,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                duration: const Duration(milliseconds: 400),
+                tabBackgroundColor: Colors.grey[100]!,
+                color: Colors.black,
+                tabs: [
+                  GButton(
+                    icon: FontAwesomeIcons.clapperboard,
+                    text: 'Movies',
+                    iconColor: Theme.of(context).colorScheme.primaryContainer,
                   ),
-                ),
+                  GButton(
+                    icon: FontAwesomeIcons.tv,
+                    text: ' TV Shows',
+                    iconColor: Theme.of(context).colorScheme.primaryContainer,
+                  ),
+                  GButton(
+                    icon: FontAwesomeIcons.compass,
+                    text: 'Discover',
+                    iconColor: Theme.of(context).colorScheme.primaryContainer,
+                  ),
+                  GButton(
+                    icon: FontAwesomeIcons.user,
+                    text: 'Profile',
+                    iconColor: Theme.of(context).colorScheme.primaryContainer,
+                  ),
+                ],
+                selectedIndex: selectedIndex,
+                onTabChange: (index) {
+                  setState(() {
+                    selectedIndex = index;
+                  });
+                },
               ),
             ),
-            body: Container(
-              color: const Color(0xFFF7F7F7),
-              child: IndexedStack(
-                index: _selectedIndex,
-                children: const <Widget>[
-                  MainMoviesDisplay(),
-                  MainTVDisplay(),
-                  DiscoverPage(),
-                ],
-              ),
-            ));
+          ),
+        ),
+      ),
+      body: Container(
+        child: IndexedStack(
+          index: selectedIndex,
+          children: const <Widget>[
+            MainMoviesDisplay(),
+            MainTVDisplay(),
+            DiscoverPage(),
+            ProfilePage()
+          ],
+        ),
+      ),
+    );
   }
 }

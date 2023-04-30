@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:login/api/movies_api.dart';
 import 'package:login/models/movie_models.dart';
 import 'package:login/provider/imagequality_provider.dart';
+import 'package:login/provider/settings_provider.dart';
 import 'package:login/screens/movie_screens/movie_details_screen.dart';
 import 'package:login/screens/movie_screens/widgets/main_movie_list.dart';
 import 'package:login/utils/config.dart';
@@ -33,7 +34,6 @@ class ScrollingMoviesTVModeState extends State<ScrollingMoviesTVMode>
   late int index;
   List<Movie>? moviesList;
   final ScrollController _scrollController = ScrollController();
-
 
   int pageNum = 2;
   bool isLoading = false;
@@ -86,7 +86,6 @@ class ScrollingMoviesTVModeState extends State<ScrollingMoviesTVMode>
     getMoreData();
   }
 
-
   void getData() {
     moviesApi().fetchMovies('${widget.api}&include_adult=false').then((value) {
       setState(() {
@@ -112,8 +111,7 @@ class ScrollingMoviesTVModeState extends State<ScrollingMoviesTVMode>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final imageQuality =
-        Provider.of<ImagequalityProvider>(context).imageQuality;
+    final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     return Column(
       children: <Widget>[
         Row(

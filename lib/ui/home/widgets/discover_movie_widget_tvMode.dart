@@ -9,6 +9,7 @@ import 'package:login/models/movie_models.dart';
 import 'package:login/models/poster.dart';
 import 'package:login/models/slide.dart';
 import 'package:login/provider/imagequality_provider.dart';
+import 'package:login/provider/settings_provider.dart';
 import 'package:login/screens/movie_screens/movie_details_screen.dart';
 import 'package:login/ui/home/widgets/slide_item_widget.dart';
 import 'package:login/utils/config.dart';
@@ -73,8 +74,7 @@ class DiscoverMoviesTVModeState extends State<DiscoverMoviesTVMode>
   Widget build(BuildContext context) {
     super.build(context);
     deviceHeight = MediaQuery.of(context).size.height;
-    final imageQuality =
-        Provider.of<ImagequalityProvider>(context).imageQuality;
+    final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     // final isDark = Provider.of<DarkthemeProvider>(context).darktheme;
     return AnimatedPositioned(
         top: (widget.posty < 0) ? 70 : 40,
@@ -126,7 +126,10 @@ class DiscoverMoviesTVModeState extends State<DiscoverMoviesTVMode>
                           // widget.move(index);
                         }),
                     itemBuilder: (ctx, index, realIdx) {
-                      return Text("fuck youuuu", style: TextStyle(color: Colors.white),);
+                      return Text(
+                        "fuck youuuu",
+                        style: TextStyle(color: Colors.white),
+                      );
                       // return SlideItemWidget(
                       //     index: index, slide: widget.slides[index]);
                     },

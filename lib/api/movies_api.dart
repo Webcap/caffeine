@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -10,6 +11,7 @@ import 'package:login/models/images.dart';
 import 'package:login/models/movie_models.dart';
 import 'package:login/models/person.dart';
 import 'package:login/models/videos.dart';
+import 'package:login/utils/config.dart';
 
 class moviesApi {
   final Dio _dio = Dio();
@@ -209,13 +211,18 @@ class moviesApi {
 
   Future<List<Movie>> fetchMovies(String api) async {
     MovieList movieList;
-    var res = await http
-        .get(Uri.parse(api))
-        .timeout(const Duration(seconds: 10), onTimeout: () {
-      return http.Response('Error', 408);
-    }).onError((error, stackTrace) => http.Response('Error', 408));
-    var decodeRes = jsonDecode(res.body);
-    movieList = MovieList.fromJson(decodeRes);
+
+    try {
+      var res = await retryOptions.retry(
+        (() => http.get(Uri.parse(api)).timeout(timeOut)),
+        retryIf: (e) => e is SocketException || e is TimeoutException,
+      );
+      var decodeRes = jsonDecode(res.body);
+      movieList = MovieList.fromJson(decodeRes);
+    } finally {
+      client.close();
+    }
+
     return movieList.movies ?? [];
   }
   

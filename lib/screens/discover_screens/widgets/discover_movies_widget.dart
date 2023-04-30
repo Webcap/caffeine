@@ -6,6 +6,7 @@ import 'package:login/models/dropdown_select.dart';
 import 'package:login/models/filter_chip.dart';
 import 'package:login/models/movie_models.dart';
 import 'package:login/provider/imagequality_provider.dart';
+import 'package:login/provider/settings_provider.dart';
 import 'package:login/screens/movie_screens/movie_details_screen.dart';
 import 'package:login/utils/config.dart';
 import 'package:login/widgets/shimmer_widget.dart';
@@ -22,7 +23,6 @@ class DiscoverMoviesState extends State<DiscoverMovies>
     with AutomaticKeepAliveClientMixin {
   List<Movie>? moviesList;
   late double deviceHeight;
-  bool requestFailed = false;
   YearDropdownData yearDropdownData = YearDropdownData();
   MovieGenreFilterChipData movieGenreFilterChipData =
       MovieGenreFilterChipData();
@@ -32,8 +32,10 @@ class DiscoverMoviesState extends State<DiscoverMovies>
     getData();
   }
 
+  
+
   void getData() {
-    List<String> years = yearDropdownData.yearsList.getRange(1, 24).toList();
+    List<String> years = yearDropdownData.yearsList.getRange(1, 25).toList();
     List<MovieGenreFilterChipWidget> genres =
         movieGenreFilterChipData.movieGenreFilterdata;
     years.shuffle();
@@ -41,15 +43,9 @@ class DiscoverMoviesState extends State<DiscoverMovies>
     moviesApi().fetchMovies(
             '$TMDB_API_BASE_URL/discover/movie?api_key=$TMDB_API_KEY&sort_by=popularity.desc&watch_region=US&include_adult=false&primary_release_year=${years.first}&with_genres=${genres.first.genreValue}')
         .then((value) {
-      setState(() {
-        moviesList = value;
-      });
-    });
-    Future.delayed(const Duration(seconds: 11), () {
-      if (moviesList == null) {
+      if (mounted) {
         setState(() {
-          requestFailed = true;
-          moviesList = [];
+          moviesList = value;
         });
       }
     });
@@ -60,8 +56,8 @@ class DiscoverMoviesState extends State<DiscoverMovies>
     super.build(context);
     deviceHeight = MediaQuery.of(context).size.height;
     final imageQuality =
-        Provider.of<ImagequalityProvider>(context).imageQuality;
-    // final isDark = Provider.of<DarkthemeProvider>(context).darktheme;
+        Provider.of<SettingsProvider>(context).imageQuality;
+    final isDark = Provider.of<SettingsProvider>(context).darktheme;
     return Column(
       children: <Widget>[
         Row(
@@ -81,9 +77,14 @@ class DiscoverMoviesState extends State<DiscoverMovies>
           height: 350,
           // height: deviceHeight * 0.417,
           child: moviesList == null
-              ? discoverMoviesAndTVShimmer()
-              : requestFailed == true
-                  ? retryWidget()
+              ? discoverMoviesAndTVShimmer1(isDark)
+              : moviesList!.isEmpty
+                  ? const Center(
+                      child: Text(
+                        'Wow, that\'s odd :/',
+                        style: kTextSmallBodyStyle,
+                      ),
+                    )
                   : CarouselSlider.builder(
                       options: CarouselOptions(
                         disableCenter: true,
@@ -131,7 +132,7 @@ class DiscoverMoviesState extends State<DiscoverMovies>
                                     ),
                                   ),
                                   placeholder: (context, url) =>
-                                      discoverImageShimmer(),
+                                      discoverImageShimmer1(isDark),
                                   errorWidget: (context, url, error) =>
                                       Image.asset(
                                     'assets/images/na_logo.png',
@@ -147,41 +148,6 @@ class DiscoverMoviesState extends State<DiscoverMovies>
                     ),
         ),
       ],
-    );
-  }
-
-  Widget retryWidget() {
-    return Center(
-      child: Container(
-          child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Image.asset('assets/images/network-signal.png',
-              width: 60, height: 60),
-          const Padding(
-            padding: EdgeInsets.only(top: 8.0),
-            child: Text('Please connect to the Internet and try again',
-                textAlign: TextAlign.center),
-          ),
-          TextButton(
-              style: ButtonStyle(
-                  backgroundColor:
-                      MaterialStateProperty.all(const Color(0x0DF57C00)),
-                  maximumSize: MaterialStateProperty.all(const Size(200, 60)),
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5.0),
-                          side: const BorderSide(color: Color(0xFFF57C00))))),
-              onPressed: () {
-                setState(() {
-                  requestFailed = false;
-                  moviesList = null;
-                });
-                getData();
-              },
-              child: const Text('Retry')),
-        ],
-      )),
     );
   }
 

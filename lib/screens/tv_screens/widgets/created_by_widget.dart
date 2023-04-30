@@ -4,6 +4,7 @@ import 'package:login/api/endpoints.dart';
 import 'package:login/models/tv.dart';
 import 'package:login/provider/adultmode_provider.dart';
 import 'package:login/provider/imagequality_provider.dart';
+import 'package:login/provider/settings_provider.dart';
 import 'package:login/screens/movie_screens/widgets/person_widget.dart';
 import 'package:login/screens/tv_screens/widgets/person_widget.dart';
 import 'package:login/utils/config.dart';
@@ -50,8 +51,7 @@ class CreatedByPersonDetailPageState extends State<CreatedByPersonDetailPage>
   Widget build(BuildContext context) {
     super.build(context);
     // final isDark = Provider.of<DarkthemeProvider>(context).darktheme;
-    final imageQuality =
-        Provider.of<ImagequalityProvider>(context).imageQuality;
+    final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     return Scaffold(
       body: Stack(
         children: <Widget>[
@@ -138,7 +138,7 @@ class CreatedByPersonDetailPageState extends State<CreatedByPersonDetailPage>
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8.0),
                             ),
-                            color:const Color(0xFFDFDEDE),
+                            color: const Color(0xFFDFDEDE),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: <Widget>[
@@ -177,7 +177,7 @@ class CreatedByPersonDetailPageState extends State<CreatedByPersonDetailPage>
                                       child: Text('Movies',
                                           style: TextStyle(
                                               fontFamily: 'Poppins',
-                                              color:Colors.black)),
+                                              color: Colors.black)),
                                     ),
                                     Tab(
                                       child: Text('TV Shows',
@@ -199,7 +199,7 @@ class CreatedByPersonDetailPageState extends State<CreatedByPersonDetailPage>
                                       children: [
                                         SingleChildScrollView(
                                           child: Container(
-                                            color:const Color(0xFFFFFFFF),
+                                            color: const Color(0xFFFFFFFF),
                                             child: Column(
                                               children: <Widget>[
                                                 Padding(
@@ -246,7 +246,7 @@ class CreatedByPersonDetailPageState extends State<CreatedByPersonDetailPage>
                                           ),
                                         ),
                                         Container(
-                                          color:const Color(0xFFFFFFFF),
+                                          color: const Color(0xFFFFFFFF),
                                           child: PersonMovieListWidget(
                                             api: Endpoints
                                                 .getMovieCreditsForPerson(
@@ -254,7 +254,7 @@ class CreatedByPersonDetailPageState extends State<CreatedByPersonDetailPage>
                                           ),
                                         ),
                                         Container(
-                                          color:const Color(0xFFFFFFFF),
+                                          color: const Color(0xFFFFFFFF),
                                           child: PersonTVListWidget(
                                               api: Endpoints
                                                   .getTVCreditsForPerson(

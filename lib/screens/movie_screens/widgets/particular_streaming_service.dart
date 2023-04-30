@@ -6,6 +6,7 @@ import 'package:login/api/movies_api.dart';
 import 'package:login/models/movie_models.dart';
 import 'package:http/http.dart' as http;
 import 'package:login/provider/imagequality_provider.dart';
+import 'package:login/provider/settings_provider.dart';
 import 'package:login/utils/config.dart';
 import 'package:login/widgets/shimmer_widget.dart';
 import 'package:provider/provider.dart';
@@ -68,8 +69,7 @@ class ParticularStreamingServiceMoviesState
   }
 
   void getData() {
-    moviesApi().fetchMovies('${widget.api}&include_adult=false')
-        .then((value) {
+    moviesApi().fetchMovies('${widget.api}&include_adult=false').then((value) {
       setState(() {
         moviesList = value;
       });
@@ -86,17 +86,14 @@ class ParticularStreamingServiceMoviesState
 
   @override
   Widget build(BuildContext context) {
-    final imageQuality =
-        Provider.of<ImagequalityProvider>(context).imageQuality;
+    final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     return moviesList == null
         ? Container(
-            color:const Color(0xFFFFFFFF),
-            child: mainPageVerticalScrollShimmer(
-                isLoading, _scrollController))
+            color: const Color(0xFFFFFFFF),
+            child: mainPageVerticalScrollShimmer(isLoading, _scrollController))
         : moviesList!.isEmpty
             ? Container(
-                color:
-                   const Color(0xFFFFFFFF),
+                color: const Color(0xFFFFFFFF),
                 child: const Center(
                   child: Text(
                       'Oops! movies for this watch provider doesn\'t exist :('),
@@ -200,10 +197,9 @@ class ParticularStreamingServiceMoviesState
                                                                           ),
                                                                         ),
                                                                       ),
-                                                                      placeholder: (context,
-                                                                              url) =>
-                                                                          mainPageVerticalScrollImageShimmer(
-                                                                              ),
+                                                                      placeholder:
+                                                                          (context, url) =>
+                                                                              mainPageVerticalScrollImageShimmer(),
                                                                       errorWidget: (context,
                                                                               url,
                                                                               error) =>
@@ -288,7 +284,7 @@ class ParticularStreamingServiceMoviesState
 
   Widget retryWidget() {
     return Container(
-      color:const Color(0xFFF7F7F7),
+      color: const Color(0xFFF7F7F7),
       child: Center(
           child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
