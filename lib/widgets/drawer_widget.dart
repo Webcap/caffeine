@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:login/provider/settings_provider.dart';
 import 'package:login/provider/sign_in_provider.dart';
 import 'package:login/screens/auth_screens/login_screen.dart';
+import 'package:login/screens/common/about.dart';
+import 'package:login/screens/common/bookmark_screen.dart';
 import 'package:login/screens/settings/settings.dart';
 import 'package:login/utils/config.dart';
 import 'package:login/utils/next_screen.dart';
@@ -23,12 +27,12 @@ class _DrawerWidgetState extends State<DrawerWidget> {
 
   @override
   Widget build(BuildContext context) {
-    // final isDark = Provider.of<DarkthemeProvider>(context).darktheme;
+    final isDark = Provider.of<SettingsProvider>(context).darktheme;
     // final mixpanel = Provider.of<MixpanelProvider>(context).mixpanel;
-    final sp = context.watch<SignInProvider>();
+    // final sp = context.watch<SignInProvider>();
     return Drawer(
       child: Container(
-        color: const Color(0xFFF7F7F7),
+        color: isDark ? Colors.black : Colors.white,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -38,56 +42,58 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                   width: double.infinity,
                   child: DrawerHeader(
                     decoration: BoxDecoration(
-                      color: const Color(0xFF363636),
-                    ),
-                    child: Image.asset('assets/images/grid_final.jpg'),
+                        color: isDark ? Colors.white : Colors.black),
+                    child: Image.asset(Config.app_icon),
                   ),
                 ),
                 ListTile(
-                  leading: const Icon(
+                  leading: Icon(
+                    FontAwesomeIcons.bookmark,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  title: const Text('Bookmark'),
+                  onTap: () {
+                    nextScreen(context, BookmarkScreen());
+                  },
+                ),
+                ListTile(
+                  leading: Icon(
+                    FontAwesomeIcons.newspaper,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  title: const Text('News'),
+                  onTap: () {
+                    //nextScreen(context, NewsPage());
+                  },
+                ),
+                ListTile(
+                  leading: Icon(
                     Icons.info_outline,
-                    color: Color(0xFFF57C00),
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                   title: const Text('About'),
                   onTap: () {
-                    // Navigator.push(context,
-                    //     MaterialPageRoute(builder: (context) {
-                    //   return const AboutPage();
-                    // }));
+                    nextScreen(context, AboutPage());
                   },
                 ),
                 ListTile(
-                  leading: const Icon(
+                  leading: Icon(
                     Icons.update,
-                    color: Color(0xFFF57C00),
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                   title: const Text('Check for an update'),
                   onTap: () {
-                    // Navigator.push(context,
-                    //     MaterialPageRoute(builder: ((context) {
-                    //   return const UpdateScreen();
-                    // })));
+                    //nextScreen(context, UpdateScreen());
                   },
                 ),
                 ListTile(
-                  leading: const Icon(
+                  leading: Icon(
                     Icons.settings,
-                    color: maincolor2,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                   title: const Text('Settings'),
                   onTap: () {
                     nextScreen(context, Settings());
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(
-                    Icons.lock,
-                    color: maincolor2,
-                  ),
-                  title: const Text('Sign Out'),
-                  onTap: () async {
-                    sp.userSignOut();
-                    nextScreenReplace(context, LoginScreen());
                   },
                 ),
               ],

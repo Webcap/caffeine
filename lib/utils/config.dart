@@ -21,6 +21,8 @@ const String TAG_LINE1 = "Unlimted, for free, anytime on Caffiene";
 const String SIGN_IN = "Log In";
 const String SIGN_UP = "Sign Up";
 const String ERROROCCURRED = "an error has occurred";
+const String CONSUMET_API = 'https://consumet-api-clone.vercel.app/';
+
 
 final client = HttpClient();
 
@@ -58,10 +60,21 @@ const kTextHeaderStyle = TextStyle(
   fontSize: 22,
 );
 
+const kBoldItemTitleStyle = TextStyle(
+  fontFamily: 'PoppinsSB',
+  fontSize: 19,
+);
+
 const kTextHeaderStyleTV = TextStyle(
   fontFamily: 'PoppinsSB',
   fontSize: 30,
   color: Colors.white,
+);
+
+const kTextVerySmallBodyStyle = TextStyle(
+  fontFamily: 'Poppins',
+  fontSize: 13,
+  overflow: TextOverflow.ellipsis,
 );
 
 const kTextSmallBodyStyle = TextStyle(

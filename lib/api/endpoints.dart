@@ -102,6 +102,19 @@ class Endpoints {
         '&watch_region=US';
   }
 
+  static String getMovieTVStreamLinks(String episodeId, String mediaId) {
+    return '$CONSUMET_API'
+        'movies/flixhq/watch?episodeId=$episodeId&mediaId=$mediaId';
+  }
+
+  static String getMovieTVStreamInfo(String titleStreamId) {
+    return '$CONSUMET_API' 'movies/flixhq/info?id=$titleStreamId';
+  }
+
+  static String searchMovieTVForStream(String titleName) {
+    return '$CONSUMET_API' 'movies/flixhq/$titleName';
+  }
+
   static watchProvidersTVShows(int providerId, int page) {
     return '$TMDB_API_BASE_URL'
         '/discover/tv?api_key='
@@ -293,4 +306,3 @@ class Endpoints {
     return '$TMDB_API_BASE_URL' '/tv/$id/watch/providers?api_key=$TMDB_API_KEY';
   }
 }
-

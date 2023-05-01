@@ -3,8 +3,10 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:login/api/movies_api.dart';
 import 'package:login/models/videos.dart';
+import 'package:login/provider/settings_provider.dart';
 import 'package:login/utils/config.dart';
 import 'package:login/widgets/shimmer_widget.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MovieVideosDisplay extends StatefulWidget {
@@ -22,16 +24,17 @@ class MovieVideosState extends State<MovieVideosDisplay> {
   void initState() {
     super.initState();
     moviesApi().fetchVideos(widget.api!).then((value) {
-      setState(() {
-        movieVideos = value;
-      });
+      if (mounted) {
+        setState(() {
+          movieVideos = value;
+        });
+      }
     });
   }
 
-  @override
   Widget build(BuildContext context) {
     bool playButtonVisibility = true;
-    //final isDark = Provider.of<DarkthemeProvider>(context).darktheme;
+    final isDark = Provider.of<SettingsProvider>(context).darktheme;
     return Column(
       children: [
         movieVideos == null
@@ -65,7 +68,7 @@ class MovieVideosState extends State<MovieVideosDisplay> {
             width: double.infinity,
             height: 230,
             child: movieVideos == null
-                ? detailVideoShimmer()
+                ? detailVideoShimmer1(isDark)
                 : movieVideos!.result!.isEmpty
                     ? const SizedBox(
                         width: double.infinity,
@@ -137,11 +140,12 @@ class MovieVideosState extends State<MovieVideosDisplay> {
                                                     ),
                                                     placeholder: (context,
                                                             url) =>
-                                                        detailVideoImageShimmer(),
+                                                        detailVideoImageShimmer1(
+                                                            isDark),
                                                     errorWidget:
                                                         (context, url, error) =>
                                                             Image.asset(
-                                                      'assets/images/na_square.png',
+                                                      'assets/images/na_rect.png',
                                                       fit: BoxFit.cover,
                                                     ),
                                                   ),

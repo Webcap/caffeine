@@ -11,8 +11,8 @@ import 'package:login/widgets/shimmer_widget.dart';
 import 'package:provider/provider.dart';
 
 class CastTab extends StatefulWidget {
-  final String? api;
-  const CastTab({Key? key, this.api}) : super(key: key);
+  final Credits credits;
+  const CastTab({Key? key, required this.credits}) : super(key: key);
 
   @override
   CastTabState createState() => CastTabState();
@@ -20,213 +20,158 @@ class CastTab extends StatefulWidget {
 
 class CastTabState extends State<CastTab>
     with AutomaticKeepAliveClientMixin<CastTab> {
-  Credits? credits;
-  bool requestFailed = false;
-
   @override
   void initState() {
     super.initState();
-    getData();
-  }
-
-  void getData() {
-    moviesApi().fetchCredits(widget.api!).then((value) {
-      setState(() {
-        credits = value;
-      });
-    });
-
-    Future.delayed(const Duration(seconds: 11), () {
-      if (credits == null) {
-        setState(() {
-          requestFailed = true;
-          credits = Credits(cast: [Cast()]);
-        });
-      }
-    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Provider.of<SettingsProvider>(context).darktheme;
     super.build(context);
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
-    return credits == null
-        ? movieCastAndCrewTabShimmer()
-        : credits!.cast!.isEmpty
-            ? Container(
-                color: const Color(0xFFFFFFFF),
-                child: const Center(
-                  child: Text('There is no cast available for this movie'),
-                ),
-              )
-            : requestFailed == true
-                ? retryWidget()
-                : Container(
-                    color: const Color(0xFFFFFFFF),
-                    child: ListView.builder(
-                        itemCount: credits!.cast!.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return GestureDetector(
-                            onTap: () {
-                              Navigator.push(context,
-                                  MaterialPageRoute(builder: (context) {
-                                return CastDetailPage(
-                                    cast: credits!.cast![index],
-                                    heroId: '${credits!.cast![index].name}');
-                              }));
-                            },
-                            child: Container(
-                              color: const Color(0xFFFFFFFF),
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                  top: 0.0,
-                                  bottom: 5.0,
-                                  left: 10,
-                                ),
-                                child: Column(
-                                  children: [
-                                    Row(
-                                      // crossAxisAlignment:
-                                      //     CrossAxisAlignment.start,
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              right: 20.0, left: 10),
-                                          child: SizedBox(
-                                            width: 80,
-                                            height: 80,
-                                            child: Hero(
-                                              tag:
-                                                  '${credits!.cast![index].name}',
-                                              child: ClipRRect(
-                                                borderRadius:
-                                                    BorderRadius.circular(
-                                                        100.0),
-                                                child: credits!.cast![index]
-                                                            .profilePath ==
-                                                        null
-                                                    ? Image.asset(
-                                                        'assets/images/na_square.png',
-                                                        fit: BoxFit.cover,
-                                                      )
-                                                    : CachedNetworkImage(
-                                                        fadeOutDuration:
-                                                            const Duration(
-                                                                milliseconds:
-                                                                    300),
-                                                        fadeOutCurve:
-                                                            Curves.easeOut,
-                                                        fadeInDuration:
-                                                            const Duration(
-                                                                milliseconds:
-                                                                    700),
-                                                        fadeInCurve:
-                                                            Curves.easeIn,
-                                                        imageUrl:
-                                                            TMDB_BASE_IMAGE_URL +
-                                                                imageQuality +
-                                                                credits!
-                                                                    .cast![
-                                                                        index]
-                                                                    .profilePath!,
-                                                        imageBuilder: (context,
-                                                                imageProvider) =>
-                                                            Container(
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            image:
-                                                                DecorationImage(
-                                                              image:
-                                                                  imageProvider,
-                                                              fit: BoxFit.cover,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        placeholder: (context,
-                                                                url) =>
-                                                            castAndCrewTabImageShimmer(),
-                                                        errorWidget: (context,
-                                                                url, error) =>
-                                                            Image.asset(
-                                                          'assets/images/na_square.png',
-                                                          fit: BoxFit.cover,
-                                                        ),
-                                                      ),
+    return widget.credits.cast!.isEmpty
+        ? Container(
+            child: const Center(
+              child: Text('There is no cast available for this movie'),
+            ),
+          )
+        : Container(
+            padding: const EdgeInsets.only(top: 8),
+            child: ListView.builder(
+                shrinkWrap: false,
+                physics: const BouncingScrollPhysics(),
+                itemCount: widget.credits.cast!.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
+                        return CastDetailPage(
+                            cast: widget.credits.cast![index],
+                            heroId: '${widget.credits.cast![index].creditId}');
+                      }));
+                    },
+                    child: Container(
+                      color: Colors.transparent,
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                          top: 0.0,
+                          bottom: 5.0,
+                          left: 10,
+                        ),
+                        child: Column(
+                          children: [
+                            Row(
+                              // crossAxisAlignment:
+                              //     CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      right: 20.0, left: 10),
+                                  child: SizedBox(
+                                    width: 80,
+                                    height: 80,
+                                    child: Hero(
+                                      tag:
+                                          '${widget.credits.cast![index].creditId}',
+                                      child: ClipRRect(
+                                        borderRadius:
+                                            BorderRadius.circular(100.0),
+                                        child: widget.credits.cast![index]
+                                                    .profilePath ==
+                                                null
+                                            ? Image.asset(
+                                                'assets/images/na_rect.png',
+                                                fit: BoxFit.cover,
+                                              )
+                                            : CachedNetworkImage(
+                                                fadeOutDuration: const Duration(
+                                                    milliseconds: 300),
+                                                fadeOutCurve: Curves.easeOut,
+                                                fadeInDuration: const Duration(
+                                                    milliseconds: 700),
+                                                fadeInCurve: Curves.easeIn,
+                                                imageUrl: TMDB_BASE_IMAGE_URL +
+                                                    imageQuality +
+                                                    widget.credits.cast![index]
+                                                        .profilePath!,
+                                                imageBuilder:
+                                                    (context, imageProvider) =>
+                                                        Container(
+                                                  decoration: BoxDecoration(
+                                                    image: DecorationImage(
+                                                      image: imageProvider,
+                                                      fit: BoxFit.cover,
+                                                    ),
+                                                  ),
+                                                ),
+                                                placeholder: (context, url) =>
+                                                    castAndCrewTabImageShimmer1(
+                                                        isDark),
+                                                errorWidget:
+                                                    (context, url, error) =>
+                                                        Image.asset(
+                                                  'assets/images/na_rect.png',
+                                                  fit: BoxFit.cover,
+                                                ),
                                               ),
-                                            ),
-                                          ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        widget.credits.cast![index].name!,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                            fontFamily: 'PoppinsSB',
+                                            fontSize: 20),
+                                      ),
+                                      Text(
+                                        'As : '
+                                        '${widget.credits.cast![index].character!.isEmpty ? 'N/A' : widget.credits.cast![index].character!}',
+                                      ),
+                                      Visibility(
+                                        visible:
+                                            widget.credits.cast![0].roles ==
+                                                    null
+                                                ? false
+                                                : true,
+                                        child: Text(
+                                          widget.credits.cast![0].roles == null
+                                              ? ''
+                                              : widget
+                                                          .credits
+                                                          .cast![index]
+                                                          .roles![0]
+                                                          .episodeCount! ==
+                                                      1
+                                                  ? '${widget.credits.cast![index].roles![0].episodeCount!} episode'
+                                                  : '${widget.credits.cast![index].roles![0].episodeCount!} episodes',
                                         ),
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                credits!.cast![index].name!,
-                                                style: const TextStyle(
-                                                    fontFamily: 'PoppinsSB'),
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                              Text(
-                                                'As : '
-                                                '${credits!.cast![index].character!.isEmpty ? 'N/A' : credits!.cast![index].character!}',
-                                              ),
-                                            ],
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                    Divider(
-                                      color: Colors.white54,
-                                      thickness: 1,
-                                      endIndent: 20,
-                                      indent: 10,
-                                    ),
-                                  ],
-                                ),
-                              ),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              ],
                             ),
-                          );
-                        }));
-  }
-
-  Widget retryWidget() {
-    return Center(
-      child: Container(
-          width: double.infinity,
-          color: const Color(0xFFFFFFFF),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset('assets/images/network-signal.png',
-                  width: 60, height: 60),
-              const Padding(
-                padding: EdgeInsets.only(top: 8.0),
-                child: Text('Please connect to the Internet and try again',
-                    textAlign: TextAlign.center),
-              ),
-              TextButton(
-                  style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all(const Color(0x0DF57C00)),
-                      maximumSize:
-                          MaterialStateProperty.all(const Size(200, 60)),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5.0),
-                              side:
-                                  const BorderSide(color: Color(0xFFF57C00))))),
-                  onPressed: () {
-                    setState(() {
-                      requestFailed = false;
-                      credits = null;
-                    });
-                    getData();
-                  },
-                  child: const Text('Retry')),
-            ],
-          )),
-    );
+                            Divider(
+                              color: !isDark ? Colors.black54 : Colors.white54,
+                              thickness: 1,
+                              endIndent: 20,
+                              indent: 10,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                }));
   }
 
   @override
@@ -234,8 +179,8 @@ class CastTabState extends State<CastTab>
 }
 
 class CrewTab extends StatefulWidget {
-  final String? api;
-  const CrewTab({Key? key, this.api}) : super(key: key);
+  const CrewTab({Key? key, required this.credits}) : super(key: key);
+  final Credits credits;
 
   @override
   CrewTabState createState() => CrewTabState();
@@ -243,217 +188,138 @@ class CrewTab extends StatefulWidget {
 
 class CrewTabState extends State<CrewTab>
     with AutomaticKeepAliveClientMixin<CrewTab> {
-  Credits? credits;
-  bool requestFailed = false;
-  @override
-  void initState() {
-    super.initState();
-    getData();
-  }
-
-  void getData() {
-    moviesApi().fetchCredits(widget.api!).then((value) {
-      setState(() {
-        credits = value;
-      });
-    });
-    Future.delayed(const Duration(seconds: 11), () {
-      if (credits == null) {
-        setState(() {
-          requestFailed = true;
-          credits = Credits(crew: [Crew()]);
-        });
-      }
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    // final isDark = Provider.of<DarkthemeProvider>(context).darktheme;
+    final isDark = Provider.of<SettingsProvider>(context).darktheme;
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
-    return credits == null
+    return widget.credits.crew!.isEmpty
         ? Container(
-            color: const Color(0xFFFFFFFF), child: movieCastAndCrewTabShimmer())
-        : credits!.crew!.isEmpty
-            ? Container(
-                color: const Color(0xFF202124),
-                child: const Center(
-                  child:
-                      Text('There is no data available for this TV show cast'),
-                ),
-              )
-            : requestFailed == true
-                ? retryWidget()
-                : Container(
-                    color: const Color(0xFFFFFFFF),
-                    child: ListView.builder(
-                        itemCount: credits!.crew!.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return GestureDetector(
-                            onTap: () {
-                              Navigator.push(context,
-                                  MaterialPageRoute(builder: (context) {
-                                return CrewDetailPage(
-                                    crew: credits!.crew![index],
-                                    heroId:
-                                        '${credits!.crew![index].creditId}');
-                              }));
-                            },
-                            child: Container(
-                              color: const Color(0xFFFFFFFF),
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                  top: 0.0,
-                                  bottom: 5.0,
-                                  left: 10,
-                                ),
-                                child: Column(
-                                  children: [
-                                    Row(
-                                      // crossAxisAlignment:
-                                      //     CrossAxisAlignment.start,
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              right: 20.0, left: 10),
-                                          child: SizedBox(
-                                            width: 80,
-                                            height: 80,
-                                            child: Hero(
-                                              tag:
-                                                  '${credits!.crew![index].creditId}',
-                                              child: ClipRRect(
-                                                borderRadius:
-                                                    BorderRadius.circular(
-                                                        100.0),
-                                                child: credits!.crew![index]
-                                                            .profilePath ==
-                                                        null
-                                                    ? Image.asset(
-                                                        'assets/images/na_square.png',
-                                                        fit: BoxFit.cover,
-                                                      )
-                                                    : CachedNetworkImage(
-                                                        fadeOutDuration:
-                                                            const Duration(
-                                                                milliseconds:
-                                                                    300),
-                                                        fadeOutCurve:
-                                                            Curves.easeOut,
-                                                        fadeInDuration:
-                                                            const Duration(
-                                                                milliseconds:
-                                                                    700),
-                                                        fadeInCurve:
-                                                            Curves.easeIn,
-                                                        imageUrl:
-                                                            TMDB_BASE_IMAGE_URL +
-                                                                imageQuality +
-                                                                credits!
-                                                                    .crew![
-                                                                        index]
-                                                                    .profilePath!,
-                                                        imageBuilder: (context,
-                                                                imageProvider) =>
-                                                            Container(
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            image:
-                                                                DecorationImage(
-                                                              image:
-                                                                  imageProvider,
-                                                              fit: BoxFit.cover,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        placeholder: (context,
-                                                                url) =>
-                                                            castAndCrewTabImageShimmer(),
-                                                        errorWidget: (context,
-                                                                url, error) =>
-                                                            Image.asset(
-                                                          'assets/images/na_square.png',
-                                                          fit: BoxFit.cover,
-                                                        ),
-                                                      ),
+            color: const Color(0xFF000000),
+            child: const Center(
+              child: Text('There is no data available for this TV show cast'),
+            ),
+          )
+        : Container(
+            padding: const EdgeInsets.only(top: 8),
+            child: ListView.builder(
+                physics: const BouncingScrollPhysics(),
+                itemCount: widget.credits.crew!.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
+                        return CrewDetailPage(
+                            crew: widget.credits.crew![index],
+                            heroId: '${widget.credits.crew![index].creditId}');
+                      }));
+                    },
+                    child: Container(
+                      color: Colors.transparent,
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                          top: 0.0,
+                          bottom: 5.0,
+                          left: 10,
+                        ),
+                        child: Column(
+                          children: [
+                            Row(
+                              // crossAxisAlignment:
+                              //     CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      right: 20.0, left: 10),
+                                  child: SizedBox(
+                                    width: 80,
+                                    height: 80,
+                                    child: Hero(
+                                      tag:
+                                          '${widget.credits.crew![index].creditId}',
+                                      child: ClipRRect(
+                                        borderRadius:
+                                            BorderRadius.circular(100.0),
+                                        child: widget.credits.crew![index]
+                                                    .profilePath ==
+                                                null
+                                            ? Image.asset(
+                                                'assets/images/na_rect.png',
+                                                fit: BoxFit.cover,
+                                              )
+                                            : CachedNetworkImage(
+                                                fadeOutDuration: const Duration(
+                                                    milliseconds: 300),
+                                                fadeOutCurve: Curves.easeOut,
+                                                fadeInDuration: const Duration(
+                                                    milliseconds: 700),
+                                                fadeInCurve: Curves.easeIn,
+                                                imageUrl: TMDB_BASE_IMAGE_URL +
+                                                    imageQuality +
+                                                    widget.credits.crew![index]
+                                                        .profilePath!,
+                                                imageBuilder:
+                                                    (context, imageProvider) =>
+                                                        Container(
+                                                  decoration: BoxDecoration(
+                                                    image: DecorationImage(
+                                                      image: imageProvider,
+                                                      fit: BoxFit.cover,
+                                                    ),
+                                                  ),
+                                                ),
+                                                placeholder: (context, url) =>
+                                                    castAndCrewTabImageShimmer1(
+                                                        isDark),
+                                                errorWidget:
+                                                    (context, url, error) =>
+                                                        Image.asset(
+                                                  'assets/images/na_rect.png',
+                                                  fit: BoxFit.cover,
+                                                ),
                                               ),
-                                            ),
-                                          ),
-                                        ),
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                credits!.crew![index].name!,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: const TextStyle(
-                                                    fontFamily: 'PoppinsSB'),
-                                              ),
-                                              Text(
-                                                'Job : '
-                                                '${credits!.crew![index].department!.isEmpty ? 'N/A' : credits!.crew![index].department!}',
-                                              ),
-                                            ],
-                                          ),
-                                        )
-                                      ],
+                                      ),
                                     ),
-                                    Divider(
-                                      color: Colors.white54,
-                                      thickness: 1,
-                                      endIndent: 20,
-                                      indent: 10,
-                                    ),
-                                  ],
+                                  ),
                                 ),
-                              ),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        widget.credits.crew![index].name!,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                            fontFamily: 'PoppinsSB',
+                                            fontSize: 20),
+                                      ),
+                                      Text(
+                                        'Job : '
+                                        '${widget.credits.crew![index].department!.isEmpty ? 'N/A' : widget.credits.crew![index].department!}',
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              ],
                             ),
-                          );
-                        }));
-  }
-
-  Widget retryWidget() {
-    return Center(
-      child: Container(
-          width: double.infinity,
-          color: const Color(0xFFFFFFFF),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset('assets/images/network-signal.png',
-                  width: 60, height: 60),
-              const Padding(
-                padding: EdgeInsets.only(top: 8.0),
-                child: Text('Please connect to the Internet and try again',
-                    textAlign: TextAlign.center),
-              ),
-              TextButton(
-                  style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all(const Color(0x0DF57C00)),
-                      maximumSize:
-                          MaterialStateProperty.all(const Size(200, 60)),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5.0),
-                              side:
-                                  const BorderSide(color: Color(0xFFF57C00))))),
-                  onPressed: () {
-                    setState(() {
-                      requestFailed = false;
-                      credits = null;
-                    });
-                    getData();
-                  },
-                  child: const Text('Retry')),
-            ],
-          )),
-    );
+                            Divider(
+                              color: !isDark ? Colors.black54 : Colors.white54,
+                              thickness: 1,
+                              endIndent: 20,
+                              indent: 10,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                }),
+          );
   }
 
   @override
   bool get wantKeepAlive => true;
 }
+

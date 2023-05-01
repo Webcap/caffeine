@@ -6,6 +6,7 @@ import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:login/screens/auth_screens/login_screen.dart';
 import 'package:login/screens/auth_screens/login_screen_042023.dart';
 import 'package:login/screens/auth_screens/register_screen.dart';
+import 'package:login/screens/home_screen/dash_screen.dart';
 import 'package:login/ui/auth/login_page/login_page_TV.dart';
 import 'package:login/utils/config.dart';
 import 'package:login/utils/next_screen.dart';
@@ -164,7 +165,9 @@ class _LandingScreenState extends State<LandingScreen> {
                           style: kTextStyleColorBlack,
                         ),
                       ),
-                      const SizedBox(height: 10,),
+                      const SizedBox(
+                        height: 10,
+                      ),
                       ElevatedButton(
                         style: ButtonStyle(
                             minimumSize:
@@ -175,8 +178,8 @@ class _LandingScreenState extends State<LandingScreen> {
                                 borderRadius: BorderRadius.circular(20.0),
                               ),
                             ),
-                            backgroundColor: MaterialStateProperty.all(
-                                Colors.white)),
+                            backgroundColor:
+                                MaterialStateProperty.all(Colors.white)),
                         onPressed: () async {
                           //updateFirstRunData();
                           nextScreen(context, SignupScreen());
@@ -219,18 +222,15 @@ class _LandingScreenState extends State<LandingScreen> {
                                           child: const Text('Go back')),
                                       TextButton(
                                           onPressed: () async {
-                                            // await auth
-                                            //     .signInAnonymously()
-                                            //     .then((value) {
-                                            //   mixpanel.track(
-                                            //     'Anonymous Login',
-                                            //   );
-                                            //   Navigator.push(context,
-                                            //       MaterialPageRoute(
-                                            //           builder: (context) {
-                                            //     return const CinemaxHomePage();
-                                            //   }));
-                                            // });
+                                            await auth
+                                                .signInAnonymously()
+                                                .then((value) {
+                                              Navigator.push(context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) {
+                                                return const caffieneHomePage();
+                                              }));
+                                            });
                                           },
                                           child: const Text(
                                             'Proceed anonymously',

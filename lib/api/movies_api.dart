@@ -9,8 +9,10 @@ import 'package:login/models/genres.dart';
 import 'package:login/models/httpresponce.dart';
 import 'package:login/models/images.dart';
 import 'package:login/models/movie_models.dart';
+import 'package:login/models/movie_stream.dart';
 import 'package:login/models/person.dart';
 import 'package:login/models/videos.dart';
+import 'package:login/models/watch_providers.dart';
 import 'package:login/utils/config.dart';
 
 class moviesApi {
@@ -29,6 +31,71 @@ class moviesApi {
     var decodeRes = jsonDecode(res.body);
     newGenreList = GenreList.fromJson(decodeRes);
     return newGenreList.genre ?? [];
+  }
+
+  Future<MovieVideoSources> getMovieStreamLinksAndSubs(String api) async {
+    MovieVideoSources movieVideoSources;
+    try {
+      print(api);
+      var res = await retryOptions.retry(
+        (() => http.get(Uri.parse(api)).timeout(timeOut)),
+        retryIf: (e) => e is SocketException || e is TimeoutException,
+      );
+      var decodeRes = jsonDecode(res.body);
+      movieVideoSources = MovieVideoSources.fromJson(decodeRes);
+    } finally {
+      client.close();
+    }
+    return movieVideoSources;
+  }
+
+  Future<List<MovieEpisodes>> getMovieStreamEpisodes(String api) async {
+    MovieInfo movieInfo;
+    try {
+      print(api);
+      var res = await retryOptions.retry(
+        (() => http.get(Uri.parse(api)).timeout(timeOut)),
+        retryIf: (e) => e is SocketException || e is TimeoutException,
+      );
+      var decodeRes = jsonDecode(res.body);
+      movieInfo = MovieInfo.fromJson(decodeRes);
+    } finally {
+      client.close();
+    }
+
+    return movieInfo.episodes ?? [];
+  }
+
+  Future<List<MovieResults>> fetchMoviesForStream(String api) async {
+    MovieStream movieStream;
+    try {
+      print(api);
+      var res = await retryOptions.retry(
+        (() => http.get(Uri.parse(api)).timeout(timeOut)),
+        retryIf: (e) => e is SocketException || e is TimeoutException,
+      );
+      var decodeRes = jsonDecode(res.body);
+      movieStream = MovieStream.fromJson(decodeRes);
+    } finally {
+      client.close();
+    }
+    return movieStream.results ?? [];
+  }
+
+
+  Future<WatchProviders> fetchWatchProviders(String api, String country) async {
+    WatchProviders watchProviders;
+    try {
+      var res = await retryOptions.retry(
+        (() => http.get(Uri.parse(api)).timeout(timeOut)),
+        retryIf: (e) => e is SocketException || e is TimeoutException,
+      );
+      var decodeRes = jsonDecode(res.body);
+      watchProviders = WatchProviders.fromJson(decodeRes, country);
+    } finally {
+      client.close();
+    }
+    return watchProviders;
   }
 
   Future<Images> fetchImages(String api) async {

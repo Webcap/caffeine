@@ -3,8 +3,10 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:login/api/movies_api.dart';
 import 'package:login/models/movie_models.dart';
 import 'package:login/models/social_icons_icons.dart';
+import 'package:login/provider/settings_provider.dart';
 import 'package:login/utils/config.dart';
 import 'package:login/widgets/shimmer_widget.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MovieSocialLinks extends StatefulWidget {
@@ -25,15 +27,17 @@ class MovieSocialLinksState extends State<MovieSocialLinks> {
   void initState() {
     super.initState();
     moviesApi().fetchSocialLinks(widget.api!).then((value) {
-      setState(() {
-        externalLinks = value;
-      });
+      if (mounted) {
+        setState(() {
+          externalLinks = value;
+        });
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    // final isDark = Provider.of<DarkthemeProvider>(context).darktheme;
+    final isDark = Provider.of<SettingsProvider>(context).darktheme;
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
@@ -49,7 +53,7 @@ class MovieSocialLinksState extends State<MovieSocialLinks> {
               height: 55,
               width: double.infinity,
               child: externalLinks == null
-                  ? socialMediaShimmer()
+                  ? socialMediaShimmer1(isDark)
                   : externalLinks?.facebookUsername == null &&
                           externalLinks?.instagramUsername == null &&
                           externalLinks?.twitterUsername == null &&
@@ -63,7 +67,9 @@ class MovieSocialLinksState extends State<MovieSocialLinks> {
                       : Container(
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8),
-                            color: const Color(0xFFDFDEDE),
+                            color: isDark
+                                ? Colors.transparent
+                                : const Color(0xFFDFDEDE),
                           ),
                           child: ListView(
                             scrollDirection: Axis.horizontal,
@@ -76,7 +82,6 @@ class MovieSocialLinksState extends State<MovieSocialLinks> {
                                         externalLinks!.facebookUsername!,
                                 icon: const Icon(
                                   SocialIcons.facebook_f,
-                                  color: Color(0xFFF57C00),
                                 ),
                               ),
                               SocialIconWidget(
@@ -88,7 +93,6 @@ class MovieSocialLinksState extends State<MovieSocialLinks> {
                                         externalLinks!.instagramUsername!,
                                 icon: const Icon(
                                   SocialIcons.instagram,
-                                  color: Color(0xFFF57C00),
                                 ),
                               ),
                               SocialIconWidget(
@@ -99,7 +103,6 @@ class MovieSocialLinksState extends State<MovieSocialLinks> {
                                         externalLinks!.twitterUsername!,
                                 icon: const Icon(
                                   SocialIcons.twitter,
-                                  color: Color(0xFFF57C00),
                                 ),
                               ),
                               SocialIconWidget(

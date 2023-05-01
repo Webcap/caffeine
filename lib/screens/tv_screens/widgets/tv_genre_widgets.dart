@@ -27,25 +27,14 @@ class TVGenreListGrid extends StatefulWidget {
 class TVGenreListGridState extends State<TVGenreListGrid>
     with AutomaticKeepAliveClientMixin<TVGenreListGrid> {
   List<Genres>? genreList;
-  bool requestFailed = false;
 
   @override
   void initState() {
     super.initState();
-    getData();
-  }
-
-  void getData() {
     moviesApi().fetchGenre(widget.api).then((value) {
-      setState(() {
-        genreList = value;
-      });
-    });
-    Future.delayed(const Duration(seconds: 11), () {
-      if (genreList == null) {
+      if (mounted) {
         setState(() {
-          requestFailed = true;
-          genreList = [];
+          genreList = value;
         });
       }
     });
@@ -53,10 +42,11 @@ class TVGenreListGridState extends State<TVGenreListGrid>
 
   @override
   bool get wantKeepAlive => true;
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    // final isDark = Provider.of<DarkthemeProvider>(context).darktheme;
+    final isDark = Provider.of<SettingsProvider>(context).darktheme;
     return Column(
       children: [
         Row(
@@ -78,90 +68,46 @@ class TVGenreListGridState extends State<TVGenreListGrid>
               height: 80,
               child: genreList == null
                   ? genreListGridShimmer()
-                  : requestFailed == true
-                      ? retryWidget()
-                      : Row(
-                          children: [
-                            Expanded(
-                              child: ListView.builder(
-                                  scrollDirection: Axis.horizontal,
-                                  itemCount: genreList!.length,
-                                  itemBuilder:
-                                      (BuildContext context, int index) {
-                                    return GestureDetector(
-                                      onTap: () {
-                                        Navigator.push(context,
-                                            MaterialPageRoute(
-                                                builder: (context) {
-                                          return TVGenre(
-                                              genres: genreList![index]);
-                                        }));
-                                      },
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Container(
-                                          width: 125,
-                                          alignment: Alignment.center,
-                                          decoration: BoxDecoration(
-                                              color: maincolor2,
-                                              borderRadius:
-                                                  BorderRadius.circular(15)),
-                                          child: Text(
-                                              genreList![index].genreName!,
-                                              textAlign: TextAlign.center,
-                                              style: const TextStyle(
-                                                  color: Colors.white)),
-                                        ),
-                                      ),
-                                    );
-                                  }),
-                            ),
-                          ],
+                  : Row(
+                      children: [
+                        Expanded(
+                          child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: genreList!.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                return GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(context,
+                                        MaterialPageRoute(builder: (context) {
+                                      return TVGenre(genres: genreList![index]);
+                                    }));
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Container(
+                                      width: 125,
+                                      alignment: Alignment.center,
+                                      decoration: BoxDecoration(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onPrimaryContainer,
+                                          borderRadius:
+                                              BorderRadius.circular(15)),
+                                      child: Text(genreList![index].genreName!,
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .onPrimaryContainer)),
+                                    ),
+                                  ),
+                                );
+                              }),
                         ),
+                      ],
+                    ),
             )),
       ],
-    );
-  }
-
-  Widget retryWidget() {
-    return Container(
-      color: const Color(0xFFF7F7F7),
-      child: Center(
-          child: Row(
-        children: [
-          Image.asset('assets/images/network-signal.png',
-              width: 50, height: 50),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Padding(
-                padding: EdgeInsets.only(top: 8.0),
-                child: Text('Please connect to the Internet and try again',
-                    textAlign: TextAlign.center),
-              ),
-              TextButton(
-                  style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all(const Color(0x0DF57C00)),
-                      maximumSize:
-                          MaterialStateProperty.all(const Size(200, 60)),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5.0),
-                              side:
-                                  const BorderSide(color: Color(0xFFF57C00))))),
-                  onPressed: () {
-                    setState(() {
-                      requestFailed = false;
-                      genreList = null;
-                    });
-                    getData();
-                  },
-                  child: const Text('Retry')),
-            ],
-          ),
-        ],
-      )),
     );
   }
 }

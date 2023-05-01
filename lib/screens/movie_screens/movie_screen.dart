@@ -161,41 +161,41 @@ class _MainMoviesDisplayState extends State<MainMoviesDisplay> {
   Widget build(BuildContext context) {
     return Container(
         child: ListView(
-      children: [
-        DiscoverMovies(),
-        ScrollingMovies(
-          title: 'Popular',
-          api: Endpoints.popularMoviesUrl(1),
-          discoverType: 'popular',
-          isTrending: false,
-        ),
-        ScrollingMovies(
-          title: 'Trending this week',
-          api: Endpoints.trendingMoviesUrl(1),
-          discoverType: 'Trending',
-          isTrending: true,
-        ),
-        ScrollingMovies(
-          title: 'Top Rated',
-          api: Endpoints.topRatedUrl(1),
-          discoverType: 'top_rated',
-          isTrending: false,
-        ),
-        ScrollingMovies(
-          title: 'Now Playing',
-          api: Endpoints.nowPlayingMoviesUrl(1),
-          discoverType: 'now_playing',
-          isTrending: false,
-        ),
-        ScrollingMovies(
-          title: 'Upcoming',
-          api: Endpoints.upcomingMoviesUrl(1),
-          discoverType: 'upcoming',
-          isTrending: false,
-        ),
-        GenreListGrid(api: Endpoints.movieGenresUrl()),
-        const MoviesFromWatchProviders(),
-      ],
+          children: [
+            DiscoverMovies(),
+            ScrollingMovies(
+              title: 'Popular',
+              api: Endpoints.popularMoviesUrl(1),
+              discoverType: 'popular',
+              isTrending: false,
+            ),
+            ScrollingMovies(
+              title: 'Trending this week',
+              api: Endpoints.trendingMoviesUrl(1),
+              discoverType: 'Trending',
+              isTrending: true,
+            ),
+            ScrollingMovies(
+              title: 'Top Rated',
+              api: Endpoints.topRatedUrl(1),
+              discoverType: 'top_rated',
+              isTrending: false,
+            ),
+            ScrollingMovies(
+              title: 'Now Playing',
+              api: Endpoints.nowPlayingMoviesUrl(1),
+              discoverType: 'now_playing',
+              isTrending: false,
+            ),
+            ScrollingMovies(
+              title: 'Upcoming',
+              api: Endpoints.upcomingMoviesUrl(1),
+              discoverType: 'upcoming',
+              isTrending: false,
+            ),
+            GenreListGrid(api: Endpoints.movieGenresUrl()),
+            const MoviesFromWatchProviders(),
+          ],
     ));
   }
 }

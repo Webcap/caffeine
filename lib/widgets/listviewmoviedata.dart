@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:login/screens/movie_screens/movie_screen.dart';
-import 'package:login/screens/movie_screens/movie_details_screen.dart';
+import 'package:login/screens/movie_screens/movie_details.dart';
 import 'package:login/widgets/moviedetails.dart';
 
 class ListViewDatamovie extends StatelessWidget {

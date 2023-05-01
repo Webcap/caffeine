@@ -25,18 +25,20 @@ class MovieImagesState extends State<MovieImagesDisplay> {
   void initState() {
     super.initState();
     moviesApi().fetchImages(widget.api!).then((value) {
-      setState(() {
-        movieImages = value;
-      });
+      if (mounted) {
+        setState(() {
+          movieImages = value;
+        });
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
-    // final isDark = Provider.of<DarkthemeProvider>(context).darktheme;
+    final isDark = Provider.of<SettingsProvider>(context).darktheme;
     return SizedBox(
-      height: 220,
+      height: 260,
       width: double.infinity,
       child: Column(
         children: [
@@ -58,7 +60,7 @@ class MovieImagesState extends State<MovieImagesDisplay> {
               width: double.infinity,
               height: 220,
               child: movieImages == null
-                  ? detailImageShimmer()
+                  ? detailImageShimmer1(isDark)
                   : Padding(
                       padding: const EdgeInsets.only(bottom: 8.0),
                       child: CarouselSlider(
@@ -168,7 +170,8 @@ class MovieImagesState extends State<MovieImagesDisplay> {
                                                               ),
                                                               placeholder: (context,
                                                                       url) =>
-                                                                  detailImageImageSimmer(),
+                                                                  detailImageImageSimmer1(
+                                                                      isDark),
                                                               errorWidget: (context,
                                                                       url,
                                                                       error) =>
@@ -298,7 +301,8 @@ class MovieImagesState extends State<MovieImagesDisplay> {
                                                               ),
                                                               placeholder: (context,
                                                                       url) =>
-                                                                  detailImageImageSimmer(),
+                                                                  detailImageImageSimmer1(
+                                                                      isDark),
                                                               errorWidget: (context,
                                                                       url,
                                                                       error) =>

@@ -125,7 +125,7 @@ class StreamingServicesWidget extends StatelessWidget {
           height: 60,
           width: 200,
           decoration: BoxDecoration(
-              color: maincolor3,
+              color: Theme.of(context).colorScheme.primaryContainer,
               borderRadius: BorderRadius.circular(15)),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -138,7 +138,7 @@ class StreamingServicesWidget extends StatelessWidget {
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 8.0),
-                child: Text(title, style: const TextStyle(color: Colors.white)),
+                child: Text(title, style: TextStyle(color: Theme.of(context).colorScheme.primaryContainer)),
               ),
             ],
           ),

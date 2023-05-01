@@ -5,7 +5,7 @@ import 'package:login/api/movies_api.dart';
 import 'package:login/models/movie_models.dart';
 import 'package:login/provider/imagequality_provider.dart';
 import 'package:login/provider/settings_provider.dart';
-import 'package:login/screens/movie_screens/movie_details_screen.dart';
+import 'package:login/screens/movie_screens/movie_details.dart';
 import 'package:login/utils/config.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
@@ -28,19 +28,22 @@ class BelongsToCollectionWidgetState extends State<BelongsToCollectionWidget> {
   void initState() {
     super.initState();
     moviesApi().fetchBelongsToCollection(widget.api!).then((value) {
-      setState(() {
-        belongsToCollection = value;
-      });
+      if (mounted) {
+        setState(() {
+          belongsToCollection = value;
+        });
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    // final isDark = Provider.of<DarkthemeProvider>(context).darktheme;
+    final isDark = Provider.of<SettingsProvider>(context).darktheme;
     return belongsToCollection == null
         ? Shimmer.fromColors(
-            baseColor: Colors.grey.shade300,
-            highlightColor: Colors.grey.shade100,
+            baseColor: isDark ? Colors.grey.shade800 : Colors.grey.shade300,
+            highlightColor:
+                isDark ? Colors.grey.shade700 : Colors.grey.shade100,
             direction: ShimmerDirection.ltr,
             child: Padding(
               padding: const EdgeInsets.all(8),
@@ -65,6 +68,7 @@ class BelongsToCollectionWidgetState extends State<BelongsToCollectionWidget> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Stack(
+                          alignment: Alignment.center,
                           children: [
                             ClipRRect(
                               borderRadius: BorderRadius.circular(8.0),
@@ -75,7 +79,7 @@ class BelongsToCollectionWidgetState extends State<BelongsToCollectionWidget> {
                                   : FadeInImage(
                                       fit: BoxFit.fill,
                                       placeholder: const AssetImage(
-                                          'assets/images/loading.gif'),
+                                          'assets/images/loading_5.gif'),
                                       image: NetworkImage(
                                           '${TMDB_BASE_IMAGE_URL}w500/${belongsToCollection!.backdropPath!}')),
                             ),
@@ -89,8 +93,11 @@ class BelongsToCollectionWidgetState extends State<BelongsToCollectionWidget> {
                                     child: Text(
                                       'Belongs to the ${belongsToCollection!.name!}',
                                       textAlign: TextAlign.center,
-                                      style: const TextStyle(
-                                          backgroundColor: Color(0xFFF57C00)),
+                                      style: TextStyle(
+                                        backgroundColor: Theme.of(context)
+                                            .colorScheme
+                                            .primary,
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -101,7 +108,11 @@ class BelongsToCollectionWidgetState extends State<BelongsToCollectionWidget> {
                                       style: ButtonStyle(
                                           backgroundColor:
                                               MaterialStateProperty.all(
-                                                  const Color(0x26F57C00)),
+                                            Theme.of(context)
+                                                .colorScheme
+                                                .primary
+                                                .withOpacity(0.3),
+                                          ),
                                           maximumSize:
                                               MaterialStateProperty.all(
                                                   const Size(200, 40)),
@@ -111,8 +122,11 @@ class BelongsToCollectionWidgetState extends State<BelongsToCollectionWidget> {
                                                   borderRadius:
                                                       BorderRadius.circular(
                                                           5.0),
-                                                  side: const BorderSide(
-                                                      color: Color(0xFFF57C00))))),
+                                                  side: BorderSide(
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .primary,
+                                                  )))),
                                       onPressed: () {
                                         Navigator.push(context,
                                             MaterialPageRoute(
