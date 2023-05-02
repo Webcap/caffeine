@@ -8,7 +8,6 @@ class SABTN extends StatefulWidget {
   const SABTN({Key? key, this.onBack}) : super(key: key);
 
   @override
-  // ignore: library_private_types_in_public_api
   _SABTNState createState() => _SABTNState();
 }
 
