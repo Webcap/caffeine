@@ -16,7 +16,7 @@ const String INSTAGRAM_BASE_URL = "https://instagram.com/";
 const String TWITTER_BASE_URL = "https://twitter.com/";
 const String IMDB_BASE_URL = "https://imdb.com/title/";
 const String TWOEMBED_BASE_URL = "https://2embed.biz";
-const String CAFFEINE_UPDATE_URL = "coming soon";
+const String CAFFEINE_UPDATE_URL = "https://webcap.github.io/caffiene/res/update.json";
 const String TAG_LINE1 = "Unlimted, for free, anytime on Caffiene";
 const String SIGN_IN = "Log In";
 const String SIGN_UP = "Sign Up";
@@ -101,7 +101,7 @@ const retryOptions = RetryOptions(
     maxAttempts: 100000);
 const timeOut = Duration(seconds: 10);
 
-final List<String> appNames = [
-  'caffiene-v1.0.1.apk',
-  'caffiene-v1.0.1-dev.apk',
-];
+// final List<String> appNames = [
+//   'caffiene-v1.0.1.apk',
+//   'caffiene-v1.0.1-dev.apk',
+// ];
