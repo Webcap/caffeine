@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:login/screens/common/landing_screen.dart';
+import 'package:login/screens/profile/edit_profile.dart';
 import 'package:login/utils/config.dart';
 import 'package:intl/intl.dart';
 
@@ -177,10 +178,10 @@ class _ProfilePageState extends State<ProfilePage> {
                                     minimumSize: MaterialStatePropertyAll(
                                         Size(250, 45))),
                                 onPressed: () {
-                                  // Navigator.push(context,
-                                  //     MaterialPageRoute(builder: (context) {
-                                  //   return const ProfileEdit();
-                                  // }));
+                                  Navigator.push(context,
+                                      MaterialPageRoute(builder: (context) {
+                                    return const ProfileEdit();
+                                  }));
                                 },
                                 child: const Text('Edit profile')),
                           ),

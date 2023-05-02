@@ -4,7 +4,8 @@ import 'package:login/provider/settings_provider.dart';
 import 'package:login/provider/sign_in_provider.dart';
 import 'package:login/screens/auth_screens/login_screen.dart';
 import 'package:login/screens/common/about.dart';
-import 'package:login/screens/common/bookmark_screen.dart';
+import 'package:login/screens/bookmarks/bookmark_screen.dart';
+import 'package:login/screens/common/update_screen.dart';
 import 'package:login/screens/settings/settings.dart';
 import 'package:login/utils/config.dart';
 import 'package:login/utils/next_screen.dart';
@@ -29,7 +30,6 @@ class _DrawerWidgetState extends State<DrawerWidget> {
   Widget build(BuildContext context) {
     final isDark = Provider.of<SettingsProvider>(context).darktheme;
     // final mixpanel = Provider.of<MixpanelProvider>(context).mixpanel;
-    // final sp = context.watch<SignInProvider>();
     return Drawer(
       child: Container(
         color: isDark ? Colors.black : Colors.white,
@@ -83,7 +83,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                   ),
                   title: const Text('Check for an update'),
                   onTap: () {
-                    //nextScreen(context, UpdateScreen());
+                    nextScreen(context, UpdateScreen());
                   },
                 ),
                 ListTile(

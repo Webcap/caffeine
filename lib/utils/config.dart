@@ -53,7 +53,7 @@ const kTextSmallHeaderStyle = TextStyle(
   overflow: TextOverflow.ellipsis,
 );
 
-const String currentAppVersion = '1.0.0';
+const String currentAppVersion = '1.0.0-dev';
 
 const kTextHeaderStyle = TextStyle(
   fontFamily: 'PoppinsSB',
@@ -100,3 +100,8 @@ const retryOptions = RetryOptions(
     delayFactor: Duration(seconds: 0),
     maxAttempts: 100000);
 const timeOut = Duration(seconds: 10);
+
+final List<String> appNames = [
+  'caffiene-v1.0.1.apk',
+  'caffiene-v1.0.1-dev.apk',
+];

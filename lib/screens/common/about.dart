@@ -39,7 +39,7 @@ class AboutPage extends StatelessWidget {
                   ],
                 ),
                 const Text(
-                  'caffiene 1.0.0-dev',
+                  currentAppVersion,
                   style: TextStyle(
                     fontSize: 30.0,
                   ),

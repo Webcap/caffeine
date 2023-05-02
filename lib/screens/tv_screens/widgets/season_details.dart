@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:login/api/endpoints.dart';
 import 'package:login/models/tv.dart';
 import 'package:login/provider/settings_provider.dart';
-import 'package:login/screens/movie_screens/widgets/sabth.dart';
+import 'package:login/screens/common/sabth.dart';
 import 'package:login/screens/tv_screens/widgets/episode_list_widget.dart';
 import 'package:login/screens/tv_screens/widgets/scrolling_tv_widget.dart';
 import 'package:login/screens/tv_screens/widgets/tv_widgets.dart';

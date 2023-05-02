@@ -20,7 +20,7 @@ import 'package:login/screens/movie_screens/widgets/movie_info_tab.dart';
 import 'package:login/screens/movie_screens/widgets/movie_social_links.dart';
 import 'package:login/screens/movie_screens/widgets/movie_video_display.dart';
 import 'package:login/screens/movie_screens/widgets/reccomend.dart';
-import 'package:login/screens/movie_screens/widgets/sabth.dart';
+import 'package:login/screens/common/sabth.dart';
 import 'package:login/screens/movie_screens/widgets/scrolling_artist.dart';
 import 'package:login/utils/config.dart';
 import 'package:login/widgets/movie_page_buttons.dart';

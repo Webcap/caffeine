@@ -5,7 +5,9 @@ import 'package:login/controller/database_controller.dart';
 import 'package:login/models/movie_models.dart';
 import 'package:login/models/tv.dart';
 import 'package:login/provider/settings_provider.dart';
-import 'package:login/screens/common/sync_screen.dart';
+import 'package:login/screens/bookmarks/bookmark_tv_screen.dart';
+import 'package:login/screens/bookmarks/movie_bookmark_tab.dart';
+import 'package:login/screens/bookmarks/sync_screen.dart';
 import 'package:login/utils/config.dart';
 import 'package:provider/provider.dart';
 
@@ -23,7 +25,7 @@ class _BookmarkScreenState extends State<BookmarkScreen>
   final FirebaseAuth _auth = FirebaseAuth.instance;
   User? user;
   MovieDatabaseController movieDatabaseController = MovieDatabaseController();
-  //TVDatabaseController tvDatabaseController = TVDatabaseController();
+  TVDatabaseController tvDatabaseController = TVDatabaseController();
   List<TV>? tvList;
   List<Movie>? movieList;
 
@@ -33,7 +35,7 @@ class _BookmarkScreenState extends State<BookmarkScreen>
     tabController = TabController(length: 2, vsync: this);
     getData();
     fetchMovieBookmark();
-    // fetchTVBookmark();
+    fetchTVBookmark();
   }
 
   void getData() async {
@@ -54,16 +56,16 @@ class _BookmarkScreenState extends State<BookmarkScreen>
     await setMovieData();
   }
 
-  // Future<void> setTVData() async {
-  //   var tv = await tvDatabaseController.getTVList();
-  //   setState(() {
-  //     tvList = tv;
-  //   });
-  // }
+  Future<void> setTVData() async {
+    var tv = await tvDatabaseController.getTVList();
+    setState(() {
+      tvList = tv;
+    });
+  }
 
-  // void fetchTVBookmark() async {
-  //   await setTVData();
-  // }
+  void fetchTVBookmark() async {
+    await setTVData();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -97,11 +99,71 @@ class _BookmarkScreenState extends State<BookmarkScreen>
                     return const SyncScreen();
                   }))).then((value) async {
                     fetchMovieBookmark();
-                    // fetchTVBookmark();
+                    fetchTVBookmark();
                   });
                 }
               },
               icon: const Icon(Icons.sync_sharp))
+        ],
+      ),
+      body: Column(
+        children: [
+          Container(
+            color: Colors.grey,
+            child: TabBar(
+              tabs: [
+                Tab(
+                    child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    Padding(
+                      padding: EdgeInsets.only(right: 8.0),
+                      child: Icon(Icons.movie_creation_rounded),
+                    ),
+                    Text(
+                      'Movies',
+                    ),
+                  ],
+                )),
+                Tab(
+                    child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    Padding(
+                        padding: EdgeInsets.only(right: 8.0),
+                        child: Icon(Icons.live_tv_rounded)),
+                    Text(
+                      'TV Series',
+                    ),
+                  ],
+                ))
+              ],
+              indicatorColor: isDark ? Colors.white : Colors.black,
+              indicatorWeight: 3,
+              //isScrollable: true,
+              labelStyle: const TextStyle(
+                fontFamily: 'PoppinsSB',
+                color: Colors.black,
+                fontSize: 17,
+              ),
+              unselectedLabelStyle:
+                  const TextStyle(fontFamily: 'Poppins', color: Colors.black87),
+              labelColor: Colors.black,
+              controller: tabController,
+              indicatorSize: TabBarIndicatorSize.tab,
+            ),
+          ),
+          Expanded(
+            child: TabBarView(
+              controller: tabController,
+              children: [
+                MovieBookmark(movieList: movieList),
+                TVBookmark(
+                  tvList: tvList,
+                )
+              ],
+            ),
+          )
         ],
       ),
     );

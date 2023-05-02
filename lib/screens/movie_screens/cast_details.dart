@@ -7,7 +7,7 @@ import 'package:login/provider/settings_provider.dart';
 import 'package:login/screens/movie_screens/widgets/cast_detail_about.dart';
 import 'package:login/screens/movie_screens/widgets/cast_details_quick_info.dart';
 import 'package:login/screens/person/widgets/person_widget.dart';
-import 'package:login/screens/movie_screens/widgets/sabth.dart';
+import 'package:login/screens/common/sabth.dart';
 import 'package:login/utils/config.dart';
 import 'package:provider/provider.dart';
 

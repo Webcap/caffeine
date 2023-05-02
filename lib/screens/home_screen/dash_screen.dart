@@ -9,7 +9,7 @@ import 'package:login/provider/mixpanel_provider.dart';
 import 'package:login/provider/settings_provider.dart';
 import 'package:login/provider/sign_in_provider.dart';
 import 'package:login/api/movies_api.dart';
-import 'package:login/screens/auth_screens/profile_page.dart';
+import 'package:login/screens/profile/profile_page.dart';
 import 'package:login/screens/discover_screens/discovery_screen.dart';
 import 'package:login/screens/movie_screens/movie_screen.dart';
 import 'package:login/screens/search/search_view.dart';

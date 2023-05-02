@@ -1,5 +1,5 @@
 import 'package:login/provider/settings_provider.dart';
-import 'package:login/screens/movie_screens/widgets/sabth.dart';
+import 'package:login/screens/common/sabth.dart';
 import 'package:login/screens/person/widgets/guest_star_detail_about.dart';
 import 'package:login/screens/person/widgets/guest_star_detail_quick.dart';
 import 'package:provider/provider.dart';

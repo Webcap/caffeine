@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:login/utils/config.dart';
 
 class Styles {
   static ThemeData themeData(
@@ -19,9 +20,9 @@ class Styles {
       appBarTheme: AppBarTheme(
         backgroundColor: isM3Enabled
             ? isDarkTheme
-                ? darkDynamicColor?.primary ?? Color(0xFFF57C00)
-                : lightDynamicColor?.primary ?? Color(0xFFF57C00)
-            : Color(0xFFF57C00),
+                ? darkDynamicColor?.primary ?? maincolor
+                : lightDynamicColor?.primary ?? maincolor
+            : maincolor,
         iconTheme: IconThemeData(
           color: isM3Enabled
               ? isDarkTheme
@@ -42,15 +43,15 @@ class Styles {
           backgroundColor: isDarkTheme ? Color(0xFF171717) : Color(0xFFdedede)),
       primaryColor: isM3Enabled
           ? isDarkTheme
-              ? darkDynamicColor?.primary ?? Color(0xFFF57C00)
-              : lightDynamicColor?.primary ?? Color(0xFFF57C00)
-          : const Color(0xFFF57C00),
+              ? darkDynamicColor?.primary ?? maincolor
+              : lightDynamicColor?.primary ?? maincolor
+          : maincolor,
       iconTheme: IconThemeData(
         color: isM3Enabled
             ? isDarkTheme
-                ? darkDynamicColor?.primary ?? Color(0xFFF57C00)
-                : lightDynamicColor?.primary ?? Color(0xFFF57C00)
-            : Color(0xFFF57C00),
+                ? darkDynamicColor?.primary ?? maincolor
+                : lightDynamicColor?.primary ?? maincolor
+            : maincolor,
       ),
       backgroundColor: isM3Enabled
           ? isDarkTheme
@@ -67,23 +68,23 @@ class Styles {
       radioTheme: RadioThemeData(
           fillColor: MaterialStatePropertyAll(isM3Enabled
               ? isDarkTheme
-                  ? darkDynamicColor?.primary ?? Color(0xFFF57C00)
-                  : lightDynamicColor?.primary ?? Color(0xFFF57C00)
-              : Color(0xFFF57C00))),
+                  ? darkDynamicColor?.primary ?? maincolor
+                  : lightDynamicColor?.primary ?? maincolor
+              : maincolor)),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ButtonStyle(
           backgroundColor: MaterialStatePropertyAll(
             isM3Enabled
                 ? isDarkTheme
-                    ? darkDynamicColor?.primary ?? Color(0xFFF57C00)
-                    : lightDynamicColor?.primary ?? Color(0xFFF57C00)
-                : Color(0xFFF57C00),
+                    ? darkDynamicColor?.primary ?? maincolor
+                    : lightDynamicColor?.primary ?? maincolor
+                : maincolor,
           ),
           foregroundColor: MaterialStatePropertyAll(
             isM3Enabled
                 ? isDarkTheme
-                    ? darkDynamicColor?.onPrimary ?? Color(0xFFF57C00)
-                    : lightDynamicColor?.onPrimary ?? Color(0xFFF57C00)
+                    ? darkDynamicColor?.onPrimary ?? maincolor
+                    : lightDynamicColor?.onPrimary ?? maincolor
                 : Colors.white,
           ),
         ),
@@ -94,10 +95,10 @@ class Styles {
               isM3Enabled
                   ? isDarkTheme
                       ? darkDynamicColor?.primary.withOpacity(0.1) ??
-                          Color(0xFFF57C00).withOpacity(0.1)
+                          maincolor.withOpacity(0.1)
                       : lightDynamicColor?.primary.withOpacity(0.1) ??
-                          Color(0xFFF57C00).withOpacity(0.1)
-                  : Color(0xFFF57C00).withOpacity(0.1),
+                          maincolor.withOpacity(0.1)
+                  : maincolor.withOpacity(0.1),
             ),
             maximumSize: MaterialStateProperty.all(const Size(200, 60)),
             shape: MaterialStateProperty.all<RoundedRectangleBorder>(
@@ -106,9 +107,9 @@ class Styles {
                     side: BorderSide(
                       color: isM3Enabled
                           ? isDarkTheme
-                              ? darkDynamicColor?.primary ?? Color(0xFFF57C00)
-                              : lightDynamicColor?.primary ?? Color(0xFFF57C00)
-                          : Color(0xFFF57C00),
+                              ? darkDynamicColor?.primary ?? maincolor
+                              : lightDynamicColor?.primary ?? maincolor
+                          : maincolor,
                     )))),
       ),
       progressIndicatorTheme: ProgressIndicatorThemeData(
@@ -119,16 +120,16 @@ class Styles {
             : Colors.black,
         color: isM3Enabled
             ? isDarkTheme
-                ? darkDynamicColor?.primary ?? Color(0xFFF57C00)
-                : lightDynamicColor?.primary ?? Color(0xFFF57C00)
-            : Color(0xFFF57C00),
+                ? darkDynamicColor?.primary ?? maincolor
+                : lightDynamicColor?.primary ?? maincolor
+            : maincolor,
       ),
       textSelectionTheme: TextSelectionThemeData(
         cursorColor: isM3Enabled
             ? isDarkTheme
-                ? darkDynamicColor?.primary ?? Color(0xFFF57C00)
-                : lightDynamicColor?.primary ?? Color(0xFFF57C00)
-            : Color(0xFFF57C00),
+                ? darkDynamicColor?.primary ?? maincolor
+                : lightDynamicColor?.primary ?? maincolor
+            : maincolor,
         selectionHandleColor:
             isDarkTheme ? const Color(0xFFFFFFFF) : const Color(0xFF000000),
         selectionColor: isDarkTheme ? Colors.white12 : Colors.black12,
@@ -145,16 +146,16 @@ class Styles {
       ),
       indicatorColor: isM3Enabled
           ? isDarkTheme
-              ? darkDynamicColor?.primary ?? Color(0xFFF57C00)
-              : lightDynamicColor?.primary ?? Color(0xFFF57C00)
-          : Color(0xFFF57C00),
+              ? darkDynamicColor?.primary ?? maincolor
+              : lightDynamicColor?.primary ?? maincolor
+          : maincolor,
       switchTheme: SwitchThemeData(
         thumbColor: MaterialStatePropertyAll(
           isM3Enabled
               ? isDarkTheme
-                  ? darkDynamicColor?.primary ?? Color(0xFFF57C00)
-                  : lightDynamicColor?.primary ?? Color(0xFFF57C00)
-              : Color(0xFFF57C00),
+                  ? darkDynamicColor?.primary ?? maincolor
+                  : lightDynamicColor?.primary ?? maincolor
+              : maincolor,
         ),
         trackColor: MaterialStatePropertyAll(
           isM3Enabled
@@ -167,9 +168,9 @@ class Styles {
       colorScheme: ColorScheme(
         primary: isM3Enabled
             ? isDarkTheme
-                ? darkDynamicColor?.primary ?? Color(0xFFF57C00)
-                : lightDynamicColor?.primary ?? Color(0xFFF57C00)
-            : const Color(0xFFF57C00),
+                ? darkDynamicColor?.primary ?? maincolor
+                : lightDynamicColor?.primary ?? maincolor
+            : maincolor,
         primaryContainer: isM3Enabled
             ? isDarkTheme
                 ? darkDynamicColor?.primaryContainer ?? Color(0xFF723600)
