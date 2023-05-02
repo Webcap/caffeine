@@ -14,7 +14,10 @@ import 'package:login/screens/movie_screens/cast_details.dart';
 import 'package:login/screens/tv_screens/guest_star_dets.dart';
 import 'package:login/screens/tv_screens/tv_detail_page.dart';
 import 'package:login/screens/tv_screens/widgets/created_by_widget.dart';
-import 'package:login/screens/tv_screens/widgets/main_tv_list.dart';
+import 'package:login/screens/tv_screens/main_tv_list.dart';
+import 'package:login/screens/tv_screens/widgets/tvdetails_cast_crew.dart';
+import 'package:login/screens/tv_screens/widgets/tvepisode_cast_crew.dart';
+import 'package:login/screens/tv_screens/widgets/tvseason_cast_crew_details.dart';
 import 'package:login/utils/config.dart';
 import 'package:login/widgets/shimmer_widget.dart';
 import 'package:provider/provider.dart';
@@ -41,7 +44,6 @@ class ScrollingTVState extends State<ScrollingTV>
   late int index;
   List<TV>? tvList;
   final ScrollController _scrollController = ScrollController();
-  //bool requestFailed = false;
   int pageNum = 2;
   bool isLoading = false;
 
@@ -53,7 +55,9 @@ class ScrollingTVState extends State<ScrollingTV>
           isLoading = true;
         });
 
-        fetchTV('${widget.api}&page=$pageNum&include_adult=${widget.includeAdult}')
+        tvApi()
+            .fetchTV(
+                '${widget.api}&page=$pageNum&include_adult=${widget.includeAdult}')
             .then((value) {
           if (mounted) {
             setState(() {
@@ -67,26 +71,12 @@ class ScrollingTVState extends State<ScrollingTV>
     });
   }
 
-  // void getData() {
-  //   tvApi().fetchTV('${widget.api}&include_adult=${widget.includeAdult}').then((value) {
-  //     setState(() {
-  //       tvList = value;
-  //     });
-  //   });
-  //   Future.delayed(const Duration(seconds: 11), () {
-  //     if (tvList == null) {
-  //       setState(() {
-  //         requestFailed = true;
-  //         tvList = [];
-  //       });
-  //     }
-  //   });
-  // }
-
   @override
   void initState() {
     super.initState();
-    fetchTV('${widget.api}&include_adult=${widget.includeAdult}').then((value) {
+    tvApi()
+        .fetchTV('${widget.api}&include_adult=${widget.includeAdult}')
+        .then((value) {
       if (mounted) {
         setState(() {
           tvList = value;
@@ -318,12 +308,21 @@ class ScrollingTVState extends State<ScrollingTV>
 
 class ScrollingTVArtists extends StatefulWidget {
   final String? api, title, tapButtonText;
-  const ScrollingTVArtists({
-    Key? key,
-    this.api,
-    this.title,
-    this.tapButtonText,
-  }) : super(key: key);
+  final int id;
+  final int? episodeNumber;
+  final int? seasonNumber;
+  final String passedFrom;
+  const ScrollingTVArtists(
+      {Key? key,
+      this.api,
+      this.title,
+      this.tapButtonText,
+      required this.id,
+      this.episodeNumber,
+      this.seasonNumber,
+      required this.passedFrom})
+      : super(key: key);
+
   @override
   ScrollingTVArtistsState createState() => ScrollingTVArtistsState();
 }
@@ -331,13 +330,16 @@ class ScrollingTVArtists extends StatefulWidget {
 class ScrollingTVArtistsState extends State<ScrollingTVArtists>
     with AutomaticKeepAliveClientMixin {
   Credits? credits;
+
   @override
   void initState() {
     super.initState();
     moviesApi().fetchCredits(widget.api!).then((value) {
-      setState(() {
-        credits = value;
-      });
+      if (mounted) {
+        setState(() {
+          credits = value;
+        });
+      }
     });
   }
 
@@ -345,26 +347,60 @@ class ScrollingTVArtistsState extends State<ScrollingTVArtists>
   Widget build(BuildContext context) {
     super.build(context);
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
-    // final isDark = Provider.of<DarkthemeProvider>(context).darktheme;
+    final isDark = Provider.of<SettingsProvider>(context).darktheme;
     return Column(
       children: <Widget>[
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: const [
-            Padding(
+          children: [
+            const Padding(
               padding: EdgeInsets.all(8.0),
               child: Text(
                 'Cast',
                 style: kTextHeaderStyle,
               ),
             ),
+            TextButton(
+                onPressed: () {
+                  if (credits != null) {
+                    if (widget.passedFrom == 'seasons_detail') {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
+                        return TVSeasonCastAndCrew(
+                          passedFrom: widget.passedFrom,
+                          id: widget.id,
+                          seasonNumber: widget.seasonNumber!,
+                        );
+                      }));
+                    } else {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
+                        return TVDetailCastAndCrew(
+                          passedFrom: widget.passedFrom,
+                          id: widget.id,
+                        );
+                      }));
+                    }
+                  }
+                },
+                style: ButtonStyle(
+                  backgroundColor:
+                      MaterialStateProperty.all(Colors.transparent),
+                  maximumSize: MaterialStateProperty.all(const Size(200, 60)),
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5.0),
+                    ),
+                  ),
+                ),
+                child: const Text('See all cast and crew'))
           ],
         ),
         SizedBox(
           width: double.infinity,
           height: 160,
           child: credits == null
-              ? detailCastShimmer()
+              ? detailCastShimmer1(isDark)
               : credits!.cast!.isEmpty
                   ? const Padding(
                       padding: EdgeInsets.all(8.0),
@@ -389,7 +425,9 @@ class ScrollingTVArtistsState extends State<ScrollingTVArtists>
                                   MaterialPageRoute(builder: (context) {
                                 return CastDetailPage(
                                   cast: credits!.cast![index],
-                                  heroId: '${credits!.cast![index].id}',
+                                  heroId: '${credits!.cast![index].id}'
+                                      '${credits!.cast![index].creditId}'
+                                      '${credits!.cast![index].castId}',
                                 );
                               }));
                             },
@@ -410,7 +448,7 @@ class ScrollingTVArtistsState extends State<ScrollingTVArtists>
                                                       .profilePath ==
                                                   null
                                               ? Image.asset(
-                                                  'assets/images/na_square.png',
+                                                  'assets/images/na_rect.png',
                                                   fit: BoxFit.cover,
                                                 )
                                               : CachedNetworkImage(
@@ -438,11 +476,12 @@ class ScrollingTVArtistsState extends State<ScrollingTVArtists>
                                                     ),
                                                   ),
                                                   placeholder: (context, url) =>
-                                                      detailCastImageShimmer(),
+                                                      detailCastImageShimmer1(
+                                                          isDark),
                                                   errorWidget:
                                                       (context, url, error) =>
                                                           Image.asset(
-                                                    'assets/images/na_sqaure.png',
+                                                    'assets/images/na_rect.png',
                                                     fit: BoxFit.cover,
                                                   ),
                                                 ),
@@ -641,10 +680,19 @@ class ScrollingTVCreatorsState extends State<ScrollingTVCreators>
 
 class ScrollingTVEpisodeCasts extends StatefulWidget {
   final String? api;
+  final int? id;
+  final int episodeNumber;
+  final int seasonNumber;
+  final String passedFrom;
   const ScrollingTVEpisodeCasts({
     Key? key,
     this.api,
+    required this.id,
+    required this.episodeNumber,
+    required this.seasonNumber,
+    required this.passedFrom,
   }) : super(key: key);
+
   @override
   ScrollingTVEpisodeCastsState createState() => ScrollingTVEpisodeCastsState();
 }
@@ -656,9 +704,11 @@ class ScrollingTVEpisodeCastsState extends State<ScrollingTVEpisodeCasts>
   void initState() {
     super.initState();
     moviesApi().fetchCredits(widget.api!).then((value) {
-      setState(() {
-        credits = value;
-      });
+      if (mounted) {
+        setState(() {
+          credits = value;
+        });
+      }
     });
   }
 
@@ -666,8 +716,7 @@ class ScrollingTVEpisodeCastsState extends State<ScrollingTVEpisodeCasts>
   Widget build(BuildContext context) {
     super.build(context);
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
-    // final mixpanel = Provider.of<MixpanelProvider>(context).mixpanel;
-    // final isDark = Provider.of<DarkthemeProvider>(context).darktheme;
+    final isDark = Provider.of<SettingsProvider>(context).darktheme;
     return Column(
       children: <Widget>[
         credits == null
@@ -692,21 +741,47 @@ class ScrollingTVEpisodeCastsState extends State<ScrollingTVEpisodeCasts>
                   )
                 : Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const <Widget>[
-                      Padding(
+                    children: <Widget>[
+                      const Padding(
                         padding: EdgeInsets.all(8.0),
                         child: Text(
                           'Cast',
                           style: kTextHeaderStyle,
                         ),
                       ),
+                      TextButton(
+                          onPressed: () {
+                            if (credits != null) {
+                              Navigator.push(context,
+                                  MaterialPageRoute(builder: (context) {
+                                return TVEpisodeCastAndCrew(
+                                  episodeNumber: widget.episodeNumber,
+                                  seasonNumber: widget.seasonNumber,
+                                  id: widget.id!,
+                                );
+                              }));
+                            }
+                          },
+                          style: ButtonStyle(
+                            backgroundColor:
+                                MaterialStateProperty.all(Colors.transparent),
+                            maximumSize:
+                                MaterialStateProperty.all(const Size(200, 60)),
+                            shape: MaterialStateProperty.all<
+                                RoundedRectangleBorder>(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(5.0),
+                              ),
+                            ),
+                          ),
+                          child: const Text('See all cast and crew'))
                     ],
                   ),
         SizedBox(
           width: double.infinity,
           height: 160,
           child: credits == null
-              ? detailCastShimmer()
+              ? detailCastShimmer1(isDark)
               : ListView.builder(
                   physics: const BouncingScrollPhysics(),
                   itemCount: credits!.cast!.length,
@@ -716,11 +791,6 @@ class ScrollingTVEpisodeCastsState extends State<ScrollingTVEpisodeCasts>
                       padding: const EdgeInsets.all(8.0),
                       child: GestureDetector(
                         onTap: () {
-                          // mixpanel
-                          //     .track('Most viewed person pages', properties: {
-                          //   'Person name': '${credits!.cast![index].name}',
-                          //   'Person id': '${credits!.cast![index].id}'
-                          // });
                           Navigator.push(context,
                               MaterialPageRoute(builder: (context) {
                             return CastDetailPage(
@@ -746,7 +816,7 @@ class ScrollingTVEpisodeCastsState extends State<ScrollingTVEpisodeCasts>
                                                   .cast![index].profilePath ==
                                               null
                                           ? Image.asset(
-                                              'assets/images/na_square.png',
+                                              'assets/images/na_rect.png',
                                               fit: BoxFit.cover,
                                             )
                                           : CachedNetworkImage(
@@ -771,11 +841,12 @@ class ScrollingTVEpisodeCastsState extends State<ScrollingTVEpisodeCasts>
                                                 ),
                                               ),
                                               placeholder: (context, url) =>
-                                                  detailCastImageShimmer(),
+                                                  detailCastImageShimmer1(
+                                                      isDark),
                                               errorWidget:
                                                   (context, url, error) =>
                                                       Image.asset(
-                                                'assets/images/na_sqaure.png',
+                                                'assets/images/na_rect.png',
                                                 fit: BoxFit.cover,
                                               ),
                                             ),

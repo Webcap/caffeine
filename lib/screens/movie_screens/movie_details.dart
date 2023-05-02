@@ -6,6 +6,7 @@ import 'package:login/models/movie_models.dart';
 import 'package:login/provider/imagequality_provider.dart';
 import 'package:login/provider/mixpanel_provider.dart';
 import 'package:login/provider/settings_provider.dart';
+import 'package:login/screens/common/watch_providers_dets.dart';
 import 'package:login/screens/movie_screens/movie_source_screen.dart';
 import 'package:login/api/movies_api.dart';
 import 'package:login/screens/movie_screens/widgets/cast_tab_widget.dart';
@@ -28,6 +29,7 @@ import 'package:login/widgets/watch_now_button.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:readmore/readmore.dart';
+import 'package:share_plus/share_plus.dart';
 
 class MovieDetailPage extends StatefulWidget {
   final Movie movie;
@@ -75,69 +77,74 @@ class MovieDetailPageState extends State<MovieDetailPage>
     final isDark = Provider.of<SettingsProvider>(context).darktheme;
     super.build(context);
     return Scaffold(
-        body: CustomScrollView(
-      controller: scrollController,
-      slivers: [
-        SliverAppBar(
-          pinned: true,
-          elevation: 1,
-          shadowColor: isDark ? Colors.white : Colors.black,
-          forceElevated: true,
-          backgroundColor: isDark ? Colors.black : Colors.white,
-          leading: SABTN(
-            onBack: () {
-              Navigator.pop(context);
-            },
-          ),
-          title: SABT(
-            child: Text(
-              widget.movie.releaseDate == null
-                  ? widget.movie.title!
-                  : widget.movie.releaseDate == ""
-                      ? widget.movie.title!
-                      : '${widget.movie.title!} (${DateTime.parse(widget.movie.releaseDate!).year})',
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.onBackground,
+      body: CustomScrollView(
+        controller: scrollController,
+        slivers: [
+          SliverAppBar(
+            pinned: true,
+            elevation: 1,
+            shadowColor: isDark ? Colors.white : Colors.black,
+            forceElevated: true,
+            backgroundColor: isDark ? Colors.black : Colors.white,
+            leading: SABTN(
+              onBack: () {
+                Navigator.pop(context);
+              },
+            ),
+            title: SABT(
+              child: Text(
+                widget.movie.releaseDate == null
+                    ? widget.movie.title!
+                    : widget.movie.releaseDate == ""
+                        ? widget.movie.title!
+                        : '${widget.movie.title!} (${DateTime.parse(widget.movie.releaseDate!).year})',
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onBackground,
+                ),
+              ),
+            ),
+            expandedHeight: 390,
+            flexibleSpace: FlexibleSpaceBar(
+              collapseMode: CollapseMode.pin,
+              background: Column(
+                children: [
+                  MovieDetailQuickInfo(
+                      heroId: widget.heroId, movie: widget.movie),
+                  const SizedBox(height: 18),
+                  // ratings / lists / bookmark options
+                  MovieDetailOptions(movie: widget.movie),
+                ],
               ),
             ),
           ),
-          expandedHeight: 390,
-          flexibleSpace: FlexibleSpaceBar(
-            collapseMode: CollapseMode.pin,
-            background: Column(
-              children: [
-                MovieDetailQuickInfo(
-                  heroId: widget.heroId,
-                  movie: widget.movie
-                ),
-                const SizedBox(height: 18),
-                // ratings / lists / bookmark options
-                MovieDetailOptions(movie: widget.movie),
-              ],
-            ),
-          ),
-        ),
-        //body
-        SliverList(
-          delegate: SliverChildListDelegate.fixed([
-            MovieAbout(movie: widget.movie)
-          ]),
-        )
-      ],
-    ));
+          //body
+          SliverList(
+            delegate: SliverChildListDelegate.fixed(
+                [MovieAbout(movie: widget.movie)]),
+          )
+        ],
+      ),
+      // floatingActionButton: FloatingActionButton(
+      //     onPressed: () async {
+      //       await Share.share(
+      //           'Checkout the movie \'${widget.movie.title}\'!\nIt is rated ${widget.movie.voteAverage!.toStringAsFixed(1)} out of 10\nhttps://themoviedb.org/movie/${widget.movie.id}');
+      //     },
+      //     child: const Icon(Icons.share)),
+    );
   }
 
   @override
   bool get wantKeepAlive => true;
 
-  void modalBottomSheetMenu() {
-    // showModalBottomSheet(
-    //   context: context,
-    //   builder: (builder) {
-    //     return WatchProvidersDetails(
-    //       api: Endpoints.getMovieWatchProviders(widget.movie.id!),
-    //     );
-    //   },
-    // );
+  void modalBottomSheetMenu(String country) {
+    showModalBottomSheet(
+      context: context,
+      builder: (builder) {
+        return WatchProvidersDetails(
+          api: Endpoints.getMovieWatchProviders(widget.movie.id!),
+          country: country,
+        );
+      },
+    );
   }
 }

@@ -5,7 +5,7 @@ import 'package:login/models/tv.dart';
 import 'package:login/provider/adultmode_provider.dart';
 import 'package:login/provider/imagequality_provider.dart';
 import 'package:login/provider/settings_provider.dart';
-import 'package:login/screens/movie_screens/widgets/person_widget.dart';
+import 'package:login/screens/person/widgets/person_widget.dart';
 import 'package:login/screens/tv_screens/widgets/person_widget.dart';
 import 'package:login/utils/config.dart';
 import 'package:provider/provider.dart';
@@ -245,21 +245,21 @@ class CreatedByPersonDetailPageState extends State<CreatedByPersonDetailPage>
                                             ),
                                           ),
                                         ),
-                                        Container(
-                                          color: const Color(0xFFFFFFFF),
-                                          child: PersonMovieListWidget(
-                                            api: Endpoints
-                                                .getMovieCreditsForPerson(
-                                                    widget.createdBy!.id!),
-                                          ),
-                                        ),
-                                        Container(
-                                          color: const Color(0xFFFFFFFF),
-                                          child: PersonTVListWidget(
-                                              api: Endpoints
-                                                  .getTVCreditsForPerson(
-                                                      widget.createdBy!.id!)),
-                                        ),
+                                        // Container(
+                                        //   color: const Color(0xFFFFFFFF),
+                                        //   child: PersonMovieListWidget(
+                                        //     api: Endpoints
+                                        //         .getMovieCreditsForPerson(
+                                        //             widget.createdBy!.id!),
+                                        //   ),
+                                        // ),
+                                        // Container(
+                                        //   color: const Color(0xFFFFFFFF),
+                                        //   child: PersonTVListWidget(
+                                        //       api: Endpoints
+                                        //           .getTVCreditsForPerson(
+                                        //               widget.createdBy!.id!)),
+                                        // ),
                                       ],
                                     ),
                                   ),

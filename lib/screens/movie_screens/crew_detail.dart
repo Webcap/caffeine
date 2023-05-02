@@ -4,7 +4,7 @@ import 'package:login/api/endpoints.dart';
 import 'package:login/models/credits.dart';
 import 'package:login/provider/imagequality_provider.dart';
 import 'package:login/provider/settings_provider.dart';
-import 'package:login/screens/movie_screens/widgets/person_widget.dart';
+import 'package:login/screens/person/widgets/person_widget.dart';
 import 'package:login/utils/config.dart';
 import 'package:provider/provider.dart';
 
@@ -247,21 +247,21 @@ class CrewDetailPageState extends State<CrewDetailPage>
                                             ),
                                           ),
                                         ),
-                                        Container(
-                                          color: const Color(0xFFFFFFFF),
-                                          child: PersonMovieListWidget(
-                                            api: Endpoints
-                                                .getMovieCreditsForPerson(
-                                                    widget.crew!.id!),
-                                          ),
-                                        ),
-                                        Container(
-                                          color: const Color(0xFFFFFFFF),
-                                          child: PersonTVListWidget(
-                                              api: Endpoints
-                                                  .getTVCreditsForPerson(
-                                                      widget.crew!.id!)),
-                                        ),
+                                        // Container(
+                                        //   color: const Color(0xFFFFFFFF),
+                                        //   child: PersonMovieListWidget(
+                                        //     api: Endpoints
+                                        //         .getMovieCreditsForPerson(
+                                        //             widget.crew!.id!),
+                                        //   ),
+                                        // ),
+                                        // Container(
+                                        //   color: const Color(0xFFFFFFFF),
+                                        //   child: PersonTVListWidget(
+                                        //       api: Endpoints
+                                        //           .getTVCreditsForPerson(
+                                        //               widget.crew!.id!)),
+                                        //),
                                       ],
                                     ),
                                   ),

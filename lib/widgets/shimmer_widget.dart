@@ -266,9 +266,136 @@ Widget mainPageVerticalScrollShimmer(isLoading, scrollController) => Container(
       ),
     );
 
+Widget mainPageVerticalScrollShimmer1({isDark, isLoading, scrollController}) =>
+    Container(
+      child: Column(
+        children: [
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 8.0),
+              child: Column(
+                children: [
+                  Expanded(
+                    child: ListView.builder(
+                        controller: scrollController,
+                        physics: const BouncingScrollPhysics(),
+                        itemCount: 10,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Container(
+                            child: Shimmer.fromColors(
+                              baseColor: isDark
+                                  ? Colors.grey.shade800
+                                  : Colors.grey.shade300,
+                              highlightColor: isDark
+                                  ? Colors.grey.shade700
+                                  : Colors.grey.shade100,
+                              direction: ShimmerDirection.ltr,
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                  top: 0.0,
+                                  bottom: 3.0,
+                                  left: 10,
+                                ),
+                                child: Column(
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              right: 10.0),
+                                          child: SizedBox(
+                                            width: 85,
+                                            height: 130,
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                borderRadius:
+                                                    BorderRadius.circular(10.0),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    bottom: 8.0),
+                                                child: Container(
+                                                  width: 150,
+                                                  height: 20,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                              Row(
+                                                children: <Widget>[
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            right: 1.0),
+                                                    child: Container(
+                                                      height: 20,
+                                                      width: 20,
+                                                      color: Colors.white,
+                                                    ),
+                                                  ),
+                                                  Container(
+                                                    width: 30,
+                                                    height: 20,
+                                                    color: Colors.white,
+                                                  )
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                    Divider(
+                                      color: !isDark
+                                          ? Colors.black54
+                                          : Colors.white54,
+                                      thickness: 1,
+                                      endIndent: 20,
+                                      indent: 10,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );
+                        }),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Visibility(
+              visible: isLoading,
+              child: const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Center(child: LinearProgressIndicator()),
+              )),
+        ],
+      ),
+    );
+
 Widget mainPageVerticalScrollImageShimmer() => Shimmer.fromColors(
     baseColor: Colors.grey.shade800,
     highlightColor: Colors.grey.shade100,
+    direction: ShimmerDirection.ltr,
+    child: Container(
+      width: 85.0,
+      height: 130.0,
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10.0), color: Colors.white),
+    ));
+
+Widget mainPageVerticalScrollImageShimmer1(isDark) => Shimmer.fromColors(
+    baseColor: isDark ? Colors.grey.shade800 : Colors.grey.shade300,
+    highlightColor: isDark ? Colors.grey.shade700 : Colors.grey.shade100,
     direction: ShimmerDirection.ltr,
     child: Container(
       width: 85.0,
@@ -485,6 +612,55 @@ Widget detailCastShimmer() => Column(
       ],
     );
 
+Widget detailCastShimmer1(isDark) => Column(
+      mainAxisSize: MainAxisSize.max,
+      children: <Widget>[
+        Expanded(
+          child: Shimmer.fromColors(
+            baseColor: isDark ? Colors.grey.shade800 : Colors.grey.shade300,
+            highlightColor:
+                isDark ? Colors.grey.shade700 : Colors.grey.shade100,
+            direction: ShimmerDirection.ltr,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemBuilder: (context, index) => Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: SizedBox(
+                  width: 100,
+                  child: Column(
+                    children: <Widget>[
+                      Expanded(
+                        flex: 6,
+                        child: Container(
+                          width: 75.0,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(100.0),
+                              color: Colors.white),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 6,
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 30),
+                          child: Container(
+                            width: 75.0,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5.0),
+                                color: Colors.white),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              itemCount: 5,
+            ),
+          ),
+        ),
+      ],
+    );
+
 Widget detailVideoImageShimmer1(isDark) => Shimmer.fromColors(
     baseColor: isDark ? Colors.grey.shade800 : Colors.grey.shade300,
     highlightColor: isDark ? Colors.grey.shade700 : Colors.grey.shade100,
@@ -492,6 +668,16 @@ Widget detailVideoImageShimmer1(isDark) => Shimmer.fromColors(
     child: Container(
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8.0), color: Colors.white),
+    ));
+
+Widget detailCastImageShimmer1(isDark) => Shimmer.fromColors(
+    baseColor: isDark ? Colors.grey.shade800 : Colors.grey.shade300,
+    highlightColor: isDark ? Colors.grey.shade700 : Colors.grey.shade100,
+    direction: ShimmerDirection.ltr,
+    child: Container(
+      width: 75.0,
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(100.0), color: Colors.white),
     ));
 
 Widget detailVideoShimmer1(isDark) => SizedBox(
@@ -850,6 +1036,146 @@ Widget personAboutSimmer() => Column(
                   width: double.infinity,
                   height: 20,
                   color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+
+Widget moviesAndTVShowGridShimmer(isDark) => Container(
+      padding: const EdgeInsets.only(top: 8),
+      child: Row(
+        children: [
+          Expanded(
+            child: Shimmer.fromColors(
+              baseColor: isDark ? Colors.grey.shade800 : Colors.grey.shade300,
+              highlightColor:
+                  isDark ? Colors.grey.shade700 : Colors.grey.shade100,
+              direction: ShimmerDirection.ltr,
+              child: GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                    maxCrossAxisExtent: 150,
+                    childAspectRatio: 0.48,
+                    crossAxisSpacing: 5,
+                    mainAxisSpacing: 5,
+                  ),
+                  itemCount: 10,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: Column(
+                        children: [
+                          Expanded(
+                            flex: 6,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  color: Colors.white),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          Expanded(
+                              flex: 2,
+                              child: Padding(
+                                padding: const EdgeInsets.only(bottom: 8.0),
+                                child: Container(
+                                  height: 20,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(8.0),
+                                      color: Colors.white),
+                                ),
+                              )),
+                        ],
+                      ),
+                    );
+                  }),
+            ),
+          ),
+        ],
+      ),
+    );
+
+Widget personMoviesAndTVShowShimmer1(isDark) => Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            Shimmer.fromColors(
+              baseColor: isDark ? Colors.grey.shade800 : Colors.grey.shade300,
+              highlightColor:
+                  isDark ? Colors.grey.shade700 : Colors.grey.shade100,
+              direction: ShimmerDirection.ltr,
+              child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Container(
+                    height: 20,
+                    width: 100,
+                    color: Colors.white,
+                  )),
+            ),
+          ],
+        ),
+        Padding(
+          padding:
+              const EdgeInsets.only(left: 5.0, right: 5.0, bottom: 8.0, top: 0),
+          child: Row(
+            children: [
+              Expanded(
+                child: Shimmer.fromColors(
+                  baseColor:
+                      isDark ? Colors.grey.shade800 : Colors.grey.shade300,
+                  highlightColor:
+                      isDark ? Colors.grey.shade700 : Colors.grey.shade100,
+                  direction: ShimmerDirection.ltr,
+                  child: GridView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      gridDelegate:
+                          const SliverGridDelegateWithMaxCrossAxisExtent(
+                        maxCrossAxisExtent: 150,
+                        childAspectRatio: 0.48,
+                        crossAxisSpacing: 5,
+                        mainAxisSpacing: 5,
+                      ),
+                      itemCount: 10,
+                      itemBuilder: (BuildContext context, int index) {
+                        return Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: Column(
+                            children: [
+                              Expanded(
+                                flex: 6,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(8.0),
+                                      color: Colors.white),
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Expanded(
+                                  flex: 2,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(bottom: 8.0),
+                                    child: Container(
+                                      height: 20,
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(8.0),
+                                          color: Colors.white),
+                                    ),
+                                  )),
+                            ],
+                          ),
+                        );
+                      }),
                 ),
               ),
             ],
@@ -1449,6 +1775,56 @@ Widget discoverImageShimmer() => Shimmer.fromColors(
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8.0), color: Colors.white),
       ),
+    );
+
+Widget horizontalScrollingSeasonsList1(isDark) => Column(
+      mainAxisSize: MainAxisSize.max,
+      children: <Widget>[
+        Expanded(
+          child: Shimmer.fromColors(
+            baseColor: isDark ? Colors.grey.shade800 : Colors.grey.shade300,
+            highlightColor:
+                isDark ? Colors.grey.shade700 : Colors.grey.shade100,
+            direction: ShimmerDirection.ltr,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemBuilder: (context, index) => Padding(
+                padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 20.0),
+                child: SizedBox(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Expanded(
+                        flex: 6,
+                        child: Container(
+                          width: 105.0,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8.0),
+                              color: Colors.white),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 3,
+                        child: Padding(
+                          padding:
+                              const EdgeInsets.only(top: 8.0, bottom: 30.0),
+                          child: Container(
+                            width: 105.0,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5.0),
+                                color: Colors.white),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              itemCount: 10,
+            ),
+          ),
+        ),
+      ],
     );
 
 Widget horizontalScrollingSeasonsList() => Column(

@@ -1,46 +1,41 @@
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/material.dart';
-import 'package:login/api/endpoints.dart';
-import 'package:login/models/credits.dart';
-import 'package:login/provider/imagequality_provider.dart';
 import 'package:login/provider/settings_provider.dart';
-import 'package:login/screens/movie_screens/widgets/cast_detail_about.dart';
-import 'package:login/screens/movie_screens/widgets/cast_details_quick_info.dart';
-import 'package:login/screens/person/widgets/person_widget.dart';
 import 'package:login/screens/movie_screens/widgets/sabth.dart';
-import 'package:login/utils/config.dart';
+import 'package:login/screens/person/widgets/guest_star_detail_about.dart';
+import 'package:login/screens/person/widgets/guest_star_detail_quick.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/material.dart';
+import '/models/credits.dart';
 
-class CastDetailPage extends StatefulWidget {
-  final Cast? cast;
+
+class GuestStarDetailPage extends StatefulWidget {
+  final TVEpisodeGuestStars? cast;
   final String heroId;
 
-  const CastDetailPage({
+  const GuestStarDetailPage({
     Key? key,
     this.cast,
     required this.heroId,
   }) : super(key: key);
   @override
-  CastDetailPageState createState() => CastDetailPageState();
+  GuestStarDetailPageState createState() => GuestStarDetailPageState();
 }
 
-class CastDetailPageState extends State<CastDetailPage>
+class GuestStarDetailPageState extends State<GuestStarDetailPage>
     with
         SingleTickerProviderStateMixin,
-        AutomaticKeepAliveClientMixin<CastDetailPage> {
+        AutomaticKeepAliveClientMixin<GuestStarDetailPage> {
   late TabController tabController;
 
   @override
   void initState() {
     super.initState();
-
     tabController = TabController(length: 3, vsync: this);
     // mixpanelUpload(context);
   }
 
   // void mixpanelUpload(BuildContext context) {
   //   final mixpanel =
-  //       Provider.of<MixpanelProvider>(context, listen: false).mixpanel;
+  //       Provider.of<SettingsProvider>(context, listen: false).mixpanel;
   //   mixpanel.track('Most viewed person pages', properties: {
   //     'Person name': '${widget.cast!.name}',
   //     'Person id': '${widget.cast!.id}'
@@ -50,6 +45,7 @@ class CastDetailPageState extends State<CastDetailPage>
   int selectedIndex = 0;
   final scrollController = ScrollController();
 
+  @override
   Widget build(BuildContext context) {
     super.build(context);
     final isDark = Provider.of<SettingsProvider>(context).darktheme;
@@ -81,7 +77,7 @@ class CastDetailPageState extends State<CastDetailPage>
               collapseMode: CollapseMode.pin,
               background: Column(
                 children: [
-                  CastDetailQuickInfo(
+                  GuestStarDetailQuickInfo(
                     widget: widget,
                     imageQuality: imageQuality,
                   ),
@@ -92,7 +88,7 @@ class CastDetailPageState extends State<CastDetailPage>
           SliverList(
             delegate: SliverChildListDelegate.fixed(
               [
-                CastDetailAbout(
+                GuestStarDetailAbout(
                     cast: widget.cast,
                     selectedIndex: selectedIndex,
                     tabController: tabController)

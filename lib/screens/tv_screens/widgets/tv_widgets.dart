@@ -20,7 +20,6 @@ import 'package:login/screens/movie_screens/cast_details.dart';
 import 'package:login/screens/movie_screens/crew_detail.dart';
 import 'package:login/screens/movie_screens/widgets/movie_social_links.dart';
 import 'package:login/screens/tv_screens/episode_detail_page.dart';
-import 'package:login/screens/tv_screens/seasons_detail.dart';
 import 'package:login/screens/tv_screens/tv_detail_page.dart';
 import 'package:login/utils/config.dart';
 import 'package:login/widgets/hero_photoview.dart';
@@ -836,18 +835,18 @@ class SeasonsListState extends State<SeasonsList> {
                                 padding: const EdgeInsets.all(8.0),
                                 child: GestureDetector(
                                   onTap: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => SeasonsDetail(
-                                                tvId: widget.tvId,
-                                                adult: widget.adult,
-                                                seriesName: widget.seriesName,
-                                                tvDetails: tvDetails!,
-                                                seasons:
-                                                    tvDetails!.seasons![index],
-                                                heroId:
-                                                    '${tvDetails!.seasons![index].seasonNumber}')));
+                                    // Navigator.push(
+                                    //     context,
+                                    //     MaterialPageRoute(
+                                    //         builder: (context) => SeasonsDetail(
+                                    //             tvId: widget.tvId,
+                                    //             adult: widget.adult,
+                                    //             seriesName: widget.seriesName,
+                                    //             tvDetails: tvDetails!,
+                                    //             seasons:
+                                    //                 tvDetails!.seasons![index],
+                                    //             heroId:
+                                    //                 '${tvDetails!.seasons![index].seasonNumber}')));
                                   },
                                   child: SizedBox(
                                     width: 105,
@@ -940,356 +939,6 @@ class SeasonsListState extends State<SeasonsList> {
       ],
     );
   }
-}
-
-class EpisodeListWidget extends StatefulWidget {
-  final int? tvId;
-  final String? api;
-  final String? seriesName;
-  final bool? adult;
-  const EpisodeListWidget(
-      {Key? key, this.api, this.tvId, this.seriesName, required this.adult})
-      : super(key: key);
-
-  @override
-  EpisodeListWidgetState createState() => EpisodeListWidgetState();
-}
-
-class EpisodeListWidgetState extends State<EpisodeListWidget>
-    with AutomaticKeepAliveClientMixin {
-  TVDetails? tvDetails;
-  bool requestFailed = false;
-
-  @override
-  void initState() {
-    super.initState();
-    getData();
-  }
-
-  void getData() {
-    tvApi().fetchTVDetails(widget.api!).then((value) {
-      setState(() {
-        tvDetails = value;
-      });
-    });
-    Future.delayed(const Duration(seconds: 11), () {
-      if (tvDetails == null) {
-        setState(() {
-          requestFailed = true;
-          tvDetails = TVDetails(episodes: [EpisodeList()]);
-        });
-      }
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    super.build(context);
-    // final isDark = Provider.of<DarkthemeProvider>(context).darktheme;
-    final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
-    return Container(
-        color: const Color(0xFFFFFFFF),
-        child: tvDetails == null
-            ? ListView.builder(
-                itemCount: 10,
-                itemBuilder: (BuildContext context, int index) {
-                  return Container(
-                    color: const Color(0xFFFFFFFF),
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                        top: 0.0,
-                        bottom: 8.0,
-                        left: 10,
-                      ),
-                      child: Column(
-                        children: [
-                          Shimmer.fromColors(
-                            baseColor: Colors.grey.shade300,
-                            highlightColor: Colors.grey.shade100,
-                            direction: ShimmerDirection.ltr,
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                    color: Colors.white, width: 10, height: 15),
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      right: 10.0, left: 5.0),
-                                  child: Container(
-                                    height: 56.4,
-                                    width: 100,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(6.0),
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(bottom: 2.0),
-                                        child: Container(
-                                            color: Colors.white,
-                                            height: 19,
-                                            width: 150),
-                                      ),
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(bottom: 2.0),
-                                        child: Container(
-                                            color: Colors.white,
-                                            height: 19,
-                                            width: 110),
-                                      ),
-                                      Row(children: [
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(right: 3.0),
-                                          child: Container(
-                                              color: Colors.white,
-                                              height: 20,
-                                              width: 20),
-                                        ),
-                                        Container(
-                                            color: Colors.white,
-                                            height: 20,
-                                            width: 25),
-                                      ]),
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                          const Divider(
-                            color: maincolor,
-                            thickness: 1.5,
-                            endIndent: 30,
-                            indent: 5,
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                })
-            : requestFailed == true
-                ? retryWidget()
-                : tvDetails!.episodes!.isEmpty
-                    ? const Center(
-                        child: Text('No episodes found :(',
-                            style: kTextSmallHeaderStyle),
-                      )
-                    : ListView.builder(
-                        itemCount: tvDetails!.episodes!.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return GestureDetector(
-                            onTap: () {
-                              Navigator.push(context,
-                                  MaterialPageRoute(builder: (context) {
-                                return EpisodeDetailPage(
-                                    adult: widget.adult,
-                                    seriesName: widget.seriesName,
-                                    tvId: widget.tvId,
-                                    episodes: tvDetails!.episodes,
-                                    episodeList: tvDetails!.episodes![index]);
-                              }));
-                            },
-                            child: Container(
-                              color: const Color(0xFFFFFFFF),
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                  top: 0.0,
-                                  bottom: 8.0,
-                                  left: 10,
-                                ),
-                                child: Column(
-                                  children: [
-                                    Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(tvDetails!
-                                            .episodes![index].episodeNumber!
-                                            .toString()),
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              right: 10.0, left: 5.0),
-                                          child: SizedBox(
-                                            height: 56.4,
-                                            width: 100,
-                                            child: ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(6.0),
-                                              child: tvDetails!.episodes![index]
-                                                              .stillPath ==
-                                                          null ||
-                                                      tvDetails!
-                                                          .episodes![index]
-                                                          .stillPath!
-                                                          .isEmpty
-                                                  ? Image.asset(
-                                                      'assets/images/na_logo.png',
-                                                      fit: BoxFit.cover,
-                                                    )
-                                                  : CachedNetworkImage(
-                                                      fadeOutDuration:
-                                                          const Duration(
-                                                              milliseconds:
-                                                                  300),
-                                                      fadeOutCurve:
-                                                          Curves.easeOut,
-                                                      fadeInDuration:
-                                                          const Duration(
-                                                              milliseconds:
-                                                                  700),
-                                                      fadeInCurve:
-                                                          Curves.easeIn,
-                                                      imageUrl:
-                                                          TMDB_BASE_IMAGE_URL +
-                                                              imageQuality +
-                                                              tvDetails!
-                                                                  .episodes![
-                                                                      index]
-                                                                  .stillPath!,
-                                                      imageBuilder: (context,
-                                                              imageProvider) =>
-                                                          Container(
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          image:
-                                                              DecorationImage(
-                                                            image:
-                                                                imageProvider,
-                                                            fit: BoxFit.cover,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      placeholder: (context,
-                                                              url) =>
-                                                          Shimmer.fromColors(
-                                                        baseColor: Colors
-                                                            .grey.shade300,
-                                                        highlightColor: Colors
-                                                            .grey.shade100,
-                                                        direction:
-                                                            ShimmerDirection
-                                                                .ltr,
-                                                        child: Container(
-                                                            color:
-                                                                Colors.white),
-                                                      ),
-                                                      errorWidget: (context,
-                                                              url, error) =>
-                                                          Image.asset(
-                                                        'assets/images/na_logo.png',
-                                                        fit: BoxFit.cover,
-                                                      ),
-                                                    ),
-                                            ),
-                                          ),
-                                        ),
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                  tvDetails!
-                                                      .episodes![index].name!,
-                                                  style: const TextStyle(
-                                                      overflow: TextOverflow
-                                                          .ellipsis)),
-                                              Text(
-                                                tvDetails!.episodes![index]
-                                                                .airDate ==
-                                                            null ||
-                                                        tvDetails!
-                                                            .episodes![index]
-                                                            .airDate!
-                                                            .isEmpty
-                                                    ? 'Air date unknown'
-                                                    : '${DateTime.parse(tvDetails!.episodes![index].airDate!).day} ${DateFormat("MMMM").format(DateTime.parse(tvDetails!.episodes![index].airDate!))}, ${DateTime.parse(tvDetails!.episodes![index].airDate!).year}',
-                                                style: TextStyle(
-                                                  color: Colors.black54,
-                                                ),
-                                              ),
-                                              Row(children: [
-                                                const Padding(
-                                                  padding: EdgeInsets.only(
-                                                      right: 3.0),
-                                                  child: Icon(
-                                                    Icons.star,
-                                                    size: 20,
-                                                  ),
-                                                ),
-                                                Text(tvDetails!.episodes![index]
-                                                    .voteAverage!
-                                                    .toStringAsFixed(1))
-                                              ]),
-                                            ],
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                    const Divider(
-                                      color: maincolor,
-                                      thickness: 1.5,
-                                      endIndent: 30,
-                                      indent: 5,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          );
-                        }));
-  }
-
-  Widget retryWidget() {
-    return Center(
-      child: Container(
-          width: double.infinity,
-          color: const Color(0xFFFFFFFF),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset('assets/images/network-signal.png',
-                  width: 60, height: 60),
-              const Padding(
-                padding: EdgeInsets.only(top: 8.0),
-                child: Text('Please connect to the Internet and try again',
-                    textAlign: TextAlign.center),
-              ),
-              TextButton(
-                  style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all(const Color(0x0DF57C00)),
-                      maximumSize:
-                          MaterialStateProperty.all(const Size(200, 60)),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5.0),
-                              side:
-                                  const BorderSide(color: Color(0xFFF57C00))))),
-                  onPressed: () {
-                    setState(() {
-                      requestFailed = false;
-                      tvDetails = null;
-                    });
-                    getData();
-                  },
-                  child: const Text('Retry')),
-            ],
-          )),
-    );
-  }
-
-  @override
-  bool get wantKeepAlive => true;
 }
 
 class TopButton extends StatefulWidget {
@@ -2138,253 +1787,253 @@ class TVInfoTableState extends State<TVInfoTable> {
   }
 }
 
-class TVSeasonsTab extends StatefulWidget {
-  final String? api;
-  final int? tvId;
-  final String? seriesName;
-  final bool? adult;
-  const TVSeasonsTab(
-      {Key? key, this.api, this.tvId, this.seriesName, required this.adult})
-      : super(key: key);
+// class TVSeasonsTab extends StatefulWidget {
+//   final String? api;
+//   final int? tvId;
+//   final String? seriesName;
+//   final bool? adult;
+//   const TVSeasonsTab(
+//       {Key? key, this.api, this.tvId, this.seriesName, required this.adult})
+//       : super(key: key);
 
-  @override
-  TVSeasonsTabState createState() => TVSeasonsTabState();
-}
+//   @override
+//   TVSeasonsTabState createState() => TVSeasonsTabState();
+// }
 
-class TVSeasonsTabState extends State<TVSeasonsTab>
-    with AutomaticKeepAliveClientMixin<TVSeasonsTab> {
-  TVDetails? tvDetails;
-  bool requestFailed = false;
+// class TVSeasonsTabState extends State<TVSeasonsTab>
+//     with AutomaticKeepAliveClientMixin<TVSeasonsTab> {
+//   TVDetails? tvDetails;
+//   bool requestFailed = false;
 
-  @override
-  void initState() {
-    super.initState();
-    getData();
-  }
+//   @override
+//   void initState() {
+//     super.initState();
+//     getData();
+//   }
 
-  void getData() {
-    tvApi().fetchTVDetails(widget.api!).then((value) {
-      setState(() {
-        tvDetails = value;
-      });
-    });
-    Future.delayed(const Duration(seconds: 11), () {
-      if (tvDetails == null) {
-        setState(() {
-          requestFailed = true;
-          tvDetails = TVDetails(seasons: [Seasons()]);
-        });
-      }
-    });
-  }
+//   void getData() {
+//     tvApi().fetchTVDetails(widget.api!).then((value) {
+//       setState(() {
+//         tvDetails = value;
+//       });
+//     });
+//     Future.delayed(const Duration(seconds: 11), () {
+//       if (tvDetails == null) {
+//         setState(() {
+//           requestFailed = true;
+//           tvDetails = TVDetails(seasons: [Seasons()]);
+//         });
+//       }
+//     });
+//   }
 
-  @override
-  Widget build(BuildContext context) {
-    // final isDark = Provider.of<DarkthemeProvider>(context).darktheme;
-    super.build(context);
-    final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
-    return tvDetails == null
-        ? Container(
-            color: const Color(0xFFFFFFFF), child: tvDetailsSeasonsTabShimmer())
-        : tvDetails!.seasons!.isEmpty
-            ? Container(
-                color: const Color(0xFFFFFFFF),
-                child: const Center(
-                  child: Text('There is no season available for this TV show',
-                      style: kTextSmallHeaderStyle),
-                ),
-              )
-            : requestFailed == true
-                ? retryWidget()
-                : Container(
-                    color: const Color(0xFFFFFFFF),
-                    child: Column(
-                      children: [
-                        Expanded(
-                          child: ListView.builder(
-                              itemCount: tvDetails!.seasons!.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                return GestureDetector(
-                                  onTap: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => SeasonsDetail(
-                                                adult: widget.adult,
-                                                seriesName: widget.seriesName,
-                                                tvId: widget.tvId,
-                                                tvDetails: tvDetails!,
-                                                seasons:
-                                                    tvDetails!.seasons![index],
-                                                heroId:
-                                                    '${tvDetails!.seasons![index].seasonId}')));
-                                  },
-                                  child: Container(
-                                    color: const Color(0xFFFFFFFF),
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(
-                                        top: 0.0,
-                                        bottom: 5.0,
-                                        left: 15,
-                                      ),
-                                      child: Column(
-                                        children: [
-                                          Row(
-                                            // crossAxisAlignment:
-                                            //     CrossAxisAlignment.start,
-                                            children: [
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    right: 30.0),
-                                                child: SizedBox(
-                                                  width: 85,
-                                                  height: 130,
-                                                  child: Hero(
-                                                    tag:
-                                                        '${tvDetails!.seasons![index].seasonId}',
-                                                    child: ClipRRect(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10.0),
-                                                      child: tvDetails!
-                                                                  .seasons![
-                                                                      index]
-                                                                  .posterPath ==
-                                                              null
-                                                          ? Image.asset(
-                                                              'assets/images/na_logo.png',
-                                                              fit: BoxFit.cover,
-                                                            )
-                                                          : CachedNetworkImage(
-                                                              fadeOutDuration:
-                                                                  const Duration(
-                                                                      milliseconds:
-                                                                          300),
-                                                              fadeOutCurve:
-                                                                  Curves
-                                                                      .easeOut,
-                                                              fadeInDuration:
-                                                                  const Duration(
-                                                                      milliseconds:
-                                                                          700),
-                                                              fadeInCurve:
-                                                                  Curves.easeIn,
-                                                              imageUrl: TMDB_BASE_IMAGE_URL +
-                                                                  imageQuality +
-                                                                  tvDetails!
-                                                                      .seasons![
-                                                                          index]
-                                                                      .posterPath!,
-                                                              imageBuilder:
-                                                                  (context,
-                                                                          imageProvider) =>
-                                                                      Container(
-                                                                decoration:
-                                                                    BoxDecoration(
-                                                                  image:
-                                                                      DecorationImage(
-                                                                    image:
-                                                                        imageProvider,
-                                                                    fit: BoxFit
-                                                                        .cover,
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                              placeholder: (context,
-                                                                      url) =>
-                                                                  recommendationAndSimilarTabImageShimmer(),
-                                                              errorWidget: (context,
-                                                                      url,
-                                                                      error) =>
-                                                                  Image.asset(
-                                                                'assets/images/na_logo.png',
-                                                                fit: BoxFit
-                                                                    .cover,
-                                                              ),
-                                                            ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                              Expanded(
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text(
-                                                      tvDetails!.seasons![index]
-                                                          .name!,
-                                                      style: const TextStyle(
-                                                          fontSize: 20,
-                                                          fontFamily:
-                                                              'PoppinsSB',
-                                                          overflow: TextOverflow
-                                                              .ellipsis),
-                                                    ),
-                                                  ],
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                          Divider(
-                                            color: Colors.white54,
-                                            thickness: 1,
-                                            endIndent: 20,
-                                            indent: 10,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              }),
-                        ),
-                      ],
-                    ));
-  }
+//   @override
+//   Widget build(BuildContext context) {
+//     // final isDark = Provider.of<DarkthemeProvider>(context).darktheme;
+//     super.build(context);
+//     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
+//     return tvDetails == null
+//         ? Container(
+//             color: const Color(0xFFFFFFFF), child: tvDetailsSeasonsTabShimmer())
+//         : tvDetails!.seasons!.isEmpty
+//             ? Container(
+//                 color: const Color(0xFFFFFFFF),
+//                 child: const Center(
+//                   child: Text('There is no season available for this TV show',
+//                       style: kTextSmallHeaderStyle),
+//                 ),
+//               )
+//             : requestFailed == true
+//                 ? retryWidget()
+//                 : Container(
+//                     color: const Color(0xFFFFFFFF),
+//                     child: Column(
+//                       children: [
+//                         Expanded(
+//                           child: ListView.builder(
+//                               itemCount: tvDetails!.seasons!.length,
+//                               itemBuilder: (BuildContext context, int index) {
+//                                 return GestureDetector(
+//                                   onTap: () {
+//                                     Navigator.push(
+//                                         context,
+//                                         MaterialPageRoute(
+//                                             builder: (context) => SeasonsDetail(
+//                                                 adult: widget.adult,
+//                                                 seriesName: widget.seriesName,
+//                                                 tvId: widget.tvId,
+//                                                 tvDetails: tvDetails!,
+//                                                 seasons:
+//                                                     tvDetails!.seasons![index],
+//                                                 heroId:
+//                                                     '${tvDetails!.seasons![index].seasonId}')));
+//                                   },
+//                                   child: Container(
+//                                     color: const Color(0xFFFFFFFF),
+//                                     child: Padding(
+//                                       padding: const EdgeInsets.only(
+//                                         top: 0.0,
+//                                         bottom: 5.0,
+//                                         left: 15,
+//                                       ),
+//                                       child: Column(
+//                                         children: [
+//                                           Row(
+//                                             // crossAxisAlignment:
+//                                             //     CrossAxisAlignment.start,
+//                                             children: [
+//                                               Padding(
+//                                                 padding: const EdgeInsets.only(
+//                                                     right: 30.0),
+//                                                 child: SizedBox(
+//                                                   width: 85,
+//                                                   height: 130,
+//                                                   child: Hero(
+//                                                     tag:
+//                                                         '${tvDetails!.seasons![index].seasonId}',
+//                                                     child: ClipRRect(
+//                                                       borderRadius:
+//                                                           BorderRadius.circular(
+//                                                               10.0),
+//                                                       child: tvDetails!
+//                                                                   .seasons![
+//                                                                       index]
+//                                                                   .posterPath ==
+//                                                               null
+//                                                           ? Image.asset(
+//                                                               'assets/images/na_logo.png',
+//                                                               fit: BoxFit.cover,
+//                                                             )
+//                                                           : CachedNetworkImage(
+//                                                               fadeOutDuration:
+//                                                                   const Duration(
+//                                                                       milliseconds:
+//                                                                           300),
+//                                                               fadeOutCurve:
+//                                                                   Curves
+//                                                                       .easeOut,
+//                                                               fadeInDuration:
+//                                                                   const Duration(
+//                                                                       milliseconds:
+//                                                                           700),
+//                                                               fadeInCurve:
+//                                                                   Curves.easeIn,
+//                                                               imageUrl: TMDB_BASE_IMAGE_URL +
+//                                                                   imageQuality +
+//                                                                   tvDetails!
+//                                                                       .seasons![
+//                                                                           index]
+//                                                                       .posterPath!,
+//                                                               imageBuilder:
+//                                                                   (context,
+//                                                                           imageProvider) =>
+//                                                                       Container(
+//                                                                 decoration:
+//                                                                     BoxDecoration(
+//                                                                   image:
+//                                                                       DecorationImage(
+//                                                                     image:
+//                                                                         imageProvider,
+//                                                                     fit: BoxFit
+//                                                                         .cover,
+//                                                                   ),
+//                                                                 ),
+//                                                               ),
+//                                                               placeholder: (context,
+//                                                                       url) =>
+//                                                                   recommendationAndSimilarTabImageShimmer(),
+//                                                               errorWidget: (context,
+//                                                                       url,
+//                                                                       error) =>
+//                                                                   Image.asset(
+//                                                                 'assets/images/na_logo.png',
+//                                                                 fit: BoxFit
+//                                                                     .cover,
+//                                                               ),
+//                                                             ),
+//                                                     ),
+//                                                   ),
+//                                                 ),
+//                                               ),
+//                                               Expanded(
+//                                                 child: Column(
+//                                                   crossAxisAlignment:
+//                                                       CrossAxisAlignment.start,
+//                                                   children: [
+//                                                     Text(
+//                                                       tvDetails!.seasons![index]
+//                                                           .name!,
+//                                                       style: const TextStyle(
+//                                                           fontSize: 20,
+//                                                           fontFamily:
+//                                                               'PoppinsSB',
+//                                                           overflow: TextOverflow
+//                                                               .ellipsis),
+//                                                     ),
+//                                                   ],
+//                                                 ),
+//                                               )
+//                                             ],
+//                                           ),
+//                                           Divider(
+//                                             color: Colors.white54,
+//                                             thickness: 1,
+//                                             endIndent: 20,
+//                                             indent: 10,
+//                                           ),
+//                                         ],
+//                                       ),
+//                                     ),
+//                                   ),
+//                                 );
+//                               }),
+//                         ),
+//                       ],
+//                     ));
+//   }
 
-  Widget retryWidget() {
-    return Center(
-      child: Container(
-          width: double.infinity,
-          color: const Color(0xFFFFFFFF),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset('assets/images/network-signal.png',
-                  width: 60, height: 60),
-              const Padding(
-                padding: EdgeInsets.only(top: 8.0),
-                child: Text('Please connect to the Internet and try again',
-                    textAlign: TextAlign.center),
-              ),
-              TextButton(
-                  style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all(const Color(0x0DF57C00)),
-                      maximumSize:
-                          MaterialStateProperty.all(const Size(200, 60)),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5.0),
-                              side:
-                                  const BorderSide(color: Color(0xFFF57C00))))),
-                  onPressed: () {
-                    setState(() {
-                      requestFailed = false;
-                      tvDetails = null;
-                    });
-                    getData();
-                  },
-                  child: const Text('Retry')),
-            ],
-          )),
-    );
-  }
+//   Widget retryWidget() {
+//     return Center(
+//       child: Container(
+//           width: double.infinity,
+//           color: const Color(0xFFFFFFFF),
+//           child: Column(
+//             mainAxisAlignment: MainAxisAlignment.center,
+//             children: [
+//               Image.asset('assets/images/network-signal.png',
+//                   width: 60, height: 60),
+//               const Padding(
+//                 padding: EdgeInsets.only(top: 8.0),
+//                 child: Text('Please connect to the Internet and try again',
+//                     textAlign: TextAlign.center),
+//               ),
+//               TextButton(
+//                   style: ButtonStyle(
+//                       backgroundColor:
+//                           MaterialStateProperty.all(const Color(0x0DF57C00)),
+//                       maximumSize:
+//                           MaterialStateProperty.all(const Size(200, 60)),
+//                       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+//                           RoundedRectangleBorder(
+//                               borderRadius: BorderRadius.circular(5.0),
+//                               side:
+//                                   const BorderSide(color: Color(0xFFF57C00))))),
+//                   onPressed: () {
+//                     setState(() {
+//                       requestFailed = false;
+//                       tvDetails = null;
+//                     });
+//                     getData();
+//                   },
+//                   child: const Text('Retry')),
+//             ],
+//           )),
+//     );
+//   }
 
-  @override
-  bool get wantKeepAlive => true;
-}
+//   @override
+//   bool get wantKeepAlive => true;
+// }
 
 class TVCastTab extends StatefulWidget {
   final String? api;
