@@ -45,8 +45,16 @@ class AboutPage extends StatelessWidget {
                   ),
                 ),
                 const Text(
-                  'This product uses the TMDB API but is not endorsed or certified by TMDB.',
+                  'this app does not host any content on its server',
                   maxLines: 5,
+                  textAlign: TextAlign.center,
+                  style:
+                      TextStyle(fontSize: 20.0, overflow: TextOverflow.visible),
+                ),
+                const SizedBox(height: 5,),
+                const Text(
+                  'This product uses the TMDB API but is not endorsed or certified by TMDB.',
+                  maxLines: 15,
                   textAlign: TextAlign.center,
                   style:
                       TextStyle(fontSize: 20.0, overflow: TextOverflow.visible),
