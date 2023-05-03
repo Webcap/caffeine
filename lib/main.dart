@@ -4,18 +4,18 @@ import 'dart:math';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-
 
 import 'package:login/provider/settings_provider.dart';
 
 import 'package:login/screens/auth_screens/user_state.dart';
-
+import 'package:login/utils/config.dart';
 
 import 'package:login/utils/theme_data.dart';
+import 'package:path_provider/path_provider.dart';
 
 import 'package:provider/provider.dart';
-
 
 SettingsProvider settingsProvider = SettingsProvider();
 final Future<FirebaseApp> _initialization = Firebase.initializeApp();
@@ -37,6 +37,7 @@ void main() async {
   await settingsProvider.getCurrentImageQuality();
   await settingsProvider.getCurrentWatchCountry();
   await settingsProvider.getCurrentViewType();
+  await settingsProvider.initMixpanel();
   await _initialization;
 
   runApp(caffeine(
@@ -55,6 +56,16 @@ class caffeine extends StatefulWidget {
 
 class _caffeineState extends State<caffeine>
     with ChangeNotifier, WidgetsBindingObserver {
+  void fileDelete() async {
+    for (int i = 0; i < appNames.length; i++) {
+      File file = File(
+          "${(await getApplicationSupportDirectory()).path}${appNames[i]}");
+      if (file.existsSync()) {
+        file.delete();
+      }
+    }
+  }
+
   bool? isFirstLaunch;
   bool? isAndroidTV;
   static final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
@@ -73,16 +84,19 @@ class _caffeineState extends State<caffeine>
   @override
   void initState() {
     super.initState();
+    FirebaseMessaging.onMessage.listen((RemoteMessage event) {});
+    FirebaseMessaging.onMessageOpenedApp.listen((message) {});
+    fileDelete();
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: _initialization,
-      builder: (
-        context,
-        snapshot,
-      ) {
+        future: _initialization,
+        builder: (
+          context,
+          snapshot,
+        ) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const MaterialApp(
               home: Scaffold(
@@ -124,7 +138,6 @@ class _caffeineState extends State<caffeine>
                   },
                 );
               }));
-        }
-    );
+        });
   }
 }

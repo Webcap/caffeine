@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:login/provider/internet_provider.dart';
+import 'package:login/provider/settings_provider.dart';
 import 'package:login/provider/sign_in_provider.dart';
 import 'package:login/screens/auth_screens/forgot_password.dart';
 import 'package:login/screens/home_screen/dash_screen.dart';
@@ -48,11 +49,11 @@ class _LoginPage423State extends State<LoginPage423> {
             .then((value) => Navigator.canPop(context)
                 ? Navigator.pushReplacement(context,
                     MaterialPageRoute(builder: ((context) {
-                    // final mixpanel =
-                    //     Provider.of<SettingsProvider>(context).mixpanel;
-                    // mixpanel.track(
-                    //   'Users Login',
-                    // );
+                    final mixpanel =
+                        Provider.of<SettingsProvider>(context).mixpanel;
+                    mixpanel.track(
+                      'Users Login',
+                    );
                     return const caffieneHomePage();
                   })))
                 : null);
@@ -85,7 +86,7 @@ class _LoginPage423State extends State<LoginPage423> {
 
   @override
   Widget build(BuildContext context) {
-    // final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final isDark = Provider.of<SettingsProvider>(context).darktheme;
 
     return Scaffold(
       backgroundColor:

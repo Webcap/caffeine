@@ -30,7 +30,7 @@ class Config {
   static final app_icon = "assets/logo.png";
 }
 
-String mixpanelKey = "4e597266d3068a1a7951bd1d1631637d";
+String mixpanelKey = "c8ff0b487c27b501b6524084dc0b83a9";
 
 const Color darkmode = Colors.white;
 const List<String> backimage = [
@@ -101,7 +101,11 @@ const retryOptions = RetryOptions(
     maxAttempts: 100000);
 const timeOut = Duration(seconds: 10);
 
-// final List<String> appNames = [
-//   'caffiene-v1.0.1.apk',
-//   'caffiene-v1.0.1-dev.apk',
-// ];
+final List<String> appNames = [
+  'caffiene-v1.0.1.apk',
+  'caffiene-v1.0.1-dev.apk',
+  'caffiene-v1.0.2-dev.apk',
+  'caffiene-v1.0.2.apk',
+  'caffiene-v1.0.3.apk',
+  'caffiene-v1.0.3-dev.apk',
+];

@@ -30,17 +30,17 @@ class GuestStarDetailPageState extends State<GuestStarDetailPage>
   void initState() {
     super.initState();
     tabController = TabController(length: 3, vsync: this);
-    // mixpanelUpload(context);
+    mixpanelUpload(context);
   }
 
-  // void mixpanelUpload(BuildContext context) {
-  //   final mixpanel =
-  //       Provider.of<SettingsProvider>(context, listen: false).mixpanel;
-  //   mixpanel.track('Most viewed person pages', properties: {
-  //     'Person name': '${widget.cast!.name}',
-  //     'Person id': '${widget.cast!.id}'
-  //   });
-  // }
+  void mixpanelUpload(BuildContext context) {
+    final mixpanel =
+        Provider.of<SettingsProvider>(context, listen: false).mixpanel;
+    mixpanel.track('Most viewed person pages', properties: {
+      'Person name': '${widget.cast!.name}',
+      'Person id': '${widget.cast!.id}'
+    });
+  }
 
   int selectedIndex = 0;
   final scrollController = ScrollController();

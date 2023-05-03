@@ -911,7 +911,7 @@ class ScrollingTVEpisodeGuestStarsState
   Widget build(BuildContext context) {
     super.build(context);
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
-    //final mixpanel = Provider.of<MixpanelProvider>(context).mixpanel;
+    final mixpanel = Provider.of<SettingsProvider>(context).mixpanel;
     return Column(
       children: <Widget>[
         credits == null
@@ -962,13 +962,13 @@ class ScrollingTVEpisodeGuestStarsState
                       padding: const EdgeInsets.all(8.0),
                       child: GestureDetector(
                         onTap: () {
-                          // mixpanel
-                          //     .track('Most viewed person pages', properties: {
-                          //   'Person name':
-                          //       '${credits!.episodeGuestStars![index].name}',
-                          //   'Person id':
-                          //       '${credits!.episodeGuestStars![index].id}'
-                          // });
+                          mixpanel
+                              .track('Most viewed person pages', properties: {
+                            'Person name':
+                                '${credits!.episodeGuestStars![index].name}',
+                            'Person id':
+                                '${credits!.episodeGuestStars![index].id}'
+                          });
                           Navigator.push(context,
                               MaterialPageRoute(builder: (context) {
                             return GuestStarDetailPage(

@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:login/provider/settings_provider.dart';
 import 'package:login/screens/auth_screens/login_screen.dart';
 import 'package:login/screens/auth_screens/login_screen_042023.dart';
 import 'package:login/screens/auth_screens/register_screen.dart';
@@ -10,6 +11,7 @@ import 'package:login/screens/home_screen/dash_screen.dart';
 import 'package:login/screens/auth_screens/login_page/login_page_TV.dart';
 import 'package:login/utils/config.dart';
 import 'package:login/utils/next_screen.dart';
+import 'package:provider/provider.dart';
 
 class LandingScreen extends StatefulWidget {
   const LandingScreen({Key? key}) : super(key: key);
@@ -24,6 +26,7 @@ class _LandingScreenState extends State<LandingScreen> {
     final FirebaseAuth auth = FirebaseAuth.instance;
     double deviceHeight = MediaQuery.of(context).size.height;
     double deviceWidth = MediaQuery.of(context).size.width;
+    final mixpanel = Provider.of<SettingsProvider>(context).mixpanel;
     return Stack(
       children: [
         Container(
@@ -225,6 +228,9 @@ class _LandingScreenState extends State<LandingScreen> {
                                             await auth
                                                 .signInAnonymously()
                                                 .then((value) {
+                                              mixpanel.track(
+                                                'Anonymous Login',
+                                              );
                                               Navigator.push(context,
                                                   MaterialPageRoute(
                                                       builder: (context) {

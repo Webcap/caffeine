@@ -33,22 +33,22 @@ class CreatedByPersonDetailPageState extends State<CreatedByPersonDetailPage>
     super.initState();
 
     tabController = TabController(length: 3, vsync: this);
-    // mixpanelUpload(context);
+    mixpanelUpload(context);
   }
 
-  // void mixpanelUpload(BuildContext context) {
-  //   final mixpanel =
-  //       Provider.of<MixpanelProvider>(context, listen: false).mixpanel;
-  //   mixpanel.track('Most viewed person pages', properties: {
-  //     'Person name': '${widget.createdBy!.name}',
-  //     'Person id': '${widget.createdBy!.id}'
-  //   });
-  // }
+  void mixpanelUpload(BuildContext context) {
+    final mixpanel =
+        Provider.of<SettingsProvider>(context, listen: false).mixpanel;
+    mixpanel.track('Most viewed person pages', properties: {
+      'Person name': '${widget.createdBy!.name}',
+      'Person id': '${widget.createdBy!.id}'
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    // final isDark = Provider.of<DarkthemeProvider>(context).darktheme;
+    final isDark = Provider.of<SettingsProvider>(context).darktheme;
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     return Scaffold(
       body: Stack(

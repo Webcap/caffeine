@@ -13,13 +13,14 @@ import 'package:login/screens/search/searched_person.dart';
 import 'package:login/screens/tv_screens/tv_detail_page.dart';
 import 'package:login/utils/config.dart';
 import 'package:login/widgets/shimmer_widget.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 
 class Search extends SearchDelegate<String> {
-  //final Mixpanel mixpanel;
+  final Mixpanel mixpanel;
   final bool includeAdult;
-  Search({required this.includeAdult})
+  Search({required this.mixpanel, required this.includeAdult})
       : super(
           searchFieldLabel: 'Search for a movie, TV show or a person',
         );
@@ -361,10 +362,10 @@ class Search extends SearchDelegate<String> {
                 itemBuilder: (BuildContext context, int index) {
                   return GestureDetector(
                     onTap: () {
-                      // mixpanel.track('Most viewed movie pages', properties: {
-                      //   'Movie name': '${moviesList[index].title}',
-                      //   'Movie id': '${moviesList[index].id}'
-                      // });
+                      mixpanel.track('Most viewed movie pages', properties: {
+                        'Movie name': '${moviesList[index].title}',
+                        'Movie id': '${moviesList[index].id}'
+                      });
                       Navigator.push(context,
                           MaterialPageRoute(builder: (context) {
                         return MovieDetailPage(

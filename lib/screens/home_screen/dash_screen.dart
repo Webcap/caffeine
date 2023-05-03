@@ -162,6 +162,7 @@ class _caffieneHomePageState extends State<caffieneHomePage>
 
   @override
   Widget build(BuildContext context) {
+    final mixpanel = Provider.of<SettingsProvider>(context).mixpanel;
     return Scaffold(
       drawer: const DrawerWidget(),
       appBar: AppBar(
@@ -176,6 +177,7 @@ class _caffieneHomePageState extends State<caffieneHomePage>
                 showSearch(
                     context: context,
                     delegate: Search(
+                        mixpanel: mixpanel,
                         includeAdult: Provider.of<SettingsProvider>(context,
                                 listen: false)
                             .isAdult));

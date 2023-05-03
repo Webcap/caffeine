@@ -35,18 +35,18 @@ class SearchedPersonDetailPageState extends State<SearchedPersonDetailPage>
   void initState() {
     super.initState();
     tabController = TabController(length: 3, vsync: this);
-    // mixpanelUpload(context);
+    mixpanelUpload(context);
   }
 
-  // void mixpanelUpload(BuildContext context) {
-  //   final mixpanel =
-  //       Provider.of<MixpanelProvider>(context, listen: false).mixpanel;
-  //   mixpanel.track('Most viewed person pages', properties: {
-  //     'Person name': '${widget.person!.name}',
-  //     'Person id': '${widget.person!.id}',
-  //     'Is Person adult?': '${widget.person!.adult}'
-  //   });
-  // }
+  void mixpanelUpload(BuildContext context) {
+    final mixpanel =
+        Provider.of<SettingsProvider>(context, listen: false).mixpanel;
+    mixpanel.track('Most viewed person pages', properties: {
+      'Person name': '${widget.person!.name}',
+      'Person id': '${widget.person!.id}',
+      'Is Person adult?': '${widget.person!.adult}'
+    });
+  }
 
   int selectedIndex = 0;
   final scrollController = ScrollController();

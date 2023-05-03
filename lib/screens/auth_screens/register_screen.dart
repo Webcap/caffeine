@@ -3,9 +3,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:login/models/profile_image_list.dart';
+import 'package:login/provider/settings_provider.dart';
 import 'package:login/screens/home_screen/dash_screen.dart';
 import 'package:login/utils/config.dart';
 import 'package:login/utils/globlal_methods.dart';
+import 'package:provider/provider.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({Key? key}) : super(key: key);
@@ -138,11 +140,11 @@ class _SignupScreenState extends State<SignupScreen> {
           Navigator.canPop(context)
               ? Navigator.pushReplacement(context,
                   MaterialPageRoute(builder: ((context) {
-                  // final mixpanel =
-                  //     Provider.of<SettingsProvider>(context).mixpanel;
-                  // mixpanel.track(
-                  //   'Users Signup',
-                  // );
+                  final mixpanel =
+                      Provider.of<SettingsProvider>(context).mixpanel;
+                  mixpanel.track(
+                    'Users Signup',
+                  );
                   return const caffieneHomePage();
                 })))
               : null;
@@ -175,7 +177,7 @@ class _SignupScreenState extends State<SignupScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final isDark = Provider.of<SettingsProvider>(context).darktheme;
     return Scaffold(
       backgroundColor:
           const Color(0xFFdedede),
@@ -376,7 +378,7 @@ class _SignupScreenState extends State<SignupScreen> {
                               filled: true,
                               prefixIcon: const Icon(Icons.person),
                               labelText: 'Username',
-                              fillColor: Theme.of(context).backgroundColor),
+                              fillColor: Theme.of(context).colorScheme.background),
                           onSaved: (value) {
                             _userName = value!;
                           },
@@ -420,7 +422,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                     : Icons.visibility_off),
                               ),
                               labelText: 'Enter password',
-                              fillColor: Theme.of(context).backgroundColor),
+                              fillColor: Theme.of(context).colorScheme.background),
                           onSaved: (value) {
                             _password = value!;
                           },
@@ -458,7 +460,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                     : Icons.visibility_off),
                               ),
                               labelText: 'Repeat password',
-                              fillColor: Theme.of(context).backgroundColor),
+                              fillColor: Theme.of(context).colorScheme.background),
                           // onSaved: (value) {
                           //   _passwordVerify = value!;
                           // },

@@ -43,18 +43,18 @@ class TVDetailPageState extends State<TVDetailPage>
   void initState() {
     super.initState();
     tabController = TabController(length: 6, vsync: this);
-    // mixpanelUpload(context);
+    mixpanelUpload(context);
   }
 
-  // void mixpanelUpload(BuildContext context) {
-  //   final mixpanel =
-  //       Provider.of<MixpanelProvider>(context, listen: false).mixpanel;
-  //   mixpanel.track('Most viewed TV pages', properties: {
-  //     'TV series name': '${widget.tvSeries.name}',
-  //     'TV series id': '${widget.tvSeries.id}',
-  //     'Is TV series adult?': '${widget.tvSeries.adult}'
-  //   });
-  // }
+  void mixpanelUpload(BuildContext context) {
+    final mixpanel =
+        Provider.of<SettingsProvider>(context, listen: false).mixpanel;
+    mixpanel.track('Most viewed TV pages', properties: {
+      'TV series name': '${widget.tvSeries.name}',
+      'TV series id': '${widget.tvSeries.id}',
+      'Is TV series adult?': '${widget.tvSeries.adult}'
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

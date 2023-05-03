@@ -34,6 +34,7 @@ class _EpisodeAboutState extends State<EpisodeAbout> {
 
   @override
   Widget build(BuildContext context) {
+    final mixpanel = Provider.of<SettingsProvider>(context).mixpanel;
     return Container(
       child: SingleChildScrollView(
         child: Column(
@@ -96,15 +97,15 @@ class _EpisodeAboutState extends State<EpisodeAbout> {
                       Theme.of(context).colorScheme.primary,
                     )),
                 onPressed: () async {
-                  // mixpanel.track('Most viewed TV series', properties: {
-                  //   'TV series name': '${widget.seriesName}',
-                  //   'TV series id': '${widget.tvId}',
-                  //   'TV series episode name': '${widget.episodeList.name}',
-                  //   'TV series season number':
-                  //       '${widget.episodeList.seasonNumber}',
-                  //   'TV series episode number':
-                  //       '${widget.episodeList.episodeNumber}'
-                  // });
+                  mixpanel.track('Most viewed TV series', properties: {
+                    'TV series name': '${widget.seriesName}',
+                    'TV series id': '${widget.tvId}',
+                    'TV series episode name': '${widget.episodeList.name}',
+                    'TV series season number':
+                        '${widget.episodeList.seasonNumber}',
+                    'TV series episode number':
+                        '${widget.episodeList.episodeNumber}'
+                  });
                   setState(() {
                     isVisible = true;
                   });

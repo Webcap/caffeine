@@ -168,6 +168,7 @@ class ListItem extends StatefulWidget {
 class _ListItemState extends State<ListItem> {
   @override
   Widget build(BuildContext context) {
+    final mixpanel = Provider.of<SettingsProvider>(context).mixpanel;
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
@@ -278,9 +279,9 @@ class _ListItemState extends State<ListItem> {
                         case DownloadStatus.canceled:
                           return ElevatedButton(
                               onPressed: () {
-                                // mixpanel.track('Download event', properties: {
-                                //   'App version': widget.appVersion
-                                // });
+                                mixpanel.track('Download event', properties: {
+                                  'App version': widget.appVersion
+                                });
                                 widget.onDownloadPlayPausedPressed(widget.url);
                               },
                               child: const Text('DOWNLOAD'));
@@ -292,8 +293,8 @@ class _ListItemState extends State<ListItem> {
                     })
                 : ElevatedButton(
                     onPressed: () {
-                      // mixpanel.track('Download event',
-                      //     properties: {'App version': widget.appVersion});
+                      mixpanel.track('Download event',
+                          properties: {'App version': widget.appVersion});
                       widget.onDownloadPlayPausedPressed(widget.url);
                     },
                     child: const Text('DOWNLOAD'))

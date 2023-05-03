@@ -86,7 +86,7 @@ class _BookmarkScreenState extends State<BookmarkScreen>
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text(
-                        'This syncing feature is only available for signed in users. Register to Cinemax to synchronize your bookmarked movies and tv shows so that you won\'t lose them.',
+                        'This syncing feature is only available for signed in users. Register to caffiene to synchronize your bookmarked movies and tv shows so that you won\'t lose them.',
                         style: kTextVerySmallBodyStyle,
                         maxLines: 6,
                       ),

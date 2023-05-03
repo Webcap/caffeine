@@ -5,6 +5,8 @@ import 'package:login/models/default_screen_preferences.dart';
 import 'package:login/models/image_preferences.dart';
 import 'package:login/models/theme_preferences.dart';
 import 'package:login/models/view_perferences.dart';
+import 'package:login/utils/config.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 
 import '../models/material3_preferences.dart';
 
@@ -37,6 +39,8 @@ class SettingsProvider with ChangeNotifier {
 
   String _defaultView = 'list';
   String get defaultView => _defaultView;
+
+  late Mixpanel mixpanel;
 
   // theme change
   Future<void> getCurrentThemeMode() async {
@@ -112,6 +116,13 @@ class SettingsProvider with ChangeNotifier {
   set defaultView(String value) {
     _defaultView = value;
     viewPreferences.setViewType(value);
+    notifyListeners();
+  }
+
+  // mixpanel
+  Future<void> initMixpanel() async {
+    mixpanel = await Mixpanel.init(mixpanelKey,
+        optOutTrackingDefault: false, trackAutomaticEvents: true);
     notifyListeners();
   }
 }

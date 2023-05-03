@@ -54,18 +54,18 @@ class MovieDetailPageState extends State<MovieDetailPage>
   void initState() {
     super.initState();
     tabController = TabController(length: 2, vsync: this);
-    // mixpanelUpload(context);
+    mixpanelUpload(context);
   }
 
-  // void mixpanelUpload(BuildContext context) {
-  //   final mixpanel =
-  //       Provider.of<MixpanelProvider>(context, listen: false).mixpanel;
-  //   mixpanel.track('Most viewed movie pages', properties: {
-  //     'Movie name': '${widget.movie.originalTitle}',
-  //     'Movie id': '${widget.movie.id}',
-  //     'Is Movie adult?': '${widget.movie.adult}'
-  //   });
-  // }
+  void mixpanelUpload(BuildContext context) {
+    final mixpanel =
+        Provider.of<SettingsProvider>(context, listen: false).mixpanel;
+        mixpanel.track('Most viewed movie pages', properties: {
+          'Movie name': '${widget.movie.originalTitle}',
+          'Movie id': '${widget.movie.id}',
+          'Is Movie adult?': '${widget.movie.adult}'
+        });
+  }
 
   final scrollController = ScrollController();
 
