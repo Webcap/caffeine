@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:login/api/endpoints.dart';
 import 'package:login/controller/database_controller.dart';
 import 'package:login/models/movie_models.dart';
-import 'package:login/provider/imagequality_provider.dart';
-import 'package:login/provider/mixpanel_provider.dart';
 import 'package:login/provider/settings_provider.dart';
 import 'package:login/screens/common/watch_providers_dets.dart';
 import 'package:login/screens/movie_screens/movie_source_screen.dart';

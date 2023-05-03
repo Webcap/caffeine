@@ -2,8 +2,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:login/api/endpoints.dart';
 import 'package:login/models/tv.dart';
-import 'package:login/provider/adultmode_provider.dart';
-import 'package:login/provider/imagequality_provider.dart';
 import 'package:login/provider/settings_provider.dart';
 import 'package:login/screens/person/widgets/person_widget.dart';
 import 'package:login/screens/tv_screens/widgets/person_widget.dart';

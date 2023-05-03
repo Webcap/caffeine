@@ -7,8 +7,6 @@ import 'package:login/api/movies_api.dart';
 import 'package:login/api/tv_api.dart';
 import 'package:login/models/genres.dart';
 import 'package:login/models/tv.dart';
-import 'package:login/provider/adultmode_provider.dart';
-import 'package:login/provider/imagequality_provider.dart';
 import 'package:login/provider/settings_provider.dart';
 import 'package:login/screens/tv_screens/tv_detail_page.dart';
 import 'package:login/utils/config.dart';
@@ -134,7 +132,7 @@ class TVGenre extends StatelessWidget {
       ),
       body: Container(
         child: ParticularGenreTV(
-          includeAdult: Provider.of<AdultmodeProvider>(context).isAdult,
+          includeAdult: Provider.of<SettingsProvider>(context).isAdult,
           genreId: genres.genreID!,
           api: Endpoints.getTVShowsForGenre(genres.genreID!, 1),
         ),

@@ -13,13 +13,10 @@ import 'package:login/models/movie_models.dart';
 import 'package:login/models/social_icons_icons.dart';
 import 'package:login/models/tv.dart';
 import 'package:login/models/videos.dart';
-import 'package:login/provider/adultmode_provider.dart';
-import 'package:login/provider/imagequality_provider.dart';
 import 'package:login/provider/settings_provider.dart';
 import 'package:login/screens/movie_screens/cast_details.dart';
 import 'package:login/screens/movie_screens/crew_detail.dart';
 import 'package:login/screens/movie_screens/widgets/movie_social_links.dart';
-import 'package:login/screens/tv_screens/episode_detail_page.dart';
 import 'package:login/screens/tv_screens/tv_detail_page.dart';
 import 'package:login/utils/config.dart';
 import 'package:login/widgets/hero_photoview.dart';
@@ -150,7 +147,7 @@ class StreamingServicesTVShows extends StatelessWidget {
       ),
       body: Container(
         child: ParticularStreamingServiceTVShows(
-          includeAdult: Provider.of<AdultmodeProvider>(context).isAdult,
+          includeAdult: Provider.of<SettingsProvider>(context).isAdult,
           providerID: providerId,
           api: Endpoints.watchProvidersTVShows(providerId, 1),
         ),

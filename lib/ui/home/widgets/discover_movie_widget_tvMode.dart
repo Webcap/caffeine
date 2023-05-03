@@ -8,7 +8,6 @@ import 'package:login/models/filter_chip.dart';
 import 'package:login/models/movie_models.dart';
 import 'package:login/models/poster.dart';
 import 'package:login/models/slide.dart';
-import 'package:login/provider/imagequality_provider.dart';
 import 'package:login/provider/settings_provider.dart';
 import 'package:login/screens/movie_screens/movie_details.dart';
 import 'package:login/ui/home/widgets/slide_item_widget.dart';

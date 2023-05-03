@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:login/api/tv_api.dart';
 import 'package:login/models/tv.dart';
 import 'package:http/http.dart' as http;
-import 'package:login/provider/imagequality_provider.dart';
 import 'package:login/provider/settings_provider.dart';
 import 'package:login/screens/tv_screens/widgets/tv_grid_view.dart';
 import 'package:login/screens/tv_screens/widgets/tv_list_view.dart';

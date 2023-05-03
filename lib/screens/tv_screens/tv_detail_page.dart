@@ -1,8 +1,6 @@
 // ignore_for_file: avoid_unnecessary_containers
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:login/provider/adultmode_provider.dart';
-import 'package:login/provider/imagequality_provider.dart';
 import 'package:login/provider/settings_provider.dart';
 import 'package:login/screens/common/sabth.dart';
 import 'package:login/screens/tv_screens/widgets/scrolling_tv_widget.dart';
