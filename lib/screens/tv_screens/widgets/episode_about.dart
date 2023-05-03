@@ -29,7 +29,7 @@ class EpisodeAbout extends StatefulWidget {
 
 class _EpisodeAboutState extends State<EpisodeAbout> {
   bool? isVisible = false;
-  double? buttonWidth = 180;
+  double? buttonWidth = 150;
   TVDetails? tvDetails;
 
   @override
@@ -108,12 +108,14 @@ class _EpisodeAboutState extends State<EpisodeAbout> {
                   });
                   setState(() {
                     isVisible = true;
+                    buttonWidth = 180;
                   });
                   tvApi().fetchTVDetails(Endpoints.tvDetailsUrl(widget.tvId!))
                       .then((value) {
                     if (mounted) {
                       setState(() {
                         isVisible = false;
+                        buttonWidth = 150;
                         tvDetails = value;
                         Navigator.push(context,
                             MaterialPageRoute(builder: (context) {

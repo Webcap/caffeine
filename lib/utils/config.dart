@@ -53,7 +53,7 @@ const kTextSmallHeaderStyle = TextStyle(
   overflow: TextOverflow.ellipsis,
 );
 
-const String currentAppVersion = '1.0.3-dev';
+const String currentAppVersion = '1.0.4-dev';
 
 const kTextHeaderStyle = TextStyle(
   fontFamily: 'PoppinsSB',
@@ -108,4 +108,6 @@ final List<String> appNames = [
   'caffiene-v1.0.2.apk',
   'caffiene-v1.0.3.apk',
   'caffiene-v1.0.3-dev.apk',
+  'caffiene-v1.0.4-dev.apk',
+  'caffiene-v1.0.4.apk',
 ];

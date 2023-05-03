@@ -52,7 +52,7 @@ class tvApi {
     return tvVideoSources;
   }
 
-  Future<List<TVEpisodes>> getTVStreamEpisodes(String api) async {
+  Future<TVInfo> getTVStreamEpisodes(String api) async {
     TVInfo tvInfo;
     try {
       var res = await retryOptions.retry(
@@ -65,7 +65,7 @@ class tvApi {
       client.close();
     }
 
-    return tvInfo.episodes ?? [];
+    return tvInfo;
   }
 
   Future<List<TVResults>> fetchTVForStream(String api) async {
