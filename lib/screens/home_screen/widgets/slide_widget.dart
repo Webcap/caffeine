@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:login/models/channel.dart';
 import 'package:login/models/poster.dart';
 import 'package:login/models/slide.dart';
-import 'package:login/ui/home/widgets/slide_item_widget.dart';
+import 'package:login/screens/home_screen/widgets/slide_item_widget.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class SlideWidget extends StatefulWidget {

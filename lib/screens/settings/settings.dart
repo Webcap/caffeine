@@ -4,8 +4,6 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:login/models/watchprovider_countries.dart';
-import 'package:login/provider/adultmode_provider.dart';
-import 'package:login/provider/imagequality_provider.dart';
 import 'package:login/provider/settings_provider.dart';
 import 'package:login/screens/common/country_choose.dart';
 import 'package:login/utils/config.dart';

@@ -1,23 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:login/api/endpoints.dart';
+import 'package:login/models/genres.dart';
 import 'package:login/provider/settings_provider.dart';
-import 'package:login/screens/movie_screens/widgets/particular_streaming_service.dart';
-import 'package:login/utils/config.dart';
+import 'package:login/screens/tv_screens/widgets/particular_genre_tv.dart';
+import 'package:login/screens/tv_screens/widgets/tv_genre_widgets.dart';
 import 'package:provider/provider.dart';
 
-class StreamingServicesMovies extends StatelessWidget {
-  final int providerId;
-  final String providerName;
-  const StreamingServicesMovies(
-      {Key? key, required this.providerId, required this.providerName})
-      : super(key: key);
+class TVGenre extends StatelessWidget {
+  final Genres genres;
+  const TVGenre({Key? key, required this.genres}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Movies from $providerName',
+          '${genres.genreName!} TV shows',
         ),
         leading: IconButton(
           icon: const Icon(
@@ -29,11 +27,10 @@ class StreamingServicesMovies extends StatelessWidget {
         ),
       ),
       body: Container(
-        child: ParticularStreamingServiceMovies(
+        child: ParticularGenreTV(
           includeAdult: Provider.of<SettingsProvider>(context).isAdult,
-          providerID: providerId,
-          api: Endpoints.watchProvidersMovies(providerId, 1),
-          watchRegion: Provider.of<SettingsProvider>(context).defaultCountry,
+          genreId: genres.genreID!,
+          api: Endpoints.getTVShowsForGenre(genres.genreID!, 1),
         ),
       ),
     );

@@ -138,7 +138,7 @@ class StreamingServicesWidget extends StatelessWidget {
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 8.0),
-                child: Text(title, style: TextStyle(color: Theme.of(context).colorScheme.primaryContainer)),
+                child: Text(title, style: TextStyle(color: Theme.of(context).colorScheme.onPrimaryContainer)),
               ),
             ],
           ),

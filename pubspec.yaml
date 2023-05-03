@@ -41,11 +41,11 @@ dependencies:
   dynamic_color: ^1.6.3
   firebase_auth: ^4.4.2
   firebase_core: ^2.10.0
+  firebase_messaging: ^14.4.1
   flutter:
     sdk: flutter
   flutter_download_manager: ^0.5.5
   flutter_downloader: ^1.10.2
-  flutter_facebook_auth: ^5.0.8
   flutter_inappwebview: ^5.4.4+3
   flutter_launcher_icons: ^0.13.1
   flutter_rating_bar: ^4.0.1
@@ -59,7 +59,7 @@ dependencies:
   google_sign_in: ^6.1.0
   http: ^0.13.5
   image_fade: ^0.6.1
-  mixpanel_flutter: ^2.0.0
+  mixpanel_flutter: ^2.1.1
   need_resume: ^1.0.7+1
   open_file_plus: ^3.4.1
   path_provider: ^2.0.14

@@ -1,40 +1,31 @@
-import 'dart:convert';
-
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:login/api/movies_api.dart';
-import 'package:login/models/genres.dart';
-import 'package:login/models/movie_models.dart';
-import 'package:http/http.dart' as http;
+import 'package:login/api/tv_api.dart';
+import 'package:login/models/tv.dart';
 import 'package:login/provider/settings_provider.dart';
-import 'package:login/screens/movie_screens/widgets/movie_grid_view.dart';
-import 'package:login/screens/movie_screens/widgets/movie_list_view.dart';
-import 'package:login/utils/config.dart';
+import 'package:login/screens/tv_screens/widgets/tv_grid_view.dart';
+import 'package:login/screens/tv_screens/widgets/tv_list_view.dart';
 import 'package:login/widgets/shimmer_widget.dart';
 import 'package:provider/provider.dart';
 
-class ParticularGenreMovies extends StatefulWidget {
+class ParticularGenreTV extends StatefulWidget {
   final String api;
   final int genreId;
-  final String watchRegion;
   final bool? includeAdult;
-  const ParticularGenreMovies(
+  const ParticularGenreTV(
       {Key? key,
       required this.api,
       required this.genreId,
-      required this.includeAdult,
-      required this.watchRegion})
+      required this.includeAdult})
       : super(key: key);
   @override
-  ParticularGenreMoviesState createState() => ParticularGenreMoviesState();
+  ParticularGenreTVState createState() => ParticularGenreTVState();
 }
 
-class ParticularGenreMoviesState extends State<ParticularGenreMovies> {
-  List<Movie>? moviesList;
+class ParticularGenreTVState extends State<ParticularGenreTV> {
+  List<TV>? tvList;
   final _scrollController = ScrollController();
   int pageNum = 2;
   bool isLoading = false;
-
 
   void getMoreData() async {
     _scrollController.addListener(() async {
@@ -43,19 +34,17 @@ class ParticularGenreMoviesState extends State<ParticularGenreMovies> {
         setState(() {
           isLoading = true;
         });
-        if (mounted) {
-          moviesApi().fetchMovies(
-                  '${widget.api}&include_adult=${widget.includeAdult}&page=$pageNum')
-              .then((value) {
-            if (mounted) {
-              setState(() {
-                moviesList!.addAll(value);
-                isLoading = false;
-                pageNum++;
-              });
-            }
-          });
-        }
+
+        tvApi().fetchTV('${widget.api}&page=$pageNum&include_adult=${widget.includeAdult}')
+            .then((value) {
+          if (mounted) {
+            setState(() {
+              tvList!.addAll(value);
+              isLoading = false;
+              pageNum++;
+            });
+          }
+        });
       }
     });
   }
@@ -63,11 +52,10 @@ class ParticularGenreMoviesState extends State<ParticularGenreMovies> {
   @override
   void initState() {
     super.initState();
-    moviesApi().fetchMovies('${widget.api}&include_adult=${widget.includeAdult}')
-        .then((value) {
+    tvApi().fetchTV('${widget.api}&include_adult=${widget.includeAdult}').then((value) {
       if (mounted) {
         setState(() {
-          moviesList = value;
+          tvList = value;
         });
       }
     });
@@ -79,18 +67,21 @@ class ParticularGenreMoviesState extends State<ParticularGenreMovies> {
     final isDark = Provider.of<SettingsProvider>(context).darktheme;
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     final viewType = Provider.of<SettingsProvider>(context).defaultView;
-    return moviesList == null && viewType == 'grid'
+    return tvList == null && viewType == 'grid'
         ? moviesAndTVShowGridShimmer(isDark)
-        : moviesList == null && viewType == 'list'
-            ? mainPageVerticalScrollShimmer1(
-                isDark: isDark,
-                isLoading: isLoading,
-                scrollController: _scrollController)
-            : moviesList!.isEmpty
+        : tvList == null && viewType == 'list'
+            ? Container(
+                color:
+                    isDark ? const Color(0xFF000000) : const Color(0xFFFFFFFF),
+                child: mainPageVerticalScrollShimmer1(
+                    isDark: isDark,
+                    isLoading: isLoading,
+                    scrollController: _scrollController))
+            : tvList!.isEmpty
                 ? Container(
                     child: const Center(
-                      child:
-                          Text('Oops! movies for this genre doesn\'t exist :('),
+                      child: Text(
+                          'Oops! TV series for this genre doesn\'t exist :('),
                     ),
                   )
                 : Container(
@@ -103,14 +94,15 @@ class ParticularGenreMoviesState extends State<ParticularGenreMovies> {
                             children: [
                               Expanded(
                                 child: viewType == 'grid'
-                                    ? MovieGridView(
-                                        scrollController: _scrollController,
-                                        moviesList: moviesList,
+                                    ? TVGridView(
+                                        tvList: tvList,
                                         imageQuality: imageQuality,
-                                        isDark: isDark)
-                                    : MovieListView(
+                                        isDark: isDark,
                                         scrollController: _scrollController,
-                                        moviesList: moviesList,
+                                      )
+                                    : TVListView(
+                                        scrollController: _scrollController,
+                                        tvList: tvList,
                                         isDark: isDark,
                                         imageQuality: imageQuality),
                               ),

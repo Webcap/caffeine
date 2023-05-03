@@ -2,7 +2,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:login/api/endpoints.dart';
 import 'package:login/models/credits.dart';
-import 'package:login/provider/imagequality_provider.dart';
 import 'package:login/provider/settings_provider.dart';
 import 'package:login/screens/movie_screens/widgets/cast_detail_about.dart';
 import 'package:login/screens/movie_screens/widgets/cast_details_quick_info.dart';
@@ -35,17 +34,17 @@ class CastDetailPageState extends State<CastDetailPage>
     super.initState();
 
     tabController = TabController(length: 3, vsync: this);
-    // mixpanelUpload(context);
+    mixpanelUpload(context);
   }
 
-  // void mixpanelUpload(BuildContext context) {
-  //   final mixpanel =
-  //       Provider.of<MixpanelProvider>(context, listen: false).mixpanel;
-  //   mixpanel.track('Most viewed person pages', properties: {
-  //     'Person name': '${widget.cast!.name}',
-  //     'Person id': '${widget.cast!.id}'
-  //   });
-  // }
+  void mixpanelUpload(BuildContext context) {
+    final mixpanel =
+        Provider.of<SettingsProvider>(context, listen: false).mixpanel;
+      mixpanel.track('Most viewed person pages', properties: {
+        'Person name': '${widget.cast!.name}',
+        'Person id': '${widget.cast!.id}'
+      });
+  }
 
   int selectedIndex = 0;
   final scrollController = ScrollController();

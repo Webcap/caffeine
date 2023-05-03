@@ -7,7 +7,7 @@ import 'package:login/key_code.dart';
 import 'package:login/provider/internet_provider.dart';
 import 'package:login/provider/sign_in_provider.dart';
 import 'package:login/screens/home_screen/dash_screen.dart';
-import 'package:login/ui/home/tvHomeScreen.dart';
+import 'package:login/screens/home_screen/tvHomeScreen.dart';
 import 'package:login/utils/next_screen.dart';
 import 'package:login/utils/snackbar.dart';
 import 'package:provider/provider.dart';

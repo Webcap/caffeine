@@ -48,17 +48,17 @@ class EpisodeDetailPageState extends State<EpisodeDetailPage>
   void initState() {
     super.initState();
     tabController = TabController(length: 4, vsync: this);
-    // mixpanelUpload(context);
+    mixpanelUpload(context);
   }
 
-  // void mixpanelUpload(BuildContext context) {
-  //   final mixpanel =
-  //       Provider.of<MixpanelProvider>(context, listen: false).mixpanel;
-  //   mixpanel.track('Most viewed episode details', properties: {
-  //     'TV series name': '${widget.seriesName}',
-  //     'TV series episode name': '${widget.episodeList.name}',
-  //   });
-  // }
+  void mixpanelUpload(BuildContext context) {
+    final mixpanel =
+        Provider.of<SettingsProvider>(context, listen: false).mixpanel;
+    mixpanel.track('Most viewed episode details', properties: {
+      'TV series name': '${widget.seriesName}',
+      'TV series episode name': '${widget.episodeList.name}',
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

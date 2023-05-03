@@ -1,24 +1,26 @@
 import 'dart:convert';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dpad_container/dpad_container.dart';
 import 'package:flutter/material.dart';
-import 'package:login/api/tv_api.dart';
-import 'package:login/models/tv.dart';
-import 'package:http/http.dart' as http;
+import 'package:login/api/movies_api.dart';
+import 'package:login/models/movie_models.dart';
 import 'package:login/provider/settings_provider.dart';
-import 'package:login/screens/tv_screens/widgets/tv_grid_view.dart';
-import 'package:login/screens/tv_screens/widgets/tv_list_view.dart';
+import 'package:login/screens/movie_screens/movie_details.dart';
+import 'package:login/screens/movie_screens/widgets/movie_grid_view.dart';
+import 'package:login/screens/movie_screens/widgets/movie_list_view.dart';
 import 'package:login/utils/config.dart';
+import 'package:http/http.dart' as http;
 import 'package:login/widgets/shimmer_widget.dart';
 import 'package:provider/provider.dart';
 
-class MainTVList extends StatefulWidget {
+class MainMoviesList extends StatefulWidget {
   final String api;
   final bool? includeAdult;
   final String discoverType;
   final bool isTrending;
   final String title;
-  const MainTVList({
+  const MainMoviesList({
     Key? key,
     required this.api,
     required this.discoverType,
@@ -27,11 +29,11 @@ class MainTVList extends StatefulWidget {
     required this.title,
   }) : super(key: key);
   @override
-  MainTVListState createState() => MainTVListState();
+  MainMoviesListState createState() => MainMoviesListState();
 }
 
-class MainTVListState extends State<MainTVList> {
-  List<TV>? tvList;
+class MainMoviesListState extends State<MainMoviesList> {
+  List<Movie>? moviesList;
   final _scrollController = ScrollController();
   int pageNum = 2;
   bool isLoading = false;
@@ -43,19 +45,20 @@ class MainTVListState extends State<MainTVList> {
         setState(() {
           isLoading = true;
         });
-
-        tvApi()
-            .fetchTV(
-                '${widget.api}&page=$pageNum&include_adult=${widget.includeAdult}')
-            .then((value) {
-          if (mounted) {
-            setState(() {
-              tvList!.addAll(value);
-              isLoading = false;
-              pageNum++;
-            });
-          }
-        });
+        if (mounted) {
+          moviesApi()
+              .fetchMovies(
+                  '${widget.api}&include_adult=${widget.includeAdult}&page=$pageNum')
+              .then((value) {
+            if (mounted) {
+              setState(() {
+                moviesList!.addAll(value);
+                isLoading = false;
+                pageNum++;
+              });
+            }
+          });
+        }
       }
     });
   }
@@ -63,12 +66,12 @@ class MainTVListState extends State<MainTVList> {
   @override
   void initState() {
     super.initState();
-    tvApi()
-        .fetchTV('${widget.api}&include_adult=${widget.includeAdult}')
+    moviesApi()
+        .fetchMovies('${widget.api}&include_adult=${widget.includeAdult}')
         .then((value) {
       if (mounted) {
         setState(() {
-          tvList = value;
+          moviesList = value;
         });
       }
     });
@@ -82,22 +85,18 @@ class MainTVListState extends State<MainTVList> {
     final viewType = Provider.of<SettingsProvider>(context).defaultView;
     return Scaffold(
       appBar: AppBar(
-        title: Text('${widget.title} TV shows'),
+        title: Text('${widget.title} movies'),
       ),
-      body: tvList == null && viewType == 'grid'
+      body: moviesList == null && viewType == 'grid'
           ? moviesAndTVShowGridShimmer(isDark)
-          : tvList == null && viewType == 'list'
-              ? Container(
-                  color: isDark
-                      ? const Color(0xFF000000)
-                      : const Color(0xFFFFFFFF),
-                  child: mainPageVerticalScrollShimmer1(
-                      isDark: isDark,
-                      isLoading: isLoading,
-                      scrollController: _scrollController))
-              : tvList!.isEmpty
+          : moviesList == null && viewType == 'list'
+              ? mainPageVerticalScrollShimmer1(
+                  isDark: isDark,
+                  isLoading: isLoading,
+                  scrollController: _scrollController)
+              : moviesList!.isEmpty
                   ? const Center(
-                      child: Text('Oops! the TV shows don\'t exist :('),
+                      child: Text('Oops! the movies don\'t exist :('),
                     )
                   : Column(
                       children: [
@@ -107,19 +106,17 @@ class MainTVListState extends State<MainTVList> {
                             child: Column(
                               children: [
                                 Expanded(
-                                  child: viewType == 'grid'
-                                      ? TVGridView(
-                                          tvList: tvList,
-                                          imageQuality: imageQuality,
-                                          isDark: isDark,
-                                          scrollController: _scrollController,
-                                        )
-                                      : TVListView(
-                                          scrollController: _scrollController,
-                                          tvList: tvList,
-                                          isDark: isDark,
-                                          imageQuality: imageQuality),
-                                ),
+                                    child: viewType == 'grid'
+                                        ? MovieGridView(
+                                            scrollController: _scrollController,
+                                            moviesList: moviesList,
+                                            imageQuality: imageQuality,
+                                            isDark: isDark)
+                                        : MovieListView(
+                                            scrollController: _scrollController,
+                                            moviesList: moviesList,
+                                            isDark: isDark,
+                                            imageQuality: imageQuality)),
                               ],
                             ),
                           ),

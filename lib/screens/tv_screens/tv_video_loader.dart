@@ -6,7 +6,7 @@ import 'package:login/api/endpoints.dart';
 import 'package:login/api/tv_api.dart';
 import 'package:login/models/tv_stream.dart';
 import 'package:http/http.dart' as http;
-import 'package:login/screens/common/player.dart';
+import 'package:login/screens/player/player.dart';
 import 'package:login/utils/config.dart';
 import 'package:video_viewer/video_viewer.dart';
 

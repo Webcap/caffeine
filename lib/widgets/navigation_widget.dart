@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:login/screens/search/search_view.dart';
 import 'package:login/screens/settings/settings.dart';
-import 'package:login/ui/home/tvHomeScreen.dart';
+import 'package:login/screens/home_screen/tvHomeScreen.dart';
 import 'package:need_resume/need_resume.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

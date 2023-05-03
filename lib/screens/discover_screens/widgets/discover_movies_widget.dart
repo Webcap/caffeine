@@ -5,7 +5,6 @@ import 'package:login/api/movies_api.dart';
 import 'package:login/models/dropdown_select.dart';
 import 'package:login/models/filter_chip.dart';
 import 'package:login/models/movie_models.dart';
-import 'package:login/provider/imagequality_provider.dart';
 import 'package:login/provider/settings_provider.dart';
 import 'package:login/screens/movie_screens/movie_details.dart';
 import 'package:login/utils/config.dart';

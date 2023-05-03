@@ -1,8 +1,6 @@
 // ignore_for_file: avoid_unnecessary_containers
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:login/provider/adultmode_provider.dart';
-import 'package:login/provider/imagequality_provider.dart';
 import 'package:login/provider/settings_provider.dart';
 import 'package:login/screens/common/sabth.dart';
 import 'package:login/screens/tv_screens/widgets/scrolling_tv_widget.dart';
@@ -45,18 +43,18 @@ class TVDetailPageState extends State<TVDetailPage>
   void initState() {
     super.initState();
     tabController = TabController(length: 6, vsync: this);
-    // mixpanelUpload(context);
+    mixpanelUpload(context);
   }
 
-  // void mixpanelUpload(BuildContext context) {
-  //   final mixpanel =
-  //       Provider.of<MixpanelProvider>(context, listen: false).mixpanel;
-  //   mixpanel.track('Most viewed TV pages', properties: {
-  //     'TV series name': '${widget.tvSeries.name}',
-  //     'TV series id': '${widget.tvSeries.id}',
-  //     'Is TV series adult?': '${widget.tvSeries.adult}'
-  //   });
-  // }
+  void mixpanelUpload(BuildContext context) {
+    final mixpanel =
+        Provider.of<SettingsProvider>(context, listen: false).mixpanel;
+    mixpanel.track('Most viewed TV pages', properties: {
+      'TV series name': '${widget.tvSeries.name}',
+      'TV series id': '${widget.tvSeries.id}',
+      'Is TV series adult?': '${widget.tvSeries.adult}'
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

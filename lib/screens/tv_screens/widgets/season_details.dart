@@ -44,17 +44,17 @@ class SeasonsDetailState extends State<SeasonsDetail>
   void initState() {
     super.initState();
     tabController = TabController(length: 4, vsync: this);
-    // mixpanelUpload(context);
+    mixpanelUpload(context);
   }
 
-  // void mixpanelUpload(BuildContext context) {
-  //   final mixpanel =
-  //       Provider.of<SettingsProvider>(context, listen: false).mixpanel;
-  //   mixpanel.track('Most viewed season details', properties: {
-  //     'TV series name': '${widget.seriesName}',
-  //     'TV series season number': '${widget.seasons.seasonNumber}',
-  //   });
-  //}
+  void mixpanelUpload(BuildContext context) {
+    final mixpanel =
+        Provider.of<SettingsProvider>(context, listen: false).mixpanel;
+    mixpanel.track('Most viewed season details', properties: {
+      'TV series name': '${widget.seriesName}',
+      'TV series season number': '${widget.seasons.seasonNumber}',
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -10,6 +10,7 @@ import 'package:login/screens/settings/settings.dart';
 import 'package:login/utils/config.dart';
 import 'package:login/utils/next_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 class DrawerWidget extends StatefulWidget {
   const DrawerWidget({
@@ -29,7 +30,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
   @override
   Widget build(BuildContext context) {
     final isDark = Provider.of<SettingsProvider>(context).darktheme;
-    // final mixpanel = Provider.of<MixpanelProvider>(context).mixpanel;
+    final mixpanel = Provider.of<SettingsProvider>(context).mixpanel;
     return Drawer(
       child: Container(
         color: isDark ? Colors.black : Colors.white,
@@ -94,6 +95,20 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                   title: const Text('Settings'),
                   onTap: () {
                     nextScreen(context, Settings());
+                  },
+                ),
+                ListTile(
+                  leading: Icon(
+                    Icons.share_sharp,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  title: const Text('Share the app'),
+                  onTap: () async {
+                    mixpanel.track('Share button data', properties: {
+                      'Share button click': 'Share',
+                    });
+                    await Share.share(
+                        'Download the caffiene app for free and watch your favorite movies and TV shows for free! Download the app from the link below.\nhttps://cinemax.rf.gd/');
                   },
                 ),
               ],

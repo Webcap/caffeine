@@ -2,7 +2,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:login/api/movies_api.dart';
 import 'package:login/models/credits.dart';
-import 'package:login/provider/imagequality_provider.dart';
 import 'package:login/provider/settings_provider.dart';
 import 'package:login/screens/movie_screens/cast_details.dart';
 import 'package:login/screens/movie_screens/movie_cast_crew_details.dart';
@@ -39,7 +38,7 @@ class ScrollingArtistsState extends State<ScrollingArtists> {
   @override
   Widget build(BuildContext context) {
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
-    // final mixpanel = Provider.of<MixpanelProvider>(context).mixpanel;
+    final mixpanel = Provider.of<SettingsProvider>(context).mixpanel;
     final isDark = Provider.of<SettingsProvider>(context).darktheme;
     return Column(
       children: <Widget>[
@@ -122,11 +121,11 @@ class ScrollingArtistsState extends State<ScrollingArtists> {
                       padding: const EdgeInsets.all(8.0),
                       child: GestureDetector(
                         onTap: () {
-                          // mixpanel
-                          //     .track('Most viewed person pages', properties: {
-                          //   'Person name': '${credits!.cast![index].name}',
-                          //   'Person id': '${credits!.cast![index].id}'
-                          // });
+                          mixpanel
+                              .track('Most viewed person pages', properties: {
+                            'Person name': '${credits!.cast![index].name}',
+                            'Person id': '${credits!.cast![index].id}'
+                          });
                           Navigator.push(context,
                               MaterialPageRoute(builder: (context) {
                             return CastDetailPage(
