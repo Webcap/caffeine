@@ -7,7 +7,7 @@ import 'package:login/screens/auth_screens/login_screen.dart';
 import 'package:login/screens/auth_screens/login_screen_042023.dart';
 import 'package:login/screens/auth_screens/register_screen.dart';
 import 'package:login/screens/home_screen/dash_screen.dart';
-import 'package:login/ui/auth/login_page/login_page_TV.dart';
+import 'package:login/screens/auth_screens/login_page/login_page_TV.dart';
 import 'package:login/utils/config.dart';
 import 'package:login/utils/next_screen.dart';
 

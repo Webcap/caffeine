@@ -6,19 +6,16 @@ import 'package:dynamic_color/dynamic_color.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
-import 'package:login/provider/internet_provider.dart';
-import 'package:login/provider/settings_provider.dart';
-import 'package:login/provider/sign_in_provider.dart';
-import 'package:login/provider/tv_mode_provider.dart';
-import 'package:login/screens/auth_screens/user_state.dart';
-import 'package:login/screens/common/landing_screen.dart';
 
-import 'package:login/ui/auth/login_page/login_page_TV.dart';
-import 'package:login/utils/config.dart';
+import 'package:login/provider/settings_provider.dart';
+
+import 'package:login/screens/auth_screens/user_state.dart';
+
+
 import 'package:login/utils/theme_data.dart';
 
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
 
 SettingsProvider settingsProvider = SettingsProvider();
 final Future<FirebaseApp> _initialization = Firebase.initializeApp();
