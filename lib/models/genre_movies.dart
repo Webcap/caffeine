@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:login/api/endpoints.dart';
 import 'package:login/models/genres.dart';
+import 'package:login/provider/settings_provider.dart';
 import 'package:login/screens/movie_screens/widgets/particular_genre_movies.dart';
 import 'package:login/utils/config.dart';
+import 'package:provider/provider.dart';
 
 class GenreMovies extends StatelessWidget {
   final Genres genres;
@@ -12,7 +14,6 @@ class GenreMovies extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: maincolor2,
         title: Text(
           '${genres.genreName!} movies',
         ),
@@ -27,8 +28,10 @@ class GenreMovies extends StatelessWidget {
       ),
       body: Container(
         child: ParticularGenreMovies(
+          includeAdult: Provider.of<SettingsProvider>(context).isAdult,
           genreId: genres.genreID!,
           api: Endpoints.getMoviesForGenre(genres.genreID!, 1),
+          watchRegion: Provider.of<SettingsProvider>(context).defaultCountry,
         ),
       ),
     );

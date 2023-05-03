@@ -445,6 +445,27 @@ Widget genreListGridShimmer() => Shimmer.fromColors(
           }),
     );
 
+    Widget genreListGridShimmer1(isDark) => Shimmer.fromColors(
+      direction: ShimmerDirection.ltr,
+      baseColor: isDark ? Colors.grey.shade800 : Colors.grey.shade300,
+      highlightColor: isDark ? Colors.grey.shade700 : Colors.grey.shade100,
+      child: ListView.builder(
+          itemCount: 10,
+          scrollDirection: Axis.horizontal,
+          itemBuilder: (BuildContext context, int index) {
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                width: 125,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15.0),
+                    color: Colors.white),
+              ),
+            );
+          }),
+    );
+
 Widget detailGenreShimmer() => Shimmer.fromColors(
       baseColor: Colors.grey.shade800,
       highlightColor: Colors.grey.shade100,

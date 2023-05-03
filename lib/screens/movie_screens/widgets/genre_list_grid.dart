@@ -22,7 +22,6 @@ class GenreListGrid extends StatefulWidget {
 class GenreListGridState extends State<GenreListGrid>
     with AutomaticKeepAliveClientMixin<GenreListGrid> {
   List<Genres>? genreList;
-  // bool requestFailed = false;
   @override
   void initState() {
     super.initState();

@@ -18,6 +18,8 @@ import 'package:login/screens/movie_screens/cast_details.dart';
 import 'package:login/screens/movie_screens/crew_detail.dart';
 import 'package:login/screens/movie_screens/widgets/movie_social_links.dart';
 import 'package:login/screens/tv_screens/tv_detail_page.dart';
+import 'package:login/screens/tv_screens/widgets/tv_grid_view.dart';
+import 'package:login/screens/tv_screens/widgets/tv_list_view.dart';
 import 'package:login/utils/config.dart';
 import 'package:login/widgets/hero_photoview.dart';
 import 'package:login/widgets/shimmer_widget.dart';
@@ -184,7 +186,8 @@ class TVStreamingServicesWidget extends StatelessWidget {
           height: 60,
           width: 200,
           decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primaryContainer, borderRadius: BorderRadius.circular(15)),
+              color: Theme.of(context).colorScheme.primaryContainer,
+              borderRadius: BorderRadius.circular(15)),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -196,7 +199,10 @@ class TVStreamingServicesWidget extends StatelessWidget {
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 8.0),
-                child: Text(title, style: TextStyle(color: Theme.of(context).colorScheme.primaryContainer,)),
+                child: Text(title,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onPrimaryContainer,
+                    )),
               ),
             ],
           ),
@@ -227,9 +233,8 @@ class ParticularStreamingServiceTVShowsState
   final _scrollController = ScrollController();
   int pageNum = 2;
   bool isLoading = false;
-  bool requestFailed = false;
 
-  Future<String> getMoreData() async {
+  void getMoreData() async {
     _scrollController.addListener(() async {
       if (_scrollController.position.pixels ==
           _scrollController.position.maxScrollExtent) {
@@ -237,286 +242,93 @@ class ParticularStreamingServiceTVShowsState
           isLoading = true;
         });
 
-        var response = await http.get(Uri.parse('$TMDB_API_BASE_URL'
-            '/discover/tv?api_key='
-            '$TMDB_API_KEY'
-            '&language=en-US&sort_by=popularity&include_adult=${widget.includeAdult}'
-            '.desc&include_adult=false&include_video=false&page=$pageNum'
-            '&with_watch_providers=${widget.providerID}'
-            '&watch_region=US'));
-        setState(() {
-          pageNum++;
-          isLoading = false;
-          var newlistTV = (json.decode(response.body)['results'] as List)
-              .map((i) => TV.fromJson(i))
-              .toList();
-          tvList!.addAll(newlistTV);
+        tvApi()
+            .fetchTV(
+                '${widget.api}&page=$pageNum&include_adult=${widget.includeAdult}')
+            .then((value) {
+          if (mounted) {
+            setState(() {
+              tvList!.addAll(value);
+              isLoading = false;
+              pageNum++;
+            });
+          }
         });
       }
     });
-
-    return "success";
   }
 
   @override
   void initState() {
     super.initState();
-    getData();
-    getMoreData();
-  }
-
-  void getData() {
     tvApi()
         .fetchTV('${widget.api}&include_adult=${widget.includeAdult}')
         .then((value) {
-      setState(() {
-        tvList = value;
-      });
-    });
-    Future.delayed(const Duration(seconds: 11), () {
-      if (tvList == null) {
+      if (mounted) {
         setState(() {
-          requestFailed = true;
-          tvList = [TV()];
+          tvList = value;
         });
       }
     });
+    getMoreData();
   }
 
   @override
   Widget build(BuildContext context) {
-    // final isDark = Provider.of<DarkthemeProvider>(context).darktheme;
+    final isDark = Provider.of<SettingsProvider>(context).darktheme;
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
-    return tvList == null
-        ? Container(
-            color: const Color(0xFFFFFFFF),
-            child: mainPageVerticalScrollShimmer(isLoading, _scrollController))
-        : tvList!.isEmpty
+    final viewType = Provider.of<SettingsProvider>(context).defaultView;
+    return tvList == null && viewType == 'grid'
+        ? moviesAndTVShowGridShimmer(isDark)
+        : tvList == null && viewType == 'list'
             ? Container(
-                color: const Color(0xFFFFFFFF),
-                child: const Center(
-                  child: Text(
-                      'Oops! TV shows for this watch provider doesn\'t exist :('),
-                ),
-              )
-            : requestFailed == true
-                ? retryWidget()
+                color:
+                    isDark ? const Color(0xFF000000) : const Color(0xFFFFFFFF),
+                child: mainPageVerticalScrollShimmer1(
+                    isDark: isDark,
+                    isLoading: isLoading,
+                    scrollController: _scrollController))
+            : tvList!.isEmpty
+                ? Container(
+                    child: const Center(
+                      child: Text(
+                          'Oops! TV shows for this watch provider doesn\'t exist :('),
+                    ),
+                  )
                 : Container(
-                    color: const Color(0xFFFFFFFF),
                     child: Column(
-                      children: [
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.only(top: 8.0),
-                            child: Column(
-                              children: [
-                                Expanded(
-                                  child: ListView.builder(
-                                      controller: _scrollController,
-                                      physics: const BouncingScrollPhysics(),
-                                      itemCount: tvList!.length,
-                                      itemBuilder:
-                                          (BuildContext context, int index) {
-                                        return GestureDetector(
-                                          onTap: () {
-                                            //TODO: add tv detail
-                                            // Navigator.push(context,
-                                            //     MaterialPageRoute(
-                                            //         builder: (context) {
-                                            //   return TVDetailPage(
-                                            //     tvSeries: tvList![index],
-                                            //     heroId: '${tvList![index].id}',
-                                            //   );
-                                            // }));
-                                          },
-                                          child: Container(
-                                            color: const Color(0xFFFFFFFF),
-                                            child: Padding(
-                                              padding: const EdgeInsets.only(
-                                                top: 0.0,
-                                                bottom: 3.0,
-                                                left: 10,
-                                              ),
-                                              child: Column(
-                                                children: [
-                                                  Row(
-                                                    children: [
-                                                      Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                    .only(
-                                                                right: 10.0),
-                                                        child: SizedBox(
-                                                          width: 85,
-                                                          height: 130,
-                                                          child: Hero(
-                                                            tag:
-                                                                '${tvList![index].id}',
-                                                            child: ClipRRect(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          10.0),
-                                                              child: tvList![index]
-                                                                          .posterPath ==
-                                                                      null
-                                                                  ? Image.asset(
-                                                                      'assets/images/na_logo.png',
-                                                                      fit: BoxFit
-                                                                          .cover,
-                                                                    )
-                                                                  : CachedNetworkImage(
-                                                                      fadeOutDuration:
-                                                                          const Duration(
-                                                                              milliseconds: 300),
-                                                                      fadeOutCurve:
-                                                                          Curves
-                                                                              .easeOut,
-                                                                      fadeInDuration:
-                                                                          const Duration(
-                                                                              milliseconds: 700),
-                                                                      fadeInCurve:
-                                                                          Curves
-                                                                              .easeIn,
-                                                                      imageUrl: TMDB_BASE_IMAGE_URL +
-                                                                          imageQuality +
-                                                                          tvList![index]
-                                                                              .posterPath!,
-                                                                      imageBuilder:
-                                                                          (context, imageProvider) =>
-                                                                              Container(
-                                                                        decoration:
-                                                                            BoxDecoration(
-                                                                          image:
-                                                                              DecorationImage(
-                                                                            image:
-                                                                                imageProvider,
-                                                                            fit:
-                                                                                BoxFit.cover,
-                                                                          ),
-                                                                        ),
-                                                                      ),
-                                                                      placeholder:
-                                                                          (context, url) =>
-                                                                              mainPageVerticalScrollImageShimmer(),
-                                                                      errorWidget: (context,
-                                                                              url,
-                                                                              error) =>
-                                                                          Image
-                                                                              .asset(
-                                                                        'assets/images/na_logo.png',
-                                                                        fit: BoxFit
-                                                                            .cover,
-                                                                      ),
-                                                                    ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      Expanded(
-                                                        child: Column(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            Text(
-                                                              tvList![index]
-                                                                  .name!,
-                                                              style: const TextStyle(
-                                                                  fontFamily:
-                                                                      'PoppinsSB',
-                                                                  fontSize: 15,
-                                                                  overflow:
-                                                                      TextOverflow
-                                                                          .ellipsis),
-                                                            ),
-                                                            Row(
-                                                              children: <
-                                                                  Widget>[
-                                                                const Icon(
-                                                                    Icons.star,
-                                                                    color: Color(
-                                                                        0xFFF57C00)),
-                                                                Text(
-                                                                  tvList![index]
-                                                                      .voteAverage!
-                                                                      .toStringAsFixed(
-                                                                          1),
-                                                                  style: const TextStyle(
-                                                                      fontFamily:
-                                                                          'Poppins'),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      )
-                                                    ],
-                                                  ),
-                                                  Divider(
-                                                    color: Colors.white54,
-                                                    thickness: 1,
-                                                    endIndent: 20,
-                                                    indent: 10,
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        );
-                                      }),
-                                ),
-                              ],
-                            ),
+                    children: [
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: Column(
+                            children: [
+                              Expanded(
+                                child: viewType == 'grid'
+                                    ? TVGridView(
+                                        tvList: tvList,
+                                        imageQuality: imageQuality,
+                                        isDark: isDark,
+                                        scrollController: _scrollController,
+                                      )
+                                    : TVListView(
+                                        scrollController: _scrollController,
+                                        tvList: tvList,
+                                        isDark: isDark,
+                                        imageQuality: imageQuality),
+                              ),
+                            ],
                           ),
                         ),
-                        Visibility(
-                            visible: isLoading,
-                            child: const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Center(child: CircularProgressIndicator()),
-                            )),
-                      ],
-                    ));
-  }
-
-  Widget retryWidget() {
-    return Center(
-      child: Container(
-          width: double.infinity,
-          color: const Color(0xFFFFFFFF),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset('assets/images/network-signal.png',
-                  width: 60, height: 60),
-              const Padding(
-                padding: EdgeInsets.only(top: 8.0),
-                child: Text('Please connect to the Internet and try again',
-                    textAlign: TextAlign.center),
-              ),
-              TextButton(
-                  style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all(const Color(0x0DF57C00)),
-                      maximumSize:
-                          MaterialStateProperty.all(const Size(200, 60)),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5.0),
-                              side:
-                                  const BorderSide(color: Color(0xFFF57C00))))),
-                  onPressed: () {
-                    setState(() {
-                      requestFailed = false;
-                      tvList = null;
-                    });
-                    getData();
-                  },
-                  child: const Text('Retry')),
-            ],
-          )),
-    );
+                      ),
+                      Visibility(
+                          visible: isLoading,
+                          child: const Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Center(child: LinearProgressIndicator()),
+                          )),
+                    ],
+                  ));
   }
 }
 

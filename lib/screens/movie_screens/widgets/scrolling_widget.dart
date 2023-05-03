@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:login/api/movies_api.dart';
 import 'package:login/models/movie_models.dart';
 import 'package:login/provider/settings_provider.dart';
-import 'package:login/screens/movie_screens/widgets/main_movie_list.dart';
+import 'package:login/screens/movie_screens/main_movie_list.dart';
 import 'package:login/screens/movie_screens/movie_details.dart';
 import 'package:login/utils/config.dart';
 import 'package:login/widgets/shimmer_widget.dart';
@@ -15,6 +15,7 @@ class ScrollingMovies extends StatefulWidget {
   final String api, title;
   final dynamic discoverType;
   final bool isTrending;
+  final bool? includeAdult;
 
   const ScrollingMovies({
     Key? key,
@@ -22,6 +23,7 @@ class ScrollingMovies extends StatefulWidget {
     required this.title,
     this.discoverType,
     required this.isTrending,
+    required this.includeAdult,
   }) : super(key: key);
   @override
   ScrollingMoviesState createState() => ScrollingMoviesState();
@@ -121,6 +123,7 @@ class ScrollingMoviesState extends State<ScrollingMovies>
                       return MainMoviesList(
                         title: widget.title,
                         api: widget.api,
+                        includeAdult: widget.includeAdult,
                         discoverType: widget.discoverType.toString(),
                         isTrending: widget.isTrending,
                       );
