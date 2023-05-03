@@ -16,13 +16,13 @@ const String INSTAGRAM_BASE_URL = "https://instagram.com/";
 const String TWITTER_BASE_URL = "https://twitter.com/";
 const String IMDB_BASE_URL = "https://imdb.com/title/";
 const String TWOEMBED_BASE_URL = "https://2embed.biz";
-const String CAFFEINE_UPDATE_URL = "https://webcap.github.io/caffiene/res/update.json";
+const String CAFFEINE_UPDATE_URL =
+    "https://webcap.github.io/caffiene/res/update.json";
 const String TAG_LINE1 = "Unlimted, for free, anytime on Caffiene";
 const String SIGN_IN = "Log In";
 const String SIGN_UP = "Sign Up";
 const String ERROROCCURRED = "an error has occurred";
 const String CONSUMET_API = 'https://consumet-api-clone.vercel.app/';
-
 
 final client = HttpClient();
 
@@ -46,6 +46,8 @@ const maincolor = Color(0xFFFea575e);
 const maincolor2 = Color(0xFFF371124);
 const maincolor3 = Color(0xFFF832f3c);
 const maincolor4 = Color(0xFFF501b2c);
+
+const bool showAds = true;
 
 const kTextSmallHeaderStyle = TextStyle(
   fontFamily: 'PoppinsSB',

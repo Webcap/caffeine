@@ -6,6 +6,7 @@ import 'package:dynamic_color/dynamic_color.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import 'package:login/provider/settings_provider.dart';
 
@@ -87,6 +88,9 @@ class _caffeineState extends State<caffeine>
     FirebaseMessaging.onMessage.listen((RemoteMessage event) {});
     FirebaseMessaging.onMessageOpenedApp.listen((message) {});
     fileDelete();
+    if (showAds) {
+      MobileAds.instance.initialize();
+    }
   }
 
   @override

@@ -3,11 +3,13 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:login/api/endpoints.dart';
 import 'package:login/api/movies_api.dart';
 import 'package:login/models/movie_stream.dart';
 import 'package:login/models/functions.dart';
 import 'package:login/screens/player/player.dart';
+import 'package:login/utils/admob.dart';
 import 'package:login/utils/config.dart';
 import 'package:web_scraper/web_scraper.dart';
 import 'package:http/http.dart' as http;
@@ -36,10 +38,32 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
   List<MovieVideoLinks>? movieVideoLinks;
   List<MovieVideoSubtitles>? movieVideoSubs;
 
+  // google ads
+  late InterstitialAd _interstitialAd;
+  _loadIntel() async {
+    if (!showAds) {
+      return false;
+    }
+    InterstitialAd.load(
+        adUnitId: kInterstitial,
+        request: const AdRequest(),
+        adLoadCallback: InterstitialAdLoadCallback(
+          onAdLoaded: (InterstitialAd ad) {
+            debugPrint("ad is loaded");
+            _interstitialAd = ad;
+          },
+          onAdFailedToLoad: (LoadAdError error) {
+            debugPrint('InterstitialAd failed to load: $error');
+          },
+        ));
+  }
+
   @override
   void initState() {
     super.initState();
+    _loadIntel();
     loadVideo();
+    _interstitialAd.show();
   }
 
   String processVttFileTimestamps(String vttFile) {
@@ -63,7 +87,8 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
 
   void loadVideo() async {
     try {
-      await moviesApi().fetchMoviesForStream(
+      await moviesApi()
+          .fetchMoviesForStream(
               Endpoints.searchMovieTVForStream(widget.videoTitle))
           .then((value) {
         setState(() {
@@ -74,14 +99,16 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
       for (int i = 0; i < movies!.length; i++) {
         if (movies![i].releaseDate == widget.releaseYear.toString() &&
             movies![i].type == 'Movie') {
-          await moviesApi().getMovieStreamEpisodes(
+          await moviesApi()
+              .getMovieStreamEpisodes(
                   Endpoints.getMovieTVStreamInfo(movies![i].id!))
               .then((value) {
             setState(() {
               epi = value;
             });
           });
-          await moviesApi().getMovieStreamLinksAndSubs(
+          await moviesApi()
+              .getMovieStreamLinksAndSubs(
                   Endpoints.getMovieTVStreamLinks(epi![0].id!, movies![i].id!))
               .then((value) {
             setState(() {
@@ -138,7 +165,7 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
               thumbnail: widget.thumbnail,
               colors: [
                 Theme.of(context).primaryColor,
-                Theme.of(context).backgroundColor
+                Theme.of(context).colorScheme.background
               ],
             );
           },
