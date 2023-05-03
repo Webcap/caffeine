@@ -6,7 +6,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:login/api/endpoints.dart';
 import 'package:login/api/movies_api.dart';
 import 'package:login/models/movie_stream.dart';
-import 'package:login/screens/common/player.dart';
+import 'package:login/screens/player/player.dart';
 import 'package:login/utils/config.dart';
 import 'package:video_viewer/video_viewer.dart';
 import 'package:web_scraper/web_scraper.dart';
