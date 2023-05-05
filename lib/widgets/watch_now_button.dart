@@ -40,7 +40,6 @@ class _WatchNowButtonState extends State<WatchNowButton> {
 
   // google ads
   late InterstitialAd _interstitialAd;
-  bool _isAdLoaded = false;
 
   _loadIntel() async {
     if (showAds == false) {
@@ -53,7 +52,6 @@ class _WatchNowButtonState extends State<WatchNowButton> {
           onAdLoaded: (InterstitialAd ad) {
             debugPrint("AD LOADED");
             _interstitialAd = ad;
-            _isAdLoaded = true;
           },
           onAdFailedToLoad: (LoadAdError error) {
             debugPrint('InterstitialAd failed to load: $error');
