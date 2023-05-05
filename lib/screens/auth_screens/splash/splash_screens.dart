@@ -3,14 +3,14 @@ import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:login/provider/sign_in_provider.dart';
-import 'package:login/screens/home_screen/dash_screen.dart';
-import 'package:login/screens/home_screen/home_screen.dart';
-import 'package:login/screens/auth_screens/login_screen.dart';
-import 'package:login/screens/auth_screens/splash/tv_splash.dart';
-import 'package:login/screens/auth_screens/login_page/login_page_TV.dart';
-import 'package:login/utils/config.dart';
-import 'package:login/utils/next_screen.dart';
+import 'package:caffiene/provider/sign_in_provider.dart';
+import 'package:caffiene/screens/home_screen/dash_screen.dart';
+import 'package:caffiene/screens/home_screen/home_screen.dart';
+import 'package:caffiene/screens/auth_screens/login_screen.dart';
+import 'package:caffiene/screens/auth_screens/splash/tv_splash.dart';
+import 'package:caffiene/screens/auth_screens/login_page/login_page_TV.dart';
+import 'package:caffiene/utils/config.dart';
+import 'package:caffiene/utils/next_screen.dart';
 import 'package:provider/provider.dart';
 
 class SplashScreen extends StatefulWidget {

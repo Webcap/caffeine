@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:login/api/endpoints.dart';
-import 'package:login/models/tv.dart';
-import 'package:login/screens/tv_screens/widgets/scrolling_tv_widget.dart';
-import 'package:login/screens/tv_screens/widgets/tv_widgets.dart';
-import 'package:login/utils/config.dart';
+import 'package:caffiene/api/endpoints.dart';
+import 'package:caffiene/models/tv.dart';
+import 'package:caffiene/screens/tv_screens/widgets/scrolling_tv_widget.dart';
+import 'package:caffiene/screens/tv_screens/widgets/tv_widgets.dart';
+import 'package:caffiene/utils/config.dart';
 import 'package:readmore/readmore.dart';
 import 'package:intl/intl.dart';
 

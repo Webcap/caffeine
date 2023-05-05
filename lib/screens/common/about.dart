@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:login/utils/config.dart';
+import 'package:caffiene/utils/config.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AboutPage extends StatelessWidget {
@@ -51,7 +51,9 @@ class AboutPage extends StatelessWidget {
                   style:
                       TextStyle(fontSize: 20.0, overflow: TextOverflow.visible),
                 ),
-                const SizedBox(height: 5,),
+                const SizedBox(
+                  height: 5,
+                ),
                 const Text(
                   'This product uses the TMDB API but is not endorsed or certified by TMDB.',
                   maxLines: 15,

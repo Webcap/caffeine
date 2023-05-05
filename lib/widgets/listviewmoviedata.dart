@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:login/screens/movie_screens/main_movie_display.dart';
-import 'package:login/screens/movie_screens/movie_details.dart';
-import 'package:login/widgets/moviedetails.dart';
+import 'package:caffiene/screens/movie_screens/main_movie_display.dart';
+import 'package:caffiene/screens/movie_screens/movie_details.dart';
+import 'package:caffiene/widgets/moviedetails.dart';
 
 class ListViewDatamovie extends StatelessWidget {
   const ListViewDatamovie({
@@ -33,8 +33,8 @@ class ListViewDatamovie extends StatelessWidget {
                     },
                     child: Container(
                       width: 115,
-                      margin: const EdgeInsets.only(
-                          left: 10, right: 5, bottom: 10),
+                      margin:
+                          const EdgeInsets.only(left: 10, right: 5, bottom: 10),
                       child: ClipRRect(
                         borderRadius:
                             const BorderRadius.all(Radius.circular(5.0)),
@@ -53,16 +53,18 @@ class ListViewDatamovie extends StatelessWidget {
             child: ListView.separated(
                 scrollDirection: Axis.horizontal,
                 itemCount: 3,
-                separatorBuilder: (context, index) =>
-                const SizedBox(width: 2),
+                separatorBuilder: (context, index) => const SizedBox(width: 2),
                 itemBuilder: (context, index) {
                   return Container(
                     width: 115,
-                    margin: const EdgeInsets.only(
-                        left: 5, right: 10, bottom: 10),
+                    margin:
+                        const EdgeInsets.only(left: 5, right: 10, bottom: 10),
                     child: ClipRRect(
-                    borderRadius: const BorderRadius.all(Radius.circular(5.0)),
-                      child: Image.asset('assets/custommovieimage.png',fit: BoxFit.cover),),
+                      borderRadius:
+                          const BorderRadius.all(Radius.circular(5.0)),
+                      child: Image.asset('assets/custommovieimage.png',
+                          fit: BoxFit.cover),
+                    ),
                   );
                 }),
           );

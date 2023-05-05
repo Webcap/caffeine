@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:login/models/poster.dart';
-import 'package:login/screens/home_screen/tvHomeScreen.dart';
-import 'package:login/widgets/movie_widget.dart';
+import 'package:caffiene/models/poster.dart';
+import 'package:caffiene/screens/home_screen/tvHomeScreen.dart';
+import 'package:caffiene/widgets/movie_widget.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 class MoviesWidget extends StatefulWidget {

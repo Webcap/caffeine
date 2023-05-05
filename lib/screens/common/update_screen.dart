@@ -2,10 +2,10 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_download_manager/flutter_download_manager.dart';
-import 'package:login/models/functions.dart';
-import 'package:login/models/update.dart';
-import 'package:login/provider/settings_provider.dart';
-import 'package:login/utils/config.dart';
+import 'package:caffiene/models/functions.dart';
+import 'package:caffiene/models/update.dart';
+import 'package:caffiene/provider/settings_provider.dart';
+import 'package:caffiene/utils/config.dart';
 import 'package:open_file_plus/open_file_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';

@@ -2,15 +2,15 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:login/provider/internet_provider.dart';
-import 'package:login/provider/settings_provider.dart';
-import 'package:login/provider/sign_in_provider.dart';
-import 'package:login/screens/auth_screens/forgot_password.dart';
-import 'package:login/screens/home_screen/dash_screen.dart';
-import 'package:login/utils/config.dart';
-import 'package:login/utils/globlal_methods.dart';
-import 'package:login/utils/next_screen.dart';
-import 'package:login/utils/snackbar.dart';
+import 'package:caffiene/provider/internet_provider.dart';
+import 'package:caffiene/provider/settings_provider.dart';
+import 'package:caffiene/provider/sign_in_provider.dart';
+import 'package:caffiene/screens/auth_screens/forgot_password.dart';
+import 'package:caffiene/screens/home_screen/dash_screen.dart';
+import 'package:caffiene/utils/config.dart';
+import 'package:caffiene/utils/globlal_methods.dart';
+import 'package:caffiene/utils/next_screen.dart';
+import 'package:caffiene/utils/snackbar.dart';
 import 'package:provider/provider.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 
@@ -31,7 +31,7 @@ class _LoginPage423State extends State<LoginPage423> {
   GlobalMethods globalMethods = GlobalMethods();
   bool isLoading = false;
   final RoundedLoadingButtonController googleController =
-    RoundedLoadingButtonController();
+      RoundedLoadingButtonController();
 
   void submitForm() async {
     final isValid = formKey.currentState!.validate();
@@ -89,8 +89,7 @@ class _LoginPage423State extends State<LoginPage423> {
     final isDark = Provider.of<SettingsProvider>(context).darktheme;
 
     return Scaffold(
-      backgroundColor:
-      const Color(0xFFdedede),
+      backgroundColor: const Color(0xFFdedede),
       appBar: AppBar(title: const Text('Login')),
       body: Container(
           padding: const EdgeInsets.all(8),
@@ -133,8 +132,9 @@ class _LoginPage423State extends State<LoginPage423> {
                                       filled: true,
                                       prefixIcon: const Icon(Icons.email),
                                       labelText: 'Email Address',
-                                      fillColor:
-                                          Theme.of(context).colorScheme.background),
+                                      fillColor: Theme.of(context)
+                                          .colorScheme
+                                          .background),
                                   onSaved: (value) {
                                     emailAddress = value!;
                                   },
@@ -167,8 +167,9 @@ class _LoginPage423State extends State<LoginPage423> {
                                             : Icons.visibility_off),
                                       ),
                                       labelText: 'Password',
-                                      fillColor:
-                                          Theme.of(context).colorScheme.background),
+                                      fillColor: Theme.of(context)
+                                          .colorScheme
+                                          .background),
                                   onSaved: (value) {
                                     password = value!;
                                   },
@@ -218,7 +219,9 @@ class _LoginPage423State extends State<LoginPage423> {
                                   child: const Text(
                                     'Forgot password?',
                                   )),
-                              const SizedBox(height: 20,),
+                              const SizedBox(
+                                height: 20,
+                              ),
                               RoundedLoadingButton(
                                   controller: googleController,
                                   onPressed: () {
@@ -256,7 +259,7 @@ class _LoginPage423State extends State<LoginPage423> {
     );
   }
 
-   // handling google sign in
+  // handling google sign in
   Future handleGoogleSignin() async {
     final sp = context.read<SignInProvider>();
     // internet provider

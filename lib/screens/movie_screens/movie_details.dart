@@ -1,29 +1,29 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:login/api/endpoints.dart';
-import 'package:login/controller/database_controller.dart';
-import 'package:login/models/movie_models.dart';
-import 'package:login/provider/settings_provider.dart';
-import 'package:login/screens/common/watch_providers_dets.dart';
-import 'package:login/screens/movie_screens/movie_source_screen.dart';
-import 'package:login/api/movies_api.dart';
-import 'package:login/screens/movie_screens/widgets/cast_tab_widget.dart';
-import 'package:login/screens/movie_screens/widgets/collecrions_widget.dart';
-import 'package:login/screens/movie_screens/widgets/genre_list_grid.dart';
-import 'package:login/screens/movie_screens/widgets/movie_about.dart';
-import 'package:login/screens/movie_screens/widgets/movie_detail_quick_info.dart';
-import 'package:login/screens/movie_screens/widgets/movie_details_options.dart';
-import 'package:login/screens/movie_screens/widgets/movie_image_display.dart';
-import 'package:login/screens/movie_screens/widgets/movie_info_tab.dart';
-import 'package:login/screens/movie_screens/widgets/movie_social_links.dart';
-import 'package:login/screens/movie_screens/widgets/movie_video_display.dart';
-import 'package:login/screens/movie_screens/widgets/reccomend.dart';
-import 'package:login/screens/common/sabth.dart';
-import 'package:login/screens/movie_screens/widgets/scrolling_artist.dart';
-import 'package:login/utils/config.dart';
-import 'package:login/widgets/movie_page_buttons.dart';
-import 'package:login/widgets/movie_rec.dart';
-import 'package:login/widgets/watch_now_button.dart';
+import 'package:caffiene/api/endpoints.dart';
+import 'package:caffiene/controller/database_controller.dart';
+import 'package:caffiene/models/movie_models.dart';
+import 'package:caffiene/provider/settings_provider.dart';
+import 'package:caffiene/screens/common/watch_providers_dets.dart';
+import 'package:caffiene/screens/movie_screens/movie_source_screen.dart';
+import 'package:caffiene/api/movies_api.dart';
+import 'package:caffiene/screens/movie_screens/widgets/cast_tab_widget.dart';
+import 'package:caffiene/screens/movie_screens/widgets/collecrions_widget.dart';
+import 'package:caffiene/screens/movie_screens/widgets/genre_list_grid.dart';
+import 'package:caffiene/screens/movie_screens/widgets/movie_about.dart';
+import 'package:caffiene/screens/movie_screens/widgets/movie_detail_quick_info.dart';
+import 'package:caffiene/screens/movie_screens/widgets/movie_details_options.dart';
+import 'package:caffiene/screens/movie_screens/widgets/movie_image_display.dart';
+import 'package:caffiene/screens/movie_screens/widgets/movie_info_tab.dart';
+import 'package:caffiene/screens/movie_screens/widgets/movie_social_links.dart';
+import 'package:caffiene/screens/movie_screens/widgets/movie_video_display.dart';
+import 'package:caffiene/screens/movie_screens/widgets/reccomend.dart';
+import 'package:caffiene/screens/common/sabth.dart';
+import 'package:caffiene/screens/movie_screens/widgets/scrolling_artist.dart';
+import 'package:caffiene/utils/config.dart';
+import 'package:caffiene/widgets/movie_page_buttons.dart';
+import 'package:caffiene/widgets/movie_rec.dart';
+import 'package:caffiene/widgets/watch_now_button.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:readmore/readmore.dart';
@@ -60,11 +60,11 @@ class MovieDetailPageState extends State<MovieDetailPage>
   void mixpanelUpload(BuildContext context) {
     final mixpanel =
         Provider.of<SettingsProvider>(context, listen: false).mixpanel;
-        mixpanel.track('Most viewed movie pages', properties: {
-          'Movie name': '${widget.movie.originalTitle}',
-          'Movie id': '${widget.movie.id}',
-          'Is Movie adult?': '${widget.movie.adult}'
-        });
+    mixpanel.track('Most viewed movie pages', properties: {
+      'Movie name': '${widget.movie.originalTitle}',
+      'Movie id': '${widget.movie.id}',
+      'Is Movie adult?': '${widget.movie.adult}'
+    });
   }
 
   final scrollController = ScrollController();

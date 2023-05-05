@@ -1,13 +1,13 @@
 import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:login/api/movies_api.dart';
-import 'package:login/models/movie_models.dart';
-import 'package:login/provider/settings_provider.dart';
-import 'package:login/screens/movie_screens/main_movie_list.dart';
-import 'package:login/screens/movie_screens/movie_details.dart';
-import 'package:login/utils/config.dart';
-import 'package:login/widgets/shimmer_widget.dart';
+import 'package:caffiene/api/movies_api.dart';
+import 'package:caffiene/models/movie_models.dart';
+import 'package:caffiene/provider/settings_provider.dart';
+import 'package:caffiene/screens/movie_screens/main_movie_list.dart';
+import 'package:caffiene/screens/movie_screens/movie_details.dart';
+import 'package:caffiene/utils/config.dart';
+import 'package:caffiene/widgets/shimmer_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 
@@ -183,54 +183,63 @@ class ScrollingMoviesState extends State<ScrollingMovies>
                                           alignment: Alignment.center,
                                           children: [
                                             ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(8.0),
-                                            child: moviesList![index]
-                                                        .posterPath ==
-                                                    null
-                                                ? Image.asset(
-                                                    'assets/images/na_logo.png',
-                                                    fit: BoxFit.cover,
-                                                  )
-                                                : CachedNetworkImage(
-                                                    fadeOutDuration:
-                                                        const Duration(
-                                                            milliseconds: 300),
-                                                    fadeOutCurve: Curves.easeOut,
-                                                    fadeInDuration:
-                                                        const Duration(
-                                                            milliseconds: 700),
-                                                    fadeInCurve: Curves.easeIn,
-                                                    imageUrl: moviesList![index]
-                                                                .posterPath ==
-                                                            null
-                                                        ? ''
-                                                        : TMDB_BASE_IMAGE_URL +
-                                                            imageQuality +
-                                                            moviesList![index]
-                                                                .posterPath!,
-                                                    imageBuilder: (context,
-                                                            imageProvider) =>
-                                                        Container(
-                                                      decoration: BoxDecoration(
-                                                        image: DecorationImage(
-                                                          image: imageProvider,
-                                                          fit: BoxFit.cover,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    placeholder: (context, url) =>
-                                                        scrollingImageShimmer1(
-                                                            isDark),
-                                                    errorWidget:
-                                                        (context, url, error) =>
-                                                            Image.asset(
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
+                                              child: moviesList![index]
+                                                          .posterPath ==
+                                                      null
+                                                  ? Image.asset(
                                                       'assets/images/na_logo.png',
                                                       fit: BoxFit.cover,
+                                                    )
+                                                  : CachedNetworkImage(
+                                                      fadeOutDuration:
+                                                          const Duration(
+                                                              milliseconds:
+                                                                  300),
+                                                      fadeOutCurve:
+                                                          Curves.easeOut,
+                                                      fadeInDuration:
+                                                          const Duration(
+                                                              milliseconds:
+                                                                  700),
+                                                      fadeInCurve:
+                                                          Curves.easeIn,
+                                                      imageUrl: moviesList![
+                                                                      index]
+                                                                  .posterPath ==
+                                                              null
+                                                          ? ''
+                                                          : TMDB_BASE_IMAGE_URL +
+                                                              imageQuality +
+                                                              moviesList![index]
+                                                                  .posterPath!,
+                                                      imageBuilder: (context,
+                                                              imageProvider) =>
+                                                          Container(
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          image:
+                                                              DecorationImage(
+                                                            image:
+                                                                imageProvider,
+                                                            fit: BoxFit.cover,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      placeholder: (context,
+                                                              url) =>
+                                                          scrollingImageShimmer1(
+                                                              isDark),
+                                                      errorWidget: (context,
+                                                              url, error) =>
+                                                          Image.asset(
+                                                        'assets/images/na_logo.png',
+                                                        fit: BoxFit.cover,
+                                                      ),
                                                     ),
-                                                  ),
-                                          ),
-                                          Positioned(
+                                            ),
+                                            Positioned(
                                               top: 0,
                                               left: 0,
                                               child: Container(

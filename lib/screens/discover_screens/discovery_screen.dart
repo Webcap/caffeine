@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:login/provider/settings_provider.dart';
-import 'package:login/screens/discover_screens/widgets/discover_tv_tab.dart';
+import 'package:caffiene/provider/settings_provider.dart';
+import 'package:caffiene/screens/discover_screens/widgets/discover_tv_tab.dart';
 import 'package:provider/provider.dart';
 
 import 'widgets/discover_movies_tab.dart';

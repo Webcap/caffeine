@@ -1,6 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:login/models/genres.dart';
-import 'package:login/models/source.dart';
+import 'package:caffiene/models/genres.dart';
+import 'package:caffiene/models/source.dart';
 
 class Poster {
   int id;

@@ -1,11 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:login/api/movies_api.dart';
-import 'package:login/models/movie_models.dart';
-import 'package:login/screens/common/did_you_know.dart';
-import 'package:login/screens/common/title_review.dart';
-import 'package:login/utils/config.dart';
-import 'package:login/widgets/shimmer_widget.dart';
+import 'package:caffiene/api/movies_api.dart';
+import 'package:caffiene/models/movie_models.dart';
+import 'package:caffiene/screens/common/did_you_know.dart';
+import 'package:caffiene/screens/common/title_review.dart';
+import 'package:caffiene/utils/config.dart';
+import 'package:caffiene/widgets/shimmer_widget.dart';
 
 Widget watchProvidersTabData(
         {required bool isDark,
@@ -87,7 +87,6 @@ Widget watchProvidersTabData(
                 );
               }),
     );
-
 
 class DidYouKnow extends StatefulWidget {
   const DidYouKnow({Key? key, required this.api}) : super(key: key);

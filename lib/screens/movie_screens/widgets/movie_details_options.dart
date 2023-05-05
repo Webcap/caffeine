@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:login/controller/database_controller.dart';
-import 'package:login/models/movie_models.dart';
+import 'package:caffiene/controller/database_controller.dart';
+import 'package:caffiene/models/movie_models.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
 class MovieDetailOptions extends StatefulWidget {

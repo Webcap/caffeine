@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:login/screens/home_screen/dash_screen.dart';
-import 'package:login/utils/next_screen.dart';
+import 'package:caffiene/screens/home_screen/dash_screen.dart';
+import 'package:caffiene/utils/next_screen.dart';
 
 class CustomNavBar extends StatelessWidget {
   const CustomNavBar({Key? key}) : super(key: key);
@@ -19,7 +19,7 @@ class CustomNavBar extends StatelessWidget {
       child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
         InkWell(
           onTap: () {
-           // nextScreen(context, dash_screen());
+            // nextScreen(context, dash_screen());
           },
           child: Icon(
             Icons.home,

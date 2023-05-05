@@ -1,14 +1,14 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:login/api/endpoints.dart';
-import 'package:login/models/person.dart';
-import 'package:login/provider/settings_provider.dart';
-import 'package:login/screens/common/sabth.dart';
-import 'package:login/screens/person/widgets/person_widget.dart';
-import 'package:login/screens/search/widgets/searched_person_about.dart';
-import 'package:login/screens/search/widgets/searched_person_quick_info.dart';
-import 'package:login/screens/tv_screens/widgets/person_widget.dart';
-import 'package:login/utils/config.dart';
+import 'package:caffiene/api/endpoints.dart';
+import 'package:caffiene/models/person.dart';
+import 'package:caffiene/provider/settings_provider.dart';
+import 'package:caffiene/screens/common/sabth.dart';
+import 'package:caffiene/screens/person/widgets/person_widget.dart';
+import 'package:caffiene/screens/search/widgets/searched_person_about.dart';
+import 'package:caffiene/screens/search/widgets/searched_person_quick_info.dart';
+import 'package:caffiene/screens/tv_screens/widgets/person_widget.dart';
+import 'package:caffiene/utils/config.dart';
 import 'package:provider/provider.dart';
 
 class SearchedPersonDetailPage extends StatefulWidget {

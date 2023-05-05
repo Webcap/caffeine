@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:login/utils/config.dart';
+import 'package:caffiene/utils/config.dart';
 
 class Styles {
   static ThemeData themeData(

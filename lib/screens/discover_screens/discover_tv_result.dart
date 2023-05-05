@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:login/api/tv_api.dart';
-import 'package:login/models/tv.dart';
-import 'package:login/provider/settings_provider.dart';
-import 'package:login/screens/tv_screens/widgets/tv_grid_view.dart';
-import 'package:login/screens/tv_screens/widgets/tv_list_view.dart';
-import 'package:login/utils/config.dart';
-import 'package:login/widgets/shimmer_widget.dart';
+import 'package:caffiene/api/tv_api.dart';
+import 'package:caffiene/models/tv.dart';
+import 'package:caffiene/provider/settings_provider.dart';
+import 'package:caffiene/screens/tv_screens/widgets/tv_grid_view.dart';
+import 'package:caffiene/screens/tv_screens/widgets/tv_list_view.dart';
+import 'package:caffiene/utils/config.dart';
+import 'package:caffiene/widgets/shimmer_widget.dart';
 import 'package:provider/provider.dart';
 
 class DiscoverTVResult extends StatefulWidget {

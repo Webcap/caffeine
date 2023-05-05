@@ -2,15 +2,15 @@ import 'dart:convert';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:login/api/movies_api.dart';
-import 'package:login/models/genres.dart';
-import 'package:login/models/movie_models.dart';
+import 'package:caffiene/api/movies_api.dart';
+import 'package:caffiene/models/genres.dart';
+import 'package:caffiene/models/movie_models.dart';
 import 'package:http/http.dart' as http;
-import 'package:login/provider/settings_provider.dart';
-import 'package:login/screens/movie_screens/widgets/movie_grid_view.dart';
-import 'package:login/screens/movie_screens/widgets/movie_list_view.dart';
-import 'package:login/utils/config.dart';
-import 'package:login/widgets/shimmer_widget.dart';
+import 'package:caffiene/provider/settings_provider.dart';
+import 'package:caffiene/screens/movie_screens/widgets/movie_grid_view.dart';
+import 'package:caffiene/screens/movie_screens/widgets/movie_list_view.dart';
+import 'package:caffiene/utils/config.dart';
+import 'package:caffiene/widgets/shimmer_widget.dart';
 import 'package:provider/provider.dart';
 
 class ParticularGenreMovies extends StatefulWidget {
@@ -35,7 +35,6 @@ class ParticularGenreMoviesState extends State<ParticularGenreMovies> {
   int pageNum = 2;
   bool isLoading = false;
 
-
   void getMoreData() async {
     _scrollController.addListener(() async {
       if (_scrollController.position.pixels ==
@@ -44,7 +43,8 @@ class ParticularGenreMoviesState extends State<ParticularGenreMovies> {
           isLoading = true;
         });
         if (mounted) {
-          moviesApi().fetchMovies(
+          moviesApi()
+              .fetchMovies(
                   '${widget.api}&include_adult=${widget.includeAdult}&page=$pageNum')
               .then((value) {
             if (mounted) {
@@ -63,7 +63,8 @@ class ParticularGenreMoviesState extends State<ParticularGenreMovies> {
   @override
   void initState() {
     super.initState();
-    moviesApi().fetchMovies('${widget.api}&include_adult=${widget.includeAdult}')
+    moviesApi()
+        .fetchMovies('${widget.api}&include_adult=${widget.includeAdult}')
         .then((value) {
       if (mounted) {
         setState(() {

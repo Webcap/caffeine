@@ -4,16 +4,16 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
-import 'package:login/models/credits.dart';
-import 'package:login/models/genres.dart';
-import 'package:login/models/httpresponce.dart';
-import 'package:login/models/images.dart';
-import 'package:login/models/movie_models.dart';
-import 'package:login/models/movie_stream.dart';
-import 'package:login/models/person.dart';
-import 'package:login/models/videos.dart';
-import 'package:login/models/watch_providers.dart';
-import 'package:login/utils/config.dart';
+import 'package:caffiene/models/credits.dart';
+import 'package:caffiene/models/genres.dart';
+import 'package:caffiene/models/httpresponce.dart';
+import 'package:caffiene/models/images.dart';
+import 'package:caffiene/models/movie_models.dart';
+import 'package:caffiene/models/movie_stream.dart';
+import 'package:caffiene/models/person.dart';
+import 'package:caffiene/models/videos.dart';
+import 'package:caffiene/models/watch_providers.dart';
+import 'package:caffiene/utils/config.dart';
 
 class moviesApi {
   final Dio _dio = Dio();
@@ -81,7 +81,6 @@ class moviesApi {
     }
     return movieStream.results ?? [];
   }
-
 
   Future<WatchProviders> fetchWatchProviders(String api, String country) async {
     WatchProviders watchProviders;
@@ -223,7 +222,6 @@ class moviesApi {
     return personMoviesList.movies ?? [];
   }
 
-
   Future<PersonImages> fetchPersonImages(String api) async {
     PersonImages personImages;
     var res = await http
@@ -292,7 +290,7 @@ class moviesApi {
 
     return movieList.movies ?? [];
   }
-  
+
   Future<PersonDetails> fetchPersonDetails(String api) async {
     PersonDetails personDetails;
     var res = await http
@@ -304,8 +302,6 @@ class moviesApi {
     personDetails = PersonDetails.fromJson(decodeRes);
     return personDetails;
   }
-
-
 
   Future<Moviedetail> getMovieDetail(String id) async {
     try {

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:login/provider/internet_provider.dart';
-import 'package:login/provider/sign_in_provider.dart';
-import 'package:login/screens/home_screen/dash_screen.dart';
-import 'package:login/screens/home_screen/home_screen.dart';
-import 'package:login/utils/config.dart';
-import 'package:login/utils/next_screen.dart';
-import 'package:login/utils/snackbar.dart';
+import 'package:caffiene/provider/internet_provider.dart';
+import 'package:caffiene/provider/sign_in_provider.dart';
+import 'package:caffiene/screens/home_screen/dash_screen.dart';
+import 'package:caffiene/screens/home_screen/home_screen.dart';
+import 'package:caffiene/utils/config.dart';
+import 'package:caffiene/utils/next_screen.dart';
+import 'package:caffiene/utils/snackbar.dart';
 import 'package:provider/provider.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 

@@ -1,7 +1,7 @@
 // import 'package:flutter/material.dart';
-// import 'package:login/utils/config.dart';
-// import 'package:login/widgets/backdropimage.dart';
-// import 'package:login/widgets/moviedetails.dart';
+// import 'package:caffiene/utils/config.dart';
+// import 'package:caffiene/widgets/backdropimage.dart';
+// import 'package:caffiene/widgets/moviedetails.dart';
 
 // class GridViewDatamovie extends StatefulWidget {
 //   const GridViewDatamovie({

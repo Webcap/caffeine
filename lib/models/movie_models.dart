@@ -1,4 +1,4 @@
-import 'package:login/models/genres.dart';
+import 'package:caffiene/models/genres.dart';
 
 class PersonMoviesList {
   List<Movie>? movies;

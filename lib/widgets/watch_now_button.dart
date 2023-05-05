@@ -1,12 +1,14 @@
+import 'package:caffiene/utils/admob.dart';
 import 'package:flutter/material.dart';
-import 'package:login/models/movie_models.dart';
-import 'package:login/screens/movie_screens/movie_source_screen.dart';
-import 'package:login/screens/movie_screens/movie_stream.dart';
-import 'package:login/screens/movie_screens/widgets/movie_video_loader.dart';
-import 'package:login/utils/config.dart';
-import 'package:login/utils/next_screen.dart';
+import 'package:caffiene/models/movie_models.dart';
+import 'package:caffiene/screens/movie_screens/movie_source_screen.dart';
+import 'package:caffiene/screens/movie_screens/movie_stream.dart';
+import 'package:caffiene/screens/movie_screens/widgets/movie_video_loader.dart';
+import 'package:caffiene/utils/config.dart';
+import 'package:caffiene/utils/next_screen.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
-import 'package:login/api/movies_api.dart';
+import 'package:caffiene/api/movies_api.dart';
 
 class WatchNowButton extends StatefulWidget {
   const WatchNowButton({
@@ -36,9 +38,33 @@ class _WatchNowButtonState extends State<WatchNowButton> {
   bool? isVisible = false;
   double? buttonWidth = 150;
 
+  // google ads
+  late InterstitialAd _interstitialAd;
+  bool _isAdLoaded = false;
+
+  _loadIntel() async {
+    if (showAds == false) {
+      return false;
+    }
+    InterstitialAd.load(
+        adUnitId: kInterstitial,
+        request: const AdRequest(),
+        adLoadCallback: InterstitialAdLoadCallback(
+          onAdLoaded: (InterstitialAd ad) {
+            debugPrint("AD LOADED");
+            _interstitialAd = ad;
+            _isAdLoaded = true;
+          },
+          onAdFailedToLoad: (LoadAdError error) {
+            debugPrint('InterstitialAd failed to load: $error');
+          },
+        ));
+  }
+
   @override
   void initState() {
     super.initState();
+    _loadIntel();
   }
 
   @override
@@ -48,11 +74,11 @@ class _WatchNowButtonState extends State<WatchNowButton> {
         style: ButtonStyle(
           maximumSize: MaterialStateProperty.all(Size(buttonWidth!, 50)),
         ).copyWith(
-          backgroundColor: MaterialStateProperty.all(
+            backgroundColor: MaterialStateProperty.all(
           Theme.of(context).colorScheme.primary,
         )),
         onPressed: () async {
-         Navigator.push(context, MaterialPageRoute(builder: (context) {
+          Navigator.push(context, MaterialPageRoute(builder: (context) {
             // return MovieStream(
             //   streamUrl:
             //       'https://www.2embed.to/embed/tmdb/movie?id=${widget.movieId}',
@@ -62,6 +88,7 @@ class _WatchNowButtonState extends State<WatchNowButton> {
               videoTitle: widget.movieName!,
               releaseYear: widget.releaseYear,
               thumbnail: widget.thumbnail,
+              interstitialAd: _interstitialAd,
             );
           }));
         },

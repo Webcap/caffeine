@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:login/utils/config.dart';
+import 'package:caffiene/utils/config.dart';
 import 'package:better_player/better_player.dart';
 
 class Player extends StatefulWidget {
@@ -71,7 +71,6 @@ class _PlayerState extends State<Player> {
         bufferingConfiguration: betterPlayerBufferingConfiguration);
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(dataSource);
-
   }
 
   @override
@@ -82,7 +81,7 @@ class _PlayerState extends State<Player> {
     super.dispose();
   }
 
-@override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
@@ -97,5 +96,3 @@ class _PlayerState extends State<Player> {
     );
   }
 }
-
-  

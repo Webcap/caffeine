@@ -1,9 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:login/provider/settings_provider.dart';
-import 'package:login/screens/movie_screens/cast_details.dart';
-import 'package:login/utils/config.dart';
-import 'package:login/widgets/shimmer_widget.dart';
+import 'package:caffiene/provider/settings_provider.dart';
+import 'package:caffiene/screens/movie_screens/cast_details.dart';
+import 'package:caffiene/utils/config.dart';
+import 'package:caffiene/widgets/shimmer_widget.dart';
 import 'package:provider/provider.dart';
 
 class CastDetailQuickInfo extends StatelessWidget {

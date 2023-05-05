@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:login/utils/config.dart';
+import 'package:caffiene/utils/config.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MovieStream extends StatefulWidget {

@@ -1,14 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
-import 'package:login/controller/database_controller.dart';
-import 'package:login/models/movie_models.dart';
-import 'package:login/models/tv.dart';
-import 'package:login/provider/settings_provider.dart';
-import 'package:login/screens/bookmarks/bookmark_tv_screen.dart';
-import 'package:login/screens/bookmarks/movie_bookmark_tab.dart';
-import 'package:login/screens/bookmarks/sync_screen.dart';
-import 'package:login/utils/config.dart';
+import 'package:caffiene/controller/database_controller.dart';
+import 'package:caffiene/models/movie_models.dart';
+import 'package:caffiene/models/tv.dart';
+import 'package:caffiene/provider/settings_provider.dart';
+import 'package:caffiene/screens/bookmarks/bookmark_tv_screen.dart';
+import 'package:caffiene/screens/bookmarks/movie_bookmark_tab.dart';
+import 'package:caffiene/screens/bookmarks/sync_screen.dart';
+import 'package:caffiene/utils/config.dart';
 import 'package:provider/provider.dart';
 
 class BookmarkScreen extends StatefulWidget {

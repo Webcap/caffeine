@@ -1,18 +1,18 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:login/api/endpoints.dart';
-import 'package:login/api/movies_api.dart';
-import 'package:login/api/peoples_api.dart';
-import 'package:login/api/tv_api.dart';
-import 'package:login/models/movie_models.dart';
-import 'package:login/models/person.dart';
-import 'package:login/models/tv.dart';
-import 'package:login/provider/settings_provider.dart';
-import 'package:login/screens/movie_screens/movie_details.dart';
-import 'package:login/screens/search/searched_person.dart';
-import 'package:login/screens/tv_screens/tv_detail_page.dart';
-import 'package:login/utils/config.dart';
-import 'package:login/widgets/shimmer_widget.dart';
+import 'package:caffiene/api/endpoints.dart';
+import 'package:caffiene/api/movies_api.dart';
+import 'package:caffiene/api/peoples_api.dart';
+import 'package:caffiene/api/tv_api.dart';
+import 'package:caffiene/models/movie_models.dart';
+import 'package:caffiene/models/person.dart';
+import 'package:caffiene/models/tv.dart';
+import 'package:caffiene/provider/settings_provider.dart';
+import 'package:caffiene/screens/movie_screens/movie_details.dart';
+import 'package:caffiene/screens/search/searched_person.dart';
+import 'package:caffiene/screens/tv_screens/tv_detail_page.dart';
+import 'package:caffiene/utils/config.dart';
+import 'package:caffiene/widgets/shimmer_widget.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
@@ -124,8 +124,8 @@ class Search extends SearchDelegate<String> {
               ),
               FutureBuilder<List<TV>>(
                 future: Future.delayed(const Duration(seconds: 1)).then(
-                    (value) =>
-                        tvApi().fetchTV(Endpoints.tvSearchUrl(query, includeAdult))),
+                    (value) => tvApi()
+                        .fetchTV(Endpoints.tvSearchUrl(query, includeAdult))),
                 builder: (context, snapshot) {
                   if (query.isEmpty) return searchATermWidget(isDark);
 

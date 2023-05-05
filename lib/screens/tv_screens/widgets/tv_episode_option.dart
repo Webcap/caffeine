@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:login/models/tv.dart';
+import 'package:caffiene/models/tv.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
 class TVEpisodeOptions extends StatelessWidget {

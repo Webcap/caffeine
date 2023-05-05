@@ -1,10 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:login/api/tv_api.dart';
-import 'package:login/models/tv.dart';
-import 'package:login/provider/settings_provider.dart';
-import 'package:login/screens/tv_screens/episode_detail_page.dart';
-import 'package:login/utils/config.dart';
+import 'package:caffiene/api/tv_api.dart';
+import 'package:caffiene/models/tv.dart';
+import 'package:caffiene/provider/settings_provider.dart';
+import 'package:caffiene/screens/tv_screens/episode_detail_page.dart';
+import 'package:caffiene/utils/config.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:shimmer/shimmer.dart';

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:login/api/endpoints.dart';
-import 'package:login/provider/settings_provider.dart';
-import 'package:login/screens/tv_screens/widgets/discover_tv.dart';
-import 'package:login/screens/tv_screens/widgets/scrolling_tv_widget.dart';
-import 'package:login/screens/tv_screens/widgets/tv_genre_widgets.dart';
-import 'package:login/screens/tv_screens/widgets/tv_widgets.dart';
+import 'package:caffiene/api/endpoints.dart';
+import 'package:caffiene/provider/settings_provider.dart';
+import 'package:caffiene/screens/tv_screens/widgets/discover_tv.dart';
+import 'package:caffiene/screens/tv_screens/widgets/scrolling_tv_widget.dart';
+import 'package:caffiene/screens/tv_screens/widgets/tv_genre_widgets.dart';
+import 'package:caffiene/screens/tv_screens/widgets/tv_widgets.dart';
 import 'package:provider/provider.dart';
 
 class MainTVDisplay extends StatefulWidget {

@@ -1,8 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:login/screens/common/landing_screen.dart';
-import 'package:login/screens/home_screen/dash_screen.dart';
-
+import 'package:caffiene/screens/common/landing_screen.dart';
+import 'package:caffiene/screens/home_screen/dash_screen.dart';
 
 class UserState extends StatelessWidget {
   const UserState({Key? key}) : super(key: key);

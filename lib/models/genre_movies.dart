@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:login/api/endpoints.dart';
-import 'package:login/models/genres.dart';
-import 'package:login/provider/settings_provider.dart';
-import 'package:login/screens/movie_screens/widgets/particular_genre_movies.dart';
-import 'package:login/utils/config.dart';
+import 'package:caffiene/api/endpoints.dart';
+import 'package:caffiene/models/genres.dart';
+import 'package:caffiene/provider/settings_provider.dart';
+import 'package:caffiene/screens/movie_screens/widgets/particular_genre_movies.dart';
+import 'package:caffiene/utils/config.dart';
 import 'package:provider/provider.dart';
 
 class GenreMovies extends StatelessWidget {

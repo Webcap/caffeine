@@ -1,14 +1,14 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:login/api/tv_api.dart';
-import 'package:login/models/dropdown_select.dart';
-import 'package:login/models/filter_chip.dart';
-import 'package:login/models/tv.dart';
-import 'package:login/provider/settings_provider.dart';
-import 'package:login/screens/tv_screens/tv_detail_page.dart';
-import 'package:login/utils/config.dart';
-import 'package:login/widgets/shimmer_widget.dart';
+import 'package:caffiene/api/tv_api.dart';
+import 'package:caffiene/models/dropdown_select.dart';
+import 'package:caffiene/models/filter_chip.dart';
+import 'package:caffiene/models/tv.dart';
+import 'package:caffiene/provider/settings_provider.dart';
+import 'package:caffiene/screens/tv_screens/tv_detail_page.dart';
+import 'package:caffiene/utils/config.dart';
+import 'package:caffiene/widgets/shimmer_widget.dart';
 import 'package:provider/provider.dart';
 
 class DiscoverTV extends StatefulWidget {

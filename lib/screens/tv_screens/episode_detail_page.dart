@@ -1,17 +1,17 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:login/api/endpoints.dart';
-import 'package:login/api/movies_api.dart';
-import 'package:login/models/movie_models.dart';
-import 'package:login/models/tv.dart';
-import 'package:login/provider/settings_provider.dart';
-import 'package:login/screens/common/sabth.dart';
-import 'package:login/screens/tv_screens/widgets/episode_about.dart';
-import 'package:login/screens/tv_screens/widgets/scrolling_tv_widget.dart';
-import 'package:login/screens/tv_screens/widgets/tv_episode_option.dart';
-import 'package:login/screens/tv_screens/widgets/tv_episode_quick_info.dart';
-import 'package:login/screens/tv_screens/widgets/tv_widgets.dart';
-import 'package:login/utils/config.dart';
+import 'package:caffiene/api/endpoints.dart';
+import 'package:caffiene/api/movies_api.dart';
+import 'package:caffiene/models/movie_models.dart';
+import 'package:caffiene/models/tv.dart';
+import 'package:caffiene/provider/settings_provider.dart';
+import 'package:caffiene/screens/common/sabth.dart';
+import 'package:caffiene/screens/tv_screens/widgets/episode_about.dart';
+import 'package:caffiene/screens/tv_screens/widgets/scrolling_tv_widget.dart';
+import 'package:caffiene/screens/tv_screens/widgets/tv_episode_option.dart';
+import 'package:caffiene/screens/tv_screens/widgets/tv_episode_quick_info.dart';
+import 'package:caffiene/screens/tv_screens/widgets/tv_widgets.dart';
+import 'package:caffiene/utils/config.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:readmore/readmore.dart';
@@ -117,4 +117,3 @@ class EpisodeDetailPageState extends State<EpisodeDetailPage>
   @override
   bool get wantKeepAlive => true;
 }
-

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:login/api/movies_api.dart';
-import 'package:login/models/genre_movies.dart';
-import 'package:login/models/genres.dart';
-import 'package:login/models/movie_models.dart';
-import 'package:login/provider/settings_provider.dart';
-import 'package:login/utils/config.dart';
-import 'package:login/widgets/shimmer_widget.dart';
+import 'package:caffiene/api/movies_api.dart';
+import 'package:caffiene/models/genre_movies.dart';
+import 'package:caffiene/models/genres.dart';
+import 'package:caffiene/models/movie_models.dart';
+import 'package:caffiene/provider/settings_provider.dart';
+import 'package:caffiene/utils/config.dart';
+import 'package:caffiene/widgets/shimmer_widget.dart';
 import 'package:provider/provider.dart';
 
 class GenreListGrid extends StatefulWidget {
@@ -88,8 +88,9 @@ class GenreListGridState extends State<GenreListGrid>
                                     child: Text(
                                       genreList![index].genreName!,
                                       style: TextStyle(
-                                        color: Theme.of(context).colorScheme.onPrimaryContainer
-                                      ),
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onPrimaryContainer),
                                       textAlign: TextAlign.center,
                                     ),
                                   ),

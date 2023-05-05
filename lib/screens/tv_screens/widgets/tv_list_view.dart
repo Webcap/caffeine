@@ -1,9 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:login/models/tv.dart';
-import 'package:login/screens/tv_screens/tv_detail_page.dart';
-import 'package:login/utils/config.dart';
-import 'package:login/widgets/shimmer_widget.dart';
+import 'package:caffiene/models/tv.dart';
+import 'package:caffiene/screens/tv_screens/tv_detail_page.dart';
+import 'package:caffiene/utils/config.dart';
+import 'package:caffiene/widgets/shimmer_widget.dart';
 
 class TVListView extends StatelessWidget {
   const TVListView({

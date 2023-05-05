@@ -1,10 +1,9 @@
 import 'dart:convert';
 
-import 'package:login/models/person.dart';
+import 'package:caffiene/models/person.dart';
 import 'package:http/http.dart' as http;
 
 class peoplesApi {
-
   Future<List<Person>> fetchPerson(String api) async {
     PersonList credits;
     var res = await http
@@ -16,5 +15,4 @@ class peoplesApi {
     credits = PersonList.fromJson(decodeRes);
     return credits.person ?? [];
   }
-
 }

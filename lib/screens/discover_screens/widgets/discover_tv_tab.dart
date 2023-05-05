@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:login/models/choice_chip.dart';
-import 'package:login/models/dropdown_select.dart';
-import 'package:login/models/filter_chip.dart';
-import 'package:login/screens/discover_screens/discover_tv_result.dart';
-import 'package:login/utils/config.dart';
+import 'package:caffiene/models/choice_chip.dart';
+import 'package:caffiene/models/dropdown_select.dart';
+import 'package:caffiene/models/filter_chip.dart';
+import 'package:caffiene/screens/discover_screens/discover_tv_result.dart';
+import 'package:caffiene/utils/config.dart';
 
 class DiscoverTVTab extends StatefulWidget {
   const DiscoverTVTab({super.key});
@@ -56,7 +56,7 @@ class _DiscoverTVTabState extends State<DiscoverTVTab> {
     });
   }
 
-@override
+  @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Padding(
@@ -269,4 +269,3 @@ class _DiscoverTVTabState extends State<DiscoverTVTab> {
     );
   }
 }
-

@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:math';
 
+
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -8,12 +9,12 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
-import 'package:login/provider/settings_provider.dart';
+import 'package:caffiene/provider/settings_provider.dart';
 
-import 'package:login/screens/auth_screens/user_state.dart';
-import 'package:login/utils/config.dart';
+import 'package:caffiene/screens/auth_screens/user_state.dart';
+import 'package:caffiene/utils/config.dart';
 
-import 'package:login/utils/theme_data.dart';
+import 'package:caffiene/utils/theme_data.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'package:provider/provider.dart';
@@ -88,7 +89,7 @@ class _caffeineState extends State<caffeine>
     FirebaseMessaging.onMessage.listen((RemoteMessage event) {});
     FirebaseMessaging.onMessageOpenedApp.listen((message) {});
     fileDelete();
-    if (showAds) {
+    if (showAds == true) {
       MobileAds.instance.initialize();
     }
   }

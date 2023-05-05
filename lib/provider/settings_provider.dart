@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:login/models/adultmode_preferences.dart';
-import 'package:login/models/country_preferences.dart';
-import 'package:login/models/default_screen_preferences.dart';
-import 'package:login/models/image_preferences.dart';
-import 'package:login/models/theme_preferences.dart';
-import 'package:login/models/view_perferences.dart';
-import 'package:login/utils/config.dart';
+import 'package:caffiene/models/adultmode_preferences.dart';
+import 'package:caffiene/models/country_preferences.dart';
+import 'package:caffiene/models/default_screen_preferences.dart';
+import 'package:caffiene/models/image_preferences.dart';
+import 'package:caffiene/models/theme_preferences.dart';
+import 'package:caffiene/models/view_perferences.dart';
+import 'package:caffiene/utils/config.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 
 import '../models/material3_preferences.dart';

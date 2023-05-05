@@ -1,9 +1,7 @@
-
-
 import 'package:flutter/material.dart';
-import 'package:login/models/credits.dart';
-import 'package:login/provider/settings_provider.dart';
-import 'package:login/screens/movie_screens/widgets/cast_tab_widget.dart';
+import 'package:caffiene/models/credits.dart';
+import 'package:caffiene/provider/settings_provider.dart';
+import 'package:caffiene/screens/movie_screens/widgets/cast_tab_widget.dart';
 import 'package:provider/provider.dart';
 
 class MovieCastAndCrew extends StatefulWidget {

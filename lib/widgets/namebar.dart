@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:login/utils/config.dart';
+import 'package:caffiene/utils/config.dart';
 
 class Namebar extends StatelessWidget {
   const Namebar({Key? key, required this.namebar, required this.navigate})

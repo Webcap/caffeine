@@ -2,10 +2,10 @@ import 'package:carousel_slider/carousel_options.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:login/models/channel.dart';
-import 'package:login/models/poster.dart';
-import 'package:login/models/slide.dart';
-import 'package:login/screens/home_screen/widgets/slide_item_widget.dart';
+import 'package:caffiene/models/channel.dart';
+import 'package:caffiene/models/poster.dart';
+import 'package:caffiene/models/slide.dart';
+import 'package:caffiene/screens/home_screen/widgets/slide_item_widget.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class SlideWidget extends StatefulWidget {
@@ -18,8 +18,8 @@ class SlideWidget extends StatefulWidget {
   Poster poster;
   Channel channel;
 
-  SlideWidget({
-      Key? key,
+  SlideWidget(
+      {Key? key,
       required this.carouselController,
       required this.posty,
       required this.postx,
@@ -27,7 +27,8 @@ class SlideWidget extends StatefulWidget {
       required this.slides,
       required this.move,
       required this.channel,
-      required this.poster}) : super(key: key);
+      required this.poster})
+      : super(key: key);
 
   @override
   _SlideWidgetState createState() => _SlideWidgetState();

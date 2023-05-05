@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:login/provider/settings_provider.dart';
-import 'package:login/provider/sign_in_provider.dart';
-import 'package:login/screens/auth_screens/login_screen.dart';
-import 'package:login/screens/common/about.dart';
-import 'package:login/screens/bookmarks/bookmark_screen.dart';
-import 'package:login/screens/common/update_screen.dart';
-import 'package:login/screens/settings/settings.dart';
-import 'package:login/utils/config.dart';
-import 'package:login/utils/next_screen.dart';
+import 'package:caffiene/provider/settings_provider.dart';
+import 'package:caffiene/provider/sign_in_provider.dart';
+import 'package:caffiene/screens/auth_screens/login_screen.dart';
+import 'package:caffiene/screens/common/about.dart';
+import 'package:caffiene/screens/bookmarks/bookmark_screen.dart';
+import 'package:caffiene/screens/common/update_screen.dart';
+import 'package:caffiene/screens/settings/settings.dart';
+import 'package:caffiene/utils/config.dart';
+import 'package:caffiene/utils/next_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 

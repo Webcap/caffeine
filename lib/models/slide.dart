@@ -1,7 +1,7 @@
-import 'package:login/models/category.dart';
-import 'package:login/models/channel.dart';
-import 'package:login/models/genres.dart';
-import 'package:login/models/poster.dart';
+import 'package:caffiene/models/category.dart';
+import 'package:caffiene/models/channel.dart';
+import 'package:caffiene/models/genres.dart';
+import 'package:caffiene/models/poster.dart';
 
 class Slide {
   int id;

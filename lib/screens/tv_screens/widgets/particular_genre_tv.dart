@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:login/api/tv_api.dart';
-import 'package:login/models/tv.dart';
-import 'package:login/provider/settings_provider.dart';
-import 'package:login/screens/tv_screens/widgets/tv_grid_view.dart';
-import 'package:login/screens/tv_screens/widgets/tv_list_view.dart';
-import 'package:login/widgets/shimmer_widget.dart';
+import 'package:caffiene/api/tv_api.dart';
+import 'package:caffiene/models/tv.dart';
+import 'package:caffiene/provider/settings_provider.dart';
+import 'package:caffiene/screens/tv_screens/widgets/tv_grid_view.dart';
+import 'package:caffiene/screens/tv_screens/widgets/tv_list_view.dart';
+import 'package:caffiene/widgets/shimmer_widget.dart';
 import 'package:provider/provider.dart';
 
 class ParticularGenreTV extends StatefulWidget {
@@ -35,7 +35,9 @@ class ParticularGenreTVState extends State<ParticularGenreTV> {
           isLoading = true;
         });
 
-        tvApi().fetchTV('${widget.api}&page=$pageNum&include_adult=${widget.includeAdult}')
+        tvApi()
+            .fetchTV(
+                '${widget.api}&page=$pageNum&include_adult=${widget.includeAdult}')
             .then((value) {
           if (mounted) {
             setState(() {
@@ -52,7 +54,9 @@ class ParticularGenreTVState extends State<ParticularGenreTV> {
   @override
   void initState() {
     super.initState();
-    tvApi().fetchTV('${widget.api}&include_adult=${widget.includeAdult}').then((value) {
+    tvApi()
+        .fetchTV('${widget.api}&include_adult=${widget.includeAdult}')
+        .then((value) {
       if (mounted) {
         setState(() {
           tvList = value;

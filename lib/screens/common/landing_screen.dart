@@ -3,14 +3,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter/src/widgets/placeholder.dart';
-import 'package:login/provider/settings_provider.dart';
-import 'package:login/screens/auth_screens/login_screen.dart';
-import 'package:login/screens/auth_screens/login_screen_042023.dart';
-import 'package:login/screens/auth_screens/register_screen.dart';
-import 'package:login/screens/home_screen/dash_screen.dart';
-import 'package:login/screens/auth_screens/login_page/login_page_TV.dart';
-import 'package:login/utils/config.dart';
-import 'package:login/utils/next_screen.dart';
+import 'package:caffiene/provider/settings_provider.dart';
+import 'package:caffiene/screens/auth_screens/login_screen.dart';
+import 'package:caffiene/screens/auth_screens/login_screen_042023.dart';
+import 'package:caffiene/screens/auth_screens/register_screen.dart';
+import 'package:caffiene/screens/home_screen/dash_screen.dart';
+import 'package:caffiene/screens/auth_screens/login_page/login_page_TV.dart';
+import 'package:caffiene/utils/config.dart';
+import 'package:caffiene/utils/next_screen.dart';
 import 'package:provider/provider.dart';
 
 class LandingScreen extends StatefulWidget {

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:login/provider/sign_in_provider.dart';
-import 'package:login/screens/home_screen/dash_screen.dart';
-import 'package:login/screens/auth_screens/login_screen.dart';
-import 'package:login/utils/next_screen.dart';
+import 'package:caffiene/provider/sign_in_provider.dart';
+import 'package:caffiene/screens/home_screen/dash_screen.dart';
+import 'package:caffiene/screens/auth_screens/login_screen.dart';
+import 'package:caffiene/utils/next_screen.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -74,21 +74,23 @@ class _HomeScreenState extends State<HomeScreen> {
               )
             ],
           ),
-          SizedBox(height: 20,),
+          SizedBox(
+            height: 20,
+          ),
           ElevatedButton(
               onPressed: () {
                 nextScreenReplace(context, caffieneHomePage());
               },
-              child: Text("New Dash")
-            ),
-          SizedBox(height: 10,),
+              child: Text("New Dash")),
+          SizedBox(
+            height: 10,
+          ),
           ElevatedButton(
               onPressed: () {
                 sp.userSignOut();
                 nextScreenReplace(context, LoginScreen());
               },
-              child: Text("Sign out")
-            )
+              child: Text("Sign out"))
         ],
       )),
     );

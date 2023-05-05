@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:login/screens/movie_screens/streaming_service_screen.dart';
-import 'package:login/utils/config.dart';
+import 'package:caffiene/screens/movie_screens/streaming_service_screen.dart';
+import 'package:caffiene/utils/config.dart';
 
 class MoviesFromWatchProviders extends StatefulWidget {
   const MoviesFromWatchProviders({Key? key}) : super(key: key);
@@ -138,7 +138,10 @@ class StreamingServicesWidget extends StatelessWidget {
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 8.0),
-                child: Text(title, style: TextStyle(color: Theme.of(context).colorScheme.onPrimaryContainer)),
+                child: Text(title,
+                    style: TextStyle(
+                        color:
+                            Theme.of(context).colorScheme.onPrimaryContainer)),
               ),
             ],
           ),

@@ -1,7 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:login/models/category.dart';
-import 'package:login/models/country.dart';
-import 'package:login/models/source.dart';
+import 'package:caffiene/models/category.dart';
+import 'package:caffiene/models/country.dart';
+import 'package:caffiene/models/source.dart';
 
 class Channel {
   int id;

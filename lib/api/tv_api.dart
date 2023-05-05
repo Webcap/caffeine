@@ -1,13 +1,13 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:login/models/tv.dart';
+import 'package:caffiene/models/tv.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:login/models/tv_stream.dart';
+import 'package:caffiene/models/tv_stream.dart';
 import 'dart:convert';
 
-import 'package:login/utils/config.dart';
+import 'package:caffiene/utils/config.dart';
 
 class tvApi {
   Future<List<TV>> fetchPersonTV(String api) async {

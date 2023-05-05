@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:login/utils/config.dart';
-import 'package:login/api/movies_api.dart';
+import 'package:caffiene/utils/config.dart';
+import 'package:caffiene/api/movies_api.dart';
 import 'package:provider/provider.dart';
 
 class MovieDescription extends StatelessWidget {

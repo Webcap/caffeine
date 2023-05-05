@@ -2,10 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:login/models/profile_image_list.dart';
-import 'package:login/provider/settings_provider.dart';
-import 'package:login/utils/config.dart';
-import 'package:login/utils/globlal_methods.dart';
+import 'package:caffiene/models/profile_image_list.dart';
+import 'package:caffiene/provider/settings_provider.dart';
+import 'package:caffiene/utils/config.dart';
+import 'package:caffiene/utils/globlal_methods.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 

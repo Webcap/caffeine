@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:login/api/movies_api.dart';
-import 'package:login/models/watch_providers.dart';
+import 'package:caffiene/api/movies_api.dart';
+import 'package:caffiene/models/watch_providers.dart';
 
 class WatchProvidersButton extends StatefulWidget {
   final Function()? onTap;

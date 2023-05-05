@@ -1,6 +1,6 @@
 // import 'package:flutter/material.dart';
-// import 'package:login/screens/movie_screens/movie_screen.dart';
-// import 'package:login/utils/next_screen.dart';
+// import 'package:caffiene/screens/movie_screens/movie_screen.dart';
+// import 'package:caffiene/utils/next_screen.dart';
 
 // class NewMoviesWidget extends StatelessWidget {
 //   const NewMoviesWidget({Key? key}) : super(key: key);

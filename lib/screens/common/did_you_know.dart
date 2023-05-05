@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:login/provider/settings_provider.dart';
-import 'package:login/utils/config.dart';
+import 'package:caffiene/provider/settings_provider.dart';
+import 'package:caffiene/utils/config.dart';
 import 'package:provider/provider.dart';
 import 'package:web_scraper/web_scraper.dart';
 

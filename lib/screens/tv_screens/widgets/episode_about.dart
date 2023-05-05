@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:login/api/endpoints.dart';
-import 'package:login/api/tv_api.dart';
-import 'package:login/models/tv.dart';
-import 'package:login/provider/settings_provider.dart';
-import 'package:login/screens/tv_screens/tv_video_loader.dart';
-import 'package:login/screens/tv_screens/widgets/scrolling_tv_widget.dart';
-import 'package:login/utils/config.dart';
+import 'package:caffiene/api/endpoints.dart';
+import 'package:caffiene/api/tv_api.dart';
+import 'package:caffiene/models/tv.dart';
+import 'package:caffiene/provider/settings_provider.dart';
+import 'package:caffiene/screens/tv_screens/tv_video_loader.dart';
+import 'package:caffiene/screens/tv_screens/widgets/scrolling_tv_widget.dart';
+import 'package:caffiene/utils/config.dart';
 import 'package:provider/provider.dart';
 import 'package:readmore/readmore.dart';
 import 'package:intl/intl.dart';
@@ -110,7 +110,8 @@ class _EpisodeAboutState extends State<EpisodeAbout> {
                     isVisible = true;
                     buttonWidth = 180;
                   });
-                  tvApi().fetchTVDetails(Endpoints.tvDetailsUrl(widget.tvId!))
+                  tvApi()
+                      .fetchTVDetails(Endpoints.tvDetailsUrl(widget.tvId!))
                       .then((value) {
                     if (mounted) {
                       setState(() {

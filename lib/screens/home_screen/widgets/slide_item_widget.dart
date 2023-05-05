@@ -2,17 +2,14 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:login/models/slide.dart';
-
+import 'package:caffiene/models/slide.dart';
 
 class SlideItemWidget extends StatelessWidget {
   int index;
 
   Slide slide;
-  SlideItemWidget({
-    Key? key, 
-    required this.index, 
-    required this.slide}) : super(key: key);
+  SlideItemWidget({Key? key, required this.index, required this.slide})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {

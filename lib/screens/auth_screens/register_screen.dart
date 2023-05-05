@@ -2,11 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:login/models/profile_image_list.dart';
-import 'package:login/provider/settings_provider.dart';
-import 'package:login/screens/home_screen/dash_screen.dart';
-import 'package:login/utils/config.dart';
-import 'package:login/utils/globlal_methods.dart';
+import 'package:caffiene/models/profile_image_list.dart';
+import 'package:caffiene/provider/settings_provider.dart';
+import 'package:caffiene/screens/home_screen/dash_screen.dart';
+import 'package:caffiene/utils/config.dart';
+import 'package:caffiene/utils/globlal_methods.dart';
 import 'package:provider/provider.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -98,7 +98,7 @@ class _SignupScreenState extends State<SignupScreen> {
             'profileId': selectedProfile,
             'username': _userName.trim().toLowerCase(),
             'verified': _isUserVerified,
-            'provider': 'email', 
+            'provider': 'email',
             'joinedAt': date,
             'createdAt': Timestamp.now(),
           });
@@ -179,8 +179,7 @@ class _SignupScreenState extends State<SignupScreen> {
   Widget build(BuildContext context) {
     final isDark = Provider.of<SettingsProvider>(context).darktheme;
     return Scaffold(
-      backgroundColor:
-          const Color(0xFFdedede),
+      backgroundColor: const Color(0xFFdedede),
       appBar: AppBar(
         title: const Text('Signup'),
       ),
@@ -205,8 +204,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         child: SizedBox(
                             width: 90,
                             height: 90,
-                            child:
-                                Image.asset(Config.app_icon)),
+                            child: Image.asset(Config.app_icon)),
                       ),
                     ),
                     const SizedBox(
@@ -378,7 +376,8 @@ class _SignupScreenState extends State<SignupScreen> {
                               filled: true,
                               prefixIcon: const Icon(Icons.person),
                               labelText: 'Username',
-                              fillColor: Theme.of(context).colorScheme.background),
+                              fillColor:
+                                  Theme.of(context).colorScheme.background),
                           onSaved: (value) {
                             _userName = value!;
                           },
@@ -422,7 +421,8 @@ class _SignupScreenState extends State<SignupScreen> {
                                     : Icons.visibility_off),
                               ),
                               labelText: 'Enter password',
-                              fillColor: Theme.of(context).colorScheme.background),
+                              fillColor:
+                                  Theme.of(context).colorScheme.background),
                           onSaved: (value) {
                             _password = value!;
                           },
@@ -460,7 +460,8 @@ class _SignupScreenState extends State<SignupScreen> {
                                     : Icons.visibility_off),
                               ),
                               labelText: 'Repeat password',
-                              fillColor: Theme.of(context).colorScheme.background),
+                              fillColor:
+                                  Theme.of(context).colorScheme.background),
                           // onSaved: (value) {
                           //   _passwordVerify = value!;
                           // },

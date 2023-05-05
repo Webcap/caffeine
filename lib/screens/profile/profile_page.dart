@@ -3,11 +3,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:login/screens/common/landing_screen.dart';
-import 'package:login/screens/profile/edit_profile.dart';
-import 'package:login/utils/config.dart';
+import 'package:caffiene/screens/common/landing_screen.dart';
+import 'package:caffiene/screens/profile/edit_profile.dart';
+import 'package:caffiene/utils/config.dart';
 import 'package:intl/intl.dart';
-
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);

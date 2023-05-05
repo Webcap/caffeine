@@ -1,13 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:login/api/endpoints.dart';
-import 'package:login/models/credits.dart';
-import 'package:login/provider/settings_provider.dart';
-import 'package:login/screens/movie_screens/widgets/cast_detail_about.dart';
-import 'package:login/screens/movie_screens/widgets/cast_details_quick_info.dart';
-import 'package:login/screens/person/widgets/person_widget.dart';
-import 'package:login/screens/common/sabth.dart';
-import 'package:login/utils/config.dart';
+import 'package:caffiene/api/endpoints.dart';
+import 'package:caffiene/models/credits.dart';
+import 'package:caffiene/provider/settings_provider.dart';
+import 'package:caffiene/screens/movie_screens/widgets/cast_detail_about.dart';
+import 'package:caffiene/screens/movie_screens/widgets/cast_details_quick_info.dart';
+import 'package:caffiene/screens/person/widgets/person_widget.dart';
+import 'package:caffiene/screens/common/sabth.dart';
+import 'package:caffiene/utils/config.dart';
 import 'package:provider/provider.dart';
 
 class CastDetailPage extends StatefulWidget {
@@ -40,10 +40,10 @@ class CastDetailPageState extends State<CastDetailPage>
   void mixpanelUpload(BuildContext context) {
     final mixpanel =
         Provider.of<SettingsProvider>(context, listen: false).mixpanel;
-      mixpanel.track('Most viewed person pages', properties: {
-        'Person name': '${widget.cast!.name}',
-        'Person id': '${widget.cast!.id}'
-      });
+    mixpanel.track('Most viewed person pages', properties: {
+      'Person name': '${widget.cast!.name}',
+      'Person id': '${widget.cast!.id}'
+    });
   }
 
   int selectedIndex = 0;

@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'package:login/models/tv.dart';
+import 'package:caffiene/models/tv.dart';
 import 'package:http/http.dart' as http;
-import 'package:login/models/update.dart';
-import 'package:login/utils/config.dart';
+import 'package:caffiene/models/update.dart';
+import 'package:caffiene/utils/config.dart';
 
 Future<String> getVttFileAsString(String url) async {
   try {

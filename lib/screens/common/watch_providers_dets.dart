@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:login/api/movies_api.dart';
-import 'package:login/models/watch_providers.dart';
-import 'package:login/provider/settings_provider.dart';
-import 'package:login/widgets/common_widgets.dart';
-import 'package:login/widgets/shimmer_widget.dart';
+import 'package:caffiene/api/movies_api.dart';
+import 'package:caffiene/models/watch_providers.dart';
+import 'package:caffiene/provider/settings_provider.dart';
+import 'package:caffiene/widgets/common_widgets.dart';
+import 'package:caffiene/widgets/shimmer_widget.dart';
 import 'package:provider/provider.dart';
 
 class WatchProvidersDetails extends StatefulWidget {

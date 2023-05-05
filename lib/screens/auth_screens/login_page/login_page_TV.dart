@@ -3,13 +3,13 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:login/key_code.dart';
-import 'package:login/provider/internet_provider.dart';
-import 'package:login/provider/sign_in_provider.dart';
-import 'package:login/screens/home_screen/dash_screen.dart';
-import 'package:login/screens/home_screen/tvHomeScreen.dart';
-import 'package:login/utils/next_screen.dart';
-import 'package:login/utils/snackbar.dart';
+import 'package:caffiene/key_code.dart';
+import 'package:caffiene/provider/internet_provider.dart';
+import 'package:caffiene/provider/sign_in_provider.dart';
+import 'package:caffiene/screens/home_screen/dash_screen.dart';
+import 'package:caffiene/screens/home_screen/tvHomeScreen.dart';
+import 'package:caffiene/utils/next_screen.dart';
+import 'package:caffiene/utils/snackbar.dart';
 import 'package:provider/provider.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:transparent_image/transparent_image.dart';
@@ -25,7 +25,7 @@ class _LoginPageState extends State<LoginPage> {
   FocusNode username_focus_node = FocusNode();
   FocusNode password_focus_node = FocusNode();
   FocusNode googleButton_focus_node = FocusNode();
-  
+
   final RoundedLoadingButtonController googleController =
       RoundedLoadingButtonController();
   TextEditingController usernameController = new TextEditingController();

@@ -1,4 +1,4 @@
-import 'package:login/models/poster.dart';
+import 'package:caffiene/models/poster.dart';
 
 class GenreList {
   List<Genres>? genre;

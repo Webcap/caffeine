@@ -2,14 +2,13 @@ import 'dart:convert';
 import 'package:better_player/better_player.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:login/api/endpoints.dart';
-import 'package:login/api/tv_api.dart';
-import 'package:login/models/tv_stream.dart';
-import 'package:login/models/functions.dart';
+import 'package:caffiene/api/endpoints.dart';
+import 'package:caffiene/api/tv_api.dart';
+import 'package:caffiene/models/tv_stream.dart';
+import 'package:caffiene/models/functions.dart';
 import 'package:http/http.dart' as http;
-import 'package:login/screens/player/player.dart';
-import 'package:login/utils/config.dart';
-
+import 'package:caffiene/screens/player/player.dart';
+import 'package:caffiene/utils/config.dart';
 
 class TVVideoLoader extends StatefulWidget {
   const TVVideoLoader(
@@ -30,6 +29,7 @@ class TVVideoLoader extends StatefulWidget {
   @override
   State<TVVideoLoader> createState() => _TVVideoLoaderState();
 }
+
 class _TVVideoLoaderState extends State<TVVideoLoader> {
   List<TVResults>? tvShows;
   List<TVEpisodes>? epi;
@@ -65,8 +65,8 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
 
   void loadVideo() async {
     try {
-      await tvApi().fetchTVForStream(
-              Endpoints.searchMovieTVForStream(widget.videoTitle))
+      await tvApi()
+          .fetchTVForStream(Endpoints.searchMovieTVForStream(widget.videoTitle))
           .then((value) {
         setState(() {
           tvShows = value;
@@ -76,7 +76,8 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
       for (int i = 0; i < tvShows!.length; i++) {
         if (tvShows![i].seasons == widget.seasons &&
             tvShows![i].type == 'TV Series') {
-          await tvApi().getTVStreamEpisodes(
+          await tvApi()
+              .getTVStreamEpisodes(
                   Endpoints.getMovieTVStreamInfo(tvShows![i].id!))
               .then((value) {
             setState(() {
@@ -87,7 +88,8 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
           for (int k = 0; k < epi!.length; k++) {
             if (epi![k].episode == widget.episodeNumber &&
                 epi![k].season == widget.seasonNumber) {
-              await tvApi().getTVStreamLinksAndSubs(Endpoints.getMovieTVStreamLinks(
+              await tvApi()
+                  .getTVStreamLinksAndSubs(Endpoints.getMovieTVStreamLinks(
                       epi![k].id!, tvShows![i].id!))
                   .then((value) {
                 setState(() {

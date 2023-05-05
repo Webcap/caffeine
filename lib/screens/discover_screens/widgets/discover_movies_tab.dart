@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:login/models/choice_chip.dart';
-import 'package:login/models/dropdown_select.dart';
-import 'package:login/models/filter_chip.dart';
-import 'package:login/screens/discover_screens/discover_movie_result.dart';
-import 'package:login/utils/config.dart';
+import 'package:caffiene/models/choice_chip.dart';
+import 'package:caffiene/models/dropdown_select.dart';
+import 'package:caffiene/models/filter_chip.dart';
+import 'package:caffiene/screens/discover_screens/discover_movie_result.dart';
+import 'package:caffiene/utils/config.dart';
 
 class DiscoverMoviesTab extends StatefulWidget {
   const DiscoverMoviesTab({super.key});
@@ -272,4 +272,3 @@ class _DiscoverMoviesTabState extends State<DiscoverMoviesTab> {
     );
   }
 }
-

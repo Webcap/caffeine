@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:login/screens/movie_screens/movie_stream.dart';
-import 'package:login/utils/config.dart';
-import 'package:login/widgets/stream_list_widget.dart';
+import 'package:caffiene/screens/movie_screens/movie_stream.dart';
+import 'package:caffiene/utils/config.dart';
+import 'package:caffiene/widgets/stream_list_widget.dart';
 
 class MovieStreamSelect extends StatefulWidget {
   final String movieName;
@@ -62,16 +62,14 @@ class _MovieStreamSelectState extends State<MovieStreamSelect> {
                           Visibility(
                             visible: widget.movieImdbId == null ? false : true,
                             child: StreamListWidget(
-                              streamName:
-                                  '123Movie',
+                              streamName: '123Movie',
                               streamLink:
                                   'https://api.123movie.cc/imdb.php?imdb=${widget.movieImdbId}&server=vcu',
                               movieName: widget.movieName,
                             ),
                           ),
                           StreamListWidget(
-                            streamName:
-                                '2embed (multiple player options)',
+                            streamName: '2embed (multiple player options)',
                             streamLink:
                                 'https://www.2embed.to/embed/tmdb/movie?id=${widget.movieId}',
                             movieName: widget.movieName,
@@ -83,7 +81,8 @@ class _MovieStreamSelectState extends State<MovieStreamSelect> {
                             movieName: widget.movieName,
                           ),
                           StreamListWidget(
-                            streamName: 'smashystream (multiple player options)',
+                            streamName:
+                                'smashystream (multiple player options)',
                             streamLink:
                                 'https://hub.smashystream.com/embed/movie?tmdb=${widget.movieId}',
                             movieName: widget.movieName,
@@ -95,15 +94,13 @@ class _MovieStreamSelectState extends State<MovieStreamSelect> {
                             movieName: widget.movieName,
                           ),
                           StreamListWidget(
-                            streamName:
-                                'cinedb (multiple player options)',
+                            streamName: 'cinedb (multiple player options)',
                             streamLink:
                                 'https://cinedb.top/embed/movie?tmdb=${widget.movieId}',
                             movieName: widget.movieName,
                           ),
                           StreamListWidget(
-                            streamName:
-                                'fembed (multiple player options)',
+                            streamName: 'fembed (multiple player options)',
                             streamLink:
                                 'https://fembed.ro/embed/movie?tmdb=${widget.movieId}',
                             movieName: widget.movieName,
@@ -127,8 +124,7 @@ class _MovieStreamSelectState extends State<MovieStreamSelect> {
                             movieName: widget.movieName,
                           ),
                           StreamListWidget(
-                            streamName:
-                                'openvids (multiple player options)',
+                            streamName: 'openvids (multiple player options)',
                             streamLink:
                                 'https://openvids.io/tmdb/movie/${widget.movieId}',
                             movieName: widget.movieName,

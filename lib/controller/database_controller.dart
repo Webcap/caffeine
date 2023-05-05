@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:login/models/movie_models.dart';
-import 'package:login/models/tv.dart';
+import 'package:caffiene/models/movie_models.dart';
+import 'package:caffiene/models/tv.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 

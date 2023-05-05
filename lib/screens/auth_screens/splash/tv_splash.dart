@@ -2,10 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:login/provider/sign_in_provider.dart';
-import 'package:login/screens/home_screen/tvHomeScreen.dart';
-import 'package:login/utils/config.dart';
-import 'package:login/utils/next_screen.dart';
+import 'package:caffiene/provider/sign_in_provider.dart';
+import 'package:caffiene/screens/home_screen/tvHomeScreen.dart';
+import 'package:caffiene/utils/config.dart';
+import 'package:caffiene/utils/next_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert' as convert;
