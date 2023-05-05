@@ -44,9 +44,6 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
   @override
   void initState() {
     super.initState();
-    if (showAds == true) {
-      widget.interstitialAd.show();
-    }
     loadVideo();
   }
 
