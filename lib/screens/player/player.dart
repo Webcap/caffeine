@@ -46,7 +46,7 @@ class _PlayerState extends State<Player> {
       loadingColor: widget.colors.first,
       iconsColor: widget.colors.first,
       progressBarPlayedColor: widget.colors.first,
-      progressBarBufferedColor: widget.colors.first.withOpacity(0.3),
+      progressBarBufferedColor: Colors.black45,
     );
 
     BetterPlayerConfiguration betterPlayerConfiguration =
@@ -62,12 +62,22 @@ class _PlayerState extends State<Player> {
                 backgroundColor: Colors.black45,
                 fontFamily: 'Poppins',
                 fontColor: Colors.white,
+                outlineEnabled: false,
                 fontSize: 17));
 
     BetterPlayerDataSource dataSource = BetterPlayerDataSource(
         BetterPlayerDataSourceType.network, widget.sources.values.first,
         resolutions: widget.sources,
         subtitles: widget.subs,
+        cacheConfiguration: const BetterPlayerCacheConfiguration(
+          useCache: true,
+          preCacheSize: 471859200 * 471859200,
+          maxCacheSize: 1073741824 * 1073741824,
+          maxCacheFileSize: 471859200 * 471859200,
+
+          ///Android only option to use cached video between app sessions
+          key: "testCacheKey",
+        ),
         bufferingConfiguration: betterPlayerBufferingConfiguration);
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(dataSource);

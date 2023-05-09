@@ -103,7 +103,7 @@ class _LoginPage423State extends State<LoginPage423> {
                       child: SizedBox(
                           height: 150,
                           width: 150,
-                          child: Image.asset(Config.app_icon))),
+                          child: Image.asset(appConfig.app_icon))),
                   SingleChildScrollView(
                     child: Center(
                       child: Form(

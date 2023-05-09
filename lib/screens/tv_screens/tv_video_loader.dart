@@ -37,6 +37,7 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
   List<TVVideoLinks>? tvVideoLinks;
   List<TVVideoSubtitles>? tvVideoSubs;
   TVInfo? tvInfo;
+  double loadProgress = 0.00;
 
   @override
   void initState() {
@@ -65,8 +66,8 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
 
   void loadVideo() async {
     try {
-      await tvApi()
-          .fetchTVForStream(Endpoints.searchMovieTVForStream(widget.videoTitle))
+      await tvApi().fetchTVForStream(
+              Endpoints.searchMovieTVForStream(widget.videoTitle))
           .then((value) {
         setState(() {
           tvShows = value;
@@ -110,7 +111,10 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
       List<BetterPlayerSubtitlesSource> subs = [];
 
       if (tvVideoSubs != null) {
-        for (int i = 0; i < tvVideoSubs!.length; i++) {
+        for (int i = 0; i < tvVideoSubs!.length - 1; i++) {
+          setState(() {
+            loadProgress = (i / tvVideoSubs!.length) * 100;
+          });
           await getVttFileAsString(tvVideoSubs![i].url!).then((value) {
             subs.addAll({
               BetterPlayerSubtitlesSource(
@@ -118,7 +122,8 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
                   content: processVttFileTimestamps(value),
                   selectedByDefault: tvVideoSubs![i].language == 'English' ||
                           tvVideoSubs![i].language == 'English - English' ||
-                          tvVideoSubs![i].language == 'English - SDH'
+                          tvVideoSubs![i].language == 'English - SDH' ||
+                          tvVideoSubs![i].language == 'English 1'
                       ? true
                       : false,
                   type: BetterPlayerSubtitlesSourceType.memory)
@@ -181,28 +186,35 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
 
   @override
   Widget build(BuildContext context) {
-    SpinKitChasingDots spinKitChasingDots = const SpinKitChasingDots(
-      color: Colors.white,
-      size: 60,
-    );
-
     return Scaffold(
-      body: Center(
+        body: Center(
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: Theme.of(context).colorScheme.onBackground,
+        ),
+        height: 120,
+        width: 180,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            spinKitChasingDots,
-            const Padding(
-              padding: EdgeInsets.only(top: 8.0),
-              child: Text(
-                'Initializing player',
-                style: kTextSmallHeaderStyle,
-              ),
-            )
+            Image.asset(
+              appConfig.app_icon,
+              height: 65,
+              width: 65,
+            ),
+            const SizedBox(
+              height: 15,
+            ),
+            const SizedBox(width: 160, child: LinearProgressIndicator()),
+            Text(
+              '${loadProgress.toStringAsFixed(0).toString()}%',
+              style: TextStyle(color: Theme.of(context).colorScheme.background),
+            ),
           ],
         ),
       ),
-    );
+    ));
   }
 }

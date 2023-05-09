@@ -108,6 +108,7 @@ class DiscoverMoviesState extends State<DiscoverMovies>
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(8.0),
                                 child: CachedNetworkImage(
+                                  cacheManager: cacheProp(),
                                   fadeOutDuration:
                                       const Duration(milliseconds: 300),
                                   fadeOutCurve: Curves.easeOut,

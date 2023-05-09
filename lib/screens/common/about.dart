@@ -30,7 +30,7 @@ class AboutPage extends StatelessWidget {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(40.0),
                         child: Image.asset(
-                          Config.app_icon,
+                          appConfig.app_icon,
                           height: 100,
                           width: 100,
                         ),

@@ -80,7 +80,7 @@ class _LandingScreenState extends State<LandingScreen> {
                                     tag: 'logo_shadow',
                                     child: Padding(
                                       padding: const EdgeInsets.all(8.0),
-                                      child: Image.asset(Config.app_icon),
+                                      child: Image.asset(appConfig.app_icon),
                                     ),
                                   ),
                                 ),

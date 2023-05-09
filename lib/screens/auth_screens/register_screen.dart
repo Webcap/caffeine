@@ -204,7 +204,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         child: SizedBox(
                             width: 90,
                             height: 90,
-                            child: Image.asset(Config.app_icon)),
+                            child: Image.asset(appConfig.app_icon)),
                       ),
                     ),
                     const SizedBox(

@@ -1,6 +1,6 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:retry/retry.dart';
 
 const String TMDB_API_BASE_URL = "https://api.themoviedb.org/3";
@@ -26,7 +26,7 @@ const String CONSUMET_API = 'https://consumet-api-clone.vercel.app/';
 
 final client = HttpClient();
 
-class Config {
+class appConfig {
   static final app_icon = "assets/logo.png";
 }
 
@@ -55,7 +55,7 @@ const kTextSmallHeaderStyle = TextStyle(
   overflow: TextOverflow.ellipsis,
 );
 
-const String currentAppVersion = '1.0.5-dev';
+const String currentAppVersion = '1.0.5-devbuild-v2';
 
 const kTextHeaderStyle = TextStyle(
   fontFamily: 'PoppinsSB',
@@ -104,12 +104,15 @@ const retryOptions = RetryOptions(
 const timeOut = Duration(seconds: 10);
 
 final List<String> appNames = [
-  'caffiene-v1.0.1.apk',
-  'caffiene-v1.0.1-dev.apk',
-  'caffiene-v1.0.2-dev.apk',
-  'caffiene-v1.0.2.apk',
   'caffiene-v1.0.3.apk',
   'caffiene-v1.0.3-dev.apk',
   'caffiene-v1.0.4-dev.apk',
   'caffiene-v1.0.4.apk',
+  'caffiene-v1.0.5.apk',
+  'caffiene-v1.0.5-devbuild-v2.apk',
 ];
+
+CacheManager cacheProp() {
+  return CacheManager(
+      Config('cacheKey', stalePeriod: const Duration(days: 10)));
+}

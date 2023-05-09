@@ -40,10 +40,12 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
   MovieVideoSources? movieVideoSources;
   List<MovieVideoLinks>? movieVideoLinks;
   List<MovieVideoSubtitles>? movieVideoSubs;
+  double loadProgress = 0.00;
 
   @override
   void initState() {
     super.initState();
+    widget.interstitialAd.show();
     loadVideo();
   }
 
@@ -107,7 +109,10 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
       List<BetterPlayerSubtitlesSource> subs = [];
 
       if (movieVideoSubs != null) {
-        for (int i = 0; i < movieVideoSubs!.length; i++) {
+        for (int i = 0; i < movieVideoSubs!.length - 1; i++) {
+          setState(() {
+            loadProgress = (i / movieVideoSubs!.length) * 100;
+          });
           await getVttFileAsString(movieVideoSubs![i].url!).then((value) {
             subs.addAll({
               BetterPlayerSubtitlesSource(
@@ -116,7 +121,8 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
                   content: processVttFileTimestamps(value),
                   selectedByDefault: movieVideoSubs![i].language == 'English' ||
                           movieVideoSubs![i].language == 'English - English' ||
-                          movieVideoSubs![i].language == 'English - SDH'
+                          movieVideoSubs![i].language == 'English - SDH' ||
+                          movieVideoSubs![i].language == 'English 1'
                       ? true
                       : false,
                   type: BetterPlayerSubtitlesSourceType.memory),
@@ -181,28 +187,35 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
 
   @override
   Widget build(BuildContext context) {
-    SpinKitChasingDots spinKitChasingDots = const SpinKitChasingDots(
-      color: Colors.white,
-      size: 60,
-    );
-
     return Scaffold(
-      body: Center(
+        body: Center(
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: Theme.of(context).colorScheme.onBackground,
+        ),
+        height: 120,
+        width: 180,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            spinKitChasingDots,
-            const Padding(
-              padding: EdgeInsets.only(top: 8.0),
-              child: Text(
-                'Initializing player',
-                style: kTextSmallHeaderStyle,
-              ),
-            )
+            Image.asset(
+              appConfig.app_icon,
+              height: 65,
+              width: 65,
+            ),
+            const SizedBox(
+              height: 15,
+            ),
+            const SizedBox(width: 160, child: LinearProgressIndicator()),
+            Text(
+              '${loadProgress.toStringAsFixed(0).toString()}%',
+              style: TextStyle(color: Theme.of(context).colorScheme.background),
+            ),
           ],
         ),
       ),
-    );
+    ));
   }
 }

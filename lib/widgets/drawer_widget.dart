@@ -44,7 +44,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                   child: DrawerHeader(
                     decoration: BoxDecoration(
                         color: isDark ? Colors.white : Colors.black),
-                    child: Image.asset(Config.app_icon),
+                    child: Image.asset(appConfig.app_icon),
                   ),
                 ),
                 ListTile(
