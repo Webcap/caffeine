@@ -36,6 +36,7 @@ class WatchNowButton extends StatefulWidget {
 class _WatchNowButtonState extends State<WatchNowButton> {
   Moviedetail? movieDetails;
   bool? isVisible = false;
+  bool adLoaded = false;
   double? buttonWidth = 150;
 
   // google ads
@@ -52,6 +53,7 @@ class _WatchNowButtonState extends State<WatchNowButton> {
           onAdLoaded: (InterstitialAd ad) {
             debugPrint("AD LOADED");
             _interstitialAd = ad;
+            adLoaded = true;
           },
           onAdFailedToLoad: (LoadAdError error) {
             debugPrint('InterstitialAd failed to load: $error');
@@ -76,19 +78,16 @@ class _WatchNowButtonState extends State<WatchNowButton> {
           Theme.of(context).colorScheme.primary,
         )),
         onPressed: () async {
-          Navigator.push(context, MaterialPageRoute(builder: (context) {
-            // return MovieStream(
-            //   streamUrl:
-            //       'https://www.2embed.to/embed/tmdb/movie?id=${widget.movieId}',
-            //   movieName: widget.movieName!,
-            // );
-            return MovieVideoLoader(
-              videoTitle: widget.movieName!,
-              releaseYear: widget.releaseYear,
-              thumbnail: widget.thumbnail,
-              interstitialAd: _interstitialAd,
-            );
-          }));
+          if (adLoaded == true) {
+            Navigator.push(context, MaterialPageRoute(builder: (context) {
+              return MovieVideoLoader(
+                videoTitle: widget.movieName!,
+                releaseYear: widget.releaseYear,
+                thumbnail: widget.thumbnail,
+                interstitialAd: _interstitialAd,
+              );
+            }));
+          }
         },
         child: Row(
           children: [
