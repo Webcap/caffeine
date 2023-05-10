@@ -1,3 +1,4 @@
+import 'package:caffiene/models/general_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/models/adultmode_preferences.dart';
 import 'package:caffiene/models/country_preferences.dart';
@@ -18,6 +19,8 @@ class SettingsProvider with ChangeNotifier {
   ViewPreferences viewPreferences = ViewPreferences();
   CountryPreferences countryPreferences = CountryPreferences();
   Material3Preferences material3preferences = Material3Preferences();
+  GeneralSettingsPreferences generalSettingsPreferences =
+      GeneralSettingsPreferences();
 
   bool _isAdult = false;
   bool get isAdult => _isAdult;
@@ -27,6 +30,9 @@ class SettingsProvider with ChangeNotifier {
 
   bool _darktheme = false;
   bool get darktheme => _darktheme;
+
+  bool _subtitleStatus = false;
+  bool get subtitleStatus => _subtitleStatus;
 
   int _defaultValue = 0;
   int get defaultValue => _defaultValue;
@@ -63,6 +69,11 @@ class SettingsProvider with ChangeNotifier {
     material3preferences.setMaterial3Mode(value);
     notifyListeners();
   }
+
+  // // subtitle status
+  // Future<void> getCurrentSubtitleStatus() async {
+  //   subtitleStatus = await generalSettingsPreferences.getSubtitleStatus();
+  // }
 
   // adult preference change
   Future<void> getCurrentAdultMode() async {

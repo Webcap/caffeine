@@ -133,12 +133,13 @@ class GenreDisplayState extends State<GenreDisplay>
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Provider.of<SettingsProvider>(context).darktheme;
     super.build(context);
     return Container(
         child: genreList == null
             ? SizedBox(
                 height: 80,
-                child: detailGenreShimmer(),
+                child: detailGenreShimmer1(isDark),
               )
             : genreList!.isEmpty
                 ? Container()
@@ -163,10 +164,10 @@ class GenreDisplayState extends State<GenreDisplay>
                             },
                             child: Chip(
                               shape: RoundedRectangleBorder(
-                                side: const BorderSide(
+                                side: BorderSide(
                                     width: 2,
                                     style: BorderStyle.solid,
-                                    color: maincolor),
+                                    color: Theme.of(context).colorScheme.primary),
                                 borderRadius: BorderRadius.circular(20.0),
                               ),
                               label: Text(
@@ -174,7 +175,9 @@ class GenreDisplayState extends State<GenreDisplay>
                                 style: const TextStyle(fontFamily: 'Poppins'),
                                 // style: widget.themeData.textTheme.bodyText1,
                               ),
-                              backgroundColor: const Color(0xFFDFDEDE),
+                              backgroundColor: isDark
+                                ? const Color(0xFF2b2c30)
+                                : const Color(0xFFDFDEDE),
                             ),
                           ),
                         );

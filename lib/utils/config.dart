@@ -23,6 +23,7 @@ const String SIGN_IN = "Log In";
 const String SIGN_UP = "Sign Up";
 const String ERROROCCURRED = "an error has occurred";
 const String CONSUMET_API = 'https://consumet-api-clone.vercel.app/';
+const String PROCESSING_VIDEO = "Please Wait while we process the video";
 
 final client = HttpClient();
 

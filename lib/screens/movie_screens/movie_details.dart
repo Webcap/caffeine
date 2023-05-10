@@ -122,12 +122,12 @@ class MovieDetailPageState extends State<MovieDetailPage>
           )
         ],
       ),
-      // floatingActionButton: FloatingActionButton(
-      //     onPressed: () async {
-      //       await Share.share(
-      //           'Checkout the movie \'${widget.movie.title}\'!\nIt is rated ${widget.movie.voteAverage!.toStringAsFixed(1)} out of 10\nhttps://themoviedb.org/movie/${widget.movie.id}');
-      //     },
-      //     child: const Icon(Icons.share)),
+      floatingActionButton: FloatingActionButton(
+          onPressed: () async {
+            await Share.share(
+                'Checkout the movie \'${widget.movie.title}\'!\nIt is rated ${widget.movie.voteAverage!.toStringAsFixed(1)} out of 10\nhttps://themoviedb.org/movie/${widget.movie.id}');
+          },
+          child: const Icon(Icons.share)),
     );
   }
 

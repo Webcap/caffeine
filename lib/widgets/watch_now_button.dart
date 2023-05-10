@@ -1,4 +1,5 @@
 import 'package:caffiene/utils/admob.dart';
+import 'package:caffiene/utils/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/models/movie_models.dart';
 import 'package:caffiene/screens/movie_screens/movie_source_screen.dart';
@@ -87,6 +88,8 @@ class _WatchNowButtonState extends State<WatchNowButton> {
                 interstitialAd: _interstitialAd,
               );
             }));
+          } else {
+            openSnackbar(context, PROCESSING_VIDEO, Colors.red);
           }
         },
         child: Row(

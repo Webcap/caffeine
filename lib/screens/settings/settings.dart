@@ -100,6 +100,21 @@ class _SettingsState extends State<Settings> {
               });
             },
           ),
+          SwitchListTile(
+            inactiveThumbColor: Colors.white,
+            inactiveTrackColor: const Color(0xFF9B9B9B),
+            value: themeChange.darktheme,
+            secondary: Icon(
+              Icons.dark_mode,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+            title: const Text('Subtitles'),
+            onChanged: (bool value) {
+              // setState(() {
+              //   themeChange.darktheme = value;
+              // });
+            },
+          ),
           Visibility(
             visible: !isBelow33,
             child: SwitchListTile(
