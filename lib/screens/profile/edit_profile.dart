@@ -1,3 +1,4 @@
+import 'package:caffiene/screens/common/upgrade_to_premium.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -363,18 +364,24 @@ class _ProfileEditState extends State<ProfileEdit> {
                             style: ButtonStyle(
                                 maximumSize: MaterialStateProperty.all(
                                     const Size(200, 60)),
+                                backgroundColor: 
+                                  MaterialStatePropertyAll(Colors.yellow[800])
+                                ,
                                 shape: MaterialStateProperty.all<
                                         RoundedRectangleBorder>(
                                     RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10.0),
                                 ))),
-                            child: const Text('Change email'),
+                            child: const Text(
+                              'Upgrade to Premium',
+                              style: TextStyle(color: Colors.white),
+                            ),
                           ),
                           TextButton(
                             onPressed: () {
                               // Navigator.push(context,
                               //     MaterialPageRoute(builder: ((context) {
-                              //   return const DeleteAccountScreen();
+                              //   return const DeleteAccount();
                               // })));
                             },
                             style: ButtonStyle(
