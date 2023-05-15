@@ -1,10 +1,17 @@
+import 'package:caffiene/provider/settings_provider.dart';
+import 'package:caffiene/screens/tv_screens/widgets/similar_tv_tab.dart';
+import 'package:caffiene/screens/tv_screens/widgets/tv_recc_tab.dart';
+import 'package:caffiene/screens/tv_screens/widgets/tv_seasons_list.dart';
+import 'package:caffiene/screens/tv_screens/widgets/tv_social_links.dart';
+import 'package:caffiene/screens/tv_screens/widgets/tv_widgets.dart';
+import 'package:caffiene/widgets/common_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/api/endpoints.dart';
 import 'package:caffiene/models/tv.dart';
 import 'package:caffiene/screens/tv_screens/widgets/scrolling_tv_widget.dart';
 import 'package:caffiene/screens/tv_screens/widgets/tv_genre_widgets.dart';
-import 'package:caffiene/screens/tv_screens/widgets/tv_seasons_list.dart';
 import 'package:caffiene/utils/config.dart';
+import 'package:provider/provider.dart';
 import 'package:readmore/readmore.dart';
 import 'package:intl/intl.dart';
 
@@ -96,7 +103,7 @@ class _TVAboutState extends State<TVAbout> {
               tvId: widget.tvSeries.id!,
               seriesName: widget.tvSeries.name!,
               title: 'Seasons',
-              api: Endpoints.getTVSeasons(widget.tvSeries.id!),
+              api: Endpoints.getTVSeasons(widget.tvSeries.id!)
             ),
             // TVImagesDisplay(
             //   title: 'Images',
@@ -108,26 +115,26 @@ class _TVAboutState extends State<TVAbout> {
             //   api2: Endpoints.tvDetailsUrl(widget.tvSeries.id!),
             //   title: 'Videos',
             // ),
-            // TVSocialLinks(
-            //   api: Endpoints.getExternalLinksForTV(widget.tvSeries.id!),
-            // ),
-            // TVInfoTable(
-            //   api: Endpoints.tvDetailsUrl(widget.tvSeries.id!),
-            // ),
-            // TVRecommendationsTab(
-            //     includeAdult: Provider.of<SettingsProvider>(context).isAdult,
-            //     tvId: widget.tvSeries.id!,
-            //     api: Endpoints.getTVRecommendations(widget.tvSeries.id!, 1)),
-            // SimilarTVTab(
-            //     includeAdult: Provider.of<SettingsProvider>(context).isAdult,
-            //     tvId: widget.tvSeries.id!,
-            //     tvName: widget.tvSeries.name!,
-            //     api: Endpoints.getSimilarTV(widget.tvSeries.id!, 1)),
-            // DidYouKnow(
-            //   api: Endpoints.getExternalLinksForTV(
-            //     widget.tvSeries.id!,
-            //   ),
-            // ),
+            TVSocialLinks(
+              api: Endpoints.getExternalLinksForTV(widget.tvSeries.id!),
+            ),
+            TVInfoTable(
+              api: Endpoints.tvDetailsUrl(widget.tvSeries.id!),
+            ),
+            TVRecommendationsTab(
+                includeAdult: Provider.of<SettingsProvider>(context).isAdult,
+                tvId: widget.tvSeries.id!,
+                api: Endpoints.getTVRecommendations(widget.tvSeries.id!, 1)),
+            SimilarTVTab(
+                includeAdult: Provider.of<SettingsProvider>(context).isAdult,
+                tvId: widget.tvSeries.id!,
+                tvName: widget.tvSeries.name!,
+                api: Endpoints.getSimilarTV(widget.tvSeries.id!, 1)),
+            DidYouKnow(
+              api: Endpoints.getExternalLinksForTV(
+                widget.tvSeries.id!,
+              ),
+            ),
           ],
         ),
       ),

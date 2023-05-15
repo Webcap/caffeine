@@ -1405,6 +1405,8 @@ Widget socialMediaShimmer() => Container(
           }),
     );
 
+  
+
 Widget detailInfoTableItemShimmer1(isDark) => Shimmer.fromColors(
       baseColor: isDark ? Colors.grey.shade800 : Colors.grey.shade300,
       highlightColor: isDark ? Colors.grey.shade700 : Colors.grey.shade100,
