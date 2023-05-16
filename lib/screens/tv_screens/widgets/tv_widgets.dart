@@ -620,18 +620,20 @@ class TVImagesDisplayState extends State<TVImagesDisplay> {
   void initState() {
     super.initState();
     moviesApi().fetchImages(widget.api!).then((value) {
-      setState(() {
-        tvImages = value;
-      });
+      if (mounted) {
+        setState(() {
+          tvImages = value;
+        });
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
-    // final isDark = Provider.of<DarkthemeProvider>(context).darktheme;
+    final isDark = Provider.of<SettingsProvider>(context).darktheme;
     return SizedBox(
-      height: 220,
+      height: 260,
       width: double.infinity,
       child: Column(
         children: [
@@ -650,9 +652,9 @@ class TVImagesDisplayState extends State<TVImagesDisplay> {
           Expanded(
             child: SizedBox(
               width: double.infinity,
-              height: 220,
+              height: 260,
               child: tvImages == null
-                  ? detailImageShimmer()
+                  ? detailImageShimmer1(isDark)
                   : CarouselSlider(
                       options: CarouselOptions(
                         enableInfiniteScroll: false,
@@ -696,6 +698,8 @@ class TVImagesDisplayState extends State<TVImagesDisplay> {
                                                             fit: BoxFit.cover,
                                                           )
                                                         : CachedNetworkImage(
+                                                            cacheManager:
+                                                                cacheProp(),
                                                             fadeOutDuration:
                                                                 const Duration(
                                                                     milliseconds:
@@ -757,7 +761,8 @@ class TVImagesDisplayState extends State<TVImagesDisplay> {
                                                             ),
                                                             placeholder: (context,
                                                                     url) =>
-                                                                detailImageImageSimmer(),
+                                                                detailImageImageSimmer1(
+                                                                    isDark),
                                                             errorWidget:
                                                                 (context, url,
                                                                         error) =>
@@ -822,6 +827,8 @@ class TVImagesDisplayState extends State<TVImagesDisplay> {
                                                             fit: BoxFit.cover,
                                                           )
                                                         : CachedNetworkImage(
+                                                            cacheManager:
+                                                                cacheProp(),
                                                             fadeOutDuration:
                                                                 const Duration(
                                                                     milliseconds:
@@ -884,7 +891,8 @@ class TVImagesDisplayState extends State<TVImagesDisplay> {
                                                             ),
                                                             placeholder: (context,
                                                                     url) =>
-                                                                detailImageImageSimmer(),
+                                                                detailImageImageSimmer1(
+                                                                    isDark),
                                                             errorWidget:
                                                                 (context, url,
                                                                         error) =>
@@ -941,16 +949,18 @@ class TVVideosDisplayState extends State<TVVideosDisplay> {
   void initState() {
     super.initState();
     moviesApi().fetchVideos(widget.api!).then((value) {
-      setState(() {
-        tvVideos = value;
-      });
+      if (mounted) {
+        setState(() {
+          tvVideos = value;
+        });
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
     bool playButtonVisibility = true;
-    // final isDark = Provider.of<DarkthemeProvider>(context).darktheme;
+    final isDark = Provider.of<SettingsProvider>(context).darktheme;
     return Column(
       children: [
         tvVideos == null
@@ -982,7 +992,7 @@ class TVVideosDisplayState extends State<TVVideosDisplay> {
             width: double.infinity,
             height: 230,
             child: tvVideos == null
-                ? detailVideoShimmer()
+                ? detailVideoShimmer1(isDark)
                 : tvVideos!.result!.isEmpty
                     ? const SizedBox(
                         width: double.infinity,
@@ -1032,6 +1042,7 @@ class TVVideosDisplayState extends State<TVVideosDisplay> {
                                                 fit: StackFit.expand,
                                                 children: [
                                                   CachedNetworkImage(
+                                                    cacheManager: cacheProp(),
                                                     fadeOutDuration:
                                                         const Duration(
                                                             milliseconds: 300),
@@ -1055,7 +1066,8 @@ class TVVideosDisplayState extends State<TVVideosDisplay> {
                                                     ),
                                                     placeholder: (context,
                                                             url) =>
-                                                        detailVideoImageShimmer(),
+                                                        detailVideoImageShimmer1(
+                                                            isDark),
                                                     errorWidget:
                                                         (context, url, error) =>
                                                             Image.asset(

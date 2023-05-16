@@ -129,21 +129,23 @@ class TVGenreDisplayState extends State<TVGenreDisplay>
   void initState() {
     super.initState();
     moviesApi().fetchGenre(widget.api!).then((value) {
-      setState(() {
-        genres = value;
-      });
+      if (mounted) {
+        setState(() {
+          genres = value;
+        });
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    // final isDark = Provider.of<DarkthemeProvider>(context).darktheme;
+    final isDark = Provider.of<SettingsProvider>(context).darktheme;
     return Container(
         child: genres == null
             ? SizedBox(
                 height: 80,
-                child: detailGenreShimmer(),
+                child: detailGenreShimmer1(isDark),
               )
             : genres!.isEmpty
                 ? Container()
@@ -168,10 +170,11 @@ class TVGenreDisplayState extends State<TVGenreDisplay>
                             },
                             child: Chip(
                               shape: RoundedRectangleBorder(
-                                side: const BorderSide(
-                                    width: 2,
-                                    style: BorderStyle.solid,
-                                    color: Color(0xFFF57C00)),
+                                side: BorderSide(
+                                  width: 2,
+                                  style: BorderStyle.solid,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
                                 borderRadius: BorderRadius.circular(20.0),
                               ),
                               label: Text(
@@ -179,7 +182,9 @@ class TVGenreDisplayState extends State<TVGenreDisplay>
                                 style: const TextStyle(fontFamily: 'Poppins'),
                                 // style: widget.themeData.textTheme.bodyText1,
                               ),
-                              backgroundColor: const Color(0xFFDFDEDE),
+                              backgroundColor: isDark
+                                  ? const Color(0xFF2b2c30)
+                                  : const Color(0xFFDFDEDE),
                             ),
                           ),
                         );

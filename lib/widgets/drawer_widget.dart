@@ -1,3 +1,5 @@
+
+import 'package:caffiene/screens/watch_history/watch_history_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:caffiene/provider/settings_provider.dart';
@@ -46,6 +48,16 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                         color: isDark ? Colors.white : Colors.black),
                     child: Image.asset(appConfig.app_icon),
                   ),
+                ),
+                ListTile(
+                  leading: Icon(
+                    FontAwesomeIcons.book,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  title: const Text('Watch History'),
+                  onTap: () {
+                    nextScreen(context, WatchHistory());
+                  },
                 ),
                 ListTile(
                   leading: Icon(

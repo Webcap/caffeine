@@ -105,16 +105,16 @@ class _TVAboutState extends State<TVAbout> {
               title: 'Seasons',
               api: Endpoints.getTVSeasons(widget.tvSeries.id!)
             ),
-            // TVImagesDisplay(
-            //   title: 'Images',
-            //   api: Endpoints.getTVImages(widget.tvSeries.id!),
-            //   name: widget.tvSeries.originalName,
-            // ),
-            // TVVideosDisplay(
-            //   api: Endpoints.getTVVideos(widget.tvSeries.id!),
-            //   api2: Endpoints.tvDetailsUrl(widget.tvSeries.id!),
-            //   title: 'Videos',
-            // ),
+            TVImagesDisplay(
+              title: 'Images',
+              api: Endpoints.getTVImages(widget.tvSeries.id!),
+              name: widget.tvSeries.originalName,
+            ),
+            TVVideosDisplay(
+              api: Endpoints.getTVVideos(widget.tvSeries.id!),
+              api2: Endpoints.tvDetailsUrl(widget.tvSeries.id!),
+              title: 'Videos',
+            ),
             TVSocialLinks(
               api: Endpoints.getExternalLinksForTV(widget.tvSeries.id!),
             ),
