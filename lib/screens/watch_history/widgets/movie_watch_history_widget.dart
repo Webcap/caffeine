@@ -41,7 +41,7 @@ class _MovieWatchHistoryState extends State<MovieWatchHistory> {
             : widget.movieList!.isEmpty
                 ? const Center(
                     child: Text(
-                      'You don\'t have any movies bookmarked :)',
+                      'You don\'t have any watch history :(',
                       textAlign: TextAlign.center,
                       style: kTextSmallHeaderStyle,
                       maxLines: 4,

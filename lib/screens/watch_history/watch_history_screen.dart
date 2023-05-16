@@ -23,7 +23,7 @@ class _WatchHistoryState extends State<WatchHistory>
   MovieDatabaseController movieDatabaseController = MovieDatabaseController();
   TVDatabaseController tvDatabaseController = TVDatabaseController();
   List<TV>? tvList;
-  List<Movie>? movieList;
+  List<Movie>? watchMovieList;
 
   @override
   void initState() {
@@ -91,7 +91,7 @@ class _WatchHistoryState extends State<WatchHistory>
             child: TabBarView(
               controller: tabController,
               children: [
-                MovieWatchHistory(movieList: movieList),
+                MovieWatchHistory(movieList: watchMovieList),
               ],
             ),
           )
