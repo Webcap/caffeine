@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'dart:math';
 
-
+import 'package:caffiene/utils/constant.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -15,6 +15,7 @@ import 'package:caffiene/screens/auth_screens/user_state.dart';
 import 'package:caffiene/utils/config.dart';
 
 import 'package:caffiene/utils/theme_data.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'package:provider/provider.dart';
@@ -92,6 +93,7 @@ class _caffeineState extends State<caffeine>
     if (showAds == true) {
       MobileAds.instance.initialize();
     }
+    _getPackage();
   }
 
   @override
@@ -144,5 +146,18 @@ class _caffeineState extends State<caffeine>
                 );
               }));
         });
+  }
+
+  _getPackage() async {
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    String appName = packageInfo.appName;
+    String packageName = packageInfo.packageName;
+    String appVersion = packageInfo.version;
+    String appBuildNumber = packageInfo.buildNumber;
+
+    Constant.appName = appName;
+    Constant.appPackageName = packageName;
+    Constant.appVersion = appVersion;
+    Constant.appBuildNumber = appBuildNumber;
   }
 }

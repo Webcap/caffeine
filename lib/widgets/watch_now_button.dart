@@ -86,6 +86,7 @@ class _WatchNowButtonState extends State<WatchNowButton> {
                 releaseYear: widget.releaseYear,
                 thumbnail: widget.thumbnail,
                 interstitialAd: _interstitialAd,
+                movieId: widget.movieId,
               );
             }));
           } else {

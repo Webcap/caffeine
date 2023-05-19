@@ -1,7 +1,10 @@
 import 'dart:convert';
 
+import 'package:caffiene/models/watch_history.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
 import 'package:easy_ads_flutter/easy_ads_flutter.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -22,12 +25,14 @@ class MovieVideoLoader extends StatefulWidget {
       required this.thumbnail,
       required this.releaseYear,
       required this.interstitialAd,
+      required this.movieId,
       Key? key})
       : super(key: key);
 
   final String videoTitle;
   final int releaseYear;
   final String? thumbnail;
+  final int? movieId;
   final InterstitialAd interstitialAd;
 
   @override
@@ -41,6 +46,7 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
   List<MovieVideoLinks>? movieVideoLinks;
   List<MovieVideoSubtitles>? movieVideoSubs;
   double loadProgress = 0.00;
+
 
   @override
   void initState() {
@@ -63,6 +69,10 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
       } else {
         processedLines.add(line);
       }
+    }
+
+    if (processedLines.isEmpty) {
+      throw Exception('No Timestamps found in VTT File');
     }
 
     return processedLines.join('\n');
@@ -144,6 +154,8 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
       Map<String, String> reversedVids = Map.fromEntries(reversedVideoList);
 
       if (movieVideoLinks != null && movieVideoSubs != null) {
+        // Create a new watch history entry.
+
         Navigator.pushReplacement(context, MaterialPageRoute(
           builder: (context) {
             return Player(

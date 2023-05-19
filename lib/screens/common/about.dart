@@ -111,31 +111,31 @@ class AboutPage extends StatelessWidget {
                         children: const [
                           SocialIconContainer(
                             platformIcon: FontAwesomeIcons.twitter,
-                            uri: 'https://twitter.com/cinemaxapp',
+                            uri: '',
                           ),
                           SocialIconContainer(
                             platformIcon: FontAwesomeIcons.instagram,
-                            uri: 'https://instagram.com/cinemaxhq',
+                            uri: '',
                           ),
                           SocialIconContainer(
                             platformIcon: FontAwesomeIcons.telegram,
-                            uri: 'https://t.me/cinemaxapp',
+                            uri: '',
                           ),
                           SocialIconContainer(
                               platformIcon: FontAwesomeIcons.tiktok,
-                              uri: 'https://www.tiktok.com/@cinemaxapp'),
+                              uri: ''),
                           SocialIconContainer(
                             platformIcon: FontAwesomeIcons.facebook,
                             uri:
-                                'https://m.facebook.com/profile.php?id=100086435380480',
+                                '',
                           ),
                           SocialIconContainer(
                             platformIcon: FontAwesomeIcons.github,
-                            uri: 'https://github.com/beamlakaschalew/cinemax',
+                            uri: '',
                           ),
                           SocialIconContainer(
                               platformIcon: Icons.mail,
-                              uri: 'mailto:cinemaxappinfo@gmail.com'),
+                              uri: ''),
                         ],
                       ),
                     )

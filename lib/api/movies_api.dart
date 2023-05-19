@@ -2,7 +2,10 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:caffiene/models/watch_history.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 import 'package:caffiene/models/credits.dart';
 import 'package:caffiene/models/genres.dart';
@@ -314,5 +317,31 @@ class moviesApi {
       throw Exception(
           'Exception accoured: $error with stacktrace: $stacktrace');
     }
+  }
+
+  void addWatchHistory(
+      int movieID, String movieTitle, DateTime watchedAt, bool completed) {
+    final FirebaseAuth _auth = FirebaseAuth.instance;
+    final User? user = _auth.currentUser;
+    final uid = user!.uid;
+
+    FirebaseFirestore firebaseInstance = FirebaseFirestore.instance;
+
+    // Creates a new Watch history event
+    WatchHistoryEntry watchHistoryEntry = WatchHistoryEntry(
+      movieID: movieID,
+      movieTitle: movieTitle,
+      dateTime: watchedAt,
+      completed: completed,
+    );
+
+    // Save the watch history entry to Firebase.
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .collection('watchHistory')
+        .add(watchHistoryEntry.toJson());
+
+    print('Well we made it this far');
   }
 }
