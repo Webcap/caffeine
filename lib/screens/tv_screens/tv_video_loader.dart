@@ -1,12 +1,9 @@
-import 'dart:convert';
 import 'package:better_player/better_player.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:caffiene/api/endpoints.dart';
 import 'package:caffiene/api/tv_api.dart';
 import 'package:caffiene/models/tv_stream.dart';
 import 'package:caffiene/models/functions.dart';
-import 'package:http/http.dart' as http;
 import 'package:caffiene/screens/player/player.dart';
 import 'package:caffiene/utils/config.dart';
 
@@ -151,7 +148,7 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
               thumbnail: widget.thumbnail,
               colors: [
                 Theme.of(context).primaryColor,
-                Theme.of(context).backgroundColor
+                Theme.of(context).colorScheme.background
               ],
             );
           },

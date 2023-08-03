@@ -22,13 +22,13 @@ const String TAG_LINE1 = "Unlimted, for free, anytime on Caffiene";
 const String SIGN_IN = "Log In";
 const String SIGN_UP = "Sign Up";
 const String ERROROCCURRED = "an error has occurred";
-const String CONSUMET_API = 'https://consumet-api-clone.vercel.app/';
+const String CONSUMET_API = 'https://consumet-snowy.vercel.app/';
 const String PROCESSING_VIDEO = "Please Wait while we process the video";
 
 final client = HttpClient();
 
 class appConfig {
-  static final app_icon = "assets/logo.png";
+  static const app_icon = "assets/logo.png";
 }
 
 String mixpanelKey = "c8ff0b487c27b501b6524084dc0b83a9";
@@ -39,14 +39,14 @@ const List<String> backimage = [
   'https://images.pexels.com/videos/3045163/free-video-3045163.jpg?auto=compress&cs=tinysrgb&dpr=1&w=500',
 ];
 
-late Color uppermodecolor = darkmode;
-late String selectedbackimg = backimage[1];
-late Color oppositecolor = Colors.black;
+Color uppermodecolor = darkmode;
+String selectedbackimg = backimage[1];
+Color oppositecolor = Colors.black;
 
-const maincolor = Color(0xFFFea575e);
-const maincolor2 = Color(0xFFF371124);
-const maincolor3 = Color(0xFFF832f3c);
-const maincolor4 = Color(0xFFF501b2c);
+const maincolor = Color(0xfffea575e);
+const maincolor2 = Color(0xfff371124);
+const maincolor3 = Color(0xfff832f3c);
+const maincolor4 = Color(0xfff501b2c);
 
 const bool showAds = true;
 

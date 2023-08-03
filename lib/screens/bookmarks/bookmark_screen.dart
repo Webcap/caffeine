@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:caffiene/controller/database_controller.dart';
 import 'package:caffiene/models/movie_models.dart';
 import 'package:caffiene/models/tv.dart';
@@ -111,11 +110,11 @@ class _BookmarkScreenState extends State<BookmarkScreen>
           Container(
             color: Colors.grey,
             child: TabBar(
-              tabs: [
+              tabs: const [
                 Tab(
                     child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
+                  children: [
                     Padding(
                       padding: EdgeInsets.only(right: 8.0),
                       child: Icon(Icons.movie_creation_rounded),
@@ -128,7 +127,7 @@ class _BookmarkScreenState extends State<BookmarkScreen>
                 Tab(
                     child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
+                  children: [
                     Padding(
                         padding: EdgeInsets.only(right: 8.0),
                         child: Icon(Icons.live_tv_rounded)),

@@ -6,7 +6,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:caffiene/models/watchprovider_countries.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/screens/common/country_choose.dart';
-import 'package:caffiene/utils/config.dart';
 import 'package:provider/provider.dart';
 
 class Settings extends StatefulWidget {

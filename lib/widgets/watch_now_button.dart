@@ -2,14 +2,9 @@ import 'package:caffiene/utils/admob.dart';
 import 'package:caffiene/utils/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/models/movie_models.dart';
-import 'package:caffiene/screens/movie_screens/movie_source_screen.dart';
-import 'package:caffiene/screens/movie_screens/movie_stream.dart';
 import 'package:caffiene/screens/movie_screens/widgets/movie_video_loader.dart';
 import 'package:caffiene/utils/config.dart';
-import 'package:caffiene/utils/next_screen.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:provider/provider.dart';
-import 'package:caffiene/api/movies_api.dart';
 
 class WatchNowButton extends StatefulWidget {
   const WatchNowButton({

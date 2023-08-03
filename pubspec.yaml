@@ -38,7 +38,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   device_info_plus: ^8.2.2
   dio: ^5.1.1
-  dpad_container: ^2.0.3
+  intl: ^0.17.0
   dynamic_color: ^1.6.3
   easy_ads_flutter: ^2.3.3
   firebase_auth: ^4.4.2
@@ -52,7 +52,6 @@ dependencies:
   flutter_inappwebview: ^5.4.4+3
   flutter_launcher_icons: ^0.13.1
   flutter_rating_bar: ^4.0.1
-  flutter_spinkit: ^5.1.0
   flutter_svg: null
   flutter_vlc_player: ^7.1.5
   fluttertoast: ^8.1.1
@@ -67,7 +66,6 @@ dependencies:
   native_device_orientation: ^1.1.4
   need_resume: ^1.0.7+1
   open_file_plus: ^3.4.1
-  package_info_plus: ^1.4.3+1
   path_provider: ^2.0.14
   percent_indicator: ^4.2.3
   photo_view: ^0.14.0

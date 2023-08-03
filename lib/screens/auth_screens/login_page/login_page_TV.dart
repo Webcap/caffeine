@@ -6,7 +6,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:caffiene/key_code.dart';
 import 'package:caffiene/provider/internet_provider.dart';
 import 'package:caffiene/provider/sign_in_provider.dart';
-import 'package:caffiene/screens/home_screen/dash_screen.dart';
 import 'package:caffiene/screens/home_screen/tvHomeScreen.dart';
 import 'package:caffiene/utils/next_screen.dart';
 import 'package:caffiene/utils/snackbar.dart';
@@ -15,12 +14,14 @@ import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
   @override
   _LoginPageState createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
-  Null focusNode = null;
+  void focusNode;
   FocusNode main_focus_node = FocusNode();
   FocusNode username_focus_node = FocusNode();
   FocusNode password_focus_node = FocusNode();
@@ -28,12 +29,12 @@ class _LoginPageState extends State<LoginPage> {
 
   final RoundedLoadingButtonController googleController =
       RoundedLoadingButtonController();
-  TextEditingController usernameController = new TextEditingController();
-  TextEditingController passwordController = new TextEditingController();
+  TextEditingController usernameController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
   bool emailvalide = true;
   bool passwordvalide = true;
   bool loading = false;
-  String _message_error = "";
+  final String _message_error = "";
   bool _visibile_error = false;
   int pos_y = 0;
 
@@ -214,7 +215,7 @@ class _LoginPageState extends State<LoginPage> {
           children: [
             FadeInImage(
                 placeholder: MemoryImage(kTransparentImage),
-                image: AssetImage("assets/images/background.jpeg"),
+                image: const AssetImage("assets/images/background.jpeg"),
                 fit: BoxFit.cover),
             ClipRRect(
               // Clip it cleanly.
@@ -231,7 +232,7 @@ class _LoginPageState extends State<LoginPage> {
               bottom: -5,
               top: -5,
               child: Container(
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: Colors.blueGrey,
                   boxShadow: [
                     BoxShadow(
@@ -243,7 +244,7 @@ class _LoginPageState extends State<LoginPage> {
                 width: MediaQuery.of(context).size.width / 2.5,
                 child: Container(
                   width: double.infinity,
-                  padding: EdgeInsets.all(50),
+                  padding: const EdgeInsets.all(50),
                   color: Colors.black54,
                   child: Column(
                     mainAxisSize: MainAxisSize.max,
@@ -251,15 +252,15 @@ class _LoginPageState extends State<LoginPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Center(child: Image.asset("assets/logo.png", height: 40)),
-                      SizedBox(height: 40),
-                      Text(
+                      const SizedBox(height: 40),
+                      const Text(
                         "Sign in to your account !",
                         style: TextStyle(
                             color: Colors.white,
                             fontSize: 15,
                             fontWeight: FontWeight.w900),
                       ),
-                      SizedBox(height: 15),
+                      const SizedBox(height: 15),
                       TextFormField(
                           controller: usernameController,
                           focusNode: username_focus_node,
@@ -292,7 +293,7 @@ class _LoginPageState extends State<LoginPage> {
                                         ? Colors.white
                                         : Colors.red,
                                     width: 1)),
-                            contentPadding: new EdgeInsets.symmetric(
+                            contentPadding: const EdgeInsets.symmetric(
                                 vertical: 4.0, horizontal: 15.0),
                             suffixIcon: Icon(
                               Icons.email,
@@ -319,7 +320,7 @@ class _LoginPageState extends State<LoginPage> {
                             FocusScope.of(context)
                                 .requestFocus(password_focus_node);
                           }),
-                      SizedBox(height: 10),
+                      const SizedBox(height: 10),
                       TextFormField(
                         controller: passwordController,
                         focusNode: password_focus_node,
@@ -353,7 +354,7 @@ class _LoginPageState extends State<LoginPage> {
                                       ? Colors.white
                                       : Colors.red,
                                   width: 1)),
-                          contentPadding: new EdgeInsets.symmetric(
+                          contentPadding: const EdgeInsets.symmetric(
                               vertical: 4.0, horizontal: 15.0),
                           suffixIcon: Icon(
                             Icons.vpn_key_rounded,
@@ -384,9 +385,9 @@ class _LoginPageState extends State<LoginPage> {
                       if (_visibile_error)
                         Container(
                           width: double.infinity,
-                          margin: EdgeInsets.symmetric(vertical: 5),
+                          margin: const EdgeInsets.symmetric(vertical: 5),
                           padding:
-                              EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+                              const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
                           decoration: BoxDecoration(
                             border: Border.all(color: Colors.red, width: 0.3),
                             borderRadius: BorderRadius.circular(5),
@@ -400,7 +401,7 @@ class _LoginPageState extends State<LoginPage> {
                                 padding: const EdgeInsets.all(5.0),
                                 height: 28,
                                 width: 28,
-                                child: Icon(
+                                child: const Icon(
                                   Icons.warning,
                                   color: Colors.white,
                                   size: 15,
@@ -410,7 +411,7 @@ class _LoginPageState extends State<LoginPage> {
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Text(_message_error,
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         color: Colors.white,
                                         fontSize: 11,
                                         fontWeight: FontWeight.w500,
@@ -427,7 +428,7 @@ class _LoginPageState extends State<LoginPage> {
                           _goToValidate();
                         },
                         child: Container(
-                          margin: EdgeInsets.only(top: 15),
+                          margin: const EdgeInsets.only(top: 15),
                           height: 45,
                           width: double.infinity,
                           decoration: BoxDecoration(
@@ -446,13 +447,13 @@ class _LoginPageState extends State<LoginPage> {
                                   ? Container(
                                       height: 40,
                                       width: 40,
-                                      decoration: BoxDecoration(
+                                      decoration: const BoxDecoration(
                                           color: Colors.white10,
                                           borderRadius: BorderRadius.only(
                                               bottomLeft: Radius.circular(4),
                                               topLeft: Radius.circular(4))),
-                                      child: Center(
-                                        child: Container(
+                                      child: const Center(
+                                        child: SizedBox(
                                             width: 20,
                                             height: 20,
                                             child: CircularProgressIndicator(
@@ -463,12 +464,12 @@ class _LoginPageState extends State<LoginPage> {
                                   : Container(
                                       height: 40,
                                       width: 40,
-                                      decoration: BoxDecoration(
+                                      decoration: const BoxDecoration(
                                           color: Colors.white10,
                                           borderRadius: BorderRadius.only(
                                               bottomLeft: Radius.circular(4),
                                               topLeft: Radius.circular(4))),
-                                      child: Icon(FontAwesomeIcons.envelope,
+                                      child: const Icon(FontAwesomeIcons.envelope,
                                           color: Colors.white)),
                               Expanded(
                                 child: Center(
@@ -476,7 +477,7 @@ class _LoginPageState extends State<LoginPage> {
                                     (loading)
                                         ? "Operation in progress ..."
                                         : "Sign in to your account !",
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                         fontSize: 12,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.white),
@@ -487,8 +488,8 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 20),
-                      Row(
+                      const SizedBox(height: 20),
+                      const Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisSize: MainAxisSize.max,
                         mainAxisAlignment: MainAxisAlignment.start,
@@ -517,11 +518,11 @@ class _LoginPageState extends State<LoginPage> {
                 right: 0,
                 bottom: -5,
                 top: 285,
-                child: Container(
+                child: SizedBox(
                   width: MediaQuery.of(context).size.width / 2.5,
                   child: Container(
                     width: double.infinity,
-                    padding: EdgeInsets.all(50),
+                    padding: const EdgeInsets.all(50),
                     child: Column(
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -536,7 +537,7 @@ class _LoginPageState extends State<LoginPage> {
                             // _goToValidate();
                           },
                           child: Container(
-                            margin: EdgeInsets.only(top: 15),
+                            margin: const EdgeInsets.only(top: 15),
                             height: 45,
                             width: double.infinity,
                             decoration: BoxDecoration(
@@ -554,13 +555,13 @@ class _LoginPageState extends State<LoginPage> {
                                     ? Container(
                                         height: 40,
                                         width: 40,
-                                        decoration: BoxDecoration(
+                                        decoration: const BoxDecoration(
                                             color: Colors.white10,
                                             borderRadius: BorderRadius.only(
                                                 bottomLeft: Radius.circular(4),
                                                 topLeft: Radius.circular(4))),
-                                        child: Center(
-                                          child: Container(
+                                        child: const Center(
+                                          child: SizedBox(
                                               width: 20,
                                               height: 20,
                                               child: CircularProgressIndicator(
@@ -571,12 +572,12 @@ class _LoginPageState extends State<LoginPage> {
                                     : Container(
                                         height: 40,
                                         width: 40,
-                                        decoration: BoxDecoration(
+                                        decoration: const BoxDecoration(
                                             color: Colors.white10,
                                             borderRadius: BorderRadius.only(
                                                 bottomLeft: Radius.circular(4),
                                                 topLeft: Radius.circular(4))),
-                                        child: Icon(FontAwesomeIcons.google,
+                                        child: const Icon(FontAwesomeIcons.google,
                                             color: Colors.white)),
                                 Expanded(
                                   child: Center(
@@ -584,7 +585,7 @@ class _LoginPageState extends State<LoginPage> {
                                       (loading)
                                           ? "Operation in progress ..."
                                           : "Sign in with Google",
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                           fontSize: 12,
                                           fontWeight: FontWeight.bold,
                                           color: Colors.white),
@@ -678,7 +679,7 @@ class _LoginPageState extends State<LoginPage> {
   // handle after signin
   handleAfterSignIn() {
     Future.delayed(const Duration(milliseconds: 1000)).then((value) {
-      nextScreenReplace(context, tvHomeScreen());
+      nextScreenReplace(context, const tvHomeScreen());
     });
   }
 }

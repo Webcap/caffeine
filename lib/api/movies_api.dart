@@ -9,7 +9,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 import 'package:caffiene/models/credits.dart';
 import 'package:caffiene/models/genres.dart';
-import 'package:caffiene/models/httpresponce.dart';
 import 'package:caffiene/models/images.dart';
 import 'package:caffiene/models/movie_models.dart';
 import 'package:caffiene/models/movie_stream.dart';
@@ -321,8 +320,8 @@ class moviesApi {
 
   void addWatchHistory(
       int movieID, String movieTitle, DateTime watchedAt, bool completed) {
-    final FirebaseAuth _auth = FirebaseAuth.instance;
-    final User? user = _auth.currentUser;
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    final User? user = auth.currentUser;
     final uid = user!.uid;
 
     FirebaseFirestore firebaseInstance = FirebaseFirestore.instance;

@@ -259,7 +259,7 @@ class ScrollingMoviesTVModeState extends State<ScrollingMoviesTVMode>
                                               maxLines: 2,
                                               textAlign: TextAlign.center,
                                               overflow: TextOverflow.ellipsis,
-                                              style: TextStyle(
+                                              style: const TextStyle(
                                                   fontSize: 15,
                                                   color: Colors.white),
                                             ),
@@ -283,7 +283,7 @@ class ScrollingMoviesTVModeState extends State<ScrollingMoviesTVMode>
                       ],
                     ),
         ),
-        Divider(
+        const Divider(
           color: Colors.white54,
           thickness: 1,
           endIndent: 20,

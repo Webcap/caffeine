@@ -40,8 +40,8 @@ class _MovieAboutState extends State<MovieAbout> {
             GenreDisplay(
               api: Endpoints.movieDetailsUrl(widget.movie.id!),
             ),
-            Row(
-              children: const <Widget>[
+            const Row(
+              children: <Widget>[
                 Padding(
                   padding: EdgeInsets.only(left: 8.0),
                   child: Text(

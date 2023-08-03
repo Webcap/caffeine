@@ -10,7 +10,7 @@ void openSnackbar(context, snackMessage, color) {
     ),
     content: Text(
       snackMessage,
-      style: TextStyle(fontSize: 14),
+      style: const TextStyle(fontSize: 14),
     ),
   ));
 }

@@ -1,23 +1,15 @@
 // ignore_for_file: avoid_unnecessary_containers
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/screens/common/sabth.dart';
-import 'package:caffiene/screens/tv_screens/widgets/scrolling_tv_widget.dart';
 import 'package:caffiene/screens/tv_screens/widgets/tv_about.dart';
 import 'package:caffiene/screens/tv_screens/widgets/tv_detail_options.dart';
 import 'package:caffiene/screens/tv_screens/widgets/tv_detail_quick_info.dart';
-import 'package:caffiene/screens/tv_screens/widgets/tv_widgets.dart';
-import 'package:caffiene/utils/config.dart';
 import 'package:provider/provider.dart';
-import 'package:readmore/readmore.dart';
 import 'package:share_plus/share_plus.dart';
 import '/models/tv.dart';
 import 'package:flutter/material.dart';
-import '/api/endpoints.dart';
-import 'package:intl/intl.dart';
 
-import 'widgets/tv_genre_widgets.dart';
 
 class TVDetailPage extends StatefulWidget {
   final TV tvSeries;

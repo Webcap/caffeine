@@ -43,10 +43,10 @@ class ScrollingArtistsState extends State<ScrollingArtists> {
     return Column(
       children: <Widget>[
         credits == null
-            ? Padding(
-                padding: const EdgeInsets.all(8.0),
+            ? const Padding(
+                padding: EdgeInsets.all(8.0),
                 child: Row(
-                  children: const <Widget>[
+                  children: <Widget>[
                     Text(
                       'Cast',
                       style: kTextHeaderStyle,
@@ -55,12 +55,12 @@ class ScrollingArtistsState extends State<ScrollingArtists> {
                 ),
               )
             : credits!.cast!.isEmpty
-                ? Padding(
-                    padding: const EdgeInsets.all(8.0),
+                ? const Padding(
+                    padding: EdgeInsets.all(8.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
+                      children: [
                         Text(
                           'Cast',
                           style: kTextHeaderStyle,

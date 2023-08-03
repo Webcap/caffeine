@@ -2,21 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:caffiene/provider/settings_provider.dart';
-import 'package:caffiene/provider/sign_in_provider.dart';
-import 'package:caffiene/api/movies_api.dart';
 import 'package:caffiene/screens/profile/profile_page.dart';
 import 'package:caffiene/screens/discover_screens/discovery_screen.dart';
 import 'package:caffiene/screens/movie_screens/main_movie_display.dart';
 import 'package:caffiene/screens/search/search_view.dart';
 import 'package:caffiene/screens/tv_screens/tv_screen.dart';
-import 'package:caffiene/utils/config.dart';
-import 'package:caffiene/widgets/custom_navbar.dart';
-import 'package:caffiene/widgets/customgridview.dart';
 import 'package:caffiene/widgets/drawer_widget.dart';
-import 'package:caffiene/widgets/listviewmoviedata.dart';
-import 'package:caffiene/widgets/namebar.dart';
-import 'package:caffiene/widgets/new_movie_widgets.dart';
-import 'package:caffiene/widgets/upcoming_widget.dart';
 import 'package:provider/provider.dart';
 
 //MAIN HOMESCREEN

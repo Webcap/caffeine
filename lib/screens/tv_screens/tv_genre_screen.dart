@@ -3,7 +3,6 @@ import 'package:caffiene/api/endpoints.dart';
 import 'package:caffiene/models/genres.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/screens/tv_screens/widgets/particular_genre_tv.dart';
-import 'package:caffiene/screens/tv_screens/widgets/tv_genre_widgets.dart';
 import 'package:provider/provider.dart';
 
 class TVGenre extends StatelessWidget {

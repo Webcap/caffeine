@@ -1,4 +1,3 @@
-import 'package:caffiene/screens/common/upgrade_to_premium.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -269,7 +268,7 @@ class _ProfileEditState extends State<ProfileEdit> {
                                 filled: true,
                                 prefixIcon: const Icon(Icons.person),
                                 labelText: 'Full name',
-                                fillColor: Theme.of(context).backgroundColor,
+                                fillColor: Theme.of(context).colorScheme.background,
                               ),
                               onSaved: (value) {
                                 _fullName = value!;
@@ -308,7 +307,7 @@ class _ProfileEditState extends State<ProfileEdit> {
                                   filled: true,
                                   prefixIcon: const Icon(Icons.person),
                                   labelText: 'Username',
-                                  fillColor: Theme.of(context).backgroundColor),
+                                  fillColor: Theme.of(context).colorScheme.background),
                               onSaved: (value) {
                                 _userName = value!;
                               },

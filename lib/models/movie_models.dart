@@ -113,9 +113,7 @@ class Mixed {
     backdropPath = json['backdropPath'];
     id = json['id'];
     title = json['title'];
-    if (title == null) {
-      title = json['name'];
-    }
+    title ??= json['name'];
     originalLanguage = json['originalLanguage'];
     originalTitle = json['originalTitle'];
     if (title == null) {
@@ -128,23 +126,23 @@ class Mixed {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['adult'] = adult;
-    data['backdropPath'] = this.backdropPath;
-    data['id'] = this.id;
-    data['title'] = this.title;
+    data['backdropPath'] = backdropPath;
+    data['id'] = id;
+    data['title'] = title;
     if (title == null) {
-      data['name'] = this.title;
+      data['name'] = title;
     }
-    data['originalLanguage'] = this.originalLanguage;
-    data['originalTitle'] = this.originalTitle;
+    data['originalLanguage'] = originalLanguage;
+    data['originalTitle'] = originalTitle;
     if (title == null) {
-      data['original_name'] = this.originalTitle;
+      data['original_name'] = originalTitle;
     }
-    data['overview'] = this.overview;
-    data['poster_path'] = this.posterPath;
-    data['media_type'] = this.mediaType;
-    data['vote_average'] = this.voteAverage;
+    data['overview'] = overview;
+    data['poster_path'] = posterPath;
+    data['media_type'] = mediaType;
+    data['vote_average'] = voteAverage;
     return data;
   }
 }
@@ -359,7 +357,7 @@ class Moviedetail {
     if (json['genres'] != null) {
       genres = <Genres>[];
       json['genres'].forEach((v) {
-        genres!.add(new Genres.fromJson(v));
+        genres!.add(Genres.fromJson(v));
       });
     }
     if (json['spoken_languages'] != null) {
@@ -399,29 +397,29 @@ class Moviedetail {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['adult'] = this.adult;
-    data['backdrop_path'] = this.backdropPath;
-    data['budget'] = this.budget;
-    if (this.genres != null) {
-      data['genres'] = this.genres!.map((v) => v.toJson()).toList();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['adult'] = adult;
+    data['backdrop_path'] = backdropPath;
+    data['budget'] = budget;
+    if (genres != null) {
+      data['genres'] = genres!.map((v) => v.toJson()).toList();
     }
-    data['homepage'] = this.homepage;
-    data['id'] = this.id;
-    data['imdb_id'] = this.imdbId;
-    data['original_language'] = this.originalLanguage;
-    data['original_title'] = this.originalTitle;
-    data['overview'] = this.overview;
-    data['popularity'] = this.popularity;
-    data['poster_path'] = this.posterPath;
-    data['release_date'] = this.releaseDate;
-    data['revenue'] = this.revenue;
-    data['runtime'] = this.runtime;
-    data['status'] = this.status;
-    data['tagline'] = this.tagline;
-    data['title'] = this.title;
-    data['vote_average'] = this.voteAverage;
-    data['vote_count'] = this.voteCount;
+    data['homepage'] = homepage;
+    data['id'] = id;
+    data['imdb_id'] = imdbId;
+    data['original_language'] = originalLanguage;
+    data['original_title'] = originalTitle;
+    data['overview'] = overview;
+    data['popularity'] = popularity;
+    data['poster_path'] = posterPath;
+    data['release_date'] = releaseDate;
+    data['revenue'] = revenue;
+    data['runtime'] = runtime;
+    data['status'] = status;
+    data['tagline'] = tagline;
+    data['title'] = title;
+    data['vote_average'] = voteAverage;
+    data['vote_count'] = voteCount;
     if (productionCompanies != null) {
       data['production_companies'] =
           productionCompanies?.map((v) => v.toJson()).toList();

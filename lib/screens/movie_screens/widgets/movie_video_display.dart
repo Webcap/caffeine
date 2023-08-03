@@ -32,6 +32,7 @@ class MovieVideosState extends State<MovieVideosDisplay> {
     });
   }
 
+  @override
   Widget build(BuildContext context) {
     bool playButtonVisibility = true;
     final isDark = Provider.of<SettingsProvider>(context).darktheme;

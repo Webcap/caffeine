@@ -1,13 +1,10 @@
-import 'dart:convert';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/api/movies_api.dart';
 import 'package:caffiene/api/tv_api.dart';
 import 'package:caffiene/models/credits.dart';
-import 'package:caffiene/models/functions.dart';
 import 'package:caffiene/models/tv.dart';
-import 'package:http/http.dart' as http;
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/screens/movie_screens/cast_details.dart';
 import 'package:caffiene/screens/tv_screens/guest_star_dets.dart';
@@ -291,7 +288,7 @@ class ScrollingTVState extends State<ScrollingTV>
                   ],
                 ),
         ),
-        Divider(
+        const Divider(
           color: Colors.white54,
           thickness: 1,
           endIndent: 20,
@@ -549,10 +546,10 @@ class ScrollingTVCreatorsState extends State<ScrollingTVCreators>
     // final isDark = Provider.of<DarkthemeProvider>(context).darktheme;
     return Column(
       children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.all(8.0),
+        const Padding(
+          padding: EdgeInsets.all(8.0),
           child: Row(
-            children: const <Widget>[
+            children: <Widget>[
               Text(
                 'Created by',
                 style: kTextHeaderStyle,
@@ -719,10 +716,10 @@ class ScrollingTVEpisodeCastsState extends State<ScrollingTVEpisodeCasts>
     return Column(
       children: <Widget>[
         credits == null
-            ? Padding(
-                padding: const EdgeInsets.all(8.0),
+            ? const Padding(
+                padding: EdgeInsets.all(8.0),
                 child: Row(
-                  children: const <Widget>[
+                  children: <Widget>[
                     Text(
                       'Cast',
                       style: kTextHeaderStyle,
@@ -915,10 +912,10 @@ class ScrollingTVEpisodeGuestStarsState
     return Column(
       children: <Widget>[
         credits == null
-            ? Padding(
-                padding: const EdgeInsets.all(8.0),
+            ? const Padding(
+                padding: EdgeInsets.all(8.0),
                 child: Row(
-                  children: const <Widget>[
+                  children: <Widget>[
                     Text(
                       'Guest stars',
                       style: kTextHeaderStyle,
@@ -934,9 +931,9 @@ class ScrollingTVEpisodeGuestStarsState
                             'There is no guest star list available for this episode',
                             textAlign: TextAlign.center)),
                   )
-                : Row(
+                : const Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const <Widget>[
+                    children: <Widget>[
                       Padding(
                         padding: EdgeInsets.all(8.0),
                         child: Text(

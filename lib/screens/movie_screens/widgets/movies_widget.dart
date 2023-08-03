@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/models/poster.dart';
 import 'package:caffiene/screens/home_screen/tvHomeScreen.dart';
@@ -32,7 +31,7 @@ class MoviesWidget extends StatefulWidget {
 class _MoviesWidgetState extends State<MoviesWidget> {
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: 175,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -40,7 +39,7 @@ class _MoviesWidgetState extends State<MoviesWidget> {
         mainAxisSize: MainAxisSize.max,
         children: [
           Container(
-            padding: EdgeInsets.only(left: 50, bottom: 5),
+            padding: const EdgeInsets.only(left: 50, bottom: 5),
             height: 22,
             child: Text(
               widget.title,
@@ -52,7 +51,7 @@ class _MoviesWidgetState extends State<MoviesWidget> {
                   fontWeight: FontWeight.w900),
             ),
           ),
-          Container(
+          SizedBox(
             height: 150,
             width: double.infinity,
             child: ScrollConfiguration(
@@ -69,7 +68,7 @@ class _MoviesWidgetState extends State<MoviesWidget> {
                           setState(() {
                             widget.posty = widget.jndex;
                             widget.postx = index;
-                            Future.delayed(Duration(milliseconds: 250), () {
+                            Future.delayed(const Duration(milliseconds: 250), () {
                               // Navigator.push(
                               //   context,
                               //   PageRouteBuilder(

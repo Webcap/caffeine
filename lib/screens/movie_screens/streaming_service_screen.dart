@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:caffiene/api/endpoints.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/screens/movie_screens/widgets/particular_streaming_service.dart';
-import 'package:caffiene/utils/config.dart';
 import 'package:provider/provider.dart';
 
 class StreamingServicesMovies extends StatelessWidget {

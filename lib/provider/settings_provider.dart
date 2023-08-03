@@ -31,7 +31,7 @@ class SettingsProvider with ChangeNotifier {
   bool _darktheme = false;
   bool get darktheme => _darktheme;
 
-  bool _subtitleStatus = false;
+  final bool _subtitleStatus = false;
   bool get subtitleStatus => _subtitleStatus;
 
   int _defaultValue = 0;

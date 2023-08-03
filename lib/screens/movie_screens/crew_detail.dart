@@ -157,7 +157,7 @@ class CrewDetailPageState extends State<CrewDetailPage>
                                       ),
                                       Text(
                                         '${widget.crew!.department}',
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                             fontSize: 15,
                                             color: Colors.black54),
                                       ),
@@ -170,7 +170,7 @@ class CrewDetailPageState extends State<CrewDetailPage>
                                   indicatorWeight: 3,
                                   unselectedLabelColor: Colors.white54,
                                   labelColor: Colors.white,
-                                  tabs: [
+                                  tabs: const [
                                     Tab(
                                       child: Text('About',
                                           style: TextStyle(

@@ -12,7 +12,7 @@ class _MovieRecommendWidgetState extends State<MovieRecommendWidget> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Padding(
+        const Padding(
           padding: EdgeInsets.symmetric(horizontal: 10),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -34,7 +34,7 @@ class _MovieRecommendWidgetState extends State<MovieRecommendWidget> {
             ],
           ),
         ),
-        SizedBox(
+        const SizedBox(
           height: 15,
         ),
         SingleChildScrollView(
@@ -43,7 +43,7 @@ class _MovieRecommendWidgetState extends State<MovieRecommendWidget> {
               children: [
                 for (int i = 1; i < 4; i++)
                   Padding(
-                    padding: EdgeInsets.only(left: 10),
+                    padding: const EdgeInsets.only(left: 10),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(10),
                       child: Image.asset(

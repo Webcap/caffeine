@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:caffiene/screens/movie_screens/movie_stream.dart';
 import 'package:caffiene/utils/config.dart';
-import 'package:caffiene/widgets/stream_list_widget.dart';
 
 class MovieStreamSelect extends StatefulWidget {
   final String movieName;
@@ -187,7 +186,7 @@ class StreamListWidget extends StatelessWidget {
               ),
             ],
           ),
-          Divider(
+          const Divider(
             color: Colors.white54,
           )
         ],

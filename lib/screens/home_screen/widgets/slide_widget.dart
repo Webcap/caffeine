@@ -1,6 +1,4 @@
-import 'package:carousel_slider/carousel_options.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/models/channel.dart';
 import 'package:caffiene/models/poster.dart';
@@ -44,24 +42,24 @@ class _SlideWidgetState extends State<SlideWidget> {
       height: (widget.posty < 0)
           ? (MediaQuery.of(context).size.height / 2) - 5
           : (MediaQuery.of(context).size.height / 2) - 45,
-      duration: Duration(milliseconds: 200),
-      child: Container(
+      duration: const Duration(milliseconds: 200),
+      child: SizedBox(
         height: (widget.posty < 0)
             ? (MediaQuery.of(context).size.height / 2) - 5
             : (MediaQuery.of(context).size.height / 2) - 45,
         child: Stack(
           children: [
-            if (widget.slides.length > 0)
+            if (widget.slides.isNotEmpty)
               Positioned(
                 bottom: 10,
                 right: 50,
                 child: AnimatedOpacity(
                   opacity: (widget.posty < 0) ? 1 : 0,
-                  duration: Duration(milliseconds: 200),
+                  duration: const Duration(milliseconds: 200),
                   child: AnimatedSmoothIndicator(
                     activeIndex: widget.side_current,
                     count: widget.slides.length,
-                    effect: ExpandingDotsEffect(
+                    effect: const ExpandingDotsEffect(
                         dotHeight: 7,
                         dotWidth: 7,
                         dotColor: Colors.white24,
@@ -71,8 +69,8 @@ class _SlideWidgetState extends State<SlideWidget> {
               ),
             AnimatedOpacity(
               opacity: (widget.posty < 0) ? 1 : 0,
-              duration: Duration(milliseconds: 200),
-              child: Container(
+              duration: const Duration(milliseconds: 200),
+              child: SizedBox(
                 width: MediaQuery.of(context).size.width,
                 child: CarouselSlider.builder(
                   itemCount: widget.slides.length,
@@ -95,7 +93,7 @@ class _SlideWidgetState extends State<SlideWidget> {
             ),
             AnimatedOpacity(
               opacity: (widget.posty < 0) ? 0 : 1,
-              duration: Duration(milliseconds: 200),
+              duration: const Duration(milliseconds: 200),
               child: Container(
                 width: MediaQuery.of(context).size.width,
                 // child: MovieShortDetailWidget(

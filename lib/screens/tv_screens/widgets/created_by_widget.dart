@@ -164,7 +164,7 @@ class CreatedByPersonDetailPageState extends State<CreatedByPersonDetailPage>
                                   indicatorWeight: 3,
                                   unselectedLabelColor: Colors.white54,
                                   labelColor: Colors.white,
-                                  tabs: [
+                                  tabs: const [
                                     Tab(
                                       child: Text('About',
                                           style: TextStyle(

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:caffiene/api/movies_api.dart';
 import 'package:caffiene/models/genre_movies.dart';
 import 'package:caffiene/models/genres.dart';
-import 'package:caffiene/models/movie_models.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/widgets/shimmer_widget.dart';
@@ -40,9 +39,9 @@ class GenreListGridState extends State<GenreListGrid>
     final isDark = Provider.of<SettingsProvider>(context).darktheme;
     return Column(
       children: [
-        Row(
+        const Row(
           mainAxisAlignment: MainAxisAlignment.start,
-          children: const <Widget>[
+          children: <Widget>[
             Padding(
               padding: EdgeInsets.all(8.0),
               child: Text(

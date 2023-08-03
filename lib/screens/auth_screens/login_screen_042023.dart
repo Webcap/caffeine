@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:caffiene/provider/internet_provider.dart';
 import 'package:caffiene/provider/settings_provider.dart';
@@ -233,8 +232,8 @@ class _LoginPage423State extends State<LoginPage423> {
                                   elevation: 0,
                                   borderRadius: 25,
                                   color: Colors.white,
-                                  child: Wrap(
-                                    children: const [
+                                  child: const Wrap(
+                                    children: [
                                       Icon(
                                         FontAwesomeIcons.google,
                                         size: 20,
@@ -302,7 +301,7 @@ class _LoginPage423State extends State<LoginPage423> {
   // handle after signin
   handleAfterSignIn() {
     Future.delayed(const Duration(milliseconds: 1000)).then((value) {
-      nextScreenReplace(context, caffieneHomePage());
+      nextScreenReplace(context, const caffieneHomePage());
     });
   }
 }

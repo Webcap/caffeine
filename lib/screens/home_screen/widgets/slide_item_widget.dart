@@ -1,5 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:caffiene/models/slide.dart';
@@ -15,7 +13,7 @@ class SlideItemWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: MediaQuery.of(context).size.width,
-      margin: EdgeInsets.only(left: 50, right: 50),
+      margin: const EdgeInsets.only(left: 50, right: 50),
       child: Stack(
         children: [
           Container(
@@ -26,27 +24,25 @@ class SlideItemWidget extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 Text(
                   slide.title,
-                  style: TextStyle(
+                  style: const TextStyle(
                       color: Colors.white,
                       fontSize: 45,
                       fontWeight: FontWeight.w900),
                 ),
-                SizedBox(height: 25),
+                const SizedBox(height: 25),
                 if (slide.channel != null || slide.poster != null)
                   Row(
                     children: [
                       Text(
-                        ((slide.poster != null)
+                        "${(slide.poster != null)
                                     ? slide.poster?.rating
                                     : (slide.channel != null)
                                         ? slide.channel?.rating
-                                        : "")
-                                .toString() +
-                            " / 5",
-                        style: TextStyle(
+                                        : ""} / 5",
+                        style: const TextStyle(
                             color: Colors.white,
                             fontSize: 13,
                             fontWeight: FontWeight.w800),
@@ -64,8 +60,8 @@ class SlideItemWidget extends StatelessWidget {
                         itemSize: 15.0,
                         ignoreGestures: true,
                         unratedColor: Colors.amber.withOpacity(0.4),
-                        itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-                        itemBuilder: (context, _) => Icon(
+                        itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
+                        itemBuilder: (context, _) => const Icon(
                           Icons.star,
                           color: Colors.amber,
                         ),
@@ -73,11 +69,11 @@ class SlideItemWidget extends StatelessWidget {
                           print(rating);
                         },
                       ),
-                      SizedBox(width: 10),
+                      const SizedBox(width: 10),
                       if (slide.poster != null)
                         Text(
                           "•  ${slide.poster?.imdb} / 10 ",
-                          style: TextStyle(
+                          style: const TextStyle(
                               color: Colors.white,
                               fontSize: 11,
                               fontWeight: FontWeight.w800),
@@ -85,11 +81,11 @@ class SlideItemWidget extends StatelessWidget {
                       if (slide.poster != null)
                         Container(
                           padding:
-                              EdgeInsets.symmetric(vertical: 2, horizontal: 5),
+                              const EdgeInsets.symmetric(vertical: 2, horizontal: 5),
                           decoration: BoxDecoration(
                               color: Colors.orangeAccent,
                               borderRadius: BorderRadius.circular(5)),
-                          child: Text(
+                          child: const Text(
                             "IMDb",
                             style: TextStyle(
                                 color: Colors.white,
@@ -99,13 +95,13 @@ class SlideItemWidget extends StatelessWidget {
                         )
                     ],
                   ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 if (slide.channel != null)
                   Row(
                     children: [
                       Text(
                         " ${slide.channel!.classification}  ${slide.channel!.getCategoriesList()}",
-                        style: TextStyle(
+                        style: const TextStyle(
                             color: Colors.white,
                             fontSize: 13,
                             fontWeight: FontWeight.w900),
@@ -128,13 +124,13 @@ class SlideItemWidget extends StatelessWidget {
                 if (slide.poster != null)
                   Text(
                     "${slide.poster?.year} • ${slide.poster?.classification} • ${slide.poster!.duration} • ${slide.poster!.getGenresList()}",
-                    style: TextStyle(
+                    style: const TextStyle(
                         color: Colors.white,
                         fontSize: 13,
                         fontWeight: FontWeight.w900),
                   ),
                 if (slide.channel != null || slide.poster != null)
-                  SizedBox(height: 25),
+                  const SizedBox(height: 25),
                 if (slide.channel != null || slide.poster != null)
                   Text(
                     ((slide.poster != null)
@@ -143,7 +139,7 @@ class SlideItemWidget extends StatelessWidget {
                                 ? slide.channel?.description
                                 : "")
                         .toString(),
-                    style: TextStyle(
+                    style: const TextStyle(
                         color: Colors.white60,
                         fontSize: 11,
                         height: 1.5,
@@ -160,7 +156,7 @@ class SlideItemWidget extends StatelessWidget {
             child: GestureDetector(
               onTap: () {
                 if (slide.channel != null) {
-                  Future.delayed(Duration(milliseconds: 50), () {
+                  Future.delayed(const Duration(milliseconds: 50), () {
                     // Navigator.push(
                     //   context,
                     //   PageRouteBuilder(
@@ -172,7 +168,7 @@ class SlideItemWidget extends StatelessWidget {
                   });
                 }
                 if (slide.poster != null) {
-                  Future.delayed(Duration(milliseconds: 50), () {
+                  Future.delayed(const Duration(milliseconds: 50), () {
                     // Navigator.push(
                     //   context,
                     //   PageRouteBuilder(
@@ -189,7 +185,7 @@ class SlideItemWidget extends StatelessWidget {
               child: GestureDetector(
                 onTap: () {
                   if (slide.channel != null) {
-                    Future.delayed(Duration(milliseconds: 50), () {
+                    Future.delayed(const Duration(milliseconds: 50), () {
                       // Navigator.push(
                       //   context,
                       //   PageRouteBuilder(
@@ -216,20 +212,26 @@ class SlideItemWidget extends StatelessWidget {
                   }
                 },
                 child: Container(
+                  height: 40,
+                  width: 130,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: Colors.white30,
+                  ),
                   child: Row(
                     children: [
                       Container(
                         height: 40,
                         width: 40,
-                        child: Center(
-                            child: Icon(Icons.play_arrow,
-                                size: 30, color: Colors.white)),
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                             border: Border(
                                 right: BorderSide(
                                     width: 1, color: Colors.black12))),
+                        child: const Center(
+                            child: Icon(Icons.play_arrow,
+                                size: 30, color: Colors.white)),
                       ),
-                      Expanded(
+                      const Expanded(
                           child: Center(
                               child: Text(
                         "Watch Now",
@@ -237,12 +239,6 @@ class SlideItemWidget extends StatelessWidget {
                             color: Colors.white, fontWeight: FontWeight.w500),
                       )))
                     ],
-                  ),
-                  height: 40,
-                  width: 130,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
-                    color: Colors.white30,
                   ),
                 ),
               ),

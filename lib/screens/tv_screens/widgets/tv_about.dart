@@ -39,8 +39,8 @@ class _TVAboutState extends State<TVAbout> {
             TVGenreDisplay(
               api: Endpoints.tvDetailsUrl(widget.tvSeries.id!),
             ),
-            Row(
-              children: const <Widget>[
+            const Row(
+              children: <Widget>[
                 Padding(
                   padding: EdgeInsets.only(left: 8.0),
                   child: Text(

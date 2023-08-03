@@ -1,14 +1,10 @@
-import 'dart:convert';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/api/movies_api.dart';
 import 'package:caffiene/models/movie_models.dart';
 import 'package:caffiene/provider/settings_provider.dart';
-import 'package:caffiene/screens/movie_screens/movie_details.dart';
 import 'package:caffiene/screens/movie_screens/widgets/movie_ui_componets.dart';
 import 'package:caffiene/utils/config.dart';
-import 'package:http/http.dart' as http;
 import 'package:caffiene/widgets/shimmer_widget.dart';
 import 'package:provider/provider.dart';
 
@@ -80,9 +76,9 @@ class MovieRecommendationsTabState extends State<MovieRecommendationsTab>
     return Container(
       child: Column(
         children: <Widget>[
-          Row(
+          const Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const <Widget>[
+            children: <Widget>[
               Padding(
                 padding: EdgeInsets.all(8.0),
                 child: Text(

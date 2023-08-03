@@ -3,7 +3,6 @@ import 'package:caffiene/api/endpoints.dart';
 import 'package:caffiene/models/genres.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/screens/movie_screens/widgets/particular_genre_movies.dart';
-import 'package:caffiene/utils/config.dart';
 import 'package:provider/provider.dart';
 
 class GenreMovies extends StatelessWidget {

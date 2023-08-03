@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:caffiene/api/endpoints.dart';
 import 'package:caffiene/models/tv.dart';
 import 'package:caffiene/screens/tv_screens/widgets/scrolling_tv_widget.dart';
-import 'package:caffiene/screens/tv_screens/widgets/tv_widgets.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:readmore/readmore.dart';
 import 'package:intl/intl.dart';
@@ -34,8 +33,8 @@ class _TVSeasonAboutState extends State<TVSeasonAbout> {
                 bottomRight: Radius.circular(8.0))),
         child: Column(
           children: [
-            Row(
-              children: const <Widget>[
+            const Row(
+              children: <Widget>[
                 Padding(
                   padding: EdgeInsets.only(left: 8.0),
                   child: Text(

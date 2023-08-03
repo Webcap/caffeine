@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/api/movies_api.dart';
@@ -9,10 +8,8 @@ import 'package:caffiene/models/movie_models.dart';
 import 'package:caffiene/models/poster.dart';
 import 'package:caffiene/models/slide.dart';
 import 'package:caffiene/provider/settings_provider.dart';
-import 'package:caffiene/screens/movie_screens/movie_details.dart';
 import 'package:caffiene/screens/home_screen/widgets/slide_item_widget.dart';
 import 'package:caffiene/utils/config.dart';
-import 'package:caffiene/widgets/shimmer_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
@@ -82,8 +79,8 @@ class DiscoverMoviesTVModeState extends State<DiscoverMoviesTVMode>
         height: (widget.posty < 0)
             ? (MediaQuery.of(context).size.height / 2) - 5
             : (MediaQuery.of(context).size.height / 2) - 45,
-        duration: Duration(milliseconds: 200),
-        child: Container(
+        duration: const Duration(milliseconds: 200),
+        child: SizedBox(
           height: (widget.posty < 0)
               ? (MediaQuery.of(context).size.height / 2) - 5
               : (MediaQuery.of(context).size.height / 2) - 45,
@@ -95,8 +92,8 @@ class DiscoverMoviesTVModeState extends State<DiscoverMoviesTVMode>
                 right: 50,
                 child: AnimatedOpacity(
                   opacity: (widget.posty < 0) ? 1 : 0,
-                  duration: Duration(milliseconds: 200),
-                  child: AnimatedSmoothIndicator(
+                  duration: const Duration(milliseconds: 200),
+                  child: const AnimatedSmoothIndicator(
                     activeIndex: 0,
                     count: 5,
                     effect: ExpandingDotsEffect(
@@ -109,8 +106,8 @@ class DiscoverMoviesTVModeState extends State<DiscoverMoviesTVMode>
               ),
               AnimatedOpacity(
                 opacity: (widget.posty < 0) ? 1 : 0,
-                duration: Duration(milliseconds: 200),
-                child: Container(
+                duration: const Duration(milliseconds: 200),
+                child: SizedBox(
                   width: MediaQuery.of(context).size.width,
                   child: CarouselSlider.builder(
                     itemCount: 5,
@@ -125,7 +122,7 @@ class DiscoverMoviesTVModeState extends State<DiscoverMoviesTVMode>
                           // widget.move(index);
                         }),
                     itemBuilder: (ctx, index, realIdx) {
-                      return Text(
+                      return const Text(
                         "fuck youuuu",
                         style: TextStyle(color: Colors.white),
                       );
@@ -215,8 +212,8 @@ class _TVModeDiscoverSliderState extends State<TVModeDiscoverSlider> {
       height: (widget.posty < 0)
           ? (MediaQuery.of(context).size.height / 2) - 5
           : (MediaQuery.of(context).size.height / 2) - 45,
-      duration: Duration(milliseconds: 200),
-      child: Container(
+      duration: const Duration(milliseconds: 200),
+      child: SizedBox(
         height: (widget.posty < 0)
             ? (MediaQuery.of(context).size.height / 2) - 5
             : (MediaQuery.of(context).size.height / 2) - 45,
@@ -227,11 +224,11 @@ class _TVModeDiscoverSliderState extends State<TVModeDiscoverSlider> {
               right: 50,
               child: AnimatedOpacity(
                 opacity: (widget.posty < 0) ? 1 : 0,
-                duration: Duration(milliseconds: 200),
+                duration: const Duration(milliseconds: 200),
                 child: AnimatedSmoothIndicator(
                   activeIndex: widget.side_current,
                   count: widget.slides.length,
-                  effect: ExpandingDotsEffect(
+                  effect: const ExpandingDotsEffect(
                       dotHeight: 7,
                       dotWidth: 7,
                       dotColor: Colors.white24,
@@ -241,8 +238,8 @@ class _TVModeDiscoverSliderState extends State<TVModeDiscoverSlider> {
             ),
             AnimatedOpacity(
               opacity: (widget.posty < 0) ? 1 : 0,
-              duration: Duration(milliseconds: 200),
-              child: Container(
+              duration: const Duration(milliseconds: 200),
+              child: SizedBox(
                 width: MediaQuery.of(context).size.width,
                 child: CarouselSlider.builder(
                   itemCount: widget.slides.length,

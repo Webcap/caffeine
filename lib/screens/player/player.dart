@@ -1,8 +1,6 @@
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:caffiene/utils/config.dart';
 import 'package:better_player/better_player.dart';
 
 class Player extends StatefulWidget {
@@ -42,7 +40,7 @@ class _PlayerState extends State<Player> {
       pauseIcon: Icons.pause_outlined,
       pipMenuIcon: Icons.picture_in_picture_sharp,
       playIcon: Icons.play_arrow_sharp,
-      showControlsOnInitialize: true,
+      showControlsOnInitialize: false,
       loadingColor: widget.colors.first,
       iconsColor: widget.colors.first,
       progressBarPlayedColor: widget.colors.first,

@@ -381,11 +381,11 @@ class _SyncScreenState extends State<SyncScreen>
                 Container(
                   color: Colors.grey,
                   child: TabBar(
-                    tabs: [
+                    tabs: const [
                       Tab(
                           child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
+                        children: [
                           Padding(
                             padding: EdgeInsets.only(right: 8.0),
                             child: Icon(Icons.movie_creation_rounded),
@@ -398,7 +398,7 @@ class _SyncScreenState extends State<SyncScreen>
                       Tab(
                           child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
+                        children: [
                           Padding(
                               padding: EdgeInsets.only(right: 8.0),
                               child: Icon(Icons.live_tv_rounded)),

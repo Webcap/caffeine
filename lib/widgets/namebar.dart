@@ -31,7 +31,7 @@ class Namebar extends StatelessWidget {
                 MaterialPageRoute(builder: (context) => navigate),
               );
             },
-            child: Text(
+            child: const Text(
               'see all',
               style: TextStyle(
                   fontSize: 16,

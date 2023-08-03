@@ -4,7 +4,6 @@ import 'package:caffiene/models/images.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/utils/config.dart';
 import 'dart:isolate';
-import 'dart:ui';
 
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
@@ -173,8 +172,8 @@ class _HeroPhotoViewState extends State<HeroPhotoView> {
           child: Stack(alignment: Alignment.bottomRight, children: [
         PhotoViewGallery.builder(
           allowImplicitScrolling: true,
-          backgroundDecoration: BoxDecoration(
-            color: const Color(0xFFFFFFFF),
+          backgroundDecoration: const BoxDecoration(
+            color: Color(0xFFFFFFFF),
           ),
           gaplessPlayback: true,
           wantKeepAlive: true,
@@ -223,7 +222,7 @@ class _HeroPhotoViewState extends State<HeroPhotoView> {
           padding: const EdgeInsets.all(20.0),
           child: Text(
             "Image ${currentIndex + 1}",
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.black,
               fontSize: 17.0,
               decoration: null,

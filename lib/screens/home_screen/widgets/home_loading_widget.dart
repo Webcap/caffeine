@@ -1,7 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class HomeLoadingWidget extends StatelessWidget {
+  const HomeLoadingWidget({super.key});
+
   @override
   Widget build(BuildContext context) {
 
@@ -9,7 +10,7 @@ class HomeLoadingWidget extends StatelessWidget {
         bottom: 0,
         left: 45,
         right: 45,
-        child: Container(
+        child: SizedBox(
           width: MediaQuery.of(context).size.width,
           height:  MediaQuery.of(context).size.height -70,
           child: Container(
@@ -24,13 +25,13 @@ class HomeLoadingWidget extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          SizedBox(height: 25),
+                          const SizedBox(height: 25),
                           Container(
                             width: 300,
                             height: 50,
                             color: Colors.white70,
                           ),
-                          SizedBox(height: 20),
+                          const SizedBox(height: 20),
                           Row(
                             children: [
                               Container(
@@ -38,20 +39,20 @@ class HomeLoadingWidget extends StatelessWidget {
                                 height: 18,
                                 color: Colors.white70,
                               ),
-                              SizedBox(width: 5),
+                              const SizedBox(width: 5),
                               Container(
                                 width: 110,
                                 height: 18,
                                 color: Colors.white70,
                               ),
-                              SizedBox(width: 10),
+                              const SizedBox(width: 10),
                               Container(
                                 width: 55,
                                 height: 18,
                                 color: Colors.white70,
                               ),
 
-                              SizedBox(width: 5),
+                              const SizedBox(width: 5),
                               Container(
                                 width: 40,
                                 height: 18,
@@ -60,7 +61,7 @@ class HomeLoadingWidget extends StatelessWidget {
 
                             ],
                           ),
-                          SizedBox(height: 10),
+                          const SizedBox(height: 10),
                           Row(
                             children: [
                               Container(
@@ -68,44 +69,44 @@ class HomeLoadingWidget extends StatelessWidget {
                                 height: 18,
                                 color: Colors.white70,
                               ),
-                              SizedBox(width: 5),
+                              const SizedBox(width: 5),
                               Container(
                                 width: 70,
                                 height: 18,
                                 color: Colors.white70,
                               ),
-                              SizedBox(width: 10),
+                              const SizedBox(width: 10),
                               Container(
                                 width: 70,
                                 height: 18,
                                 color: Colors.white70,
                               ),
 
-                              SizedBox(width: 5),
+                              const SizedBox(width: 5),
                               Container(
                                 width: 70,
                                 height: 18,
                                 color: Colors.white70,
                               ),
-                              SizedBox(width: 5),
+                              const SizedBox(width: 5),
                               Container(
                                 width: 70,
                                 height: 18,
                                 color: Colors.white70,
                               ),
-                              SizedBox(width: 5),
+                              const SizedBox(width: 5),
                               Container(
                                 width: 70,
                                 height: 18,
                                 color: Colors.white70,
                               ),
-                              SizedBox(width: 5),
+                              const SizedBox(width: 5),
                               Container(
                                 width: 70,
                                 height: 18,
                                 color: Colors.white70,
                               ),
-                              SizedBox(width: 5),
+                              const SizedBox(width: 5),
                               Container(
                                 width: 70,
                                 height: 18,
@@ -113,33 +114,33 @@ class HomeLoadingWidget extends StatelessWidget {
                               ),
                             ],
                           ),
-                          SizedBox(height: 27),
+                          const SizedBox(height: 27),
                           Container(
                             width: 600,
                             height: 12,
                             color: Colors.white70,
                           ),
-                          SizedBox(height: 5),
+                          const SizedBox(height: 5),
                           Container(
                             width: 600,
                             height: 12,
                             color: Colors.white70,
                           ),
-                          SizedBox(height: 5),
+                          const SizedBox(height: 5),
                           Container(
                             width: 600,
                             height: 12,
                             color: Colors.white70,
                           ),
-                          SizedBox(height: 5),
+                          const SizedBox(height: 5),
                           Container(
                             width: 600,
                             height: 12,
                             color: Colors.white70,
                           ),
-                          SizedBox(height: 5),
+                          const SizedBox(height: 5),
                           Container(
-                            margin: EdgeInsets.only(bottom: 10),
+                            margin: const EdgeInsets.only(bottom: 10),
                             width: 400,
                             height: 12,
                             color: Colors.white70,
@@ -152,22 +153,22 @@ class HomeLoadingWidget extends StatelessWidget {
                       right: 5,
                       bottom: 15,
                       child: Container(
-                        child: Row(
-                          children: [
-                            Container(
-                              height: 35,
-                              width: 35,
-                              decoration: BoxDecoration(
-                                  border: Border(right: BorderSide(width: 1,color:Colors.black12))
-                              ),
-                            ),
-                          ],
-                        ),
                         height: 35,
                         width: 140,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(0),
                           color: Colors.white70,
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              height: 35,
+                              width: 35,
+                              decoration: const BoxDecoration(
+                                  border: Border(right: BorderSide(width: 1,color:Colors.black12))
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
@@ -176,44 +177,50 @@ class HomeLoadingWidget extends StatelessWidget {
                       bottom: 0,
                       child: Container(
 
+                        width: 140,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(0),
+
+                        ),
+
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             Container(
                               height: 10,
                               width: 10,
-                              decoration: BoxDecoration(
+                              decoration: const BoxDecoration(
                                   color: Colors.white70,
                                   border: Border(right: BorderSide(width: 1,color:Colors.black12))
                               ),
                             ),
 
-                            SizedBox(width: 5),
+                            const SizedBox(width: 5),
                             Container(
                               height: 10,
                               width: 10,
-                              decoration: BoxDecoration(
+                              decoration: const BoxDecoration(
 
                                   color: Colors.white70,
                                   border: Border(right: BorderSide(width: 1,color:Colors.black12))
                               ),
                             ),
 
-                            SizedBox(width: 5),
+                            const SizedBox(width: 5),
                             Container(
                               height: 10,
                               width: 10,
-                              decoration: BoxDecoration(
+                              decoration: const BoxDecoration(
 
                                   color: Colors.white70,
                                   border: Border(right: BorderSide(width: 1,color:Colors.black12))
                               ),
                             ),
-                            SizedBox(width: 5),
+                            const SizedBox(width: 5),
                             Container(
                               height: 10,
                               width: 20,
-                              decoration: BoxDecoration(
+                              decoration: const BoxDecoration(
 
                                   color: Colors.white70,
                                   border: Border(right: BorderSide(width: 1,color:Colors.black12))
@@ -221,18 +228,13 @@ class HomeLoadingWidget extends StatelessWidget {
                             ),
                           ],
                         ),
-                        width: 140,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(0),
-
-                        ),
                       ),
                     )
                   ],
                 ),
 
                 Container(
-                  margin: EdgeInsets.only(bottom: 7,top: 10),
+                  margin: const EdgeInsets.only(bottom: 7,top: 10),
                   child: Container(
                     color: Colors.white70,
                     width: 100,
@@ -240,7 +242,7 @@ class HomeLoadingWidget extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  margin: EdgeInsets.only(bottom: 10),
+                  margin: const EdgeInsets.only(bottom: 10),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -253,35 +255,35 @@ class HomeLoadingWidget extends StatelessWidget {
                       ),
                       Expanded(
                         child: Container(
-                          margin: EdgeInsets.only(left: 15),
+                          margin: const EdgeInsets.only(left: 15),
                           color: Colors.white70,
                           height: 65,
                         ),
                       ),
                       Expanded(
                         child: Container(
-                          margin: EdgeInsets.only(left: 15),
+                          margin: const EdgeInsets.only(left: 15),
                           color: Colors.white70,
                           height: 65,
                         ),
                       ),
                       Expanded(
                         child: Container(
-                          margin: EdgeInsets.only(left: 15),
+                          margin: const EdgeInsets.only(left: 15),
                           color: Colors.white70,
                           height: 65,
                         ),
                       ),
                       Expanded(
                         child: Container(
-                          margin: EdgeInsets.only(left: 15),
+                          margin: const EdgeInsets.only(left: 15),
                           color: Colors.white70,
                           height: 65,
                         ),
                       ),
                       Expanded(
                         child: Container(
-                          margin: EdgeInsets.only(left: 15),
+                          margin: const EdgeInsets.only(left: 15),
                           color: Colors.white70,
                           height: 65,
                         ),
@@ -292,7 +294,7 @@ class HomeLoadingWidget extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  margin: EdgeInsets.only(bottom: 7,top: 0),
+                  margin: const EdgeInsets.only(bottom: 7,top: 0),
                   child: Container(
                     color: Colors.white70,
                     width: 100,
@@ -309,49 +311,49 @@ class HomeLoadingWidget extends StatelessWidget {
                     ),
                     Expanded(
                       child: Container(
-                        margin: EdgeInsets.only(left: 10),
+                        margin: const EdgeInsets.only(left: 10),
                         color: Colors.white70,
                         height: 140,
                       ),
                     ),
                     Expanded(
                       child: Container(
-                        margin: EdgeInsets.only(left: 10),
+                        margin: const EdgeInsets.only(left: 10),
                         color: Colors.white70,
                         height: 140,
                       ),
                     ),
                     Expanded(
                       child: Container(
-                        margin: EdgeInsets.only(left: 10),
+                        margin: const EdgeInsets.only(left: 10),
                         color: Colors.white70,
                         height: 140,
                       ),
                     ),
                     Expanded(
                       child: Container(
-                        margin: EdgeInsets.only(left: 10),
+                        margin: const EdgeInsets.only(left: 10),
                         color: Colors.white70,
                         height: 140,
                       ),
                     ),
                     Expanded(
                       child: Container(
-                        margin: EdgeInsets.only(left: 10),
+                        margin: const EdgeInsets.only(left: 10),
                         color: Colors.white70,
                         height: 140,
                       ),
                     ),
                     Expanded(
                       child: Container(
-                        margin: EdgeInsets.only(left: 10),
+                        margin: const EdgeInsets.only(left: 10),
                         color: Colors.white70,
                         height: 140,
                       ),
                     ),
                     Expanded(
                       child: Container(
-                        margin: EdgeInsets.only(left: 10),
+                        margin: const EdgeInsets.only(left: 10),
                         color: Colors.white70,
                         height: 140,
                       ),

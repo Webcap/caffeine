@@ -11,7 +11,6 @@ import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/screens/movie_screens/movie_details.dart';
 import 'package:caffiene/screens/tv_screens/tv_detail_page.dart';
 import 'package:caffiene/utils/config.dart';
-import 'package:caffiene/widgets/hero_photoview.dart';
 import 'package:caffiene/widgets/shimmer_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:readmore/readmore.dart';

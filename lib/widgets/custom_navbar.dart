@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:caffiene/screens/home_screen/dash_screen.dart';
-import 'package:caffiene/utils/next_screen.dart';
 
 class CustomNavBar extends StatelessWidget {
   const CustomNavBar({Key? key}) : super(key: key);
@@ -9,8 +7,8 @@ class CustomNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 65,
-      padding: EdgeInsets.symmetric(horizontal: 20),
-      decoration: BoxDecoration(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      decoration: const BoxDecoration(
           color: Color(0xFF292837),
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(25),
@@ -21,7 +19,7 @@ class CustomNavBar extends StatelessWidget {
           onTap: () {
             // nextScreen(context, dash_screen());
           },
-          child: Icon(
+          child: const Icon(
             Icons.home,
             size: 35,
             color: Colors.white,
@@ -39,7 +37,7 @@ class CustomNavBar extends StatelessWidget {
         // ),
         InkWell(
           onTap: () {},
-          child: Icon(
+          child: const Icon(
             Icons.favorite_border,
             size: 35,
             color: Colors.white,
@@ -47,7 +45,7 @@ class CustomNavBar extends StatelessWidget {
         ),
         InkWell(
           onTap: () {},
-          child: Icon(
+          child: const Icon(
             Icons.download,
             size: 35,
             color: Colors.white,

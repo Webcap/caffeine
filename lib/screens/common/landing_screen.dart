@@ -158,10 +158,10 @@ class _LandingScreenState extends State<LandingScreen> {
                               ),
                             ),
                             backgroundColor: MaterialStateProperty.all(
-                                const Color(0xFFFea575e))),
+                                const Color(0xfffea575e))),
                         onPressed: () async {
                           //updateFirstRunData();
-                          nextScreen(context, LoginPage423());
+                          nextScreen(context, const LoginPage423());
                         },
                         child: const Text(
                           SIGN_IN,
@@ -185,7 +185,7 @@ class _LandingScreenState extends State<LandingScreen> {
                                 MaterialStateProperty.all(Colors.white)),
                         onPressed: () async {
                           //updateFirstRunData();
-                          nextScreen(context, SignupScreen());
+                          nextScreen(context, const SignupScreen());
                         },
                         child: const Text(
                           SIGN_UP,

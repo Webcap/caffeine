@@ -306,7 +306,7 @@ class _SignupScreenState extends State<SignupScreen> {
                             filled: true,
                             prefixIcon: const Icon(Icons.person),
                             labelText: 'Full name',
-                            fillColor: Theme.of(context).backgroundColor,
+                            fillColor: Theme.of(context).colorScheme.background,
                           ),
                           onSaved: (value) {
                             _fullName = value!;
@@ -337,7 +337,7 @@ class _SignupScreenState extends State<SignupScreen> {
                               filled: true,
                               prefixIcon: const Icon(Icons.email),
                               labelText: 'Email Address',
-                              fillColor: Theme.of(context).backgroundColor),
+                              fillColor: Theme.of(context).colorScheme.background),
                           onSaved: (value) {
                             _emailAddress = value!;
                           },

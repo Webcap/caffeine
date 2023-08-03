@@ -6,7 +6,7 @@ import 'package:caffiene/utils/next_screen.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
-  HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({Key? key}) : super(key: key);
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -74,23 +74,23 @@ class _HomeScreenState extends State<HomeScreen> {
               )
             ],
           ),
-          SizedBox(
+          const SizedBox(
             height: 20,
           ),
           ElevatedButton(
               onPressed: () {
-                nextScreenReplace(context, caffieneHomePage());
+                nextScreenReplace(context, const caffieneHomePage());
               },
-              child: Text("New Dash")),
-          SizedBox(
+              child: const Text("New Dash")),
+          const SizedBox(
             height: 10,
           ),
           ElevatedButton(
               onPressed: () {
                 sp.userSignOut();
-                nextScreenReplace(context, LoginScreen());
+                nextScreenReplace(context, const LoginScreen());
               },
-              child: Text("Sign out"))
+              child: const Text("Sign out"))
         ],
       )),
     );

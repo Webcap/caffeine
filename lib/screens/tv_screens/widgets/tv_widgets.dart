@@ -1,32 +1,23 @@
-import 'dart:convert';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:caffiene/api/endpoints.dart';
 import 'package:caffiene/api/movies_api.dart';
 import 'package:caffiene/api/tv_api.dart';
 import 'package:caffiene/models/credits.dart';
 import 'package:caffiene/models/images.dart';
-import 'package:caffiene/models/movie_models.dart';
-import 'package:caffiene/models/social_icons_icons.dart';
 import 'package:caffiene/models/tv.dart';
 import 'package:caffiene/models/videos.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/screens/movie_screens/cast_details.dart';
 import 'package:caffiene/screens/movie_screens/crew_detail.dart';
-import 'package:caffiene/screens/movie_screens/widgets/movie_social_links.dart';
-import 'package:caffiene/screens/tv_screens/tv_detail_page.dart';
 import 'package:caffiene/screens/tv_screens/widgets/tv_grid_view.dart';
 import 'package:caffiene/screens/tv_screens/widgets/tv_list_view.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/widgets/hero_photoview.dart';
 import 'package:caffiene/widgets/shimmer_widget.dart';
 import 'package:provider/provider.dart';
-import 'package:http/http.dart' as http;
-import 'package:shimmer/shimmer.dart';
-import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class TVShowsFromWatchProviders extends StatefulWidget {
@@ -512,7 +503,7 @@ class TVEpisodeCastTabState extends State<TVEpisodeCastTab>
                                         )
                                       ],
                                     ),
-                                    Divider(
+                                    const Divider(
                                       color: Colors.white54,
                                       thickness: 1,
                                       endIndent: 20,
@@ -1735,7 +1726,7 @@ class TVCastTabState extends State<TVCastTab>
                                         )
                                       ],
                                     ),
-                                    Divider(
+                                    const Divider(
                                       color: Colors.white54,
                                       thickness: 1,
                                       endIndent: 20,
@@ -1961,7 +1952,7 @@ class TVCrewTabState extends State<TVCrewTab>
                                         )
                                       ],
                                     ),
-                                    Divider(
+                                    const Divider(
                                       color: Colors.white54,
                                       thickness: 1,
                                       endIndent: 20,

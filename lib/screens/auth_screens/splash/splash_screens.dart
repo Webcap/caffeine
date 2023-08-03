@@ -5,16 +5,14 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/provider/sign_in_provider.dart';
 import 'package:caffiene/screens/home_screen/dash_screen.dart';
-import 'package:caffiene/screens/home_screen/home_screen.dart';
 import 'package:caffiene/screens/auth_screens/login_screen.dart';
 import 'package:caffiene/screens/auth_screens/splash/tv_splash.dart';
-import 'package:caffiene/screens/auth_screens/login_page/login_page_TV.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/utils/next_screen.dart';
 import 'package:provider/provider.dart';
 
 class SplashScreen extends StatefulWidget {
-  SplashScreen({Key? key}) : super(key: key);
+  const SplashScreen({Key? key}) : super(key: key);
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
@@ -43,7 +41,7 @@ class _SplashScreenState extends State<SplashScreen> {
         // todo: change to login screen
         print("starting android tv layout");
         Timer(const Duration(seconds: 1), () {
-          nextScreen(context, Splash());
+          nextScreen(context, const Splash());
           // sp.isSignedIn == false
           //     ? nextScreen(context, LoginPage()) // todo: change this to LoginPage()
           //     : nextScreen(context, tvModeMain());
@@ -53,8 +51,8 @@ class _SplashScreenState extends State<SplashScreen> {
         print("not tv");
         Timer(const Duration(seconds: 2), () {
           sp.isSignedIn == false
-              ? nextScreen(context, LoginScreen())
-              : nextScreen(context, caffieneHomePage());
+              ? nextScreen(context, const LoginScreen())
+              : nextScreen(context, const caffieneHomePage());
         });
       }
     }
@@ -62,7 +60,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       backgroundColor: Color(0xFFea575e),
       body: SafeArea(
           child: Center(

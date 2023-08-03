@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'package:caffiene/models/tv.dart';
 import 'package:http/http.dart' as http;
 import 'package:caffiene/models/update.dart';
 import 'package:caffiene/utils/config.dart';

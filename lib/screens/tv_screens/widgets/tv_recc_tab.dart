@@ -2,7 +2,6 @@ import 'package:caffiene/api/tv_api.dart';
 import 'package:caffiene/models/tv.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/screens/tv_screens/widgets/horizontal_scrolling_tv_list.dart';
-import 'package:caffiene/screens/tv_screens/widgets/tv_widgets.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/widgets/shimmer_widget.dart';
 import 'package:flutter/material.dart';
@@ -74,9 +73,9 @@ class TVRecommendationsTabState extends State<TVRecommendationsTab>
     return Container(
       child: Column(
         children: <Widget>[
-          Row(
+          const Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const <Widget>[
+            children: <Widget>[
               Padding(
                 padding: EdgeInsets.all(8.0),
                 child: Text(

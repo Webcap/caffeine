@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:caffiene/screens/movie_screens/main_movie_display.dart';
-import 'package:caffiene/screens/movie_screens/movie_details.dart';
-import 'package:caffiene/widgets/moviedetails.dart';
 
 class ListViewDatamovie extends StatelessWidget {
   const ListViewDatamovie({

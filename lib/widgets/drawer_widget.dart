@@ -3,8 +3,6 @@ import 'package:caffiene/screens/watch_history/watch_history_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:caffiene/provider/settings_provider.dart';
-import 'package:caffiene/provider/sign_in_provider.dart';
-import 'package:caffiene/screens/auth_screens/login_screen.dart';
 import 'package:caffiene/screens/common/about.dart';
 import 'package:caffiene/screens/bookmarks/bookmark_screen.dart';
 import 'package:caffiene/screens/common/update_screen.dart';
@@ -56,7 +54,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                   ),
                   title: const Text('Watch History'),
                   onTap: () {
-                    nextScreen(context, WatchHistory());
+                    nextScreen(context, const WatchHistory());
                   },
                 ),
                 ListTile(
@@ -66,7 +64,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                   ),
                   title: const Text('Bookmark'),
                   onTap: () {
-                    nextScreen(context, BookmarkScreen());
+                    nextScreen(context, const BookmarkScreen());
                   },
                 ),
                 ListTile(
@@ -86,7 +84,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                   ),
                   title: const Text('About'),
                   onTap: () {
-                    nextScreen(context, AboutPage());
+                    nextScreen(context, const AboutPage());
                   },
                 ),
                 ListTile(
@@ -96,7 +94,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                   ),
                   title: const Text('Check for an update'),
                   onTap: () {
-                    nextScreen(context, UpdateScreen());
+                    nextScreen(context, const UpdateScreen());
                   },
                 ),
                 ListTile(
@@ -106,7 +104,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                   ),
                   title: const Text('Settings'),
                   onTap: () {
-                    nextScreen(context, Settings());
+                    nextScreen(context, const Settings());
                   },
                 ),
                 ListTile(

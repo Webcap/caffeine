@@ -1,22 +1,13 @@
-import 'dart:convert';
 
-import 'package:caffiene/models/watch_history.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dio/dio.dart';
 import 'package:easy_ads_flutter/easy_ads_flutter.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:caffiene/api/endpoints.dart';
 import 'package:caffiene/api/movies_api.dart';
 import 'package:caffiene/models/movie_stream.dart';
 import 'package:caffiene/models/functions.dart';
 import 'package:caffiene/screens/player/player.dart';
-import 'package:caffiene/utils/admob.dart';
 import 'package:caffiene/utils/config.dart';
-import 'package:web_scraper/web_scraper.dart';
-import 'package:http/http.dart' as http;
 import 'package:better_player/better_player.dart';
 
 class MovieVideoLoader extends StatefulWidget {

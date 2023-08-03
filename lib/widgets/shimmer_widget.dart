@@ -239,7 +239,7 @@ Widget mainPageVerticalScrollShimmer(isLoading, scrollController) => Container(
                                         )
                                       ],
                                     ),
-                                    Divider(
+                                    const Divider(
                                       color: Colors.white54,
                                       thickness: 1,
                                       endIndent: 20,
@@ -1616,7 +1616,7 @@ Widget movieCastAndCrewTabShimmer() => Container(
                         )
                       ],
                     ),
-                    Divider(
+                    const Divider(
                       color: Colors.white54,
                       thickness: 1,
                       endIndent: 20,
@@ -1703,7 +1703,7 @@ Widget detailsRecommendationsAndSimilarShimmer(scrollController, isLoading) =>
                               )
                             ],
                           ),
-                          Divider(
+                          const Divider(
                             color: Colors.white54,
                             thickness: 1,
                             endIndent: 20,
@@ -1970,7 +1970,7 @@ Widget tvDetailsSeasonsTabShimmer() => Column(
                               )
                             ],
                           ),
-                          Divider(
+                          const Divider(
                             color: Colors.white54,
                             thickness: 1,
                             endIndent: 20,
@@ -2051,7 +2051,7 @@ Widget tvCastAndCrewTabShimmer() => Container(
                         )
                       ],
                     ),
-                    Divider(
+                    const Divider(
                       color: Colors.white54,
                       thickness: 1,
                       endIndent: 20,

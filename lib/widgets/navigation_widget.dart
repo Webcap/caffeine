@@ -1,11 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:caffiene/screens/search/search_view.dart';
 import 'package:caffiene/screens/settings/settings.dart';
 import 'package:caffiene/screens/home_screen/tvHomeScreen.dart';
 import 'package:need_resume/need_resume.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class NavigationWidget extends StatefulWidget {
   int posty;
@@ -44,50 +40,56 @@ class _NavigationWidgetState extends ResumableState<NavigationWidget> {
       left: 0,
       right: 0,
       top: (widget.posty < 0) ? 0 : -100,
-      duration: Duration(milliseconds: 200),
+      duration: const Duration(milliseconds: 200),
       child: Container(
+          decoration: const BoxDecoration(
+              gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Colors.black87, Colors.black54, Colors.transparent],
+          )),
           child: Container(
-            margin: EdgeInsets.only(left: 50, right: 50, top: 10),
+            margin: const EdgeInsets.only(left: 50, right: 50, top: 10),
             height: 50,
             child: Row(
               children: [
                 Expanded(
-                  child: Container(
+                  child: SizedBox(
                     height: 50,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Container(
+                        SizedBox(
                           width: 100,
                           child: Padding(
                             padding: const EdgeInsets.all(0.0),
                             child: Image.asset("assets/logo.png"),
                           ),
                         ),
-                        SizedBox(width: 15),
+                        const SizedBox(width: 15),
                         GestureDetector(
                           onTap: () {
                             setState(() {
                               widget.postx = 0;
                               widget.posty = -2;
-                              Future.delayed(Duration(milliseconds: 200), () {
+                              Future.delayed(const Duration(milliseconds: 200), () {
                                 Navigator.push(
                                   context,
                                   PageRouteBuilder(
                                     pageBuilder:
                                         (context, animation1, animation2) =>
-                                            tvHomeScreen(),
-                                    transitionDuration: Duration(seconds: 0),
+                                            const tvHomeScreen(),
+                                    transitionDuration: const Duration(seconds: 0),
                                   ),
                                 );
                               });
                             });
                           },
                           child: Container(
-                            margin: EdgeInsets.symmetric(
+                            margin: const EdgeInsets.symmetric(
                                 horizontal: 7, vertical: 1),
-                            padding: EdgeInsets.symmetric(
+                            padding: const EdgeInsets.symmetric(
                                 horizontal: 15, vertical: 8),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(20),
@@ -111,7 +113,7 @@ class _NavigationWidgetState extends ResumableState<NavigationWidget> {
                                           ? Colors.white
                                           : Colors.white60,
                                 ),
-                                SizedBox(width: 5),
+                                const SizedBox(width: 5),
                                 Text(
                                   "Search",
                                   style: TextStyle(
@@ -133,15 +135,15 @@ class _NavigationWidgetState extends ResumableState<NavigationWidget> {
                             setState(() {
                               widget.postx = 1;
                               widget.posty = -2;
-                              Future.delayed(Duration(milliseconds: 200), () {
+                              Future.delayed(const Duration(milliseconds: 200), () {
                                 if (widget.selectedItem != 1) {
                                   Navigator.pushReplacement(
                                     context,
                                     PageRouteBuilder(
                                       pageBuilder:
                                           (context, animation1, animation2) =>
-                                              tvHomeScreen(),
-                                      transitionDuration: Duration(seconds: 0),
+                                              const tvHomeScreen(),
+                                      transitionDuration: const Duration(seconds: 0),
                                     ),
                                   );
                                 }
@@ -149,9 +151,9 @@ class _NavigationWidgetState extends ResumableState<NavigationWidget> {
                             });
                           },
                           child: Container(
-                            margin: EdgeInsets.symmetric(
+                            margin: const EdgeInsets.symmetric(
                                 horizontal: 7, vertical: 1),
-                            padding: EdgeInsets.symmetric(
+                            padding: const EdgeInsets.symmetric(
                                 horizontal: 15, vertical: 9),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(20),
@@ -182,15 +184,15 @@ class _NavigationWidgetState extends ResumableState<NavigationWidget> {
                             setState(() {
                               widget.postx = 2;
                               widget.posty = -2;
-                              Future.delayed(Duration(milliseconds: 200), () {
+                              Future.delayed(const Duration(milliseconds: 200), () {
                                 if (widget.selectedItem != 2) {
                                   Navigator.pushReplacement(
                                     context,
                                     PageRouteBuilder(
                                       pageBuilder:
                                           (context, animation1, animation2) =>
-                                              tvHomeScreen(),
-                                      transitionDuration: Duration(seconds: 0),
+                                              const tvHomeScreen(),
+                                      transitionDuration: const Duration(seconds: 0),
                                     ),
                                   );
                                 }
@@ -198,9 +200,9 @@ class _NavigationWidgetState extends ResumableState<NavigationWidget> {
                             });
                           },
                           child: Container(
-                            margin: EdgeInsets.symmetric(
+                            margin: const EdgeInsets.symmetric(
                                 horizontal: 7, vertical: 1),
-                            padding: EdgeInsets.symmetric(
+                            padding: const EdgeInsets.symmetric(
                                 horizontal: 15, vertical: 9),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(20),
@@ -231,15 +233,15 @@ class _NavigationWidgetState extends ResumableState<NavigationWidget> {
                             setState(() {
                               widget.postx = 3;
                               widget.posty = -2;
-                              Future.delayed(Duration(milliseconds: 200), () {
+                              Future.delayed(const Duration(milliseconds: 200), () {
                                 if (widget.selectedItem != 3) {
                                   Navigator.pushReplacement(
                                     context,
                                     PageRouteBuilder(
                                       pageBuilder:
                                           (context, animation1, animation2) =>
-                                              tvHomeScreen(),
-                                      transitionDuration: Duration(seconds: 0),
+                                              const tvHomeScreen(),
+                                      transitionDuration: const Duration(seconds: 0),
                                     ),
                                   );
                                 }
@@ -247,9 +249,9 @@ class _NavigationWidgetState extends ResumableState<NavigationWidget> {
                             });
                           },
                           child: Container(
-                            margin: EdgeInsets.symmetric(
+                            margin: const EdgeInsets.symmetric(
                                 horizontal: 7, vertical: 1),
-                            padding: EdgeInsets.symmetric(
+                            padding: const EdgeInsets.symmetric(
                                 horizontal: 15, vertical: 9),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(20),
@@ -280,15 +282,15 @@ class _NavigationWidgetState extends ResumableState<NavigationWidget> {
                             setState(() {
                               widget.postx = 4;
                               widget.posty = -2;
-                              Future.delayed(Duration(milliseconds: 200), () {
+                              Future.delayed(const Duration(milliseconds: 200), () {
                                 if (widget.selectedItem != 4) {
                                   Navigator.pushReplacement(
                                     context,
                                     PageRouteBuilder(
                                       pageBuilder:
                                           (context, animation1, animation2) =>
-                                              tvHomeScreen(),
-                                      transitionDuration: Duration(seconds: 0),
+                                              const tvHomeScreen(),
+                                      transitionDuration: const Duration(seconds: 0),
                                     ),
                                   );
                                 }
@@ -296,9 +298,9 @@ class _NavigationWidgetState extends ResumableState<NavigationWidget> {
                             });
                           },
                           child: Container(
-                            margin: EdgeInsets.symmetric(
+                            margin: const EdgeInsets.symmetric(
                                 horizontal: 7, vertical: 1),
-                            padding: EdgeInsets.symmetric(
+                            padding: const EdgeInsets.symmetric(
                                 horizontal: 15, vertical: 9),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(20),
@@ -353,9 +355,9 @@ class _NavigationWidgetState extends ResumableState<NavigationWidget> {
                             });
                           },
                           child: Container(
-                            margin: EdgeInsets.symmetric(
+                            margin: const EdgeInsets.symmetric(
                                 horizontal: 7, vertical: 1),
-                            padding: EdgeInsets.symmetric(
+                            padding: const EdgeInsets.symmetric(
                                 horizontal: 15, vertical: 9),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(20),
@@ -390,13 +392,13 @@ class _NavigationWidgetState extends ResumableState<NavigationWidget> {
                     setState(() {
                       widget.postx = 6;
                       widget.posty = -2;
-                      Future.delayed(Duration(milliseconds: 200), () {
+                      Future.delayed(const Duration(milliseconds: 200), () {
                         Navigator.push(
                           context,
                           PageRouteBuilder(
                             pageBuilder: (context, animation1, animation2) =>
-                                Settings(),
-                            transitionDuration: Duration(seconds: 0),
+                                const Settings(),
+                            transitionDuration: const Duration(seconds: 0),
                           ),
                         );
                       });
@@ -457,6 +459,14 @@ class _NavigationWidgetState extends ResumableState<NavigationWidget> {
                     padding: const EdgeInsets.all(8.0),
                     height: 50,
                     width: 50,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(50),
+                        boxShadow: [
+                          BoxShadow(
+                              color: Colors.black54.withOpacity(0.2),
+                              offset: const Offset(0, 0),
+                              blurRadius: 5)
+                        ]),
                     child: Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(50),
@@ -472,25 +482,11 @@ class _NavigationWidgetState extends ResumableState<NavigationWidget> {
                         ),
                       ),
                     ),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(50),
-                        boxShadow: [
-                          BoxShadow(
-                              color: Colors.black54.withOpacity(0.2),
-                              offset: Offset(0, 0),
-                              blurRadius: 5)
-                        ]),
                   ),
                 )
               ],
             ),
-          ),
-          decoration: BoxDecoration(
-              gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Colors.black87, Colors.black54, Colors.transparent],
-          ))),
+          )),
     );
   }
 }

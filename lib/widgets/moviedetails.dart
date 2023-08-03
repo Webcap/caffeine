@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/api/movies_api.dart';
-import 'package:provider/provider.dart';
 
 class MovieDescription extends StatelessWidget {
   final int id;
 
-  MovieDescription({
+  const MovieDescription({
     Key? key,
     required this.id,
   }) : super(key: key);
@@ -32,7 +31,7 @@ class MovieDescription extends StatelessWidget {
                               width: 1000,
                               color: uppermodecolor,
                             )
-                          : Container(
+                          : SizedBox(
                               height: 300,
                               width: 1000,
                               child: ClipRRect(
@@ -149,7 +148,7 @@ class MovieDescription extends StatelessWidget {
                       },
                       child: Container(
                         margin:
-                            EdgeInsets.symmetric(vertical: 20, horizontal: 40),
+                            const EdgeInsets.symmetric(vertical: 20, horizontal: 40),
                         height: 60,
                         width: 100,
                         decoration: BoxDecoration(

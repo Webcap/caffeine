@@ -2,16 +2,14 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:caffiene/provider/sign_in_provider.dart';
 import 'package:caffiene/screens/home_screen/tvHomeScreen.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/utils/next_screen.dart';
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert' as convert;
-import 'dart:math';
 
 class Splash extends StatefulWidget {
+  const Splash({super.key});
+
   @override
   _SplashState createState() => _SplashState();
 }
@@ -42,66 +40,66 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
         _p_1 = true;
       });
     });
-    Future.delayed(Duration(milliseconds: 200), () {
+    Future.delayed(const Duration(milliseconds: 200), () {
       setState(() {
         _p_2 = true;
       });
     });
-    Future.delayed(Duration(milliseconds: 400), () {
+    Future.delayed(const Duration(milliseconds: 400), () {
       setState(() {
         _p_3 = true;
       });
     });
-    Future.delayed(Duration(milliseconds: 600), () {
+    Future.delayed(const Duration(milliseconds: 600), () {
       setState(() {
         _p_4 = true;
       });
     });
 
-    Future.delayed(Duration(milliseconds: 800), () {
+    Future.delayed(const Duration(milliseconds: 800), () {
       setState(() {
         _p_5 = true;
       });
     });
-    Future.delayed(Duration(milliseconds: 1000), () {
+    Future.delayed(const Duration(milliseconds: 1000), () {
       setState(() {
         _p_6 = true;
       });
     });
-    Future.delayed(Duration(milliseconds: 1200), () {
+    Future.delayed(const Duration(milliseconds: 1200), () {
       setState(() {
         _p_7 = true;
       });
     });
-    Future.delayed(Duration(milliseconds: 1400), () {
+    Future.delayed(const Duration(milliseconds: 1400), () {
       setState(() {
         _p_8 = true;
       });
     });
-    Future.delayed(Duration(milliseconds: 1600), () {
+    Future.delayed(const Duration(milliseconds: 1600), () {
       setState(() {
         _p_9 = true;
       });
     });
-    Future.delayed(Duration(milliseconds: 1800), () {
+    Future.delayed(const Duration(milliseconds: 1800), () {
       setState(() {
         _p_10 = true;
       });
     });
-    Future.delayed(Duration(milliseconds: 2000), () {
+    Future.delayed(const Duration(milliseconds: 2000), () {
       setState(() {
         _p_11 = true;
       });
     });
-    Future.delayed(Duration(milliseconds: 2200), () {
+    Future.delayed(const Duration(milliseconds: 2200), () {
       setState(() {
         _p_12 = true;
       });
     });
-    Future.delayed(Duration(milliseconds: 5000), () {
+    Future.delayed(const Duration(milliseconds: 5000), () {
       //redirect();
       Timer(const Duration(seconds: 2), () {
-        nextScreenReplace(context, tvHomeScreen());
+        nextScreenReplace(context, const tvHomeScreen());
       });
     });
   }
@@ -157,8 +155,8 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
       Navigator.pushReplacement(
         context,
         PageRouteBuilder(
-          pageBuilder: (context, animation1, animation2) => tvHomeScreen(),
-          transitionDuration: Duration(seconds: 0),
+          pageBuilder: (context, animation1, animation2) => const tvHomeScreen(),
+          transitionDuration: const Duration(seconds: 0),
         ),
       );
     } else {
@@ -168,13 +166,14 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
 
   logout() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    if (prefs.getBool("LOGGED_USER") != null)
+    if (prefs.getBool("LOGGED_USER") != null) {
       Fluttertoast.showToast(
         msg: "You have logout in successfully !",
         gravity: ToastGravity.BOTTOM,
         backgroundColor: Colors.green,
         textColor: Colors.white,
       );
+    }
 
     prefs.remove("ID_USER");
     prefs.remove("SALT_USER");
@@ -196,7 +195,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
       body: Stack(
         children: [
           AnimatedPositioned(
-            duration: Duration(milliseconds: 200),
+            duration: const Duration(milliseconds: 200),
             right: (_p_1) ? 0 : MediaQuery.of(context).size.width,
             top: 0,
             bottom: 0,
@@ -206,7 +205,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
             ),
           ),
           AnimatedPositioned(
-            duration: Duration(milliseconds: 200),
+            duration: const Duration(milliseconds: 200),
             right: (_p_2)
                 ? MediaQuery.of(context).size.width / 7
                 : MediaQuery.of(context).size.width,
@@ -219,7 +218,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
             ),
           ),
           AnimatedPositioned(
-            duration: Duration(milliseconds: 200),
+            duration: const Duration(milliseconds: 200),
             right: (_p_3)
                 ? (MediaQuery.of(context).size.width / 7) * 2
                 : MediaQuery.of(context).size.width,
@@ -232,7 +231,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
             ),
           ),
           AnimatedPositioned(
-            duration: Duration(milliseconds: 200),
+            duration: const Duration(milliseconds: 200),
             right: (_p_4)
                 ? (MediaQuery.of(context).size.width / 7) * 3
                 : MediaQuery.of(context).size.width,
@@ -245,7 +244,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
             ),
           ),
           AnimatedPositioned(
-            duration: Duration(milliseconds: 200),
+            duration: const Duration(milliseconds: 200),
             right: (_p_5)
                 ? (MediaQuery.of(context).size.width / 7) * 4
                 : MediaQuery.of(context).size.width,
@@ -258,7 +257,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
             ),
           ),
           AnimatedPositioned(
-            duration: Duration(milliseconds: 200),
+            duration: const Duration(milliseconds: 200),
             right: (_p_6)
                 ? (MediaQuery.of(context).size.width / 7) * 5
                 : MediaQuery.of(context).size.width,
@@ -271,7 +270,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
             ),
           ),
           AnimatedPositioned(
-            duration: Duration(milliseconds: 200),
+            duration: const Duration(milliseconds: 200),
             right: (_p_7)
                 ? (MediaQuery.of(context).size.width / 7) * 6
                 : MediaQuery.of(context).size.width,
@@ -284,7 +283,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
             ),
           ),
           AnimatedPositioned(
-            duration: Duration(milliseconds: 200),
+            duration: const Duration(milliseconds: 200),
             right: (_p_9) ? 0 : (MediaQuery.of(context).size.width / 7) * 3,
             top: 0,
             left: (_p_9) ? 0 : (MediaQuery.of(context).size.width / 7) * 3,
@@ -292,11 +291,11 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
             child: Visibility(
               visible: _p_8,
               child: AnimatedContainer(
-                duration: Duration(milliseconds: 200),
+                duration: const Duration(milliseconds: 200),
                 width: MediaQuery.of(context).size.width / 7,
                 color: maincolor,
                 child: AnimatedContainer(
-                  duration: Duration(milliseconds: 200),
+                  duration: const Duration(milliseconds: 200),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -304,7 +303,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
                       Visibility(
                           visible: _p_10,
                           child: Image.asset("assets/logo.png", width: 300)),
-                      SizedBox(width: 20),
+                      const SizedBox(width: 20),
                       Visibility(
                         visible: _p_11,
                         child: Container(
@@ -318,14 +317,14 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
                         child: AnimatedContainer(
                             width: (_p_12) ? 300 : 0,
                             height: 200,
-                            duration: Duration(milliseconds: 500),
+                            duration: const Duration(milliseconds: 500),
                             child: Stack(
                               children: [
                                 AnimatedPositioned(
-                                  duration: Duration(milliseconds: 500),
+                                  duration: const Duration(milliseconds: 500),
                                   left: (_p_12) ? 20 : -400,
                                   top: 0,
-                                  child: Container(
+                                  child: const SizedBox(
                                     width: 300,
                                     height: 200,
                                     child: Column(

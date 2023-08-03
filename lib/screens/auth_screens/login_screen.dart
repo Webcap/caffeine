@@ -3,7 +3,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:caffiene/provider/internet_provider.dart';
 import 'package:caffiene/provider/sign_in_provider.dart';
 import 'package:caffiene/screens/home_screen/dash_screen.dart';
-import 'package:caffiene/screens/home_screen/home_screen.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/utils/next_screen.dart';
 import 'package:caffiene/utils/snackbar.dart';
@@ -11,7 +10,7 @@ import 'package:provider/provider.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 
 class LoginScreen extends StatefulWidget {
-  LoginScreen({Key? key}) : super(key: key);
+  const LoginScreen({Key? key}) : super(key: key);
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -28,7 +27,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      backgroundColor: Color(0xFFea575e),
+      backgroundColor: const Color(0xFFea575e),
       body: SafeArea(
         child: Padding(
           padding:
@@ -36,7 +35,7 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Flexible(
+              const Flexible(
                 flex: 2,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -47,10 +46,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       width: 80,
                       fit: BoxFit.cover,
                     ),
-                    const SizedBox(
+                    SizedBox(
                       height: 20,
                     ),
-                    const Text("Welcome to caffeine",
+                    Text("Welcome to caffeine",
                         style: TextStyle(
                             fontSize: 25, fontWeight: FontWeight.w500)),
                     Text(
@@ -76,8 +75,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       elevation: 0,
                       borderRadius: 25,
                       color: Colors.white,
-                      child: Wrap(
-                        children: const [
+                      child: const Wrap(
+                        children: [
                           Icon(
                             FontAwesomeIcons.google,
                             size: 20,
@@ -100,15 +99,15 @@ class _LoginScreenState extends State<LoginScreen> {
                   RoundedLoadingButton(
                       controller: facebookController,
                       onPressed: () {
-                        nextScreenReplace(context, caffieneHomePage());
+                        nextScreenReplace(context, const caffieneHomePage());
                       },
                       successColor: Colors.blue,
                       width: MediaQuery.of(context).size.width * 0.80,
                       elevation: 0,
                       borderRadius: 25,
                       color: Colors.blue,
-                      child: Wrap(
-                        children: const [
+                      child: const Wrap(
+                        children: [
                           Icon(
                             FontAwesomeIcons.facebook,
                             size: 20,
@@ -174,7 +173,7 @@ class _LoginScreenState extends State<LoginScreen> {
   // handle after signin
   handleAfterSignIn() {
     Future.delayed(const Duration(milliseconds: 1000)).then((value) {
-      nextScreenReplace(context, caffieneHomePage());
+      nextScreenReplace(context, const caffieneHomePage());
     });
   }
 }
