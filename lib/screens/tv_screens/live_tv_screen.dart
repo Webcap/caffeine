@@ -162,7 +162,7 @@ class _ChannelListState extends State<ChannelList> {
       debugPrint("Error loading Banner ad: $error");
     });
     fetchChannels(
-            'https://raw.githubusercontent.com/BeamlakAschalew/cinemax_live_channels/master/${widget.catName}.json')
+            'https://raw.githubusercontent.com/Webcap/caffiene_live_channels/main/${widget.catName}.json')
         .then((value) {
       setState(() {
         channels = value;

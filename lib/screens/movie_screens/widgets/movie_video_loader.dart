@@ -42,6 +42,7 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
   late int seekDuration;
   late int videoQuality;
   late String subLanguage;
+  late bool autoFS;
 
   @override
   void initState() {
@@ -83,6 +84,8 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
           .defaultVideoResolution;
       subLanguage = Provider.of<SettingsProvider>(context, listen: false)
           .defaultSubtitleLanguage;
+      autoFS =
+          Provider.of<SettingsProvider>(context, listen: false).defaultViewMode;
     });
     try {
       await moviesApi()
@@ -192,7 +195,7 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
                 Theme.of(context).primaryColor,
                 Theme.of(context).colorScheme.background
               ],
-              videoProperties: [maxBuffer, seekDuration, videoQuality],
+              videoProperties: [maxBuffer, seekDuration, videoQuality, autoFS],
             );
           },
         ));

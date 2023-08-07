@@ -55,7 +55,7 @@ class _PlayerState extends State<Player> {
     BetterPlayerConfiguration betterPlayerConfiguration =
         BetterPlayerConfiguration(
             autoDetectFullscreenDeviceOrientation: true,
-            fullScreenByDefault: true,
+            fullScreenByDefault: widget.videoProperties.elementAt(3),
             autoPlay: true,
             fit: BoxFit.contain,
             autoDispose: true,

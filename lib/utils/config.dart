@@ -22,7 +22,8 @@ const String TAG_LINE1 = "Unlimted, for free, anytime on Caffiene";
 const String SIGN_IN = "Log In";
 const String SIGN_UP = "Sign Up";
 const String ERROROCCURRED = "an error has occurred";
-const String CONSUMET_API = 'https://consumet-snowy.vercel.app/';
+const String CONSUMET_API = 'https://consumet-railway.justchill.tv/';
+const String OLD_CONSUMET_API = 'https://consumet-snowy.vercel.app/';
 const String PROCESSING_VIDEO = "Please Wait while we process the video";
 
 final client = HttpClient();
@@ -56,7 +57,7 @@ const kTextSmallHeaderStyle = TextStyle(
   overflow: TextOverflow.ellipsis,
 );
 
-const String currentAppVersion = '1.0.8-dev';
+const String currentAppVersion = '1.1-dev';
 
 const kTextHeaderStyle = TextStyle(
   fontFamily: 'PoppinsSB',
@@ -105,16 +106,13 @@ const retryOptions = RetryOptions(
 const timeOut = Duration(seconds: 10);
 
 final List<String> appNames = [
-  'caffiene-v1.0.3.apk',
-  'caffiene-v1.0.3-dev.apk',
-  'caffiene-v1.0.4-dev.apk',
-  'caffiene-v1.0.4.apk',
-  'caffiene-v1.0.5.apk',
   'caffiene-v1.0.5-dev-v2.apk',
   'caffiene-v1.0.6.apk',
   'caffiene-v1.0.8.apk',
+  'caffiene-v1.1.apk',
   'caffiene-v1.0.6-dev.apk',
   'caffiene-v1.0.8-dev.apk',
+  'caffiene-v1.1-dev.apk',
 ];
 
 CacheManager cacheProp() {

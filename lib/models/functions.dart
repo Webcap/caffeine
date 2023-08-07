@@ -47,9 +47,10 @@ Future<List<Channel>> fetchChannels(String api) async {
       retryIf: (e) => e is SocketException || e is TimeoutException,
     );
     var decodeRes = jsonDecode(res.body);
-    channelsList = ChannelsList.fromJson(decodeRes.body);
+    channelsList = ChannelsList.fromJson(decodeRes);
   } finally {
     client.close();
   }
   return channelsList.channels ?? [];
 }
+

@@ -148,7 +148,7 @@ class SettingsProvider with ChangeNotifier {
         optOutTrackingDefault: false, trackAutomaticEvents: true);
     notifyListeners();
   }
-  
+
   Future<void> getSeekDuration() async {
     defaultSeekDuration = await videoPlayerPreferences.getSeekDuraion();
   }
@@ -156,6 +156,16 @@ class SettingsProvider with ChangeNotifier {
   set defaultSeekDuration(int value) {
     _defaultSeekDuration = value;
     videoPlayerPreferences.setSeekDuration(value);
+    notifyListeners();
+  }
+
+  Future<void> getViewMode() async {
+    defaultViewMode = await videoPlayerPreferences.autoFullScreen();
+  }
+
+  set defaultViewMode(bool value) {
+    _defaultViewMode = value;
+    videoPlayerPreferences.setDefaultFullScreen(value);
     notifyListeners();
   }
 

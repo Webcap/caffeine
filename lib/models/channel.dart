@@ -1,4 +1,3 @@
-import 'package:json_annotation/json_annotation.dart';
 import 'package:caffiene/models/category.dart';
 import 'package:caffiene/models/country.dart';
 import 'package:caffiene/models/source.dart';
