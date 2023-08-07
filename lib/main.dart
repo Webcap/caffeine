@@ -1,7 +1,5 @@
 import 'dart:io';
 
-import 'package:caffiene/utils/constant.dart';
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -43,6 +41,10 @@ Future<void> appInitialize() async {
   await settingsProvider.getCurrentWatchCountry();
   await settingsProvider.getCurrentViewType();
   await settingsProvider.initMixpanel();
+  await settingsProvider.getSeekDuration();
+  await settingsProvider.getMaxBufferDuration();
+  await settingsProvider.getVideoResolution();
+  await settingsProvider.getSubtitleLanguage();
   await _initialization;
 }
 
@@ -76,7 +78,7 @@ class _caffeineState extends State<caffeine>
 
   bool? isFirstLaunch;
   bool? isAndroidTV;
-  static final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
+  //static final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
 
   // void firstTimeCheck() async {
   //   final prefs = await SharedPreferences.getInstance();
@@ -98,7 +100,6 @@ class _caffeineState extends State<caffeine>
     if (showAds == true) {
       MobileAds.instance.initialize();
     }
-    //_getPackage();
   }
 
   @override

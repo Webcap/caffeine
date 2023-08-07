@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:caffiene/models/live_tv.dart';
 import 'package:http/http.dart' as http;
 import 'package:caffiene/models/update.dart';
 import 'package:caffiene/utils/config.dart';
@@ -36,4 +37,19 @@ Future checkForUpdate(String api) async {
     client.close();
   }
   return updateChecker;
+}
+
+Future<List<Channel>> fetchChannels(String api) async {
+  ChannelsList channelsList;
+  try {
+    var res = await retryOptions.retry(
+      () => http.get(Uri.parse(api)),
+      retryIf: (e) => e is SocketException || e is TimeoutException,
+    );
+    var decodeRes = jsonDecode(res.body);
+    channelsList = ChannelsList.fromJson(decodeRes.body);
+  } finally {
+    client.close();
+  }
+  return channelsList.channels ?? [];
 }

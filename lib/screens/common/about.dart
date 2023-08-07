@@ -97,6 +97,7 @@ class AboutPage extends StatelessWidget {
                     const Text(
                       'Follow caffiene on various platforms',
                       maxLines: 5,
+                      textAlign: TextAlign.center,
                       style: kTextSmallHeaderStyle,
                     ),
                     Container(

@@ -50,7 +50,7 @@ class MovieInfoTableState extends State<MovieInfoTable> {
                 scrollDirection: Axis.horizontal,
                 child: movieDetails == null
                     ? detailInfoTableShimmer1(isDark)
-                    : DataTable(dataRowHeight: 40, columns: [
+                    : DataTable(dataRowMinHeight: 40, columns: [
                         const DataColumn(
                             label: Text(
                           'Original Title',

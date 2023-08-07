@@ -1,15 +1,8 @@
 import 'package:caffiene/models/general_settings.dart';
+import 'package:caffiene/models/setting_preferences.dart';
 import 'package:flutter/material.dart';
-import 'package:caffiene/models/adultmode_preferences.dart';
-import 'package:caffiene/models/country_preferences.dart';
-import 'package:caffiene/models/default_screen_preferences.dart';
-import 'package:caffiene/models/image_preferences.dart';
-import 'package:caffiene/models/theme_preferences.dart';
-import 'package:caffiene/models/view_perferences.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
-
-import '../models/material3_preferences.dart';
 
 class SettingsProvider with ChangeNotifier {
   ThemeModePreferences themeModePreferences = ThemeModePreferences();
@@ -21,6 +14,7 @@ class SettingsProvider with ChangeNotifier {
   Material3Preferences material3preferences = Material3Preferences();
   GeneralSettingsPreferences generalSettingsPreferences =
       GeneralSettingsPreferences();
+  VideoPlayerPreferences videoPlayerPreferences = VideoPlayerPreferences();
 
   bool _isAdult = false;
   bool get isAdult => _isAdult;
@@ -45,6 +39,24 @@ class SettingsProvider with ChangeNotifier {
 
   String _defaultView = 'list';
   String get defaultView => _defaultView;
+
+  int _defaultSeekDuration = 10;
+  int get defaultSeekDuration => _defaultSeekDuration;
+
+  // int _defaultMinBufferDuration = 120000;
+  // int get defaultMinBufferDuration => _defaultMinBufferDuration;
+
+  int _defaultMaxBufferDuration = 240000;
+  int get defaultMaxBufferDuration => _defaultMaxBufferDuration;
+
+  int _defaultVideoResolution = 0;
+  int get defaultVideoResolution => _defaultVideoResolution;
+
+  String _defaultSubtitleLanguage = 'English';
+  String get defaultSubtitleLanguage => _defaultSubtitleLanguage;
+
+  bool _defaultViewMode = true;
+  bool get defaultViewMode => _defaultViewMode;
 
   late Mixpanel mixpanel;
 
@@ -134,6 +146,57 @@ class SettingsProvider with ChangeNotifier {
   Future<void> initMixpanel() async {
     mixpanel = await Mixpanel.init(mixpanelKey,
         optOutTrackingDefault: false, trackAutomaticEvents: true);
+    notifyListeners();
+  }
+  
+  Future<void> getSeekDuration() async {
+    defaultSeekDuration = await videoPlayerPreferences.getSeekDuraion();
+  }
+
+  set defaultSeekDuration(int value) {
+    _defaultSeekDuration = value;
+    videoPlayerPreferences.setSeekDuration(value);
+    notifyListeners();
+  }
+
+  // Future<void> getMinBufferDuration() async {
+  //   defaultMinBufferDuration = await videoPlayerPreferences.getMinBuffer();
+  // }
+
+  // set defaultMinBufferDuration(int value) {
+  //   _defaultMinBufferDuration = value;
+  //   videoPlayerPreferences.setMinBufferDuration(value);
+  //   notifyListeners();
+  // }
+
+  Future<void> getMaxBufferDuration() async {
+    defaultMaxBufferDuration = await videoPlayerPreferences.getMaxBuffer();
+  }
+
+  set defaultMaxBufferDuration(int value) {
+    _defaultMaxBufferDuration = value;
+    videoPlayerPreferences.setMaxBufferDuration(value);
+    notifyListeners();
+  }
+
+  Future<void> getVideoResolution() async {
+    defaultVideoResolution =
+        await videoPlayerPreferences.getDefaultVideoQuality();
+  }
+
+  set defaultVideoResolution(int value) {
+    _defaultVideoResolution = value;
+    videoPlayerPreferences.setDefaultVideoQuality(value);
+    notifyListeners();
+  }
+
+  Future<void> getSubtitleLanguage() async {
+    defaultSubtitleLanguage = await videoPlayerPreferences.getSubLanguage();
+  }
+
+  set defaultSubtitleLanguage(String value) {
+    _defaultSubtitleLanguage = value;
+    videoPlayerPreferences.setDefaultSubtitle(value);
     notifyListeners();
   }
 }

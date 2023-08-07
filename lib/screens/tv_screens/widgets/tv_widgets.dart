@@ -1,4 +1,3 @@
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
@@ -1108,8 +1107,6 @@ class TVVideosDisplayState extends State<TVVideosDisplay> {
   }
 }
 
-
-
 class TVInfoTable extends StatefulWidget {
   final String? api;
   const TVInfoTable({Key? key, this.api}) : super(key: key);
@@ -1147,7 +1144,7 @@ class TVInfoTableState extends State<TVInfoTable> {
               scrollDirection: Axis.horizontal,
               child: tvDetails == null
                   ? detailInfoTableShimmer()
-                  : DataTable(dataRowHeight: 40, columns: [
+                  : DataTable(dataRowMinHeight: 40, columns: [
                       const DataColumn(
                           label: Text(
                         'Original Title',

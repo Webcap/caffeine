@@ -862,7 +862,7 @@ class _PersonDataTableState extends State<PersonDataTable> {
           scrollDirection: Axis.horizontal,
           child: personDetails == null
               ? personDetailInfoTableShimmer()
-              : DataTable(dataRowHeight: 40, columns: [
+              : DataTable(dataRowMinHeight: 40, columns: [
                   const DataColumn(
                       label: Text(
                     'Age',

@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:better_player/better_player.dart';
@@ -9,12 +8,14 @@ class Player extends StatefulWidget {
       required this.thumbnail,
       required this.subs,
       required this.colors,
+      required this.videoProperties,
       Key? key})
       : super(key: key);
   final Map<String, String> sources;
   final List<BetterPlayerSubtitlesSource> subs;
   final String? thumbnail;
   final List<Color> colors;
+  final List videoProperties;
 
   @override
   State<Player> createState() => _PlayerState();
@@ -23,16 +24,16 @@ class Player extends StatefulWidget {
 class _PlayerState extends State<Player> {
   late BetterPlayerController _betterPlayerController;
   late BetterPlayerControlsConfiguration betterPlayerControlsConfiguration;
-  late BetterPlayerBufferingConfiguration betterPlayerBufferingConfiguration =
-      const BetterPlayerBufferingConfiguration(
-    maxBufferMs: 240000,
-    minBufferMs: 120000,
-  );
+  late BetterPlayerBufferingConfiguration betterPlayerBufferingConfiguration;
 
   @override
   void initState() {
     super.initState();
 
+    betterPlayerBufferingConfiguration = BetterPlayerBufferingConfiguration(
+      maxBufferMs: widget.videoProperties.first,
+      minBufferMs: 15000,
+    );
     betterPlayerControlsConfiguration = BetterPlayerControlsConfiguration(
       enableFullscreen: true,
       backgroundColor: widget.colors.elementAt(1).withOpacity(0.6),
@@ -43,6 +44,10 @@ class _PlayerState extends State<Player> {
       showControlsOnInitialize: false,
       loadingColor: widget.colors.first,
       iconsColor: widget.colors.first,
+      backwardSkipTimeInMilliseconds:
+          Duration(seconds: widget.videoProperties.elementAt(1)).inMilliseconds,
+      forwardSkipTimeInMilliseconds:
+          Duration(seconds: widget.videoProperties.elementAt(1)).inMilliseconds,
       progressBarPlayedColor: widget.colors.first,
       progressBarBufferedColor: Colors.black45,
     );
@@ -63,20 +68,36 @@ class _PlayerState extends State<Player> {
                 outlineEnabled: false,
                 fontSize: 17));
 
-    BetterPlayerDataSource dataSource = BetterPlayerDataSource(
-        BetterPlayerDataSourceType.network, widget.sources.values.first,
-        resolutions: widget.sources,
-        subtitles: widget.subs,
-        cacheConfiguration: const BetterPlayerCacheConfiguration(
-          useCache: true,
-          preCacheSize: 471859200 * 471859200,
-          maxCacheSize: 1073741824 * 1073741824,
-          maxCacheFileSize: 471859200 * 471859200,
+    String keyToFind = widget.videoProperties.elementAt(2) == 0
+        ? 'auto'
+        : widget.videoProperties.elementAt(2).toString();
+    String? link;
 
-          ///Android only option to use cached video between app sessions
-          key: "testCacheKey",
-        ),
-        bufferingConfiguration: betterPlayerBufferingConfiguration);
+    if (widget.sources.entries
+        .where((entry) => entry.key == keyToFind)
+        .isNotEmpty) {
+      link = widget.sources.entries
+          .where((entry) => entry.key == keyToFind)
+          .map((entry) => entry.value)
+          .first;
+    } else {
+      link = widget.sources.values.first;
+    }
+
+    BetterPlayerDataSource dataSource =
+        BetterPlayerDataSource(BetterPlayerDataSourceType.network, link,
+            resolutions: widget.sources,
+            subtitles: widget.subs,
+            cacheConfiguration: const BetterPlayerCacheConfiguration(
+              useCache: true,
+              preCacheSize: 471859200 * 471859200,
+              maxCacheSize: 1073741824 * 1073741824,
+              maxCacheFileSize: 471859200 * 471859200,
+
+              ///Android only option to use cached video between app sessions
+              key: "testCacheKey",
+            ),
+            bufferingConfiguration: betterPlayerBufferingConfiguration);
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(dataSource);
   }

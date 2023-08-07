@@ -53,7 +53,6 @@ class MovieDetailPageState extends State<MovieDetailPage>
 
   @override
   Widget build(BuildContext context) {
-    // final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     final isDark = Provider.of<SettingsProvider>(context).darktheme;
     super.build(context);
     return Scaffold(

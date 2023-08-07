@@ -1,4 +1,5 @@
 
+import 'package:caffiene/screens/tv_screens/live_tv_screen.dart';
 import 'package:caffiene/screens/watch_history/watch_history_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -34,96 +35,108 @@ class _DrawerWidgetState extends State<DrawerWidget> {
     return Drawer(
       child: Container(
         color: isDark ? Colors.black : Colors.white,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Column(
-              children: [
-                SizedBox(
-                  width: double.infinity,
-                  child: DrawerHeader(
-                    decoration: BoxDecoration(
-                        color: isDark ? Colors.white : Colors.black),
-                    child: Image.asset(appConfig.app_icon),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                children: [
+                  SizedBox(
+                    width: double.infinity,
+                    child: DrawerHeader(
+                      decoration: BoxDecoration(
+                          color: isDark ? Colors.white : Colors.black),
+                      child: Image.asset(appConfig.app_icon),
+                    ),
                   ),
-                ),
-                ListTile(
-                  leading: Icon(
-                    FontAwesomeIcons.book,
-                    color: Theme.of(context).colorScheme.primary,
+                  ListTile(
+                    leading: Icon(
+                      FontAwesomeIcons.tv,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    title: const Text('Live TV (beta)'),
+                    onTap: () {
+                      nextScreen(context, const LiveTV());
+                    },
                   ),
-                  title: const Text('Watch History'),
-                  onTap: () {
-                    nextScreen(context, const WatchHistory());
-                  },
-                ),
-                ListTile(
-                  leading: Icon(
-                    FontAwesomeIcons.bookmark,
-                    color: Theme.of(context).colorScheme.primary,
+                  ListTile(
+                    leading: Icon(
+                      FontAwesomeIcons.book,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    title: const Text('Watch History'),
+                    onTap: () {
+                      nextScreen(context, const WatchHistory());
+                    },
                   ),
-                  title: const Text('Bookmark'),
-                  onTap: () {
-                    nextScreen(context, const BookmarkScreen());
-                  },
-                ),
-                ListTile(
-                  leading: Icon(
-                    FontAwesomeIcons.newspaper,
-                    color: Theme.of(context).colorScheme.primary,
+                  ListTile(
+                    leading: Icon(
+                      FontAwesomeIcons.bookmark,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    title: const Text('Bookmark'),
+                    onTap: () {
+                      nextScreen(context, const BookmarkScreen());
+                    },
                   ),
-                  title: const Text('News'),
-                  onTap: () {
-                    //nextScreen(context, NewsPage());
-                  },
-                ),
-                ListTile(
-                  leading: Icon(
-                    Icons.info_outline,
-                    color: Theme.of(context).colorScheme.primary,
+                  ListTile(
+                    leading: Icon(
+                      FontAwesomeIcons.newspaper,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    title: const Text('News'),
+                    onTap: () {
+                      //nextScreen(context, NewsPage());
+                    },
                   ),
-                  title: const Text('About'),
-                  onTap: () {
-                    nextScreen(context, const AboutPage());
-                  },
-                ),
-                ListTile(
-                  leading: Icon(
-                    Icons.update,
-                    color: Theme.of(context).colorScheme.primary,
+                  ListTile(
+                    leading: Icon(
+                      Icons.info_outline,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    title: const Text('About'),
+                    onTap: () {
+                      nextScreen(context, const AboutPage());
+                    },
                   ),
-                  title: const Text('Check for an update'),
-                  onTap: () {
-                    nextScreen(context, const UpdateScreen());
-                  },
-                ),
-                ListTile(
-                  leading: Icon(
-                    Icons.settings,
-                    color: Theme.of(context).colorScheme.primary,
+                  ListTile(
+                    leading: Icon(
+                      Icons.update,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    title: const Text('Check for an update'),
+                    onTap: () {
+                      nextScreen(context, const UpdateScreen());
+                    },
                   ),
-                  title: const Text('Settings'),
-                  onTap: () {
-                    nextScreen(context, const Settings());
-                  },
-                ),
-                ListTile(
-                  leading: Icon(
-                    Icons.share_sharp,
-                    color: Theme.of(context).colorScheme.primary,
+                  ListTile(
+                    leading: Icon(
+                      Icons.settings,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    title: const Text('Settings'),
+                    onTap: () {
+                      nextScreen(context, const Settings());
+                    },
                   ),
-                  title: const Text('Share the app'),
-                  onTap: () async {
-                    mixpanel.track('Share button data', properties: {
-                      'Share button click': 'Share',
-                    });
-                    await Share.share(
-                        'Download the caffiene app for free and watch your favorite movies and TV shows for free! Download the app from the link below.\nhttps://cinemax.rf.gd/');
-                  },
-                ),
-              ],
-            ),
-          ],
+                  ListTile(
+                    leading: Icon(
+                      Icons.share_sharp,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    title: const Text('Share the app'),
+                    onTap: () async {
+                      mixpanel.track('Share button data', properties: {
+                        'Share button click': 'Share',
+                      });
+                      await Share.share(
+                          'Download the caffiene app for free and watch your favorite movies and TV shows for free! Download the app from the link below.\nhttps://cinemax.rf.gd/');
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

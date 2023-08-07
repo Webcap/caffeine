@@ -445,7 +445,7 @@ Widget genreListGridShimmer() => Shimmer.fromColors(
           }),
     );
 
-    Widget genreListGridShimmer1(isDark) => Shimmer.fromColors(
+Widget genreListGridShimmer1(isDark) => Shimmer.fromColors(
       direction: ShimmerDirection.ltr,
       baseColor: isDark ? Colors.grey.shade800 : Colors.grey.shade300,
       highlightColor: isDark ? Colors.grey.shade700 : Colors.grey.shade100,
@@ -1323,7 +1323,8 @@ Widget detailVideoImageShimmer() => Shimmer.fromColors(
           borderRadius: BorderRadius.circular(8.0), color: Colors.white),
     ));
 
-Widget personDetailInfoTableShimmer() => DataTable(dataRowHeight: 40, columns: [
+Widget personDetailInfoTableShimmer() =>
+    DataTable(dataRowMinHeight: 40, columns: [
       DataColumn(label: detailInfoTableItemShimmer()),
       DataColumn(label: detailInfoTableItemShimmer()),
     ], rows: [
@@ -1405,8 +1406,6 @@ Widget socialMediaShimmer() => Container(
           }),
     );
 
-  
-
 Widget detailInfoTableItemShimmer1(isDark) => Shimmer.fromColors(
       baseColor: isDark ? Colors.grey.shade800 : Colors.grey.shade300,
       highlightColor: isDark ? Colors.grey.shade700 : Colors.grey.shade100,
@@ -1419,7 +1418,7 @@ Widget detailInfoTableItemShimmer1(isDark) => Shimmer.fromColors(
     );
 
 Widget detailInfoTableShimmer1(isDark) =>
-    DataTable(dataRowHeight: 40, columns: [
+    DataTable(dataRowMinHeight: 40, columns: [
       // const DataColumn(
       //     label: Text(
       //   'Original Title',
@@ -1481,7 +1480,7 @@ Widget detailInfoTableShimmer1(isDark) =>
       ]),
     ]);
 
-Widget detailInfoTableShimmer() => DataTable(dataRowHeight: 40, columns: [
+Widget detailInfoTableShimmer() => DataTable(dataRowMinHeight: 40, columns: [
       // const DataColumn(
       //     label: Text(
       //   'Original Title',

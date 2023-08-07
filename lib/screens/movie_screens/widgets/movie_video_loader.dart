@@ -1,4 +1,4 @@
-
+import 'package:caffiene/provider/settings_provider.dart';
 import 'package:easy_ads_flutter/easy_ads_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -9,6 +9,7 @@ import 'package:caffiene/models/functions.dart';
 import 'package:caffiene/screens/player/player.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:better_player/better_player.dart';
+import 'package:provider/provider.dart';
 
 class MovieVideoLoader extends StatefulWidget {
   const MovieVideoLoader(
@@ -37,7 +38,10 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
   List<MovieVideoLinks>? movieVideoLinks;
   List<MovieVideoSubtitles>? movieVideoSubs;
   double loadProgress = 0.00;
-
+  late int maxBuffer;
+  late int seekDuration;
+  late int videoQuality;
+  late String subLanguage;
 
   @override
   void initState() {
@@ -70,14 +74,26 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
   }
 
   void loadVideo() async {
+    setState(() {
+      maxBuffer = Provider.of<SettingsProvider>(context, listen: false)
+          .defaultMaxBufferDuration;
+      seekDuration = Provider.of<SettingsProvider>(context, listen: false)
+          .defaultSeekDuration;
+      videoQuality = Provider.of<SettingsProvider>(context, listen: false)
+          .defaultVideoResolution;
+      subLanguage = Provider.of<SettingsProvider>(context, listen: false)
+          .defaultSubtitleLanguage;
+    });
     try {
       await moviesApi()
           .fetchMoviesForStream(
               Endpoints.searchMovieTVForStream(widget.videoTitle))
           .then((value) {
-        setState(() {
-          movies = value;
-        });
+        if (mounted) {
+          setState(() {
+            movies = value;
+          });
+        }
       });
 
       for (int i = 0; i < movies!.length; i++) {
@@ -110,25 +126,44 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
       List<BetterPlayerSubtitlesSource> subs = [];
 
       if (movieVideoSubs != null) {
-        for (int i = 0; i < movieVideoSubs!.length - 1; i++) {
-          setState(() {
-            loadProgress = (i / movieVideoSubs!.length) * 100;
-          });
-          await getVttFileAsString(movieVideoSubs![i].url!).then((value) {
-            subs.addAll({
-              BetterPlayerSubtitlesSource(
-                  name: movieVideoSubs![i].language!,
-                  //  urls: [movieVideoSubs![i].url],
-                  content: processVttFileTimestamps(value),
-                  selectedByDefault: movieVideoSubs![i].language == 'English' ||
-                          movieVideoSubs![i].language == 'English - English' ||
-                          movieVideoSubs![i].language == 'English - SDH' ||
-                          movieVideoSubs![i].language == 'English 1'
-                      ? true
-                      : false,
-                  type: BetterPlayerSubtitlesSourceType.memory),
+        if (subLanguage == '') {
+          for (int i = 0; i < movieVideoSubs!.length - 1; i++) {
+            setState(() {
+              loadProgress = (i / movieVideoSubs!.length) * 100;
             });
-          });
+            await getVttFileAsString(movieVideoSubs![i].url!).then((value) {
+              subs.addAll({
+                BetterPlayerSubtitlesSource(
+                    name: movieVideoSubs![i].language!,
+                    //  urls: [movieVideoSubs![i].url],
+                    content: processVttFileTimestamps(value),
+                    type: BetterPlayerSubtitlesSourceType.memory),
+              });
+            });
+          }
+        } else {
+          if (movieVideoSubs!
+              .where((element) => element.language!.startsWith(subLanguage))
+              .isNotEmpty) {
+            await getVttFileAsString((movieVideoSubs!.where(
+                        (element) => element.language!.startsWith(subLanguage)))
+                    .first
+                    .url!)
+                .then((value) {
+              subs.addAll({
+                BetterPlayerSubtitlesSource(
+                    name: movieVideoSubs!
+                        .where((element) =>
+                            element.language!.startsWith(subLanguage))
+                        .first
+                        .language,
+                    //  urls: [movieVideoSubs![i].url],
+                    selectedByDefault: true,
+                    content: processVttFileTimestamps(value),
+                    type: BetterPlayerSubtitlesSourceType.memory),
+              });
+            });
+          }
         }
       }
 
@@ -157,6 +192,7 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
                 Theme.of(context).primaryColor,
                 Theme.of(context).colorScheme.background
               ],
+              videoProperties: [maxBuffer, seekDuration, videoQuality],
             );
           },
         ));
@@ -212,9 +248,13 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
               height: 15,
             ),
             const SizedBox(width: 160, child: LinearProgressIndicator()),
-            Text(
-              '${loadProgress.toStringAsFixed(0).toString()}%',
-              style: TextStyle(color: Theme.of(context).colorScheme.background),
+            Visibility(
+              visible: subLanguage != '' ? false : true,
+              child: Text(
+                '${loadProgress.toStringAsFixed(0).toString()}%',
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.background),
+              ),
             ),
           ],
         ),

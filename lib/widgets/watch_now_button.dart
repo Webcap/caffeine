@@ -1,3 +1,5 @@
+import 'package:caffiene/provider/settings_provider.dart';
+import 'package:caffiene/screens/movie_screens/movie_stream.dart';
 import 'package:caffiene/utils/admob.dart';
 import 'package:caffiene/utils/snackbar.dart';
 import 'package:flutter/material.dart';
@@ -5,6 +7,7 @@ import 'package:caffiene/models/movie_models.dart';
 import 'package:caffiene/screens/movie_screens/widgets/movie_video_loader.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:provider/provider.dart';
 
 class WatchNowButton extends StatefulWidget {
   const WatchNowButton({
@@ -15,7 +18,7 @@ class WatchNowButton extends StatefulWidget {
     this.movieImdbId,
     this.api,
     required this.releaseYear,
-    required this.adult,
+    this.adult,
   }) : super(key: key);
   final String? movieName;
   final int movieId;
@@ -63,6 +66,103 @@ class _WatchNowButtonState extends State<WatchNowButton> {
     _loadIntel();
   }
 
+  void streamSelectBottomSheet(
+      {required String movieName,
+      required String thumbnail,
+      bool? adult,
+      required int releaseYear,
+      required int movieId}) {
+    showModalBottomSheet(
+        context: context,
+        builder: (builder) {
+          final mixpanel = Provider.of<SettingsProvider>(context).mixpanel;
+          return Container(
+              child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text(
+                      'Watch with:',
+                      style: kTextSmallHeaderStyle,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: GestureDetector(
+                    onTap: () {
+                      mixpanel.track('Most viewed movies', properties: {
+                        'Movie name': movieName,
+                        'Movie id': movieId,
+                        'Is Movie adult?': adult ?? 'unknown',
+                      });
+
+                      Navigator.pushReplacement(context,
+                          MaterialPageRoute(builder: ((context) {
+                        return MovieVideoLoader(
+                          releaseYear: releaseYear,
+                          thumbnail: thumbnail,
+                          videoTitle: movieName,
+                          interstitialAd: _interstitialAd,
+                          movieId: widget.movieId,
+                        );
+                      })));
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.primary,
+                          borderRadius: BorderRadius.circular(10)),
+                      child: const Padding(
+                        padding: EdgeInsets.all(20.0),
+                        child: Text(
+                          'caffiene player (recommended)',
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: GestureDetector(
+                    onTap: () {
+                      mixpanel.track('Most viewed movies', properties: {
+                        'Movie name': movieName,
+                        'Movie id': movieId,
+                        'Is Movie adult?': adult ?? 'unknown',
+                      });
+                      Navigator.pushReplacement(context,
+                          MaterialPageRoute(builder: ((context) {
+                        return MovieStream(
+                            streamUrl:
+                                'https://2embed.to/embed/tmdb/movie?id=$movieId',
+                            movieName: movieName);
+                      })));
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.primary,
+                          borderRadius: BorderRadius.circular(10)),
+                      child: const Padding(
+                        padding: EdgeInsets.all(20.0),
+                        child: Text(
+                          'Legacy (Webview)',
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ));
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -74,6 +174,14 @@ class _WatchNowButtonState extends State<WatchNowButton> {
           Theme.of(context).colorScheme.primary,
         )),
         onPressed: () async {
+          final mixpanel =
+              Provider.of<SettingsProvider>(context, listen: false).mixpanel;
+          mixpanel.track('Most viewed movies', properties: {
+            'Movie name': widget.movieName,
+            'Movie id': widget.movieId,
+            'Is Movie adult?': widget.adult ?? 'unknown',
+          });
+          
           if (adLoaded == true) {
             Navigator.push(context, MaterialPageRoute(builder: (context) {
               return MovieVideoLoader(

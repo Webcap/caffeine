@@ -140,19 +140,19 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
       Map<String, String> reversedVids = Map.fromEntries(reversedVideoList);
 
       if (tvVideoLinks != null && tvVideoSubs != null) {
-        Navigator.pushReplacement(context, MaterialPageRoute(
-          builder: (context) {
-            return Player(
-              sources: reversedVids,
-              subs: subs,
-              thumbnail: widget.thumbnail,
-              colors: [
-                Theme.of(context).primaryColor,
-                Theme.of(context).colorScheme.background
-              ],
-            );
-          },
-        ));
+        // Navigator.pushReplacement(context, MaterialPageRoute(
+        //   builder: (context) {
+        //     return Player(
+        //       sources: reversedVids,
+        //       subs: subs,
+        //       thumbnail: widget.thumbnail,
+        //       colors: [
+        //         Theme.of(context).primaryColor,
+        //         Theme.of(context).colorScheme.background
+        //       ],
+        //     );
+        //   },
+        // ));
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(

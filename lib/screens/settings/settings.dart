@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:caffiene/screens/settings/player_settings.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -47,7 +48,6 @@ class _SettingsState extends State<Settings> {
     final adultChange = Provider.of<SettingsProvider>(context);
     final themeChange = Provider.of<SettingsProvider>(context);
     final imagequalityChange = Provider.of<SettingsProvider>(context);
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
     final defaultHomeValue = Provider.of<SettingsProvider>(context);
     final country = Provider.of<SettingsProvider>(context).defaultCountry;
     final viewType = Provider.of<SettingsProvider>(context);
@@ -99,19 +99,16 @@ class _SettingsState extends State<Settings> {
               });
             },
           ),
-          SwitchListTile(
-            inactiveThumbColor: Colors.white,
-            inactiveTrackColor: const Color(0xFF9B9B9B),
-            value: themeChange.darktheme,
-            secondary: Icon(
-              Icons.dark_mode,
+          ListTile(
+            leading: Icon(
+              Icons.play_arrow,
               color: Theme.of(context).colorScheme.primary,
             ),
-            title: const Text('Subtitles'),
-            onChanged: (bool value) {
-              // setState(() {
-              //   themeChange.darktheme = value;
-              // });
+            title: const Text('Player settings'),
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: ((context) {
+                return const PlayerSettings();
+              })));
             },
           ),
           Visibility(
