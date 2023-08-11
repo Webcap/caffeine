@@ -6,6 +6,8 @@ import 'package:http/http.dart' as http;
 import 'package:caffiene/models/update.dart';
 import 'package:caffiene/utils/config.dart';
 
+void initializeApp() {}
+
 Future<String> getVttFileAsString(String url) async {
   try {
     var response = await retryOptions.retry(
