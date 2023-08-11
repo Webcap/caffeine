@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/api/movies_api.dart';
 import 'package:caffiene/models/dropdown_select.dart';
@@ -58,13 +59,13 @@ class DiscoverMoviesState extends State<DiscoverMovies>
     final isDark = Provider.of<SettingsProvider>(context).darktheme;
     return Column(
       children: <Widget>[
-        const Row(
+        Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Padding(
               padding: EdgeInsets.all(8.0),
               child: Text(
-                'Featured movies',
+                tr('featured_movies'),
                 style: kTextHeaderStyle,
               ),
             ),

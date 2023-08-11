@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/api/endpoints.dart';
 import 'package:caffiene/provider/settings_provider.dart';
@@ -31,7 +32,7 @@ class _MainTVDisplayState extends State<MainTVDisplay> {
               includeAdult: Provider.of<SettingsProvider>(context).isAdult),
           ScrollingTV(
             includeAdult: Provider.of<SettingsProvider>(context).isAdult,
-            title: 'Popular',
+            title: tr('popular'),
             api: Endpoints.popularTVUrl(1),
             discoverType: 'popular',
             isTrending: false,

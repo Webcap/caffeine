@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/api/endpoints.dart';
 import 'package:caffiene/provider/settings_provider.dart';
@@ -32,12 +33,12 @@ class _MainMoviesDisplayState extends State<MainMoviesDisplay> {
         ScrollingMovies(
           title: 'Popular',
           api: Endpoints.popularMoviesUrl(1),
-          discoverType: 'popular',
+          discoverType: tr('popular'),
           isTrending: false,
           includeAdult: includeAdult,
         ),
         ScrollingMovies(
-          title: 'Trending this week',
+          title: tr('trending_this_week'),
           api: Endpoints.trendingMoviesUrl(1),
           discoverType: 'Trending',
           isTrending: true,

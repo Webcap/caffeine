@@ -1,6 +1,8 @@
 import 'dart:io';
 
+import 'package:caffiene/models/translation.dart';
 import 'package:dynamic_color/dynamic_color.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -31,6 +33,7 @@ final Future<FirebaseApp> _initialization = Firebase.initializeApp();
 
 Future<void> appInitialize() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await EasyLocalization.ensureInitialized();
   FirebaseMessaging.onBackgroundMessage(_messageHandler);
   await FlutterDownloader.initialize(debug: true, ignoreSsl: true);
   await settingsProvider.getCurrentThemeMode();
@@ -45,13 +48,20 @@ Future<void> appInitialize() async {
   await settingsProvider.getMaxBufferDuration();
   await settingsProvider.getVideoResolution();
   await settingsProvider.getSubtitleLanguage();
+  await settingsProvider.getViewMode();
   await _initialization;
 }
 
 void main() async {
   await appInitialize();
-  runApp(caffeine(
-    settingsProvider: settingsProvider,
+  runApp(EasyLocalization(
+    supportedLocales: Translation.all,
+    path: 'assets/translations',
+    fallbackLocale: Translation.all[0],
+    startLocale: Locale('en'),
+    child: caffeine(
+      settingsProvider: settingsProvider
+    ),
   ));
 }
 
@@ -138,6 +148,9 @@ class _caffeineState extends State<caffeine>
                 return DynamicColorBuilder(
                   builder: (lightDynamic, darkDynamic) {
                     return MaterialApp(
+                      localizationsDelegates: context.localizationDelegates,
+                      supportedLocales: context.supportedLocales,
+                      locale: context.locale,
                       debugShowCheckedModeBanner: false,
                       title: 'Caffiene',
                       theme: Styles.themeData(
