@@ -1,4 +1,5 @@
 import 'package:better_player/better_player.dart';
+import 'package:caffiene/provider/settings_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/api/endpoints.dart';
 import 'package:caffiene/api/tv_api.dart';
@@ -6,6 +7,7 @@ import 'package:caffiene/models/tv_stream.dart';
 import 'package:caffiene/models/functions.dart';
 import 'package:caffiene/screens/player/player.dart';
 import 'package:caffiene/utils/config.dart';
+import 'package:provider/provider.dart';
 
 class TVVideoLoader extends StatefulWidget {
   const TVVideoLoader(
@@ -35,6 +37,11 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
   List<TVVideoSubtitles>? tvVideoSubs;
   TVInfo? tvInfo;
   double loadProgress = 0.00;
+  late int maxBuffer;
+  late int seekDuration;
+  late int videoQuality;
+  late String subLanguage;
+  late bool autoFS;
 
   @override
   void initState() {
@@ -62,13 +69,27 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
   }
 
   void loadVideo() async {
+    setState(() {
+      maxBuffer = Provider.of<SettingsProvider>(context, listen: false)
+          .defaultMaxBufferDuration;
+      seekDuration = Provider.of<SettingsProvider>(context, listen: false)
+          .defaultSeekDuration;
+      videoQuality = Provider.of<SettingsProvider>(context, listen: false)
+          .defaultVideoResolution;
+      subLanguage = Provider.of<SettingsProvider>(context, listen: false)
+          .defaultSubtitleLanguage;
+      autoFS =
+          Provider.of<SettingsProvider>(context, listen: false).defaultViewMode;
+    });
     try {
-      await tvApi().fetchTVForStream(
-              Endpoints.searchMovieTVForStream(widget.videoTitle))
+      await tvApi()
+          .fetchTVForStream(Endpoints.searchMovieTVForStream(widget.videoTitle))
           .then((value) {
-        setState(() {
-          tvShows = value;
-        });
+        if (mounted) {
+          setState(() {
+            tvShows = value;
+          });
+        }
       });
 
       for (int i = 0; i < tvShows!.length; i++) {
@@ -108,24 +129,49 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
       List<BetterPlayerSubtitlesSource> subs = [];
 
       if (tvVideoSubs != null) {
-        for (int i = 0; i < tvVideoSubs!.length - 1; i++) {
-          setState(() {
-            loadProgress = (i / tvVideoSubs!.length) * 100;
-          });
-          await getVttFileAsString(tvVideoSubs![i].url!).then((value) {
-            subs.addAll({
-              BetterPlayerSubtitlesSource(
-                  name: tvVideoSubs![i].language!,
-                  content: processVttFileTimestamps(value),
-                  selectedByDefault: tvVideoSubs![i].language == 'English' ||
-                          tvVideoSubs![i].language == 'English - English' ||
-                          tvVideoSubs![i].language == 'English - SDH' ||
-                          tvVideoSubs![i].language == 'English 1'
-                      ? true
-                      : false,
-                  type: BetterPlayerSubtitlesSourceType.memory)
+        if (subLanguage == '') {
+          for (int i = 0; i < tvVideoSubs!.length - 1; i++) {
+            setState(() {
+              loadProgress = (i / tvVideoSubs!.length) * 100;
             });
-          });
+            await getVttFileAsString(tvVideoSubs![i].url!).then((value) {
+              subs.addAll({
+                BetterPlayerSubtitlesSource(
+                    name: tvVideoSubs![i].language!,
+                    content: processVttFileTimestamps(value),
+                    selectedByDefault: tvVideoSubs![i].language == 'English' ||
+                            tvVideoSubs![i].language == 'English - English' ||
+                            tvVideoSubs![i].language == 'English - SDH' ||
+                            tvVideoSubs![i].language == 'English 1'
+                        ? true
+                        : false,
+                    type: BetterPlayerSubtitlesSourceType.memory)
+              });
+            });
+          }
+        } else {
+          if (tvVideoSubs!
+              .where((element) => element.language!.startsWith(subLanguage))
+              .isNotEmpty) {
+            await getVttFileAsString(tvVideoSubs!
+                    .where(
+                        (element) => element.language!.startsWith(subLanguage))
+                    .first
+                    .url!)
+                .then((value) {
+              subs.addAll({
+                BetterPlayerSubtitlesSource(
+                    name: tvVideoSubs!
+                        .where((element) =>
+                            element.language!.startsWith(subLanguage))
+                        .first
+                        .language,
+                    content: processVttFileTimestamps(value),
+                    selectedByDefault: true,
+                    type: BetterPlayerSubtitlesSourceType.memory)
+              });
+            });
+          }
         }
       }
 
@@ -140,19 +186,20 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
       Map<String, String> reversedVids = Map.fromEntries(reversedVideoList);
 
       if (tvVideoLinks != null && tvVideoSubs != null) {
-        // Navigator.pushReplacement(context, MaterialPageRoute(
-        //   builder: (context) {
-        //     return Player(
-        //       sources: reversedVids,
-        //       subs: subs,
-        //       thumbnail: widget.thumbnail,
-        //       colors: [
-        //         Theme.of(context).primaryColor,
-        //         Theme.of(context).colorScheme.background
-        //       ],
-        //     );
-        //   },
-        // ));
+        Navigator.pushReplacement(context, MaterialPageRoute(
+          builder: (context) {
+            return Player(
+              sources: reversedVids,
+              subs: subs,
+              thumbnail: widget.thumbnail,
+              colors: [
+                Theme.of(context).primaryColor,
+                Theme.of(context).colorScheme.background
+              ],
+              videoProperties: [maxBuffer, seekDuration, videoQuality, autoFS],
+            );
+          },
+        ));
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -205,10 +252,14 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
               height: 15,
             ),
             const SizedBox(width: 160, child: LinearProgressIndicator()),
-            Text(
-              '${loadProgress.toStringAsFixed(0).toString()}%',
-              style: TextStyle(color: Theme.of(context).colorScheme.background),
-            ),
+            Visibility(
+              visible: subLanguage != '' ? false : true,
+              child: Text(
+                '${loadProgress.toStringAsFixed(0).toString()}%',
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.background),
+              ),
+            )
           ],
         ),
       ),
