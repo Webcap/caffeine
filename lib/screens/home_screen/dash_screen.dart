@@ -1,3 +1,5 @@
+import 'package:caffiene/screens/common/video_download_screen.dart';
+import 'package:caffiene/utils/next_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
@@ -61,7 +63,12 @@ class _caffieneHomePageState extends State<caffieneHomePage>
                                 listen: false)
                             .isAdult));
               },
-              icon: const Icon(Icons.search))
+              icon: const Icon(Icons.search)),
+          IconButton(
+              onPressed: () {
+                nextScreen(context, VideoDownloadScreen());
+              },
+              icon: Icon(Icons.download))
         ],
       ),
       bottomNavigationBar: Container(

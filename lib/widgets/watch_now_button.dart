@@ -109,6 +109,7 @@ class _WatchNowButtonState extends State<WatchNowButton> {
                           videoTitle: movieName,
                           interstitialAd: _interstitialAd,
                           movieId: widget.movieId,
+                          download: false,
                         );
                       })));
                     },
@@ -190,6 +191,7 @@ class _WatchNowButtonState extends State<WatchNowButton> {
                 thumbnail: widget.thumbnail,
                 interstitialAd: _interstitialAd,
                 movieId: widget.movieId,
+                download: false,
               );
             }));
           } else {

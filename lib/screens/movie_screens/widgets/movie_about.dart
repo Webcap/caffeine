@@ -26,6 +26,8 @@ class MovieAbout extends StatefulWidget {
 }
 
 class _MovieAboutState extends State<MovieAbout> {
+  bool? isVisible = false;
+  double? buttonWidth = 150;
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(

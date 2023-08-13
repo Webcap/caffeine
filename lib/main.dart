@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:caffiene/models/download_manager.dart';
 import 'package:caffiene/models/translation.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -22,6 +23,7 @@ import 'package:provider/provider.dart';
 Future<void> _messageHandler(RemoteMessage message) async {}
 
 SettingsProvider settingsProvider = SettingsProvider();
+DownloadProvider downloadProvider = DownloadProvider();
 final Future<FirebaseApp> _initialization = Firebase.initializeApp();
 
 // extension Precision on double {
@@ -60,15 +62,21 @@ void main() async {
     fallbackLocale: Translation.all[0],
     startLocale: Locale('en'),
     child: caffeine(
-      settingsProvider: settingsProvider
+      settingsProvider: settingsProvider,
+      downloadProvider: downloadProvider,
     ),
   ));
 }
 
 class caffeine extends StatefulWidget {
-  const caffeine({required this.settingsProvider, Key? key}) : super(key: key);
+  const caffeine({
+    required this.settingsProvider, 
+    required this.downloadProvider,  
+    Key? key
+  }) : super(key: key);
 
   final SettingsProvider settingsProvider;
+  final DownloadProvider downloadProvider;
 
   @override
   State<caffeine> createState() => _caffeineState();
@@ -141,10 +149,13 @@ class _caffeineState extends State<caffeine>
               providers: [
                 ChangeNotifierProvider(create: (_) {
                   return widget.settingsProvider;
+                }),
+                ChangeNotifierProvider(create: (_) {
+                  return widget.downloadProvider;
                 })
               ],
-              child: Consumer<SettingsProvider>(
-                  builder: (context, settingsProvider, snapshot) {
+              child: Consumer2<SettingsProvider, DownloadProvider>(
+                  builder: (context, settingsProvider, downloadProvider, snapshot) {
                 return DynamicColorBuilder(
                   builder: (lightDynamic, darkDynamic) {
                     return MaterialApp(
