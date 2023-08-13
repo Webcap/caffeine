@@ -1,3 +1,4 @@
+import 'package:caffiene/widgets/download_button_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/api/endpoints.dart';
 import 'package:caffiene/models/movie_models.dart';
@@ -89,13 +90,29 @@ class _MovieAboutState extends State<MovieAbout> {
                 ),
               ],
             ),
-            WatchNowButton(
-              releaseYear: DateTime.parse(widget.movie.releaseDate!).year,
-              movieId: widget.movie.id!,
-              movieName: widget.movie.title,
-              adult: widget.movie.adult,
-              thumbnail: widget.movie.backdropPath,
-              api: Endpoints.movieDetailsUrl(widget.movie.id!),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                WatchNowButton(
+                  releaseYear: DateTime.parse(widget.movie.releaseDate!).year,
+                  movieId: widget.movie.id!,
+                  movieName: widget.movie.title,
+                  adult: widget.movie.adult,
+                  thumbnail: widget.movie.backdropPath,
+                  api: Endpoints.movieDetailsUrl(widget.movie.id!),
+                ),
+                SizedBox(
+                  width: 15,
+                ),
+                DownloadMovie(
+                  releaseYear: DateTime.parse(widget.movie.releaseDate!).year,
+                  movieId: widget.movie.id!,
+                  movieName: widget.movie.title,
+                  adult: widget.movie.adult,
+                  thumbnail: widget.movie.backdropPath,
+                  api: Endpoints.movieDetailsUrl(widget.movie.id!),
+                )
+              ],
             ),
             ScrollingArtists(
               api: Endpoints.getCreditsUrl(widget.movie.id!),

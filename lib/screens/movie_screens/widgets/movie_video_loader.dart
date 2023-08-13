@@ -317,3 +317,305 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
     ));
   }
 }
+
+class MovieVideoLoaderNoAds extends StatefulWidget {
+  const MovieVideoLoaderNoAds(
+      {required this.videoTitle,
+      required this.thumbnail,
+      required this.releaseYear,
+      required this.download,
+      Key? key})
+      : super(key: key);
+
+  final String videoTitle;
+  final int releaseYear;
+  final String? thumbnail;
+  final bool download;
+
+  @override
+  State<MovieVideoLoaderNoAds> createState() => _MovieVideoLoaderNoAdsState();
+}
+
+class _MovieVideoLoaderNoAdsState extends State<MovieVideoLoaderNoAds> {
+  List<MovieResults>? movies;
+  List<MovieEpisodes>? epi;
+  MovieVideoSources? movieVideoSources;
+  List<MovieVideoLinks>? movieVideoLinks;
+  List<MovieVideoSubtitles>? movieVideoSubs;
+  double loadProgress = 0.00;
+  late int maxBuffer;
+  late int seekDuration;
+  late int videoQuality;
+  late String subLanguage;
+  late bool autoFS;
+
+  @override
+  void initState() {
+    super.initState();
+    loadVideo();
+  }
+
+  String processVttFileTimestamps(String vttFile) {
+    final lines = vttFile.split('\n');
+    final processedLines = <String>[];
+
+    for (var i = 0; i < lines.length; i++) {
+      final line = lines[i];
+      if (line.contains('-->') && line.trim().length == 23) {
+        String endTimeModifiedString =
+            '${line.trim().substring(0, line.trim().length - 9)}00:${line.trim().substring(line.trim().length - 9)}';
+        String finalStr = '00:$endTimeModifiedString';
+        processedLines.add(finalStr);
+      } else {
+        processedLines.add(line);
+      }
+    }
+
+    if (processedLines.isEmpty) {
+      throw Exception('No Timestamps found in VTT File');
+    }
+
+    return processedLines.join('\n');
+  }
+
+  void loadVideo() async {
+    setState(() {
+      maxBuffer = Provider.of<SettingsProvider>(context, listen: false)
+          .defaultMaxBufferDuration;
+      seekDuration = Provider.of<SettingsProvider>(context, listen: false)
+          .defaultSeekDuration;
+      videoQuality = Provider.of<SettingsProvider>(context, listen: false)
+          .defaultVideoResolution;
+      subLanguage = Provider.of<SettingsProvider>(context, listen: false)
+          .defaultSubtitleLanguage;
+      autoFS =
+          Provider.of<SettingsProvider>(context, listen: false).defaultViewMode;
+    });
+    try {
+      await moviesApi()
+          .fetchMoviesForStream(
+              Endpoints.searchMovieTVForStream(widget.videoTitle))
+          .then((value) {
+        if (mounted) {
+          setState(() {
+            movies = value;
+          });
+        }
+      });
+
+      for (int i = 0; i < movies!.length; i++) {
+        if (movies![i].releaseDate == widget.releaseYear.toString() &&
+            movies![i].type == 'Movie') {
+          await moviesApi()
+              .getMovieStreamEpisodes(
+                  Endpoints.getMovieTVStreamInfo(movies![i].id!))
+              .then((value) {
+            setState(() {
+              epi = value;
+            });
+          });
+          await moviesApi()
+              .getMovieStreamLinksAndSubs(
+                  Endpoints.getMovieTVStreamLinks(epi![0].id!, movies![i].id!))
+              .then((value) {
+            setState(() {
+              movieVideoSources = value;
+            });
+            movieVideoLinks = movieVideoSources!.videoLinks;
+            movieVideoSubs = movieVideoSources!.videoSubtitles;
+          });
+
+          break;
+        }
+      }
+
+      Map<String, String> videos = {};
+      List<BetterPlayerSubtitlesSource> subs = [];
+
+      if (movieVideoSubs != null) {
+        if (subLanguage == '') {
+          for (int i = 0; i < movieVideoSubs!.length - 1; i++) {
+            setState(() {
+              loadProgress = (i / movieVideoSubs!.length) * 100;
+            });
+            await getVttFileAsString(movieVideoSubs![i].url!).then((value) {
+              subs.addAll({
+                BetterPlayerSubtitlesSource(
+                    name: movieVideoSubs![i].language!,
+                    //  urls: [movieVideoSubs![i].url],
+                    content: processVttFileTimestamps(value),
+                    type: BetterPlayerSubtitlesSourceType.memory),
+              });
+            });
+          }
+        } else {
+          if (movieVideoSubs!
+              .where((element) => element.language!.startsWith(subLanguage))
+              .isNotEmpty) {
+            await getVttFileAsString((movieVideoSubs!.where(
+                        (element) => element.language!.startsWith(subLanguage)))
+                    .first
+                    .url!)
+                .then((value) {
+              subs.addAll({
+                BetterPlayerSubtitlesSource(
+                    name: movieVideoSubs!
+                        .where((element) =>
+                            element.language!.startsWith(subLanguage))
+                        .first
+                        .language,
+                    //  urls: [movieVideoSubs![i].url],
+                    selectedByDefault: true,
+                    content: processVttFileTimestamps(value),
+                    type: BetterPlayerSubtitlesSourceType.memory),
+              });
+            });
+          }
+        }
+      }
+
+      if (movieVideoLinks != null) {
+        for (int k = 0; k < movieVideoLinks!.length; k++) {
+          videos.addAll({
+            movieVideoLinks![k].quality!: movieVideoLinks![k].url!,
+          });
+        }
+      }
+
+      List<MapEntry<String, String>> reversedVideoList =
+          videos.entries.toList().reversed.toList();
+      Map<String, String> reversedVids = Map.fromEntries(reversedVideoList);
+
+      void streamSelectBottomSheet({
+        //   required String movieName,
+        // required String thumbnail,
+        // bool? adult,
+        required Map vids,
+        // required int releaseYear,
+        // required int movieId
+      }) {
+        showModalBottomSheet(
+            context: context,
+            builder: (builder) {
+              final mixpanel = Provider.of<SettingsProvider>(context).mixpanel;
+              vids.removeWhere((key, value) => key == 'auto');
+              return Container(
+                  child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Text(
+                        'Choose resolution:',
+                        style: kTextSmallHeaderStyle,
+                      ),
+                    ),
+                  ),
+                  Column(
+                    children: [
+                      for (var entry in vids.entries)
+                        ListTile(
+                          title: Text(entry.key),
+                          //  subtitle: Text(entry.value),
+                        ),
+                    ],
+                  )
+                ],
+              ));
+            });
+      }
+
+      if (movieVideoLinks != null && movieVideoSubs != null) {
+        // Create a new watch history entry.
+
+        if (widget.download) {
+          streamSelectBottomSheet(vids: reversedVids);
+        } else {
+          Navigator.pushReplacement(context, MaterialPageRoute(
+            builder: (context) {
+              return Player(
+                sources: reversedVids,
+                subs: subs,
+                thumbnail: widget.thumbnail,
+                colors: [
+                  Theme.of(context).primaryColor,
+                  Theme.of(context).colorScheme.background
+                ],
+                videoProperties: [
+                  maxBuffer,
+                  seekDuration,
+                  videoQuality,
+                  autoFS
+                ],
+              );
+            },
+          ));
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'The movie couldn\'t be found on our servers :(',
+              maxLines: 3,
+              style: kTextSmallBodyStyle,
+            ),
+            duration: Duration(seconds: 3),
+          ),
+        );
+        Navigator.pop(context);
+      }
+    } on Exception catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'The movie couldn\'t be found on our servers :( Error: ${e.toString()}',
+            maxLines: 3,
+            style: kTextSmallBodyStyle,
+          ),
+          duration: const Duration(seconds: 3),
+        ),
+      );
+      Navigator.pop(context);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        body: Center(
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: Theme.of(context).colorScheme.onBackground,
+        ),
+        height: 120,
+        width: 180,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Image.asset(
+              appConfig.app_icon,
+              height: 65,
+              width: 65,
+            ),
+            const SizedBox(
+              height: 15,
+            ),
+            const SizedBox(width: 160, child: LinearProgressIndicator()),
+            Visibility(
+              visible: subLanguage != '' ? false : true,
+              child: Text(
+                '${loadProgress.toStringAsFixed(0).toString()}%',
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.background),
+              ),
+            ),
+          ],
+        ),
+      ),
+    ));
+  }
+}

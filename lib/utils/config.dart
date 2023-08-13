@@ -49,7 +49,7 @@ const maincolor2 = Color(0xfff371124);
 const maincolor3 = Color(0xfff832f3c);
 const maincolor4 = Color(0xfff501b2c);
 
-const bool showAds = true;
+const bool showAds = false;
 
 const kTextSmallHeaderStyle = TextStyle(
   fontFamily: 'PoppinsSB',

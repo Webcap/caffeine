@@ -183,19 +183,30 @@ class _WatchNowButtonState extends State<WatchNowButton> {
             'Is Movie adult?': widget.adult ?? 'unknown',
           });
           
-          if (adLoaded == true) {
+          if (showAds) {
+            if (adLoaded == true) {
+              Navigator.push(context, MaterialPageRoute(builder: (context) {
+                return MovieVideoLoader(
+                  videoTitle: widget.movieName!,
+                  releaseYear: widget.releaseYear,
+                  thumbnail: widget.thumbnail,
+                  interstitialAd: _interstitialAd,
+                  movieId: widget.movieId,
+                  download: false,
+                );
+              }));
+            } else {
+              openSnackbar(context, PROCESSING_VIDEO, Colors.red);
+            }
+          } else {
             Navigator.push(context, MaterialPageRoute(builder: (context) {
-              return MovieVideoLoader(
+              return MovieVideoLoaderNoAds(
                 videoTitle: widget.movieName!,
                 releaseYear: widget.releaseYear,
                 thumbnail: widget.thumbnail,
-                interstitialAd: _interstitialAd,
-                movieId: widget.movieId,
                 download: false,
               );
             }));
-          } else {
-            openSnackbar(context, PROCESSING_VIDEO, Colors.red);
           }
         },
         child: Row(

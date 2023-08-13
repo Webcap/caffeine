@@ -56,6 +56,10 @@ Future<void> appInitialize() async {
 
 void main() async {
   await appInitialize();
+  
+  if (showAds) {
+    MobileAds.instance.initialize();
+  }
   runApp(EasyLocalization(
     supportedLocales: Translation.all,
     path: 'assets/translations',
@@ -115,9 +119,6 @@ class _caffeineState extends State<caffeine>
     FirebaseMessaging.onMessage.listen((RemoteMessage event) {});
     FirebaseMessaging.onMessageOpenedApp.listen((message) {});
     fileDelete();
-    if (showAds == true) {
-      MobileAds.instance.initialize();
-    }
   }
 
   @override
