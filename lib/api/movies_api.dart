@@ -36,6 +36,7 @@ class moviesApi {
   }
 
   Future<MovieVideoSources> getMovieStreamLinksAndSubs(String api) async {
+    print('mov str');
     MovieVideoSources movieVideoSources;
     try {
       print(api);
@@ -52,6 +53,7 @@ class moviesApi {
   }
 
   Future<List<MovieEpisodes>> getMovieStreamEpisodes(String api) async {
+    print('mov ep');
     MovieInfo movieInfo;
     try {
       print(api);
@@ -70,6 +72,7 @@ class moviesApi {
 
   Future<List<MovieResults>> fetchMoviesForStream(String api) async {
     MovieStream movieStream;
+    print('ftc mov');
     try {
       print(api);
       var res = await retryOptions.retry(

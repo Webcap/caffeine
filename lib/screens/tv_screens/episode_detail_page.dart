@@ -13,6 +13,7 @@ class EpisodeDetailPage extends StatefulWidget {
   final List<EpisodeList>? episodes;
   final int? tvId;
   final String? seriesName;
+  final String? posterPath;
 
   const EpisodeDetailPage({
     Key? key,
@@ -20,6 +21,7 @@ class EpisodeDetailPage extends StatefulWidget {
     this.episodes,
     this.tvId,
     this.seriesName,
+    required this.posterPath,
   }) : super(key: key);
 
   @override
@@ -78,7 +80,7 @@ class EpisodeDetailPageState extends State<EpisodeDetailPage>
                 color: Theme.of(context).colorScheme.onBackground,
               ),
             )),
-            expandedHeight: 360,
+            expandedHeight: 375,
             flexibleSpace: FlexibleSpaceBar(
               collapseMode: CollapseMode.pin,
               background: Column(
@@ -99,6 +101,7 @@ class EpisodeDetailPageState extends State<EpisodeDetailPage>
               episodeList: widget.episodeList,
               seriesName: widget.seriesName,
               tvId: widget.tvId,
+              posterPath: widget.posterPath,
             )
           ]))
         ],

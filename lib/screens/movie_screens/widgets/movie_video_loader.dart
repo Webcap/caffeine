@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:caffiene/models/download_manager.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:easy_ads_flutter/easy_ads_flutter.dart';
 import 'package:flutter/material.dart';
@@ -13,19 +16,13 @@ import 'package:provider/provider.dart';
 
 class MovieVideoLoader extends StatefulWidget {
   const MovieVideoLoader(
-      {required this.videoTitle,
-      required this.thumbnail,
-      required this.releaseYear,
-      required this.interstitialAd,
-      required this.movieId,
+      {required this.interstitialAd,
+      required this.metadata,
       required this.download,
       Key? key})
       : super(key: key);
 
-  final String videoTitle;
-  final int releaseYear;
-  final String? thumbnail;
-  final int? movieId;
+  final List metadata;
   final InterstitialAd interstitialAd;
   final bool download;
 
@@ -92,7 +89,7 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
     try {
       await moviesApi()
           .fetchMoviesForStream(
-              Endpoints.searchMovieTVForStream(widget.videoTitle))
+              Endpoints.searchMovieTVForStream(widget.metadata.elementAt(1)))
           .then((value) {
         if (mounted) {
           setState(() {
@@ -102,7 +99,7 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
       });
 
       for (int i = 0; i < movies!.length; i++) {
-        if (movies![i].releaseDate == widget.releaseYear.toString() &&
+        if (movies![i].releaseDate == widget.metadata.elementAt(3).toString() &&
             movies![i].type == 'Movie') {
           await moviesApi()
               .getMovieStreamEpisodes(
@@ -185,58 +182,73 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
       Map<String, String> reversedVids = Map.fromEntries(reversedVideoList);
 
       void streamSelectBottomSheet({
-        //   required String movieName,
-        // required String thumbnail,
-        // bool? adult,
         required Map vids,
-        // required int releaseYear,
-        // required int movieId
       }) {
+        final downloadProvider =
+            Provider.of<DownloadProvider>(context, listen: false);
+        vids.removeWhere((key, value) => key == 'auto');
         showModalBottomSheet(
-            context: context,
-            builder: (builder) {
-              final mixpanel = Provider.of<SettingsProvider>(context).mixpanel;
-              vids.removeWhere((key, value) => key == 'auto');
-              return Container(
-                  child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Center(
-                    child: Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text(
-                        'Choose resolution:',
-                        style: kTextSmallHeaderStyle,
-                      ),
+          context: context,
+          builder: (builder) {
+            final mixpanel = Provider.of<SettingsProvider>(context).mixpanel;
+            return Container(
+                padding: const EdgeInsets.all(8),
+                height: 300,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Download: "${widget.metadata.elementAt(1)}"',
+                      textAlign: TextAlign.center,
                     ),
-                  ),
-                  Column(
-                    children: [
-                      for (var entry in vids.entries)
-                        ListTile(
-                          title: Text(entry.key),
-                          //  subtitle: Text(entry.value),
-                        ),
-                    ],
-                  )
-                ],
-              ));
-            });
+                    const Text(
+                      'Choose resolution:',
+                      style: kTextSmallHeaderStyle,
+                    ),
+                    Column(
+                      children: [
+                        for (var entry in vids.entries)
+                          InkWell(
+                            child: ListTile(
+                              onTap: () {
+                                Directory? appDir = Directory(
+                                    "storage/emulated/0/Cinemax/Backdrops");
+
+                                // String outputPath =
+                                //     "${appDir!.path}/output1.mp4";
+                                Download dwn = Download(
+                                    input: entry.value,
+                                    output:
+                                        '${appDir.path}/${widget.metadata.elementAt(1)}_${entry.key}p_Downloaded_from_Cinemax.mp4',
+                                    progress: 0.0);
+                                downloadProvider.addDownload(dwn);
+                                downloadProvider.startDownload(dwn);
+                              },
+                              title: Text(entry.key),
+                              trailing:
+                                  const Icon(Icons.arrow_forward_ios_rounded),
+                            ),
+                          ),
+                      ],
+                    )
+                  ],
+                ));
+          },
+        );
       }
 
       if (movieVideoLinks != null && movieVideoSubs != null) {
-        // Create a new watch history entry.
-
         if (widget.download) {
+          Navigator.pop(context);
           streamSelectBottomSheet(vids: reversedVids);
         } else {
           Navigator.pushReplacement(context, MaterialPageRoute(
             builder: (context) {
               return Player(
+                mediaType: MediaType.movie,
                 sources: reversedVids,
                 subs: subs,
-                thumbnail: widget.thumbnail,
                 colors: [
                   Theme.of(context).primaryColor,
                   Theme.of(context).colorScheme.background
@@ -247,6 +259,7 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
                   videoQuality,
                   autoFS
                 ],
+                movieMetadata: widget.metadata,
               );
             },
           ));
@@ -320,16 +333,10 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
 
 class MovieVideoLoaderNoAds extends StatefulWidget {
   const MovieVideoLoaderNoAds(
-      {required this.videoTitle,
-      required this.thumbnail,
-      required this.releaseYear,
-      required this.download,
-      Key? key})
+      {required this.metadata, required this.download, Key? key})
       : super(key: key);
 
-  final String videoTitle;
-  final int releaseYear;
-  final String? thumbnail;
+  final List metadata;
   final bool download;
 
   @override
@@ -371,10 +378,6 @@ class _MovieVideoLoaderNoAdsState extends State<MovieVideoLoaderNoAds> {
       }
     }
 
-    if (processedLines.isEmpty) {
-      throw Exception('No Timestamps found in VTT File');
-    }
-
     return processedLines.join('\n');
   }
 
@@ -394,7 +397,7 @@ class _MovieVideoLoaderNoAdsState extends State<MovieVideoLoaderNoAds> {
     try {
       await moviesApi()
           .fetchMoviesForStream(
-              Endpoints.searchMovieTVForStream(widget.videoTitle))
+              Endpoints.searchMovieTVForStream(widget.metadata.elementAt(1)))
           .then((value) {
         if (mounted) {
           setState(() {
@@ -404,7 +407,7 @@ class _MovieVideoLoaderNoAdsState extends State<MovieVideoLoaderNoAds> {
       });
 
       for (int i = 0; i < movies!.length; i++) {
-        if (movies![i].releaseDate == widget.releaseYear.toString() &&
+        if (movies![i].releaseDate == widget.metadata.elementAt(3).toString() &&
             movies![i].type == 'Movie') {
           await moviesApi()
               .getMovieStreamEpisodes(
@@ -487,58 +490,73 @@ class _MovieVideoLoaderNoAdsState extends State<MovieVideoLoaderNoAds> {
       Map<String, String> reversedVids = Map.fromEntries(reversedVideoList);
 
       void streamSelectBottomSheet({
-        //   required String movieName,
-        // required String thumbnail,
-        // bool? adult,
         required Map vids,
-        // required int releaseYear,
-        // required int movieId
       }) {
+        final downloadProvider =
+            Provider.of<DownloadProvider>(context, listen: false);
+        vids.removeWhere((key, value) => key == 'auto');
         showModalBottomSheet(
-            context: context,
-            builder: (builder) {
-              final mixpanel = Provider.of<SettingsProvider>(context).mixpanel;
-              vids.removeWhere((key, value) => key == 'auto');
-              return Container(
-                  child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Center(
-                    child: Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text(
-                        'Choose resolution:',
-                        style: kTextSmallHeaderStyle,
-                      ),
+          context: context,
+          builder: (builder) {
+            final mixpanel = Provider.of<SettingsProvider>(context).mixpanel;
+            return Container(
+                padding: const EdgeInsets.all(8),
+                height: 300,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Download: "${widget.metadata.elementAt(1)}"',
+                      textAlign: TextAlign.center,
                     ),
-                  ),
-                  Column(
-                    children: [
-                      for (var entry in vids.entries)
-                        ListTile(
-                          title: Text(entry.key),
-                          //  subtitle: Text(entry.value),
-                        ),
-                    ],
-                  )
-                ],
-              ));
-            });
+                    const Text(
+                      'Choose resolution:',
+                      style: kTextSmallHeaderStyle,
+                    ),
+                    Column(
+                      children: [
+                        for (var entry in vids.entries)
+                          InkWell(
+                            child: ListTile(
+                              onTap: () {
+                                Directory? appDir = Directory(
+                                    "storage/emulated/0/Cinemax/Backdrops");
+
+                                // String outputPath =
+                                //     "${appDir!.path}/output1.mp4";
+                                Download dwn = Download(
+                                    input: entry.value,
+                                    output:
+                                        '${appDir.path}/${widget.metadata.elementAt(1)}_${entry.key}p_Downloaded_from_Cinemax.mp4',
+                                    progress: 0.0);
+                                downloadProvider.addDownload(dwn);
+                                downloadProvider.startDownload(dwn);
+                              },
+                              title: Text(entry.key),
+                              trailing:
+                                  const Icon(Icons.arrow_forward_ios_rounded),
+                            ),
+                          ),
+                      ],
+                    )
+                  ],
+                ));
+          },
+        );
       }
 
       if (movieVideoLinks != null && movieVideoSubs != null) {
-        // Create a new watch history entry.
-
         if (widget.download) {
+          Navigator.pop(context);
           streamSelectBottomSheet(vids: reversedVids);
         } else {
           Navigator.pushReplacement(context, MaterialPageRoute(
             builder: (context) {
               return Player(
+                mediaType: MediaType.movie,
                 sources: reversedVids,
                 subs: subs,
-                thumbnail: widget.thumbnail,
                 colors: [
                   Theme.of(context).primaryColor,
                   Theme.of(context).colorScheme.background
@@ -549,6 +567,7 @@ class _MovieVideoLoaderNoAdsState extends State<MovieVideoLoaderNoAds> {
                   videoQuality,
                   autoFS
                 ],
+                movieMetadata: widget.metadata
               );
             },
           ));

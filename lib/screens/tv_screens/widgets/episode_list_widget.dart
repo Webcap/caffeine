@@ -13,11 +13,13 @@ class EpisodeListWidget extends StatefulWidget {
   final int? tvId;
   final String? api;
   final String? seriesName;
+  final String? posterPath;
   const EpisodeListWidget({
     Key? key,
     this.api,
     this.tvId,
     this.seriesName,
+    required this.posterPath,
   }) : super(key: key);
 
   @override
@@ -180,6 +182,7 @@ class EpisodeListWidgetState extends State<EpisodeListWidget>
                                     MaterialPageRoute(builder: (context) {
                                   return EpisodeDetailPage(
                                       seriesName: widget.seriesName,
+                                      posterPath: widget.posterPath,
                                       tvId: widget.tvId,
                                       episodes: tvDetails!.episodes,
                                       episodeList: tvDetails!.episodes![index]);

@@ -12,7 +12,7 @@ class Download {
 }
 
 class DownloadProvider extends ChangeNotifier {
-  List<Download> _downloads = [];
+  final List<Download> _downloads = [];
   List<Download> get downloads => _downloads;
 
   void addDownload(Download download) {

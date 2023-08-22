@@ -1,3 +1,5 @@
+import 'package:caffiene/provider/recently_watched_provider.dart';
+import 'package:caffiene/screens/movie_screens/widgets/scrolling_recent_movies.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/api/endpoints.dart';
@@ -26,6 +28,7 @@ class _MainMoviesDisplayState extends State<MainMoviesDisplay> {
   @override
   Widget build(BuildContext context) {
     bool includeAdult = Provider.of<SettingsProvider>(context).isAdult;
+    var rMovies = Provider.of<RecentProvider>(context).movies;
     return Container(
         child: ListView(
       children: [
@@ -37,6 +40,9 @@ class _MainMoviesDisplayState extends State<MainMoviesDisplay> {
           isTrending: false,
           includeAdult: includeAdult,
         ),
+        rMovies.isEmpty
+          ? Container()
+          : ScrollingRecentMovies(moviesList: rMovies),
         ScrollingMovies(
           title: tr('trending_this_week'),
           api: Endpoints.trendingMoviesUrl(1),

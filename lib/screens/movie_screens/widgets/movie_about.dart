@@ -98,7 +98,8 @@ class _MovieAboutState extends State<MovieAbout> {
                   movieId: widget.movie.id!,
                   movieName: widget.movie.title,
                   adult: widget.movie.adult,
-                  thumbnail: widget.movie.backdropPath,
+                  posterPath: widget.movie.posterPath,
+                  backdropPath: widget.movie.backdropPath,
                   api: Endpoints.movieDetailsUrl(widget.movie.id!),
                 ),
                 SizedBox(

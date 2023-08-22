@@ -36,9 +36,7 @@ class DownloadMovie extends StatelessWidget {
         onPressed: () async {
           Navigator.push(context, MaterialPageRoute(builder: ((context) {
             return MovieVideoLoaderNoAds(
-              releaseYear: releaseYear,
-              thumbnail: thumbnail,
-              videoTitle: movieName!,
+              metadata: [movieId, movieName, thumbnail, releaseYear],
               download: true,
             );
           })));

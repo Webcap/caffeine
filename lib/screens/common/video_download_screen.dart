@@ -19,7 +19,7 @@ class _VideoDownloadScreenState extends State<VideoDownloadScreen> {
   Future<void> _convertM3U8toMP4() async {
     Directory? appDir = Directory("storage/emulated/0/caffiene/Backdrops");
 
-    String outputPath = "${appDir!.path}/output1.mp4";
+    String outputPath = "${appDir.path}/output1.mp4";
     String _outputPath;
 
     setState(() {

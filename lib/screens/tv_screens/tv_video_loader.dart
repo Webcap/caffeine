@@ -11,19 +11,11 @@ import 'package:provider/provider.dart';
 
 class TVVideoLoader extends StatefulWidget {
   const TVVideoLoader(
-      {required this.videoTitle,
-      required this.thumbnail,
-      required this.seasons,
-      required this.episodeNumber,
-      required this.seasonNumber,
-      Key? key})
+      {required this.metadata, required this.download, Key? key})
       : super(key: key);
 
-  final String videoTitle;
-  final int seasons;
-  final String? thumbnail;
-  final int episodeNumber;
-  final int seasonNumber;
+  final List metadata;
+  final bool download;
 
   @override
   State<TVVideoLoader> createState() => _TVVideoLoaderState();
@@ -83,7 +75,7 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
     });
     try {
       await tvApi()
-          .fetchTVForStream(Endpoints.searchMovieTVForStream(widget.videoTitle))
+          .fetchTVForStream(Endpoints.searchMovieTVForStream(widget.metadata.elementAt(1)))
           .then((value) {
         if (mounted) {
           setState(() {
@@ -93,7 +85,7 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
       });
 
       for (int i = 0; i < tvShows!.length; i++) {
-        if (tvShows![i].seasons == widget.seasons &&
+        if (tvShows![i].seasons == widget.metadata.elementAt(5) &&
             tvShows![i].type == 'TV Series') {
           await tvApi()
               .getTVStreamEpisodes(
@@ -105,8 +97,8 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
             });
           });
           for (int k = 0; k < epi!.length; k++) {
-            if (epi![k].episode == widget.episodeNumber &&
-                epi![k].season == widget.seasonNumber) {
+            if (epi![k].episode == widget.metadata.elementAt(3) &&
+                epi![k].season == widget.metadata.elementAt(4)) {
               await tvApi()
                   .getTVStreamLinksAndSubs(Endpoints.getMovieTVStreamLinks(
                       epi![k].id!, tvShows![i].id!))
@@ -189,14 +181,15 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
         Navigator.pushReplacement(context, MaterialPageRoute(
           builder: (context) {
             return Player(
+              mediaType: MediaType.tvShow,
               sources: reversedVids,
               subs: subs,
-              thumbnail: widget.thumbnail,
               colors: [
                 Theme.of(context).primaryColor,
                 Theme.of(context).colorScheme.background
               ],
               videoProperties: [maxBuffer, seekDuration, videoQuality, autoFS],
+              tvMetadata: widget.metadata,
             );
           },
         ));

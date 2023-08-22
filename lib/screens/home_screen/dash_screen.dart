@@ -41,19 +41,32 @@ class _caffieneHomePageState extends State<caffieneHomePage>
     });
   }
 
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     final mixpanel = Provider.of<SettingsProvider>(context).mixpanel;
     return Scaffold(
-      drawer: const DrawerWidget(),
+      drawer: const Drawer(child: DrawerWidget()),
       appBar: AppBar(
-        elevation: 1,
-        title: const Text(
-          'caffiene',
-          style: TextStyle(fontFamily: 'PoppinsSB'),
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(
+            Icons.menu,
+            color: Theme.of(context).primaryColor,
+          ),
+          onPressed: () {
+            _scaffoldKey.currentState?.openDrawer();
+          },
         ),
+        title: Text(
+          'caffiene',
+          style: TextStyle(fontFamily: 'PoppinsSB', color: Theme.of(context).primaryColor),
+        ),
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         actions: [
           IconButton(
+              color: Theme.of(context).primaryColor,
               onPressed: () {
                 showSearch(
                     context: context,
@@ -65,10 +78,11 @@ class _caffieneHomePageState extends State<caffieneHomePage>
               },
               icon: const Icon(Icons.search)),
           IconButton(
+              color: Theme.of(context).primaryColor,
               onPressed: () {
-                nextScreen(context, VideoDownloadScreen());
+                nextScreen(context, const VideoDownloadScreen());
               },
-              icon: Icon(Icons.download))
+              icon: const Icon(Icons.download))
         ],
       ),
       bottomNavigationBar: Container(

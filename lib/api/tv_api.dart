@@ -37,6 +37,7 @@ class tvApi {
   }
 
   Future<TVVideoSources> getTVStreamLinksAndSubs(String api) async {
+    print('link');
     TVVideoSources tvVideoSources;
     try {
       var res = await retryOptions.retry(
@@ -52,6 +53,7 @@ class tvApi {
   }
 
   Future<TVInfo> getTVStreamEpisodes(String api) async {
+    print('epi');
     TVInfo tvInfo;
     try {
       var res = await retryOptions.retry(
@@ -69,6 +71,7 @@ class tvApi {
 
   Future<List<TVResults>> fetchTVForStream(String api) async {
     TVStream tvStream;
+    print('tvstr');
     try {
       var res = await retryOptions.retry(
         (() => http.get(Uri.parse(api)).timeout(timeOut)),

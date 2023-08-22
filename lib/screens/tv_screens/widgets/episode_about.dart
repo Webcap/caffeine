@@ -17,11 +17,13 @@ class EpisodeAbout extends StatefulWidget {
     this.episodes,
     this.tvId,
     this.seriesName,
+    required this.posterPath
   }) : super(key: key);
   final EpisodeList episodeList;
   final List<EpisodeList>? episodes;
   final int? tvId;
   final String? seriesName;
+  final String? posterPath;
 
   @override
   State<EpisodeAbout> createState() => _EpisodeAboutState();
@@ -120,12 +122,19 @@ class _EpisodeAboutState extends State<EpisodeAbout> {
                         tvDetails = value;
                         Navigator.push(context,
                             MaterialPageRoute(builder: (context) {
-                          return TVVideoLoader(
-                            videoTitle: widget.seriesName!,
-                            thumbnail: value.backdropPath,
-                            seasons: value.numberOfSeasons!,
-                            episodeNumber: widget.episodeList.episodeNumber!,
-                            seasonNumber: widget.episodeList.seasonNumber!,
+                           return TVVideoLoader(
+                            download: false,
+                            metadata: [
+                              widget.episodeList.episodeId,
+                              widget.seriesName!,
+                              widget.episodeList.name,
+                              widget.episodeList.episodeNumber!,
+                              widget.episodeList.seasonNumber!,
+                              value.numberOfSeasons!,
+                              value.backdropPath,
+                              widget.posterPath,
+                              0
+                            ],
                           );
                         }));
                       });

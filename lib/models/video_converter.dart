@@ -19,7 +19,7 @@ class VideoConverter {
 
     FFprobeKit.getMediaInformation(inputPath)
         .then((MediaInformationSession session) async {
-      var information = await session.getMediaInformation();
+      var information = session.getMediaInformation();
 
       if (information != null) {
         duration = information.getDuration();

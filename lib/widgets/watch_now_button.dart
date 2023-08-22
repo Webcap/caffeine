@@ -12,12 +12,13 @@ import 'package:provider/provider.dart';
 class WatchNowButton extends StatefulWidget {
   const WatchNowButton({
     Key? key,
-    required this.thumbnail,
+    required this.posterPath,
     required this.movieId,
     this.movieName,
     this.movieImdbId,
     this.api,
     required this.releaseYear,
+    required this.backdropPath,
     this.adult,
   }) : super(key: key);
   final String? movieName;
@@ -26,7 +27,8 @@ class WatchNowButton extends StatefulWidget {
   final bool? adult;
   final String? api;
   final int releaseYear;
-  final String? thumbnail;
+  final String? posterPath;
+  final String? backdropPath;
 
   @override
   State<WatchNowButton> createState() => _WatchNowButtonState();
@@ -104,11 +106,13 @@ class _WatchNowButtonState extends State<WatchNowButton> {
                       Navigator.pushReplacement(context,
                           MaterialPageRoute(builder: ((context) {
                         return MovieVideoLoader(
-                          releaseYear: releaseYear,
-                          thumbnail: thumbnail,
-                          videoTitle: movieName,
+                          metadata: [
+                            widget.movieId,
+                            movieName,
+                            thumbnail,
+                            releaseYear
+                          ],
                           interstitialAd: _interstitialAd,
-                          movieId: widget.movieId,
                           download: false,
                         );
                       })));
@@ -182,16 +186,20 @@ class _WatchNowButtonState extends State<WatchNowButton> {
             'Movie id': widget.movieId,
             'Is Movie adult?': widget.adult ?? 'unknown',
           });
-          
+
           if (showAds) {
             if (adLoaded == true) {
               Navigator.push(context, MaterialPageRoute(builder: (context) {
                 return MovieVideoLoader(
-                  videoTitle: widget.movieName!,
-                  releaseYear: widget.releaseYear,
-                  thumbnail: widget.thumbnail,
+                  metadata: [
+                    widget.movieId,
+                    widget.movieName,
+                    widget.posterPath,
+                    widget.backdropPath,
+                    widget.releaseYear,
+                    0
+                  ],
                   interstitialAd: _interstitialAd,
-                  movieId: widget.movieId,
                   download: false,
                 );
               }));
@@ -201,9 +209,14 @@ class _WatchNowButtonState extends State<WatchNowButton> {
           } else {
             Navigator.push(context, MaterialPageRoute(builder: (context) {
               return MovieVideoLoaderNoAds(
-                videoTitle: widget.movieName!,
-                releaseYear: widget.releaseYear,
-                thumbnail: widget.thumbnail,
+                metadata: [
+                  widget.movieId,
+                  widget.movieName,
+                  widget.posterPath,
+                  widget.backdropPath,
+                  widget.releaseYear,
+                  0
+                ],
                 download: false,
               );
             }));

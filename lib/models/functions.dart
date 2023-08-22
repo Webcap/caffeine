@@ -9,6 +9,7 @@ import 'package:caffiene/utils/config.dart';
 void initializeApp() {}
 
 Future<String> getVttFileAsString(String url) async {
+  print('vtt');
   try {
     var response = await retryOptions.retry(
       () => http.get(Uri.parse(url)),
@@ -43,6 +44,7 @@ Future checkForUpdate(String api) async {
 
 Future<List<Channel>> fetchChannels(String api) async {
   ChannelsList channelsList;
+  print('fetchChan');
   try {
     var res = await retryOptions.retry(
       () => http.get(Uri.parse(api)),

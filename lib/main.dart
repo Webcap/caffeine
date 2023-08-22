@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:caffiene/models/download_manager.dart';
 import 'package:caffiene/models/translation.dart';
+import 'package:caffiene/provider/recently_watched_provider.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -24,6 +25,8 @@ Future<void> _messageHandler(RemoteMessage message) async {}
 
 SettingsProvider settingsProvider = SettingsProvider();
 DownloadProvider downloadProvider = DownloadProvider();
+RecentProvider recentProvider = RecentProvider();
+
 final Future<FirebaseApp> _initialization = Firebase.initializeApp();
 
 // extension Precision on double {
@@ -51,6 +54,8 @@ Future<void> appInitialize() async {
   await settingsProvider.getVideoResolution();
   await settingsProvider.getSubtitleLanguage();
   await settingsProvider.getViewMode();
+  await recentProvider.fetchMovies();
+  await recentProvider.fetchEpisodes();
   await _initialization;
 }
 
@@ -64,10 +69,11 @@ void main() async {
     supportedLocales: Translation.all,
     path: 'assets/translations',
     fallbackLocale: Translation.all[0],
-    startLocale: Locale('en'),
+    startLocale: const Locale('en'),
     child: caffeine(
       settingsProvider: settingsProvider,
       downloadProvider: downloadProvider,
+      recentProvider: recentProvider,
     ),
   ));
 }
@@ -76,11 +82,13 @@ class caffeine extends StatefulWidget {
   const caffeine({
     required this.settingsProvider, 
     required this.downloadProvider,  
+    required this.recentProvider,  
     Key? key
   }) : super(key: key);
 
   final SettingsProvider settingsProvider;
   final DownloadProvider downloadProvider;
+  final RecentProvider recentProvider;
 
   @override
   State<caffeine> createState() => _caffeineState();
@@ -153,10 +161,13 @@ class _caffeineState extends State<caffeine>
                 }),
                 ChangeNotifierProvider(create: (_) {
                   return widget.downloadProvider;
+                }),
+                ChangeNotifierProvider(create: (_) {
+                  return widget.recentProvider;
                 })
               ],
-              child: Consumer2<SettingsProvider, DownloadProvider>(
-                  builder: (context, settingsProvider, downloadProvider, snapshot) {
+              child: Consumer3<SettingsProvider, DownloadProvider, RecentProvider>(
+                  builder: (context, settingsProvider, downloadProvider, recentProvider, snapshot) {
                 return DynamicColorBuilder(
                   builder: (lightDynamic, darkDynamic) {
                     return MaterialApp(
