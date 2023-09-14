@@ -73,7 +73,8 @@ class _WatchNowButtonState extends State<WatchNowButton> {
       required String thumbnail,
       bool? adult,
       required int releaseYear,
-      required int movieId}) {
+      required int movieId,
+      required String backdropPath}) {
     showModalBottomSheet(
         context: context,
         builder: (builder) {
@@ -140,13 +141,13 @@ class _WatchNowButtonState extends State<WatchNowButton> {
                         'Movie id': movieId,
                         'Is Movie adult?': adult ?? 'unknown',
                       });
-                      Navigator.pushReplacement(context,
-                          MaterialPageRoute(builder: ((context) {
-                        return MovieStream(
-                            streamUrl:
-                                'https://2embed.to/embed/tmdb/movie?id=$movieId',
-                            movieName: movieName);
-                      })));
+                      // Navigator.pushReplacement(context,
+                      //     MaterialPageRoute(builder: ((context) {
+                      //   return MovieStream(
+                      //       streamUrl:
+                      //           'https://2embed.to/embed/tmdb/movie?id=$movieId',
+                      //       movieName: movieName);
+                      // })));
                     },
                     child: Container(
                       decoration: BoxDecoration(
@@ -215,6 +216,7 @@ class _WatchNowButtonState extends State<WatchNowButton> {
                   widget.posterPath,
                   widget.backdropPath,
                   widget.releaseYear,
+                  widget.backdropPath,
                   0
                 ],
                 download: false,

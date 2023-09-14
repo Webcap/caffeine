@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:caffiene/models/download_manager.dart';
+import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:easy_ads_flutter/easy_ads_flutter.dart';
 import 'package:flutter/material.dart';
@@ -37,12 +38,10 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
   List<MovieVideoLinks>? movieVideoLinks;
   List<MovieVideoSubtitles>? movieVideoSubs;
   double loadProgress = 0.00;
-  late int maxBuffer;
-  late int seekDuration;
-  late int videoQuality;
-  late String subLanguage;
-  late bool autoFS;
-
+  late SettingsProvider settings =
+      Provider.of<SettingsProvider>(context, listen: false);
+  late AppDependencyProvider appDep =
+      Provider.of<AppDependencyProvider>(context, listen: false);
   @override
   void initState() {
     super.initState();
@@ -74,22 +73,10 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
   }
 
   void loadVideo() async {
-    setState(() {
-      maxBuffer = Provider.of<SettingsProvider>(context, listen: false)
-          .defaultMaxBufferDuration;
-      seekDuration = Provider.of<SettingsProvider>(context, listen: false)
-          .defaultSeekDuration;
-      videoQuality = Provider.of<SettingsProvider>(context, listen: false)
-          .defaultVideoResolution;
-      subLanguage = Provider.of<SettingsProvider>(context, listen: false)
-          .defaultSubtitleLanguage;
-      autoFS =
-          Provider.of<SettingsProvider>(context, listen: false).defaultViewMode;
-    });
     try {
       await moviesApi()
           .fetchMoviesForStream(
-              Endpoints.searchMovieTVForStream(widget.metadata.elementAt(1)))
+              Endpoints.searchMovieTVForStream1(widget.metadata.elementAt(1), appDep.consumetUrl))
           .then((value) {
         if (mounted) {
           setState(() {
@@ -103,7 +90,7 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
             movies![i].type == 'Movie') {
           await moviesApi()
               .getMovieStreamEpisodes(
-                  Endpoints.getMovieTVStreamInfo(movies![i].id!))
+                  Endpoints.getMovieTVStreamInfo1(movies![i].id!, appDep.consumetUrl))
               .then((value) {
             setState(() {
               epi = value;
@@ -111,7 +98,7 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
           });
           await moviesApi()
               .getMovieStreamLinksAndSubs(
-                  Endpoints.getMovieTVStreamLinks(epi![0].id!, movies![i].id!))
+                  Endpoints.getMovieTVStreamLinks1(epi![0].id!, movies![i].id!, appDep.consumetUrl))
               .then((value) {
             setState(() {
               movieVideoSources = value;
@@ -128,7 +115,7 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
       List<BetterPlayerSubtitlesSource> subs = [];
 
       if (movieVideoSubs != null) {
-        if (subLanguage == '') {
+        if (settings.defaultSubtitleLanguage == '') {
           for (int i = 0; i < movieVideoSubs!.length - 1; i++) {
             setState(() {
               loadProgress = (i / movieVideoSubs!.length) * 100;
@@ -145,18 +132,18 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
           }
         } else {
           if (movieVideoSubs!
-              .where((element) => element.language!.startsWith(subLanguage))
+              .where((element) => element.language!
+                  .startsWith(settings.defaultSubtitleLanguage))
               .isNotEmpty) {
-            await getVttFileAsString((movieVideoSubs!.where(
-                        (element) => element.language!.startsWith(subLanguage)))
-                    .first
-                    .url!)
+            await getVttFileAsString((movieVideoSubs!.where((element) => element
+                    .language!
+                    .startsWith(settings.defaultSubtitleLanguage))).first.url!)
                 .then((value) {
               subs.addAll({
                 BetterPlayerSubtitlesSource(
                     name: movieVideoSubs!
-                        .where((element) =>
-                            element.language!.startsWith(subLanguage))
+                        .where((element) => element.language!
+                            .startsWith(settings.defaultSubtitleLanguage))
                         .first
                         .language,
                     //  urls: [movieVideoSubs![i].url],
@@ -190,7 +177,7 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
         showModalBottomSheet(
           context: context,
           builder: (builder) {
-            final mixpanel = Provider.of<SettingsProvider>(context).mixpanel;
+            //final mixpanel = Provider.of<SettingsProvider>(context).mixpanel;
             return Container(
                 padding: const EdgeInsets.all(8),
                 height: 300,
@@ -253,12 +240,7 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
                   Theme.of(context).primaryColor,
                   Theme.of(context).colorScheme.background
                 ],
-                videoProperties: [
-                  maxBuffer,
-                  seekDuration,
-                  videoQuality,
-                  autoFS
-                ],
+                settings: settings,
                 movieMetadata: widget.metadata,
               );
             },
@@ -317,7 +299,7 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
             ),
             const SizedBox(width: 160, child: LinearProgressIndicator()),
             Visibility(
-              visible: subLanguage != '' ? false : true,
+              visible: settings.defaultSubtitleLanguage != '' ? false : true,
               child: Text(
                 '${loadProgress.toStringAsFixed(0).toString()}%',
                 style:
@@ -350,12 +332,8 @@ class _MovieVideoLoaderNoAdsState extends State<MovieVideoLoaderNoAds> {
   List<MovieVideoLinks>? movieVideoLinks;
   List<MovieVideoSubtitles>? movieVideoSubs;
   double loadProgress = 0.00;
-  late int maxBuffer;
-  late int seekDuration;
-  late int videoQuality;
-  late String subLanguage;
-  late bool autoFS;
-
+  late SettingsProvider settings =
+      Provider.of<SettingsProvider>(context, listen: false);
   @override
   void initState() {
     super.initState();
@@ -378,22 +356,14 @@ class _MovieVideoLoaderNoAdsState extends State<MovieVideoLoaderNoAds> {
       }
     }
 
+    if (processedLines.isEmpty) {
+      throw Exception('No Timestamps found in VTT File');
+    }
+
     return processedLines.join('\n');
   }
 
   void loadVideo() async {
-    setState(() {
-      maxBuffer = Provider.of<SettingsProvider>(context, listen: false)
-          .defaultMaxBufferDuration;
-      seekDuration = Provider.of<SettingsProvider>(context, listen: false)
-          .defaultSeekDuration;
-      videoQuality = Provider.of<SettingsProvider>(context, listen: false)
-          .defaultVideoResolution;
-      subLanguage = Provider.of<SettingsProvider>(context, listen: false)
-          .defaultSubtitleLanguage;
-      autoFS =
-          Provider.of<SettingsProvider>(context, listen: false).defaultViewMode;
-    });
     try {
       await moviesApi()
           .fetchMoviesForStream(
@@ -436,7 +406,7 @@ class _MovieVideoLoaderNoAdsState extends State<MovieVideoLoaderNoAds> {
       List<BetterPlayerSubtitlesSource> subs = [];
 
       if (movieVideoSubs != null) {
-        if (subLanguage == '') {
+        if (settings.defaultSubtitleLanguage == '') {
           for (int i = 0; i < movieVideoSubs!.length - 1; i++) {
             setState(() {
               loadProgress = (i / movieVideoSubs!.length) * 100;
@@ -453,18 +423,18 @@ class _MovieVideoLoaderNoAdsState extends State<MovieVideoLoaderNoAds> {
           }
         } else {
           if (movieVideoSubs!
-              .where((element) => element.language!.startsWith(subLanguage))
+              .where((element) => element.language!
+                  .startsWith(settings.defaultSubtitleLanguage))
               .isNotEmpty) {
-            await getVttFileAsString((movieVideoSubs!.where(
-                        (element) => element.language!.startsWith(subLanguage)))
-                    .first
-                    .url!)
+            await getVttFileAsString((movieVideoSubs!.where((element) => element
+                    .language!
+                    .startsWith(settings.defaultSubtitleLanguage))).first.url!)
                 .then((value) {
               subs.addAll({
                 BetterPlayerSubtitlesSource(
                     name: movieVideoSubs!
-                        .where((element) =>
-                            element.language!.startsWith(subLanguage))
+                        .where((element) => element.language!
+                            .startsWith(settings.defaultSubtitleLanguage))
                         .first
                         .language,
                     //  urls: [movieVideoSubs![i].url],
@@ -498,7 +468,7 @@ class _MovieVideoLoaderNoAdsState extends State<MovieVideoLoaderNoAds> {
         showModalBottomSheet(
           context: context,
           builder: (builder) {
-            final mixpanel = Provider.of<SettingsProvider>(context).mixpanel;
+            //final mixpanel = Provider.of<SettingsProvider>(context).mixpanel;
             return Container(
                 padding: const EdgeInsets.all(8),
                 height: 300,
@@ -561,13 +531,8 @@ class _MovieVideoLoaderNoAdsState extends State<MovieVideoLoaderNoAds> {
                   Theme.of(context).primaryColor,
                   Theme.of(context).colorScheme.background
                 ],
-                videoProperties: [
-                  maxBuffer,
-                  seekDuration,
-                  videoQuality,
-                  autoFS
-                ],
-                movieMetadata: widget.metadata
+                settings: settings,
+                movieMetadata: widget.metadata,
               );
             },
           ));
@@ -625,7 +590,7 @@ class _MovieVideoLoaderNoAdsState extends State<MovieVideoLoaderNoAds> {
             ),
             const SizedBox(width: 160, child: LinearProgressIndicator()),
             Visibility(
-              visible: subLanguage != '' ? false : true,
+              visible: settings.defaultSubtitleLanguage != '' ? false : true,
               child: Text(
                 '${loadProgress.toStringAsFixed(0).toString()}%',
                 style:

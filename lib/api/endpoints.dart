@@ -104,15 +104,28 @@ class Endpoints {
 
   static String getMovieTVStreamLinks(String episodeId, String mediaId) {
     return '$CONSUMET_API'
-        'movies/flixhq/watch?episodeId=$episodeId&mediaId=$mediaId';
+        'movies/flixhq/watch?episodeId=$episodeId&mediaId=$mediaId&server=vidcloud';
+  }
+
+  static String getMovieTVStreamLinks1(String episodeId, String mediaId, String baseUrl) {
+    return '$baseUrl'
+        'movies/flixhq/watch?episodeId=$episodeId&mediaId=$mediaId&server=vidcloud';
   }
 
   static String getMovieTVStreamInfo(String titleStreamId) {
     return '$CONSUMET_API' 'movies/flixhq/info?id=$titleStreamId';
   }
 
+  static String getMovieTVStreamInfo1(String titleStreamId, String baseUrl) {
+    return '$baseUrl' 'movies/flixhq/info?id=$titleStreamId';
+  }
+
   static String searchMovieTVForStream(String titleName) {
     return '$CONSUMET_API' 'movies/flixhq/$titleName';
+  }
+
+  static String searchMovieTVForStream1(String titleName, String baseUrl) {
+    return '$baseUrl' 'movies/flixhq/$titleName';
   }
 
   static watchProvidersTVShows(int providerId, int page) {

@@ -60,6 +60,15 @@ class SettingsProvider with ChangeNotifier {
 
   late Mixpanel mixpanel;
 
+  String _subtitleForegroundColor = Colors.white.toString();
+  String get subtitleForegroundColor => _subtitleForegroundColor;
+
+  String _subtitleBackgroundColor = Colors.black45.toString();
+  String get subtitleBackgroundColor => _subtitleBackgroundColor;
+
+  int _subtitleFontSize = 17;
+  int get subtitleFontSize => _subtitleFontSize;
+
   // theme change
   Future<void> getCurrentThemeMode() async {
     darktheme = await themeModePreferences.getThemeMode();
@@ -207,6 +216,36 @@ class SettingsProvider with ChangeNotifier {
   set defaultSubtitleLanguage(String value) {
     _defaultSubtitleLanguage = value;
     videoPlayerPreferences.setDefaultSubtitle(value);
+    notifyListeners();
+  }
+
+  Future<void> getForegroundSubtitleColor() async {
+    subtitleForegroundColor = await videoPlayerPreferences.subtitleForeground();
+  }
+
+  set subtitleForegroundColor(String value) {
+    _subtitleForegroundColor = value;
+    videoPlayerPreferences.setSubtitleForeground(value);
+    notifyListeners();
+  }
+
+  Future<void> getBackgroundSubtitleColor() async {
+    subtitleBackgroundColor = await videoPlayerPreferences.subtitleBackground();
+  }
+
+  set subtitleBackgroundColor(String value) {
+    _subtitleBackgroundColor = value;
+    videoPlayerPreferences.setSubtitleBackground(value);
+    notifyListeners();
+  }
+
+  Future<void> getSubtitleSize() async {
+    subtitleFontSize = await videoPlayerPreferences.subtitleFont();
+  }
+
+  set subtitleFontSize(int value) {
+    _subtitleFontSize = value;
+    videoPlayerPreferences.setSubtitleFont(value);
     notifyListeners();
   }
 }

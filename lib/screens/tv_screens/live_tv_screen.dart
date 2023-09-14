@@ -18,24 +18,24 @@ class LiveTV extends StatefulWidget {
 class _LiveTVState extends State<LiveTV> {
   var startAppSdk = StartAppSdk();
 
-  StartAppBannerAd? bannerAd;
+  //StartAppBannerAd? bannerAd;
 
-  @override
-  void initState() {
-    startAppSdk
-        .loadBannerAd(StartAppBannerType.BANNER,
-            prefs: const StartAppAdPreferences(minCPM: 0.01))
-        .then((bannerAd) {
-      setState(() {
-        this.bannerAd = bannerAd;
-      });
-    }).onError<StartAppException>((ex, stackTrace) {
-      debugPrint("Error loading Banner ad: ${ex.message}");
-    }).onError((error, stackTrace) {
-      debugPrint("Error loading Banner ad: $error");
-    });
-    super.initState();
-  }
+  // @override
+  // void initState() {
+  //   startAppSdk
+  //       .loadBannerAd(StartAppBannerType.BANNER,
+  //           prefs: const StartAppAdPreferences(minCPM: 0.01))
+  //       .then((bannerAd) {
+  //     setState(() {
+  //       this.bannerAd = bannerAd;
+  //     });
+  //   }).onError<StartAppException>((ex, stackTrace) {
+  //     debugPrint("Error loading Banner ad: ${ex.message}");
+  //   }).onError((error, stackTrace) {
+  //     debugPrint("Error loading Banner ad: $error");
+  //   });
+  //   super.initState();
+  // }
 
   final List<CatImage> categories = [
     CatImage(categoryName: 'General', imagePath: 'assets/images/general.png'),
@@ -91,7 +91,7 @@ class _LiveTVState extends State<LiveTV> {
                   );
                 }),
               ))),
-              bannerAd != null ? StartAppBanner(bannerAd!) : Container()
+              //bannerAd != null ? StartAppBanner(bannerAd!) : Container()
             ],
           ),
         ));
@@ -145,31 +145,31 @@ class _ChannelListState extends State<ChannelList> {
   List<Channel>? channels;
   var startAppSdk = StartAppSdk();
 
-  StartAppBannerAd? bannerAd;
+  //StartAppBannerAd? bannerAd;
 
-  @override
-  void initState() {
-    startAppSdk
-        .loadBannerAd(StartAppBannerType.BANNER,
-            prefs: const StartAppAdPreferences(minCPM: 0.01))
-        .then((bannerAd) {
-      setState(() {
-        this.bannerAd = bannerAd;
-      });
-    }).onError<StartAppException>((ex, stackTrace) {
-      debugPrint("Error loading Banner ad: ${ex.message}");
-    }).onError((error, stackTrace) {
-      debugPrint("Error loading Banner ad: $error");
-    });
-    fetchChannels(
-            'https://raw.githubusercontent.com/Webcap/caffiene_live_channels/main/${widget.catName}.json')
-        .then((value) {
-      setState(() {
-        channels = value;
-      });
-    });
-    super.initState();
-  }
+  // @override
+  // void initState() {
+  //   startAppSdk
+  //       .loadBannerAd(StartAppBannerType.BANNER,
+  //           prefs: const StartAppAdPreferences(minCPM: 0.01))
+  //       .then((bannerAd) {
+  //     setState(() {
+  //       this.bannerAd = bannerAd;
+  //     });
+  //   }).onError<StartAppException>((ex, stackTrace) {
+  //     debugPrint("Error loading Banner ad: ${ex.message}");
+  //   }).onError((error, stackTrace) {
+  //     debugPrint("Error loading Banner ad: $error");
+  //   });
+  //   fetchChannels(
+  //           'https://raw.githubusercontent.com/Webcap/caffiene_live_channels/main/${widget.catName}.json')
+  //       .then((value) {
+  //     setState(() {
+  //       channels = value;
+  //     });
+  //   });
+  //   super.initState();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -194,7 +194,7 @@ class _ChannelListState extends State<ChannelList> {
                       },
                     ),
                   ),
-                  bannerAd != null ? StartAppBanner(bannerAd!) : Container()
+                  //bannerAd != null ? StartAppBanner(bannerAd!) : Container()
                 ],
               ),
       ),

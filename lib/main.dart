@@ -2,11 +2,13 @@ import 'dart:io';
 
 import 'package:caffiene/models/download_manager.dart';
 import 'package:caffiene/models/translation.dart';
+import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:caffiene/provider/recently_watched_provider.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -26,6 +28,7 @@ Future<void> _messageHandler(RemoteMessage message) async {}
 SettingsProvider settingsProvider = SettingsProvider();
 DownloadProvider downloadProvider = DownloadProvider();
 RecentProvider recentProvider = RecentProvider();
+AppDependencyProvider appDependencyProvider = AppDependencyProvider();
 
 final Future<FirebaseApp> _initialization = Firebase.initializeApp();
 
@@ -56,12 +59,16 @@ Future<void> appInitialize() async {
   await settingsProvider.getViewMode();
   await recentProvider.fetchMovies();
   await recentProvider.fetchEpisodes();
+  await appDependencyProvider.getConsumetUrl();
+  await settingsProvider.getSubtitleSize();
+  await settingsProvider.getForegroundSubtitleColor();
+  await settingsProvider.getBackgroundSubtitleColor();
   await _initialization;
 }
 
 void main() async {
   await appInitialize();
-  
+
   if (showAds) {
     MobileAds.instance.initialize();
   }
@@ -71,24 +78,26 @@ void main() async {
     fallbackLocale: Translation.all[0],
     startLocale: const Locale('en'),
     child: caffeine(
-      settingsProvider: settingsProvider,
-      downloadProvider: downloadProvider,
-      recentProvider: recentProvider,
-    ),
+        settingsProvider: settingsProvider,
+        downloadProvider: downloadProvider,
+        recentProvider: recentProvider,
+        appDependencyProvider: appDependencyProvider),
   ));
 }
 
 class caffeine extends StatefulWidget {
-  const caffeine({
-    required this.settingsProvider, 
-    required this.downloadProvider,  
-    required this.recentProvider,  
-    Key? key
-  }) : super(key: key);
+  const caffeine(
+      {required this.settingsProvider,
+      required this.downloadProvider,
+      required this.recentProvider,
+      required this.appDependencyProvider,
+      Key? key})
+      : super(key: key);
 
   final SettingsProvider settingsProvider;
   final DownloadProvider downloadProvider;
   final RecentProvider recentProvider;
+  final AppDependencyProvider appDependencyProvider;
 
   @override
   State<caffeine> createState() => _caffeineState();
@@ -121,12 +130,30 @@ class _caffeineState extends State<caffeine>
   //   });
   // }
 
+  final FirebaseRemoteConfig _remoteConfig = FirebaseRemoteConfig.instance;
+  Future<void> _initConfig() async {
+    print('COLORRRRRRRR: ${Colors.white.toString()}');
+    await _remoteConfig.setConfigSettings(RemoteConfigSettings(
+        fetchTimeout: const Duration(minutes: 1),
+        minimumFetchInterval: const Duration(minutes: 1)));
+
+    _fetchConfig();
+  }
+
+  void _fetchConfig() async {
+    await _remoteConfig.fetchAndActivate();
+    appDependencyProvider.consumetUrl = _remoteConfig.getString('consumet_url');
+    appDependencyProvider.caffieneLogo =
+        _remoteConfig.getString('caffiene_logo');
+  }
+
   @override
   void initState() {
     super.initState();
+    _initConfig();
+    fileDelete();
     FirebaseMessaging.onMessage.listen((RemoteMessage event) {});
     FirebaseMessaging.onMessageOpenedApp.listen((message) {});
-    fileDelete();
   }
 
   @override
@@ -160,14 +187,16 @@ class _caffeineState extends State<caffeine>
                   return widget.settingsProvider;
                 }),
                 ChangeNotifierProvider(create: (_) {
-                  return widget.downloadProvider;
+                  return widget.recentProvider;
                 }),
                 ChangeNotifierProvider(create: (_) {
-                  return widget.recentProvider;
-                })
+                  return widget.appDependencyProvider;
+                }),
               ],
-              child: Consumer3<SettingsProvider, DownloadProvider, RecentProvider>(
-                  builder: (context, settingsProvider, downloadProvider, recentProvider, snapshot) {
+              child:
+                  Consumer3<SettingsProvider, AppDependencyProvider, RecentProvider>(
+                      builder: (context, settingsProvider, appDependencyProvider,
+                          recentProvider, snapshot) {
                 return DynamicColorBuilder(
                   builder: (lightDynamic, darkDynamic) {
                     return MaterialApp(

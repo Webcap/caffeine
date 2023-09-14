@@ -47,6 +47,7 @@ class _caffieneHomePageState extends State<caffieneHomePage>
   Widget build(BuildContext context) {
     final mixpanel = Provider.of<SettingsProvider>(context).mixpanel;
     return Scaffold(
+      key: _scaffoldKey,
       drawer: const Drawer(child: DrawerWidget()),
       appBar: AppBar(
         elevation: 0,
@@ -77,12 +78,12 @@ class _caffieneHomePageState extends State<caffieneHomePage>
                             .isAdult));
               },
               icon: const Icon(Icons.search)),
-          IconButton(
-              color: Theme.of(context).primaryColor,
-              onPressed: () {
-                nextScreen(context, const VideoDownloadScreen());
-              },
-              icon: const Icon(Icons.download))
+          // IconButton(
+          //     color: Theme.of(context).primaryColor,
+          //     onPressed: () {
+          //       nextScreen(context, const VideoDownloadScreen());
+          //     },
+          //     icon: const Icon(Icons.download))
         ],
       ),
       bottomNavigationBar: Container(

@@ -1,18 +1,20 @@
 import 'package:caffiene/controller/recently_watched_database_controller.dart';
 import 'package:caffiene/models/recently_watched.dart';
 import 'package:caffiene/provider/recently_watched_provider.dart';
+import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:better_player/better_player.dart';
 import 'package:provider/provider.dart';
+import 'package:wakelock/wakelock.dart';
 
 class Player extends StatefulWidget {
   const Player(
       {required this.sources,
       required this.subs,
       required this.colors,
-      required this.videoProperties,
+      required this.settings,
       this.movieMetadata,
       this.tvMetadata,
       required this.mediaType,
@@ -21,7 +23,7 @@ class Player extends StatefulWidget {
   final Map<String, String> sources;
   final List<BetterPlayerSubtitlesSource> subs;
   final List<Color> colors;
-  final List videoProperties;
+  final SettingsProvider settings;
   final List? movieMetadata;
   final List? tvMetadata;
   final MediaType? mediaType;
@@ -30,7 +32,7 @@ class Player extends StatefulWidget {
   State<Player> createState() => _PlayerState();
 }
 
-class _PlayerState extends State<Player> with WidgetsBindingObserver{
+class _PlayerState extends State<Player> with WidgetsBindingObserver {
   late BetterPlayerController _betterPlayerController;
   late BetterPlayerControlsConfiguration betterPlayerControlsConfiguration;
   late BetterPlayerBufferingConfiguration betterPlayerBufferingConfiguration;
@@ -43,9 +45,19 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver{
   @override
   void initState() {
     super.initState();
+    String backgroundColorString = widget.settings.subtitleBackgroundColor;
+    String foregroundColorString = widget.settings.subtitleForegroundColor;
+    String hexColorBackground =
+        backgroundColorString.replaceAll("Color(0x", "").replaceAll(")", "");
+    String hexColorForeground =
+        foregroundColorString.replaceAll("Color(0x", "").replaceAll(")", "");
+
+    Color backgroundColor = Color(int.parse("0x$hexColorBackground"));
+    Color foregroundColor = Color(int.parse("0x$hexColorForeground"));
+
     WidgetsBinding.instance.addObserver(this);
     betterPlayerBufferingConfiguration = BetterPlayerBufferingConfiguration(
-      maxBufferMs: widget.videoProperties.first,
+      maxBufferMs: widget.settings.defaultMaxBufferDuration,
       minBufferMs: 15000,
     );
     betterPlayerControlsConfiguration = BetterPlayerControlsConfiguration(
@@ -59,9 +71,9 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver{
       loadingColor: widget.colors.first,
       iconsColor: widget.colors.first,
       backwardSkipTimeInMilliseconds:
-          Duration(seconds: widget.videoProperties.elementAt(1)).inMilliseconds,
+          Duration(seconds: widget.settings.defaultSeekDuration).inMilliseconds,
       forwardSkipTimeInMilliseconds:
-          Duration(seconds: widget.videoProperties.elementAt(1)).inMilliseconds,
+          Duration(seconds: widget.settings.defaultSeekDuration).inMilliseconds,
       progressBarPlayedColor: widget.colors.first,
       progressBarBufferedColor: Colors.black45,
     );
@@ -69,22 +81,23 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver{
     BetterPlayerConfiguration betterPlayerConfiguration =
         BetterPlayerConfiguration(
             autoDetectFullscreenDeviceOrientation: true,
-            fullScreenByDefault: widget.videoProperties.elementAt(3),
+            fullScreenByDefault: widget.settings.defaultViewMode,
             autoPlay: true,
             fit: BoxFit.contain,
             autoDispose: true,
             controlsConfiguration: betterPlayerControlsConfiguration,
             showPlaceholderUntilPlay: true,
-            subtitlesConfiguration: const BetterPlayerSubtitlesConfiguration(
-                backgroundColor: Colors.black45,
+            allowedScreenSleep: false,
+            subtitlesConfiguration: BetterPlayerSubtitlesConfiguration(
+                backgroundColor: backgroundColor,
                 fontFamily: 'Poppins',
-                fontColor: Colors.white,
+                fontColor: foregroundColor,
                 outlineEnabled: false,
-                fontSize: 17));
+                fontSize: widget.settings.subtitleFontSize.toDouble()));
 
-    String keyToFind = widget.videoProperties.elementAt(2) == 0
+    String keyToFind = widget.settings.defaultVideoResolution == 0
         ? 'auto'
-        : widget.videoProperties.elementAt(2).toString();
+        : widget.settings.defaultVideoResolution.toString();
     String? link;
 
     if (widget.sources.entries
@@ -142,10 +155,10 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver{
         elapsed: elapsed,
         id: widget.movieMetadata!.elementAt(0),
         posterPath: widget.movieMetadata!.elementAt(2),
-        releaseYear: widget.movieMetadata!.elementAt(4),
+        releaseYear: widget.movieMetadata!.elementAt(3),
         remaining: remaining,
         title: widget.movieMetadata!.elementAt(1),
-        backdropPath: widget.movieMetadata!.elementAt(3));
+        backdropPath: widget.movieMetadata!.elementAt(4));
 
     double precentage = (elapsed / duration) * 100;
 
@@ -216,11 +229,17 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver{
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     // print(widget.movieMetadata!.elementAt(0));
     return WillPopScope(
       onWillPop: () async {
         if (_betterPlayerController.isVideoInitialized()!) {
+          Wakelock.disable();
           widget.mediaType == MediaType.movie
               ? insertRecentMovieData()
               : insertRecentEpisodeData();

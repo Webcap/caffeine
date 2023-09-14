@@ -62,6 +62,7 @@ class _LivePlayerState extends State<LivePlayer> {
             //  fullScreenByDefault: true,
             looping: true,
             autoPlay: true,
+            allowedScreenSleep: false,
             fit: BoxFit.contain,
             autoDispose: true,
             controlsConfiguration: betterPlayerControlsConfiguration,
@@ -118,9 +119,9 @@ class _LivePlayerState extends State<LivePlayer> {
                 ),
               ),
             ),
-            playerBannerAd != null
-                ? StartAppBanner(playerBannerAd!)
-                : Container(),
+            // playerBannerAd != null
+            //     ? StartAppBanner(playerBannerAd!)
+            //     : Container(),
           ],
         ),
       ),

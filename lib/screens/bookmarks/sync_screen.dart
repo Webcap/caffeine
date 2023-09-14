@@ -238,10 +238,21 @@ class _SyncScreenState extends State<SyncScreen>
       }
 
       // Calculates the differences between the converted firebase items and sqlite items
-      List<Movie> difference = sqliteMovieForOnlineSync
-          .toSet()
-          .difference(firebaseMovieForOnlineSync.toSet())
-          .toList();
+      List<Movie> difference = [];
+
+      bool containsById(List<Movie> list, int id) {
+        return list.any((item) => item.id == id);
+      }
+
+      for (var movie in sqliteMovieForOnlineSync) {
+        if (!containsById(difference, movie.id!)) {
+          difference.add(movie);
+        }
+      }
+      // List<Movie> difference = sqliteMovieForOnlineSync
+      //     .toSet()
+      //     .difference(firebaseMovieForOnlineSync.toSet())
+      //     .toList();
 
       // Loops through all items of difference and converts it to a list of map
       for (int i = 0; i < difference.length; i++) {
@@ -301,10 +312,23 @@ class _SyncScreenState extends State<SyncScreen>
         });
       }
 
-      List<TV> difference = sqliteTVForOnlineSync
-          .toSet()
-          .difference(firebaseTVForOnlineSync.toSet())
-          .toList();
+      List<TV> difference = [];
+      difference.addAll(firebaseTVForOnlineSync);
+
+      bool containsById(List<TV> list, int id) {
+        return list.any((item) => item.id == id);
+      }
+
+      for (var tv in sqliteTVForOnlineSync) {
+        if (!containsById(difference, tv.id!)) {
+          difference.add(tv);
+        }
+      }
+
+      // List<TV> difference = sqliteTVForOnlineSync
+      //     .toSet()
+      //     .difference(firebaseTVForOnlineSync.toSet())
+      //     .toList();
 
       for (int i = 0; i < difference.length; i++) {
         toFirebase.add(difference[i].toMap());

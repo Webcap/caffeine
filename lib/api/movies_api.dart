@@ -321,29 +321,4 @@ class moviesApi {
     }
   }
 
-  void addWatchHistory(
-      int movieID, String movieTitle, DateTime watchedAt, bool completed) {
-    final FirebaseAuth auth = FirebaseAuth.instance;
-    final User? user = auth.currentUser;
-    final uid = user!.uid;
-
-    FirebaseFirestore firebaseInstance = FirebaseFirestore.instance;
-
-    // Creates a new Watch history event
-    WatchHistoryEntry watchHistoryEntry = WatchHistoryEntry(
-      movieID: movieID,
-      movieTitle: movieTitle,
-      dateTime: watchedAt,
-      completed: completed,
-    );
-
-    // Save the watch history entry to Firebase.
-    FirebaseFirestore.instance
-        .collection('users')
-        .doc(user.uid)
-        .collection('watchHistory')
-        .add(watchHistoryEntry.toJson());
-
-    print('Well we made it this far');
-  }
 }

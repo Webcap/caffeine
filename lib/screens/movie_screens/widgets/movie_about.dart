@@ -102,17 +102,17 @@ class _MovieAboutState extends State<MovieAbout> {
                   backdropPath: widget.movie.backdropPath,
                   api: Endpoints.movieDetailsUrl(widget.movie.id!),
                 ),
-                SizedBox(
-                  width: 15,
-                ),
-                DownloadMovie(
-                  releaseYear: DateTime.parse(widget.movie.releaseDate!).year,
-                  movieId: widget.movie.id!,
-                  movieName: widget.movie.title,
-                  adult: widget.movie.adult,
-                  thumbnail: widget.movie.backdropPath,
-                  api: Endpoints.movieDetailsUrl(widget.movie.id!),
-                )
+                // SizedBox(
+                //   width: 15,
+                // ),
+                // DownloadMovie(
+                //   releaseYear: DateTime.parse(widget.movie.releaseDate!).year,
+                //   movieId: widget.movie.id!,
+                //   movieName: widget.movie.title,
+                //   adult: widget.movie.adult,
+                //   thumbnail: widget.movie.backdropPath,
+                //   api: Endpoints.movieDetailsUrl(widget.movie.id!),
+                // )
               ],
             ),
             ScrollingArtists(
@@ -152,11 +152,11 @@ class _MovieAboutState extends State<MovieAbout> {
                 includeAdult: Provider.of<SettingsProvider>(context).isAdult,
                 movieId: widget.movie.id!,
                 api: Endpoints.getSimilarMovies(widget.movie.id!, 1)),
-            DidYouKnow(
-              api: Endpoints.getExternalLinksForMovie(
-                widget.movie.id!,
-              ),
-            ),
+            // DidYouKnow(
+            //   api: Endpoints.getExternalLinksForMovie(
+            //     widget.movie.id!,
+            //   ),
+            // ),
           ],
         ),
       ),

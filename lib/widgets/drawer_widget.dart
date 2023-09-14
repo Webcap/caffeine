@@ -81,16 +81,6 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                   ),
                   ListTile(
                     leading: Icon(
-                      FontAwesomeIcons.newspaper,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                    title: const Text('News'),
-                    onTap: () {
-                      //nextScreen(context, NewsPage());
-                    },
-                  ),
-                  ListTile(
-                    leading: Icon(
                       Icons.info_outline,
                       color: Theme.of(context).colorScheme.primary,
                     ),

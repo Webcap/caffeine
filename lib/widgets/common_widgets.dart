@@ -112,15 +112,15 @@ class _DidYouKnowState extends State<DidYouKnow> {
     super.initState();
   }
 
-  void navToDYK(String dataType, String dataName, String imdbId) {
-    Navigator.push(context, MaterialPageRoute(builder: ((context) {
-      return DidYouKnowScreen(
-        dataType: dataType,
-        dataName: dataName,
-        imdbId: imdbId,
-      );
-    })));
-  }
+  // void navToDYK(String dataType, String dataName, String imdbId) {
+  //   Navigator.push(context, MaterialPageRoute(builder: ((context) {
+  //     return DidYouKnowScreen(
+  //       dataType: dataType,
+  //       dataName: dataName,
+  //       imdbId: imdbId,
+  //     );
+  //   })));
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -148,62 +148,62 @@ class _DidYouKnowState extends State<DidYouKnow> {
                         ))
                       : Wrap(
                           spacing: 5,
-                          children: [
-                            ElevatedButton(
-                              onPressed: () {
-                                navToDYK(
-                                    'trivia', 'Trivia', externalLinks!.imdbId!);
-                              },
-                              child: const Text('Trivia'),
-                            ),
-                            ElevatedButton(
-                              onPressed: () {
-                                navToDYK(
-                                    'quotes', 'Quotes', externalLinks!.imdbId!);
-                              },
-                              child: const Text('Quotes'),
-                            ),
-                            ElevatedButton(
-                              onPressed: () {
-                                navToDYK(
-                                    'goofs', 'Goofs', externalLinks!.imdbId!);
-                              },
-                              child: const Text('Goofs'),
-                            ),
-                            ElevatedButton(
-                              onPressed: () {
-                                navToDYK('crazycredits', 'Crazy Credits',
-                                    externalLinks!.imdbId!);
-                              },
-                              child: const Text('Crazy Credits'),
-                            ),
-                            ElevatedButton(
-                              onPressed: () {
-                                navToDYK(
-                                    'alternateversions',
-                                    'Alternate Versions',
-                                    externalLinks!.imdbId!);
-                              },
-                              child: const Text('Alternate Versions'),
-                            ),
-                            ElevatedButton(
-                              onPressed: () {
-                                navToDYK('soundtrack', 'Soundtrack',
-                                    externalLinks!.imdbId!);
-                              },
-                              child: const Text('Soundtrack'),
-                            ),
-                            ElevatedButton(
-                              onPressed: () {
-                                Navigator.push(context,
-                                    MaterialPageRoute(builder: ((context) {
-                                  return TitleReviews(
-                                      imdbId: externalLinks!.imdbId!);
-                                })));
-                              },
-                              child: const Text('Reviews'),
-                            ),
-                          ],
+                          // children: [
+                          //   ElevatedButton(
+                          //     onPressed: () {
+                          //       navToDYK(
+                          //           'trivia', 'Trivia', externalLinks!.imdbId!);
+                          //     },
+                          //     child: const Text('Trivia'),
+                          //   ),
+                          //   ElevatedButton(
+                          //     onPressed: () {
+                          //       navToDYK(
+                          //           'quotes', 'Quotes', externalLinks!.imdbId!);
+                          //     },
+                          //     child: const Text('Quotes'),
+                          //   ),
+                          //   ElevatedButton(
+                          //     onPressed: () {
+                          //       navToDYK(
+                          //           'goofs', 'Goofs', externalLinks!.imdbId!);
+                          //     },
+                          //     child: const Text('Goofs'),
+                          //   ),
+                          //   ElevatedButton(
+                          //     onPressed: () {
+                          //       navToDYK('crazycredits', 'Crazy Credits',
+                          //           externalLinks!.imdbId!);
+                          //     },
+                          //     child: const Text('Crazy Credits'),
+                          //   ),
+                          //   ElevatedButton(
+                          //     onPressed: () {
+                          //       navToDYK(
+                          //           'alternateversions',
+                          //           'Alternate Versions',
+                          //           externalLinks!.imdbId!);
+                          //     },
+                          //     child: const Text('Alternate Versions'),
+                          //   ),
+                          //   ElevatedButton(
+                          //     onPressed: () {
+                          //       navToDYK('soundtrack', 'Soundtrack',
+                          //           externalLinks!.imdbId!);
+                          //     },
+                          //     child: const Text('Soundtrack'),
+                          //   ),
+                          //   ElevatedButton(
+                          //     onPressed: () {
+                          //       Navigator.push(context,
+                          //           MaterialPageRoute(builder: ((context) {
+                          //         return TitleReviews(
+                          //             imdbId: externalLinks!.imdbId!);
+                          //       })));
+                          //     },
+                          //     child: const Text('Reviews'),
+                          //   ),
+                          // ],
                         )),
           const SizedBox(
             height: 10,

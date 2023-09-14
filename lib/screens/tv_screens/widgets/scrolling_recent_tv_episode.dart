@@ -2,23 +2,24 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:caffiene/models/recently_watched.dart';
 import 'package:caffiene/provider/recently_watched_provider.dart';
 import 'package:caffiene/provider/settings_provider.dart';
-import 'package:caffiene/screens/movie_screens/widgets/movie_video_loader.dart';
+import 'package:caffiene/screens/tv_screens/tv_video_loader.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/widgets/shimmer_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class ScrollingRecentMovies extends StatefulWidget {
-  const ScrollingRecentMovies({required this.moviesList, Key? key})
+class ScrollingRecentEpisodes extends StatefulWidget {
+  const ScrollingRecentEpisodes({required this.episodesList, Key? key})
       : super(key: key);
 
-  final List<RecentMovie> moviesList;
+  final List<RecentEpisode> episodesList;
 
   @override
-  State<ScrollingRecentMovies> createState() => _ScrollingRecentMoviesState();
+  State<ScrollingRecentEpisodes> createState() =>
+      _ScrollingRecentEpisodesState();
 }
 
-class _ScrollingRecentMoviesState extends State<ScrollingRecentMovies> {
+class _ScrollingRecentEpisodesState extends State<ScrollingRecentEpisodes> {
   final ScrollController _scrollController = ScrollController();
   @override
   Widget build(BuildContext context) {
@@ -42,8 +43,7 @@ class _ScrollingRecentMoviesState extends State<ScrollingRecentMovies> {
             //       onPressed: () {
             //         Navigator.push(context,
             //             MaterialPageRoute(builder: (context) {
-            //           return const MovieVideoLoader(
-            //               download: false, metadata: []);
+            //           return const TVVideoLoader(download: false, metadata: []);
             //         }));
             //       },
             //       style: ButtonStyle(
@@ -62,37 +62,46 @@ class _ScrollingRecentMoviesState extends State<ScrollingRecentMovies> {
         ),
         SizedBox(
           width: double.infinity,
-          height: 250,
+          height: 280,
           child: Row(
             children: [
               Expanded(
                 child: ListView.builder(
                   controller: _scrollController,
                   physics: const BouncingScrollPhysics(),
-                  itemCount: widget.moviesList.length,
+                  itemCount: widget.episodesList.length,
                   scrollDirection: Axis.horizontal,
                   itemBuilder: (BuildContext context, int index) {
-                    final prv =
+                    final recentEpisodes =
                         Provider.of<RecentProvider>(context, listen: false);
                     return Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: GestureDetector(
                         onLongPress: () {
-                          prv.deleteMovie(widget.moviesList[index].id!);
+                          recentEpisodes.deleteEpisode(
+                              widget.episodesList[index].id!,
+                              widget.episodesList[index].episodeNum!,
+                              widget.episodesList[index].seasonNum!);
                         },
                         onTap: () {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => MovieVideoLoaderNoAds(
+                                  builder: (context) => TVVideoLoader(
                                         download: false,
                                         metadata: [
-                                          widget.moviesList[index].id,
-                                          widget.moviesList[index].title,
-                                          widget.moviesList[index].posterPath,
-                                          widget.moviesList[index].releaseYear,
-                                          widget.moviesList[index].backdropPath,
-                                          widget.moviesList[index].elapsed
+                                          widget.episodesList[index].id,
+                                          widget.episodesList[index].seriesName,
+                                          widget
+                                              .episodesList[index].episodeName,
+                                          widget.episodesList[index].episodeNum,
+                                          widget.episodesList[index].seasonNum,
+                                          widget
+                                              .episodesList[index].totalSeasons,
+                                          widget
+                                              .episodesList[index].backdropPath,
+                                          widget.episodesList[index].posterPath,
+                                          widget.episodesList[index].elapsed
                                         ],
                                       )));
                         },
@@ -101,7 +110,7 @@ class _ScrollingRecentMoviesState extends State<ScrollingRecentMovies> {
                           child: Column(
                             children: <Widget>[
                               Expanded(
-                                flex: 6,
+                                flex: 8,
                                 child: Material(
                                   type: MaterialType.transparency,
                                   child: Stack(
@@ -110,7 +119,7 @@ class _ScrollingRecentMoviesState extends State<ScrollingRecentMovies> {
                                       ClipRRect(
                                         borderRadius:
                                             BorderRadius.circular(8.0),
-                                        child: widget.moviesList[index]
+                                        child: widget.episodesList[index]
                                                     .posterPath ==
                                                 null
                                             ? Image.asset(
@@ -126,13 +135,14 @@ class _ScrollingRecentMoviesState extends State<ScrollingRecentMovies> {
                                                     milliseconds: 700),
                                                 fadeInCurve: Curves.easeIn,
                                                 imageUrl: widget
-                                                            .moviesList[index]
+                                                            .episodesList[index]
                                                             .posterPath ==
                                                         null
                                                     ? ''
                                                     : TMDB_BASE_IMAGE_URL +
                                                         imageQuality +
-                                                        widget.moviesList[index]
+                                                        widget
+                                                            .episodesList[index]
                                                             .posterPath!,
                                                 imageBuilder:
                                                     (context, imageProvider) =>
@@ -155,6 +165,35 @@ class _ScrollingRecentMoviesState extends State<ScrollingRecentMovies> {
                                                 ),
                                               ),
                                       ),
+                                      Positioned(
+                                        top: 0,
+                                        left: 0,
+                                        child: Container(
+                                          margin: const EdgeInsets.all(3),
+                                          alignment: Alignment.center,
+                                          width: 70,
+                                          height: 22,
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              color: Theme.of(context)
+                                                  .primaryColor
+                                                  .withOpacity(0.85)),
+                                          child: Row(
+                                            children: [
+                                              Text(
+                                                  '${widget.episodesList[index].seasonNum! <= 9 ? 'S0${widget.episodesList[index].seasonNum!}' : 'S${widget.episodesList[index].seasonNum!}'} | '
+                                                  '${widget.episodesList[index].episodeNum! <= 9 ? 'E0${widget.episodesList[index].episodeNum!}' : 'E${widget.episodesList[index].episodeNum!}'}'
+                                                  '',
+                                                  style: TextStyle(
+                                                      color: Theme.of(context)
+                                                          .colorScheme
+                                                          .onPrimary
+                                                          .withOpacity(0.85)))
+                                            ],
+                                          ),
+                                        ),
+                                      ),
                                       SizedBox(
                                         height: 10,
                                         child: ClipRRect(
@@ -162,30 +201,14 @@ class _ScrollingRecentMoviesState extends State<ScrollingRecentMovies> {
                                               bottomLeft: Radius.circular(8),
                                               bottomRight: Radius.circular(8)),
                                           child: LinearProgressIndicator(
-                                            value: (widget.moviesList[index]
+                                            value: (widget.episodesList[index]
                                                     .elapsed! /
-                                                (widget.moviesList[index]
+                                                (widget.episodesList[index]
                                                         .remaining! +
-                                                    widget.moviesList[index]
+                                                    widget.episodesList[index]
                                                         .elapsed!)),
                                           ),
                                         ),
-                                      ),
-                                      Positioned(
-                                        top: -15,
-                                        right: 8,
-                                        child: Container(
-                                            alignment: Alignment.topRight,
-                                            child: IconButton(
-                                              alignment: Alignment.topRight,
-                                              onPressed: () async {
-                                                prv.deleteMovie(widget
-                                                    .moviesList[index].id!);
-                                              },
-                                              icon: const Icon(
-                                                  Icons.bookmark_remove,
-                                                  size: 60),
-                                            )),
                                       ),
                                     ],
                                   ),
@@ -196,8 +219,23 @@ class _ScrollingRecentMoviesState extends State<ScrollingRecentMovies> {
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Text(
-                                    widget.moviesList[index].title!,
+                                    widget.episodesList[index].seriesName!,
                                     maxLines: 2,
+                                    textAlign: TextAlign.center,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                flex: 3,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 8.0, right: 8.0),
+                                  child: Text(
+                                    widget.episodesList[index].episodeName!,
+                                    maxLines: 2,
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.w900),
                                     textAlign: TextAlign.center,
                                     overflow: TextOverflow.ellipsis,
                                   ),
