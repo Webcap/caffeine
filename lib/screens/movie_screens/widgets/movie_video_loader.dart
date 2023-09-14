@@ -75,8 +75,8 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
   void loadVideo() async {
     try {
       await moviesApi()
-          .fetchMoviesForStream(
-              Endpoints.searchMovieTVForStream1(widget.metadata.elementAt(1), appDep.consumetUrl))
+          .fetchMoviesForStream(Endpoints.searchMovieTVForStream1(
+              widget.metadata.elementAt(1), appDep.consumetUrl))
           .then((value) {
         if (mounted) {
           setState(() {
@@ -89,16 +89,16 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
         if (movies![i].releaseDate == widget.metadata.elementAt(3).toString() &&
             movies![i].type == 'Movie') {
           await moviesApi()
-              .getMovieStreamEpisodes(
-                  Endpoints.getMovieTVStreamInfo1(movies![i].id!, appDep.consumetUrl))
+              .getMovieStreamEpisodes(Endpoints.getMovieTVStreamInfo1(
+                  movies![i].id!, appDep.consumetUrl))
               .then((value) {
             setState(() {
               epi = value;
             });
           });
           await moviesApi()
-              .getMovieStreamLinksAndSubs(
-                  Endpoints.getMovieTVStreamLinks1(epi![0].id!, movies![i].id!, appDep.consumetUrl))
+              .getMovieStreamLinksAndSubs(Endpoints.getMovieTVStreamLinks1(
+                  epi![0].id!, movies![i].id!, appDep.consumetUrl))
               .then((value) {
             setState(() {
               movieVideoSources = value;
@@ -334,6 +334,8 @@ class _MovieVideoLoaderNoAdsState extends State<MovieVideoLoaderNoAds> {
   double loadProgress = 0.00;
   late SettingsProvider settings =
       Provider.of<SettingsProvider>(context, listen: false);
+  late AppDependencyProvider appDep =
+      Provider.of<AppDependencyProvider>(context, listen: false);
   @override
   void initState() {
     super.initState();
@@ -367,7 +369,7 @@ class _MovieVideoLoaderNoAdsState extends State<MovieVideoLoaderNoAds> {
     try {
       await moviesApi()
           .fetchMoviesForStream(
-              Endpoints.searchMovieTVForStream(widget.metadata.elementAt(1)))
+              Endpoints.searchMovieTVForStream1(widget.metadata.elementAt(1), appDep.consumetUrl))
           .then((value) {
         if (mounted) {
           setState(() {
@@ -381,7 +383,7 @@ class _MovieVideoLoaderNoAdsState extends State<MovieVideoLoaderNoAds> {
             movies![i].type == 'Movie') {
           await moviesApi()
               .getMovieStreamEpisodes(
-                  Endpoints.getMovieTVStreamInfo(movies![i].id!))
+                  Endpoints.getMovieTVStreamInfo1(movies![i].id!, appDep.consumetUrl))
               .then((value) {
             setState(() {
               epi = value;
@@ -389,7 +391,7 @@ class _MovieVideoLoaderNoAdsState extends State<MovieVideoLoaderNoAds> {
           });
           await moviesApi()
               .getMovieStreamLinksAndSubs(
-                  Endpoints.getMovieTVStreamLinks(epi![0].id!, movies![i].id!))
+                  Endpoints.getMovieTVStreamLinks1(epi![0].id!, movies![i].id!, appDep.consumetUrl))
               .then((value) {
             setState(() {
               movieVideoSources = value;
