@@ -19,7 +19,7 @@ dependencies:
   connectivity_plus: ^3.0.6
   cupertino_icons: ^1.0.2
   device_info_plus: ^8.2.2
-  dio: ^5.1.1
+  dio: ^4.0.6
   dynamic_color: ^1.6.3
   easy_ads_flutter: ^2.3.3
   easy_localization: ^3.0.2
@@ -32,7 +32,7 @@ dependencies:
     sdk: flutter
   flutter_cache_manager: ^3.3.0
   flutter_colorpicker: ^1.0.3
-  flutter_download_manager: ^0.5.5
+  flutter_download_manager: ^0.5.4
   flutter_downloader: ^1.10.2
   flutter_inappwebview: ^5.4.4+3
   flutter_launcher_icons: ^0.13.1
@@ -46,7 +46,7 @@ dependencies:
   google_mobile_ads: ^2.4.0
   google_nav_bar: ^5.0.6
   google_sign_in: ^6.1.0
-  http: ^0.13.5
+  http: ^0.13.4
   image_fade: ^0.6.1
   intl: ^0.18.0
   mixpanel_flutter: ^2.1.1

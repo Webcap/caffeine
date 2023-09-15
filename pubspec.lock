@@ -261,10 +261,10 @@ packages:
     dependency: "direct main"
     description:
       name: dio
-      sha256: "3866d67f93523161b643187af65f5ac08bc991a5bcdaf41a2d587fe4ccb49993"
+      sha256: "7d328c4d898a61efc3cd93655a0955858e29a0aa647f0f9e02d59b3bb275e2e8"
       url: "https://pub.dev"
     source: hosted
-    version: "5.3.0"
+    version: "4.0.6"
   dynamic_color:
     dependency: "direct main"
     description:
@@ -474,10 +474,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_download_manager
-      sha256: f0e604be623f2559a2dc2ccb0918e4e5224ff28a02b864ba0c27a3c6aca6c154
+      sha256: "287976e0cba0047925cec247fbb88e1924ed18cae78b69af85ffd6b55d590b32"
       url: "https://pub.dev"
     source: hosted
-    version: "0.5.5"
+    version: "0.5.4"
   flutter_downloader:
     dependency: "direct main"
     description:

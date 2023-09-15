@@ -4,6 +4,7 @@ import 'package:caffiene/models/download_manager.dart';
 import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:easy_ads_flutter/easy_ads_flutter.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:caffiene/api/endpoints.dart';
@@ -65,9 +66,9 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
       }
     }
 
-    if (processedLines.isEmpty) {
-      throw Exception('No Timestamps found in VTT File');
-    }
+    // if (processedLines.isEmpty) {
+    //   throw Exception('No Timestamps found in VTT File');
+    // }
 
     return processedLines.join('\n');
   }
@@ -75,7 +76,7 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
   void loadVideo() async {
     try {
       await moviesApi()
-          .fetchMoviesForStream(Endpoints.searchMovieTVForStream1(
+          .fetchMoviesForStream(Endpoints.searchMovieTVForStream(
               widget.metadata.elementAt(1), appDep.consumetUrl))
           .then((value) {
         if (mounted) {
@@ -89,7 +90,7 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
         if (movies![i].releaseDate == widget.metadata.elementAt(3).toString() &&
             movies![i].type == 'Movie') {
           await moviesApi()
-              .getMovieStreamEpisodes(Endpoints.getMovieTVStreamInfo1(
+              .getMovieStreamEpisodes(Endpoints.getMovieTVStreamInfo(
                   movies![i].id!, appDep.consumetUrl))
               .then((value) {
             setState(() {
@@ -97,7 +98,7 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
             });
           });
           await moviesApi()
-              .getMovieStreamLinksAndSubs(Endpoints.getMovieTVStreamLinks1(
+              .getMovieStreamLinksAndSubs(Endpoints.getMovieTVStreamLinks(
                   epi![0].id!, movies![i].id!, appDep.consumetUrl))
               .then((value) {
             setState(() {
@@ -168,71 +169,10 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
           videos.entries.toList().reversed.toList();
       Map<String, String> reversedVids = Map.fromEntries(reversedVideoList);
 
-      void streamSelectBottomSheet({
-        required Map vids,
-      }) {
-        final downloadProvider =
-            Provider.of<DownloadProvider>(context, listen: false);
-        vids.removeWhere((key, value) => key == 'auto');
-        showModalBottomSheet(
-          context: context,
-          builder: (builder) {
-            //final mixpanel = Provider.of<SettingsProvider>(context).mixpanel;
-            return Container(
-                padding: const EdgeInsets.all(8),
-                height: 300,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Download: "${widget.metadata.elementAt(1)}"',
-                      textAlign: TextAlign.center,
-                    ),
-                    const Text(
-                      'Choose resolution:',
-                      style: kTextSmallHeaderStyle,
-                    ),
-                    Column(
-                      children: [
-                        for (var entry in vids.entries)
-                          InkWell(
-                            child: ListTile(
-                              onTap: () {
-                                Directory? appDir = Directory(
-                                    "storage/emulated/0/Cinemax/Backdrops");
-
-                                // String outputPath =
-                                //     "${appDir!.path}/output1.mp4";
-                                Download dwn = Download(
-                                    input: entry.value,
-                                    output:
-                                        '${appDir.path}/${widget.metadata.elementAt(1)}_${entry.key}p_Downloaded_from_Cinemax.mp4',
-                                    progress: 0.0);
-                                downloadProvider.addDownload(dwn);
-                                downloadProvider.startDownload(dwn);
-                              },
-                              title: Text(entry.key),
-                              trailing:
-                                  const Icon(Icons.arrow_forward_ios_rounded),
-                            ),
-                          ),
-                      ],
-                    )
-                  ],
-                ));
-          },
-        );
-      }
-
       if (movieVideoLinks != null && movieVideoSubs != null) {
-        if (widget.download) {
-          Navigator.pop(context);
-          streamSelectBottomSheet(vids: reversedVids);
-        } else {
-          Navigator.pushReplacement(context, MaterialPageRoute(
-            builder: (context) {
-              return Player(
+        Navigator.pushReplacement(context, MaterialPageRoute(
+          builder: (context) {
+            return Player(
                 mediaType: MediaType.movie,
                 sources: reversedVids,
                 subs: subs,
@@ -241,20 +181,18 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
                   Theme.of(context).colorScheme.background
                 ],
                 settings: settings,
-                movieMetadata: widget.metadata,
-              );
-            },
-          ));
-        }
+                movieMetadata: widget.metadata);
+          },
+        ));
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
+          SnackBar(
             content: Text(
-              'The movie couldn\'t be found on our servers :(',
+              tr("movie_vid_404"),
               maxLines: 3,
               style: kTextSmallBodyStyle,
             ),
-            duration: Duration(seconds: 3),
+            duration: const Duration(seconds: 3),
           ),
         );
         Navigator.pop(context);
@@ -263,7 +201,10 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            'The movie couldn\'t be found on our servers :( Error: ${e.toString()}',
+            tr(
+              "movie_vid_404_desc",
+              namedArgs: {"error": e.toString()},
+            ),
             maxLines: 3,
             style: kTextSmallBodyStyle,
           ),
@@ -368,8 +309,8 @@ class _MovieVideoLoaderNoAdsState extends State<MovieVideoLoaderNoAds> {
   void loadVideo() async {
     try {
       await moviesApi()
-          .fetchMoviesForStream(
-              Endpoints.searchMovieTVForStream1(widget.metadata.elementAt(1), appDep.consumetUrl))
+          .fetchMoviesForStream(Endpoints.searchMovieTVForStream(
+              widget.metadata.elementAt(1), appDep.consumetUrl))
           .then((value) {
         if (mounted) {
           setState(() {
@@ -382,16 +323,16 @@ class _MovieVideoLoaderNoAdsState extends State<MovieVideoLoaderNoAds> {
         if (movies![i].releaseDate == widget.metadata.elementAt(3).toString() &&
             movies![i].type == 'Movie') {
           await moviesApi()
-              .getMovieStreamEpisodes(
-                  Endpoints.getMovieTVStreamInfo1(movies![i].id!, appDep.consumetUrl))
+              .getMovieStreamEpisodes(Endpoints.getMovieTVStreamInfo(
+                  movies![i].id!, appDep.consumetUrl))
               .then((value) {
             setState(() {
               epi = value;
             });
           });
           await moviesApi()
-              .getMovieStreamLinksAndSubs(
-                  Endpoints.getMovieTVStreamLinks1(epi![0].id!, movies![i].id!, appDep.consumetUrl))
+              .getMovieStreamLinksAndSubs(Endpoints.getMovieTVStreamLinks(
+                  epi![0].id!, movies![i].id!, appDep.consumetUrl))
               .then((value) {
             setState(() {
               movieVideoSources = value;
@@ -461,71 +402,10 @@ class _MovieVideoLoaderNoAdsState extends State<MovieVideoLoaderNoAds> {
           videos.entries.toList().reversed.toList();
       Map<String, String> reversedVids = Map.fromEntries(reversedVideoList);
 
-      void streamSelectBottomSheet({
-        required Map vids,
-      }) {
-        final downloadProvider =
-            Provider.of<DownloadProvider>(context, listen: false);
-        vids.removeWhere((key, value) => key == 'auto');
-        showModalBottomSheet(
-          context: context,
-          builder: (builder) {
-            //final mixpanel = Provider.of<SettingsProvider>(context).mixpanel;
-            return Container(
-                padding: const EdgeInsets.all(8),
-                height: 300,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Download: "${widget.metadata.elementAt(1)}"',
-                      textAlign: TextAlign.center,
-                    ),
-                    const Text(
-                      'Choose resolution:',
-                      style: kTextSmallHeaderStyle,
-                    ),
-                    Column(
-                      children: [
-                        for (var entry in vids.entries)
-                          InkWell(
-                            child: ListTile(
-                              onTap: () {
-                                Directory? appDir = Directory(
-                                    "storage/emulated/0/Cinemax/Backdrops");
-
-                                // String outputPath =
-                                //     "${appDir!.path}/output1.mp4";
-                                Download dwn = Download(
-                                    input: entry.value,
-                                    output:
-                                        '${appDir.path}/${widget.metadata.elementAt(1)}_${entry.key}p_Downloaded_from_Cinemax.mp4',
-                                    progress: 0.0);
-                                downloadProvider.addDownload(dwn);
-                                downloadProvider.startDownload(dwn);
-                              },
-                              title: Text(entry.key),
-                              trailing:
-                                  const Icon(Icons.arrow_forward_ios_rounded),
-                            ),
-                          ),
-                      ],
-                    )
-                  ],
-                ));
-          },
-        );
-      }
-
       if (movieVideoLinks != null && movieVideoSubs != null) {
-        if (widget.download) {
-          Navigator.pop(context);
-          streamSelectBottomSheet(vids: reversedVids);
-        } else {
-          Navigator.pushReplacement(context, MaterialPageRoute(
-            builder: (context) {
-              return Player(
+        Navigator.pushReplacement(context, MaterialPageRoute(
+          builder: (context) {
+            return Player(
                 mediaType: MediaType.movie,
                 sources: reversedVids,
                 subs: subs,
@@ -534,20 +414,18 @@ class _MovieVideoLoaderNoAdsState extends State<MovieVideoLoaderNoAds> {
                   Theme.of(context).colorScheme.background
                 ],
                 settings: settings,
-                movieMetadata: widget.metadata,
-              );
-            },
-          ));
-        }
+                movieMetadata: widget.metadata);
+          },
+        ));
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
+          SnackBar(
             content: Text(
-              'The movie couldn\'t be found on our servers :(',
+              tr("movie_vid_404"),
               maxLines: 3,
               style: kTextSmallBodyStyle,
             ),
-            duration: Duration(seconds: 3),
+            duration: const Duration(seconds: 3),
           ),
         );
         Navigator.pop(context);
@@ -556,7 +434,10 @@ class _MovieVideoLoaderNoAdsState extends State<MovieVideoLoaderNoAds> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            'The movie couldn\'t be found on our servers :( Error: ${e.toString()}',
+            tr(
+              "movie_vid_404_desc",
+              namedArgs: {"error": e.toString()},
+            ),
             maxLines: 3,
             style: kTextSmallBodyStyle,
           ),

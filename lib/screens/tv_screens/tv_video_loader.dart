@@ -63,7 +63,7 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
 
   void loadVideo() async {
     try {
-      await tvApi().fetchTVForStream(Endpoints.searchMovieTVForStream1(
+      await tvApi().fetchTVForStream(Endpoints.searchMovieTVForStream(
               widget.metadata.elementAt(1), appDep.consumetUrl))
           .then((value) {
         if (mounted) {
@@ -75,7 +75,7 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
       for (int i = 0; i < tvShows!.length; i++) {
         if (tvShows![i].seasons == widget.metadata.elementAt(5) &&
             tvShows![i].type == 'TV Series') {
-          await tvApi().getTVStreamEpisodes(Endpoints.getMovieTVStreamInfo1(
+          await tvApi().getTVStreamEpisodes(Endpoints.getMovieTVStreamInfo(
                   tvShows![i].id!, appDep.consumetUrl))
               .then((value) {
             setState(() {
@@ -87,7 +87,7 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
           for (int k = 0; k < epi!.length; k++) {
             if (epi![k].episode == widget.metadata.elementAt(3) &&
                 epi![k].season == widget.metadata.elementAt(4)) {
-              await tvApi().getTVStreamLinksAndSubs(Endpoints.getMovieTVStreamLinks1(
+              await tvApi().getTVStreamLinksAndSubs(Endpoints.getMovieTVStreamLinks(
                       epi![k].id!, tvShows![i].id!, appDep.consumetUrl))
                   .then((value) {
                 setState(() {
@@ -105,7 +105,7 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
 
         if (tvShows![i].seasons == (widget.metadata.elementAt(5) - 1) &&
             tvShows![i].type == 'TV Series') {
-          await tvApi().getTVStreamEpisodes(Endpoints.getMovieTVStreamInfo1(
+          await tvApi().getTVStreamEpisodes(Endpoints.getMovieTVStreamInfo(
                   tvShows![i].id!, appDep.consumetUrl))
               .then((value) {
             setState(() {
@@ -117,7 +117,7 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
           for (int k = 0; k < epi!.length; k++) {
             if (epi![k].episode == widget.metadata.elementAt(3) &&
                 epi![k].season == widget.metadata.elementAt(4)) {
-              await tvApi().getTVStreamLinksAndSubs(Endpoints.getMovieTVStreamLinks1(
+              await tvApi().getTVStreamLinksAndSubs(Endpoints.getMovieTVStreamLinks(
                       epi![k].id!, tvShows![i].id!, appDep.consumetUrl))
                   .then((value) {
                 setState(() {
