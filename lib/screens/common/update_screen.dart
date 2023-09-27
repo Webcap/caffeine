@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_download_manager/flutter_download_manager.dart';
 import 'package:caffiene/models/functions.dart';
@@ -11,7 +12,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
 class UpdateScreen extends StatefulWidget {
-  const UpdateScreen({super.key});
+  const UpdateScreen({Key? key}) : super(key: key);
 
   @override
   State<UpdateScreen> createState() => _UpdateScreenState();
@@ -45,7 +46,7 @@ class _UpdateScreenState extends State<UpdateScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Check for update'),
+        title: Text(tr("check_for_update")),
       ),
       body: Container(
           child: updateChecker == null
@@ -56,12 +57,14 @@ class _UpdateScreenState extends State<UpdateScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          const Text(
-                            'Update is available!',
+                          Text(
+                            tr("update_available"),
                             style: kTextHeaderStyle,
                           ),
                           Text(
-                            'New update version: ${updateChecker!.versionNumber!}',
+                            tr("new_version", namedArgs: {
+                              "v": updateChecker!.versionNumber!
+                            }),
                             style: kTextSmallBodyStyle,
                           ),
                           ElevatedButton(
@@ -70,7 +73,7 @@ class _UpdateScreenState extends State<UpdateScreen> {
                                     context: context,
                                     builder: (_) {
                                       return SimpleDialog(
-                                          title: const Text('Changelogs'),
+                                          title: Text(tr("changelogs")),
                                           children: [
                                             Padding(
                                               padding:
@@ -81,7 +84,7 @@ class _UpdateScreenState extends State<UpdateScreen> {
                                           ]);
                                     });
                               },
-                              child: const Text('See changelogs')),
+                              child: Text(tr("see_changelogs"))),
                           ListItem(
                               appVersion: updateChecker!.versionNumber!,
                               onDownloadPlayPausedPressed: (url) async {
@@ -132,9 +135,9 @@ class _UpdateScreenState extends State<UpdateScreen> {
                         ],
                       ),
                     )
-                  : const Center(
+                  : Center(
                       child: Text(
-                        'No need to download anything, Your app version is up-to-date!',
+                        tr("no_update"),
                         textAlign: TextAlign.center,
                         style: kTextHeaderStyle,
                       ),
@@ -189,7 +192,7 @@ class _ListItemState extends State<ListItem> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
-                      'caffiene v${widget.appVersion}',
+                      'Caffiene v${widget.appVersion}',
                       overflow: TextOverflow.ellipsis,
                       style: kTextSmallBodyStyle,
                     ),
@@ -201,17 +204,17 @@ class _ListItemState extends State<ListItem> {
                               padding: const EdgeInsets.symmetric(vertical: 8),
                               child: Text(
                                   value == DownloadStatus.downloading
-                                      ? 'downloading file...'
+                                      ? tr("downloading_file")
                                       : value == DownloadStatus.completed
-                                          ? 'file downloaded'
+                                          ? tr("file_downloaded")
                                           : value == DownloadStatus.failed
-                                              ? 'downloading failed'
+                                              ? tr("downloading_failed")
                                               : value == DownloadStatus.paused
-                                                  ? 'downloading paused'
+                                                  ? tr("downloading_paused")
                                                   : value ==
                                                           DownloadStatus
                                                               .canceled
-                                                      ? 'download cancelled'
+                                                      ? tr("download_cancelled")
                                                       : value.toString(),
                                   style: const TextStyle(fontSize: 16)),
                             );
@@ -246,14 +249,14 @@ class _ListItemState extends State<ListItem> {
                               onPressed: () {
                                 widget.onDownloadPlayPausedPressed(widget.url);
                               },
-                              child: const Text('PAUSE'));
+                              child: Text(tr("pause")));
 
                         case DownloadStatus.paused:
                           return ElevatedButton(
                               onPressed: () {
                                 widget.onDownloadPlayPausedPressed(widget.url);
                               },
-                              child: const Text('RESUME'));
+                              child: Text(tr("resume")));
 
                         case DownloadStatus.completed:
                           return Row(
@@ -266,13 +269,13 @@ class _ListItemState extends State<ListItem> {
                                     onPressed: () {
                                       widget.onOpen(widget.url);
                                     },
-                                    child: const Text('INSTALL')),
+                                    child: Text(tr("install"))),
                               ),
                               ElevatedButton(
                                   onPressed: () {
                                     widget.onDelete(widget.url);
                                   },
-                                  child: const Text('DELETE')),
+                                  child: Text(tr("delete"))),
                             ],
                           );
                         case DownloadStatus.failed:
@@ -284,7 +287,7 @@ class _ListItemState extends State<ListItem> {
                                 });
                                 widget.onDownloadPlayPausedPressed(widget.url);
                               },
-                              child: const Text('DOWNLOAD'));
+                              child: Text(tr("download")));
                         case DownloadStatus.queued:
                           break;
                       }
@@ -297,7 +300,7 @@ class _ListItemState extends State<ListItem> {
                           properties: {'App version': widget.appVersion});
                       widget.onDownloadPlayPausedPressed(widget.url);
                     },
-                    child: const Text('DOWNLOAD'))
+                    child: Text(tr("download")))
           ],
         ),
       ),

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/api/endpoints.dart';
 import 'package:caffiene/models/credits.dart';
@@ -34,16 +35,15 @@ class _TVSeasonCastAndCrewState extends State<TVSeasonCastAndCrew>
 
   @override
   Widget build(BuildContext context) {
-    // print(widget.id);
-    // print(widget.seasonNumber);
+    final lang = Provider.of<SettingsProvider>(context).appLanguage;
     final isDark = Provider.of<SettingsProvider>(context).darktheme;
     return DefaultTabController(
         length: 2,
         child: Scaffold(
           appBar: AppBar(
             elevation: 3,
-            title: const Text(
-              'Cast And Crew',
+            title: Text(
+              tr("cast_and_crew"),
             ),
             leading: IconButton(
               icon: const Icon(
@@ -59,14 +59,14 @@ class _TVSeasonCastAndCrewState extends State<TVSeasonCastAndCrew>
               Container(
                 color: Colors.grey,
                 child: TabBar(
-                  tabs: const [
+                  tabs: [
                     Tab(
                         child: Text(
-                      'Cast',
+                      tr("cast"),
                     )),
                     Tab(
                         child: Text(
-                      'Crew',
+                      tr("crew"),
                     ))
                   ],
                   indicatorColor: isDark ? Colors.white : Colors.black,
@@ -90,11 +90,11 @@ class _TVSeasonCastAndCrewState extends State<TVSeasonCastAndCrew>
                   children: [
                     TVCastTab(
                       api: Endpoints.getFullTVSeasonCreditsUrl(
-                          widget.id, widget.seasonNumber),
+                          widget.id, widget.seasonNumber, lang),
                     ),
                     TVCrewTab(
                       api: Endpoints.getFullTVSeasonCreditsUrl(
-                          widget.id, widget.seasonNumber),
+                          widget.id, widget.seasonNumber, lang),
                     )
                   ],
                 ),

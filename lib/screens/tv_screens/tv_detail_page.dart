@@ -1,15 +1,17 @@
 // ignore_for_file: avoid_unnecessary_containers
 
+import 'package:caffiene/api/endpoints.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/screens/common/sabth.dart';
 import 'package:caffiene/screens/tv_screens/widgets/tv_about.dart';
 import 'package:caffiene/screens/tv_screens/widgets/tv_detail_options.dart';
 import 'package:caffiene/screens/tv_screens/widgets/tv_detail_quick_info.dart';
+import 'package:caffiene/screens/tv_screens/widgets/tv_widgets.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import '/models/tv.dart';
 import 'package:flutter/material.dart';
-
 
 class TVDetailPage extends StatefulWidget {
   final TV tvSeries;
@@ -76,17 +78,14 @@ class TVDetailPageState extends State<TVDetailPage>
                 color: Theme.of(context).colorScheme.onBackground,
               ),
             )),
-            expandedHeight: 380,
+            expandedHeight: 390,
             flexibleSpace: FlexibleSpaceBar(
               collapseMode: CollapseMode.pin,
               background: Column(
                 children: [
                   TVDetailQuickInfo(
                       tvSeries: widget.tvSeries, heroId: widget.heroId),
-
                   const SizedBox(height: 18),
-
-                  // ratings / lists / bookmark options
                   TVDetailOptions(tvSeries: widget.tvSeries),
                 ],
               ),
@@ -101,8 +100,11 @@ class TVDetailPageState extends State<TVDetailPage>
       ),
       floatingActionButton: FloatingActionButton(
           onPressed: () async {
-            await Share.share(
-                'Checkout the TV show \'${widget.tvSeries.name}\'!\nIt is rated ${widget.tvSeries.voteAverage!.toStringAsFixed(1)} out of 10\nhttps://themoviedb.org/tv/${widget.tvSeries.id}');
+            await Share.share(tr("share_tv", namedArgs: {
+              "title": widget.tvSeries.name!,
+              "rating": widget.tvSeries.voteAverage!.toStringAsFixed(1),
+              "id": widget.tvSeries.id.toString()
+            }));
           },
           child: const Icon(Icons.share)),
     );
@@ -111,15 +113,16 @@ class TVDetailPageState extends State<TVDetailPage>
   @override
   bool get wantKeepAlive => true;
 
-  // void modalBottomSheetMenu(String country) {
-  //   showModalBottomSheet(
-  //     context: context,
-  //     builder: (builder) {
-  //       return TVWatchProvidersDetails(
-  //         api: Endpoints.getTVWatchProviders(widget.tvSeries.id!),
-  //         country: country,
-  //       );
-  //     },
-  //   );
-  // }
+  void modalBottomSheetMenu(String country) {
+    final lang = Provider.of<SettingsProvider>(context).appLanguage;
+    showModalBottomSheet(
+      context: context,
+      builder: (builder) {
+        return TVWatchProvidersDetails(
+          api: Endpoints.getTVWatchProviders(widget.tvSeries.id!, lang),
+          country: country,
+        );
+      },
+    );
+  }
 }

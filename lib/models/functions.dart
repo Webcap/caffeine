@@ -9,7 +9,7 @@ import 'package:caffiene/utils/config.dart';
 void initializeApp() {}
 
 Future<String> getVttFileAsString(String url) async {
-  print('vtt');
+  print(url);
   try {
     var response = await retryOptions.retry(
       () => http.get(Uri.parse(url)),

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/api/endpoints.dart';
 import 'package:caffiene/models/credits.dart';
@@ -31,13 +32,14 @@ class _TVDetailCastAndCrewState extends State<TVDetailCastAndCrew>
   @override
   Widget build(BuildContext context) {
     final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final lang = Provider.of<SettingsProvider>(context).appLanguage;
     return DefaultTabController(
         length: 2,
         child: Scaffold(
           appBar: AppBar(
             elevation: 3,
-            title: const Text(
-              'Cast And Crew',
+            title: Text(
+              tr("cast_and_crew"),
             ),
             leading: IconButton(
               icon: const Icon(
@@ -53,14 +55,14 @@ class _TVDetailCastAndCrewState extends State<TVDetailCastAndCrew>
               Container(
                 color: Colors.grey,
                 child: TabBar(
-                  tabs: const [
+                  tabs: [
                     Tab(
                         child: Text(
-                      'Cast',
+                      tr("cast"),
                     )),
                     Tab(
                         child: Text(
-                      'Crew',
+                      tr("crew"),
                     ))
                   ],
                   indicatorColor: isDark ? Colors.white : Colors.black,
@@ -83,10 +85,10 @@ class _TVDetailCastAndCrewState extends State<TVDetailCastAndCrew>
                   controller: tabController,
                   children: [
                     TVCastTab(
-                      api: Endpoints.getFullTVCreditsUrl(widget.id),
+                      api: Endpoints.getFullTVCreditsUrl(widget.id, lang),
                     ),
                     TVCrewTab(
-                      api: Endpoints.getFullTVCreditsUrl(widget.id),
+                      api: Endpoints.getFullTVCreditsUrl(widget.id, lang),
                     )
                   ],
                 ),

@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/controller/database_controller.dart';
 import 'package:caffiene/models/tv.dart';
@@ -38,9 +39,9 @@ class _TVBookmarkState extends State<TVBookmark> {
                     scrollController: _scrollController,
                     isLoading: false))
             : widget.tvList!.isEmpty
-                ? const Center(
+                ? Center(
                     child: Text(
-                      'You don\'t have any TV shows bookmarked :)',
+                      tr("no_tv_bookmarked"),
                       textAlign: TextAlign.center,
                       style: kTextSmallHeaderStyle,
                       maxLines: 4,
@@ -89,148 +90,135 @@ class _TVBookmarkState extends State<TVBookmark> {
                                                       child: Hero(
                                                         tag:
                                                             '${widget.tvList![index].id}',
-                                                        child: Stack(
-                                                          alignment:
-                                                              Alignment.center,
-                                                          children: [
-                                                            ClipRRect(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          8.0),
-                                                              child: widget
-                                                                          .tvList![
-                                                                              index]
-                                                                          .posterPath ==
-                                                                      null
-                                                                  ? Image.asset(
-                                                                      'assets/images/na_rect.png',
-                                                                      fit: BoxFit
-                                                                          .cover,
-                                                                    )
-                                                                  : CachedNetworkImage(
-                                                                      cacheManager:
-                                                                          cacheProp(),
-                                                                      fadeOutDuration:
-                                                                          const Duration(
-                                                                              milliseconds: 300),
-                                                                      fadeOutCurve:
-                                                                          Curves
-                                                                              .easeOut,
-                                                                      fadeInDuration:
-                                                                          const Duration(
-                                                                              milliseconds: 700),
-                                                                      fadeInCurve:
-                                                                          Curves
-                                                                              .easeIn,
-                                                                      imageUrl: TMDB_BASE_IMAGE_URL +
-                                                                          imageQuality +
-                                                                          widget
-                                                                              .tvList![index]
-                                                                              .posterPath!,
-                                                                      imageBuilder:
-                                                                          (context, imageProvider) =>
-                                                                              Container(
-                                                                        decoration:
-                                                                            BoxDecoration(
-                                                                          image:
-                                                                              DecorationImage(
-                                                                            image:
-                                                                                imageProvider,
-                                                                            fit:
-                                                                                BoxFit.cover,
-                                                                          ),
-                                                                        ),
-                                                                      ),
-                                                                      placeholder: (context,
-                                                                              url) =>
-                                                                          scrollingImageShimmer1(
-                                                                              isDark),
-                                                                      errorWidget: (context,
-                                                                              url,
-                                                                              error) =>
-                                                                          Image
-                                                                              .asset(
+                                                        child: Material(
+                                                          type: MaterialType
+                                                              .transparency,
+                                                          child: Stack(
+                                                            alignment: Alignment
+                                                                .center,
+                                                            children: [
+                                                              ClipRRect(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            8.0),
+                                                                child: widget
+                                                                            .tvList![
+                                                                                index]
+                                                                            .posterPath ==
+                                                                        null
+                                                                    ? Image
+                                                                        .asset(
                                                                         'assets/images/na_rect.png',
                                                                         fit: BoxFit
                                                                             .cover,
+                                                                      )
+                                                                    : CachedNetworkImage(
+                                                                        cacheManager:
+                                                                            cacheProp(),
+                                                                        fadeOutDuration:
+                                                                            const Duration(milliseconds: 300),
+                                                                        fadeOutCurve:
+                                                                            Curves.easeOut,
+                                                                        fadeInDuration:
+                                                                            const Duration(milliseconds: 700),
+                                                                        fadeInCurve:
+                                                                            Curves.easeIn,
+                                                                        imageUrl: TMDB_BASE_IMAGE_URL +
+                                                                            imageQuality +
+                                                                            widget.tvList![index].posterPath!,
+                                                                        imageBuilder:
+                                                                            (context, imageProvider) =>
+                                                                                Container(
+                                                                          decoration:
+                                                                              BoxDecoration(
+                                                                            image:
+                                                                                DecorationImage(
+                                                                              image: imageProvider,
+                                                                              fit: BoxFit.cover,
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                        placeholder:
+                                                                            (context, url) =>
+                                                                                scrollingImageShimmer1(isDark),
+                                                                        errorWidget: (context,
+                                                                                url,
+                                                                                error) =>
+                                                                            Image.asset(
+                                                                          'assets/images/na_rect.png',
+                                                                          fit: BoxFit
+                                                                              .cover,
+                                                                        ),
                                                                       ),
-                                                                    ),
-                                                            ),
-                                                            Positioned(
-                                                              top: 0,
-                                                              left: 0,
-                                                              child: Container(
-                                                                margin:
-                                                                    const EdgeInsets
-                                                                        .all(3),
-                                                                alignment:
-                                                                    Alignment
-                                                                        .topLeft,
-                                                                width: 50,
-                                                                height: 25,
-                                                                decoration: BoxDecoration(
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(
-                                                                                8),
-                                                                    color: isDark
-                                                                        ? Colors
-                                                                            .black45
-                                                                        : Colors
-                                                                            .white60),
-                                                                child: Row(
-                                                                  children: [
-                                                                    const Icon(
-                                                                      Icons
-                                                                          .star,
-                                                                    ),
-                                                                    Text(widget
-                                                                        .tvList![
-                                                                            index]
-                                                                        .voteAverage!
-                                                                        .toStringAsFixed(
-                                                                            1))
-                                                                  ],
-                                                                ),
                                                               ),
-                                                            ),
-                                                            Positioned(
-                                                              top: -15,
-                                                              right: 8,
-                                                              child: Container(
+                                                              Positioned(
+                                                                top: 0,
+                                                                left: 0,
+                                                                child:
+                                                                    Container(
+                                                                  margin:
+                                                                      const EdgeInsets
+                                                                          .all(3),
                                                                   alignment:
                                                                       Alignment
-                                                                          .topRight,
-                                                                  child:
-                                                                      IconButton(
-                                                                    alignment:
-                                                                        Alignment
-                                                                            .topRight,
-                                                                    onPressed:
-                                                                        () async {
-                                                                      tvDatabaseController.deleteTV(widget
+                                                                          .topLeft,
+                                                                  width: 50,
+                                                                  height: 25,
+                                                                  decoration: BoxDecoration(
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              8),
+                                                                      color: isDark
+                                                                          ? Colors
+                                                                              .black45
+                                                                          : Colors
+                                                                              .white60),
+                                                                  child: Row(
+                                                                    children: [
+                                                                      const Icon(
+                                                                        Icons
+                                                                            .star,
+                                                                      ),
+                                                                      Text(widget
                                                                           .tvList![
                                                                               index]
-                                                                          .id!);
-                                                                      //  movieList[index].favorite = false;
-                                                                      if (mounted) {
-                                                                        setState(
-                                                                            () {
-                                                                          widget
-                                                                              .tvList!
-                                                                              .removeAt(index);
-                                                                        });
-                                                                      }
-                                                                    },
-                                                                    icon: const Icon(
-                                                                        Icons
-                                                                            .bookmark_remove,
-                                                                        size:
-                                                                            60),
-                                                                  )),
-                                                            ),
-                                                          ],
+                                                                          .voteAverage!
+                                                                          .toStringAsFixed(
+                                                                              1))
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              Positioned(
+                                                                top: -15,
+                                                                right: 8,
+                                                                child:
+                                                                    Container(
+                                                                        alignment:
+                                                                            Alignment
+                                                                                .topRight,
+                                                                        child:
+                                                                            IconButton(
+                                                                          alignment:
+                                                                              Alignment.topRight,
+                                                                          onPressed:
+                                                                              () async {
+                                                                            tvDatabaseController.deleteTV(widget.tvList![index].id!);
+                                                                            //  movieList[index].favorite = false;
+                                                                            if (mounted) {
+                                                                              setState(() {
+                                                                                widget.tvList!.removeAt(index);
+                                                                              });
+                                                                            }
+                                                                          },
+                                                                          icon: const Icon(
+                                                                              Icons.bookmark_remove,
+                                                                              size: 60),
+                                                                        )),
+                                                              ),
+                                                            ],
+                                                          ),
                                                         ),
                                                       ),
                                                     ),
@@ -377,8 +365,7 @@ class _TVBookmarkState extends State<TVBookmark> {
                                                                               .ellipsis),
                                                                 ),
                                                                 Row(
-                                                                  children: <
-                                                                      Widget>[
+                                                                  children: <Widget>[
                                                                     const Icon(
                                                                       Icons
                                                                           .star,

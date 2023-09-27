@@ -48,10 +48,10 @@ class _HeroPhotoViewState extends State<HeroPhotoView> {
   //   final stillFolderName = stillFolder;
   //   final cinemaxPath = Directory("storage/emulated/0/$cinefolderName");
   //   final imageTypePath =
-  //       Directory("storage/emulated/0/Cinemax/$imagefolderName");
+  //       Directory("storage/emulated/0/caffiene/$imagefolderName");
   //   final posterPath =
-  //       Directory("storage/emulated/0/Cinemax/$posterFolderName");
-  //   final stillPath = Directory("storage/emulated/0/Cinemax/$stillFolderName");
+  //       Directory("storage/emulated/0/caffiene/$posterFolderName");
+  //   final stillPath = Directory("storage/emulated/0/caffiene/$stillFolderName");
   //   var storageStatus = await Permission.storage.status;
   //   var externalStatus = await Permission.manageExternalStorage.status;
   //   var mediaStatus = await Permission.accessMediaLocation.status;
@@ -83,16 +83,16 @@ class _HeroPhotoViewState extends State<HeroPhotoView> {
   //   // final status2 = await Permission.accessMediaLocation.request();
 
   //   if (status.isGranted) {
-  //     await createFolder('Cinemax', 'Backdrops', 'Posters', 'Stills');
+  //     await createFolder('caffiene', 'Backdrops', 'Posters', 'Stills');
   //     await FlutterDownloader.enqueue(
   //       url: url,
   //       fileName: '${widget.name}_${widget.imageType}_$currentIndex.jpg',
   //       headers: {}, // optional: header send with url (auth token etc)
   //       savedDir: widget.imageType == 'backdrop'
-  //           ? '/storage/emulated/0/Cinemax/Backdrops/'
+  //           ? '/storage/emulated/0/caffiene/Backdrops/'
   //           : widget.imageType == 'poster'
-  //               ? '/storage/emulated/0/Cinemax/Stills/'
-  //               : '/storage/emulated/0/Cinemax/Posters/',
+  //               ? '/storage/emulated/0/caffiene/Stills/'
+  //               : '/storage/emulated/0/caffiene/Posters/',
   //       showNotification:
   //           true, // show download progress in status bar (for Android)
   //       openFileFromNotification:
@@ -102,7 +102,7 @@ class _HeroPhotoViewState extends State<HeroPhotoView> {
   //     ScaffoldMessenger.of(context).showSnackBar(
   //       SnackBar(
   //           content: Text(
-  //         'File permission isn\'t given to Cinemax, therefore image couldn\'t be downloaded.',
+  //         'File permission isn\'t given to caffiene, therefore image couldn\'t be downloaded.',
   //         style: TextStyle(
   //             color: isDark ? Colors.white : Colors.black,
   //             fontFamily: 'PoppinsSB'),

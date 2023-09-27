@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/controller/database_controller.dart';
@@ -48,7 +49,7 @@ class _SyncScreenState extends State<SyncScreen>
 
   Future<bool> checkIfDocExists(String docId) async {
     try {
-      var collectionRef = firebaseInstance.collection('bookmarks');
+      var collectionRef = firebaseInstance.collection('bookmarks-v2.0');
       var doc = await collectionRef.doc(docId).get();
       return doc.exists;
     } catch (e) {
@@ -67,29 +68,29 @@ class _SyncScreenState extends State<SyncScreen>
 
     // Checks if a bookmark document exists for a signed in user
     if (await checkIfDocExists(uid!) == false) {
-      await firebaseInstance.collection('bookmarks').doc(uid!).set({});
+      await firebaseInstance.collection('bookmarks-v2.0').doc(uid!).set({});
     }
 
     // Checks if a movie and tvShow collection exists for a signed in user and creates a collection if it doesn't exist
     subscription =
-        await firebaseInstance.collection('bookmarks').doc(uid!).get();
+        await firebaseInstance.collection('bookmarks-v2.0').doc(uid!).get();
     final docData = subscription.data() as Map<String, dynamic>;
 
     if (docData.containsKey('movies') == false) {
-      await firebaseInstance.collection('bookmarks').doc(uid!).update(
+      await firebaseInstance.collection('bookmarks-v2.0').doc(uid!).update(
         {'movies': []},
       );
     }
 
     if (docData.containsKey('tvShows') == false) {
-      await firebaseInstance.collection('bookmarks').doc(uid!).update(
+      await firebaseInstance.collection('bookmarks-v2.0').doc(uid!).update(
         {'tvShows': []},
       );
     }
 
     // Fetches movies and tvShows of the signed in user and converts the map into a Movie/TV object/list
     await firebaseInstance
-        .collection('bookmarks')
+        .collection('bookmarks-v2.0')
         .doc(uid!)
         .get()
         .then((value) {
@@ -104,7 +105,7 @@ class _SyncScreenState extends State<SyncScreen>
     });
 
     await firebaseInstance
-        .collection('bookmarks')
+        .collection('bookmarks-v2.0')
         .doc(uid!)
         .get()
         .then((value) {
@@ -150,16 +151,18 @@ class _SyncScreenState extends State<SyncScreen>
       setState(() {
         isOfflineMovieSyncFinished = true;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Finished syncing to local/offline bookmark',
-            maxLines: 3,
-            style: kTextSmallBodyStyle,
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              tr("finished_sync_local"),
+              maxLines: 3,
+              style: kTextSmallBodyStyle,
+            ),
+            duration: const Duration(seconds: 2),
           ),
-          duration: Duration(seconds: 2),
-        ),
-      );
+        );
+      }
       //  print(isOfflineMovieSyncFinished);
     }
   }
@@ -189,16 +192,18 @@ class _SyncScreenState extends State<SyncScreen>
       setState(() {
         isOfflineTVSyncFinished = true;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Finished syncing to local/offline bookmark',
-            style: kTextSmallBodyStyle,
-            maxLines: 3,
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              tr("finished_sync_local"),
+              style: kTextSmallBodyStyle,
+              maxLines: 3,
+            ),
+            duration: const Duration(seconds: 2),
           ),
-          duration: Duration(seconds: 2),
-        ),
-      );
+        );
+      }
     }
   }
 
@@ -215,7 +220,7 @@ class _SyncScreenState extends State<SyncScreen>
     try {
       // fetches movie map from firebase and converts it into a list of movie
       await firebaseInstance
-          .collection('bookmarks')
+          .collection('bookmarks-v2.0')
           .doc(uid!)
           .get()
           .then((value) {
@@ -237,8 +242,9 @@ class _SyncScreenState extends State<SyncScreen>
         });
       }
 
-      // Calculates the differences between the converted firebase items and sqlite items
       List<Movie> difference = [];
+
+      difference.addAll(firebaseMovieForOnlineSync);
 
       bool containsById(List<Movie> list, int id) {
         return list.any((item) => item.id == id);
@@ -249,6 +255,7 @@ class _SyncScreenState extends State<SyncScreen>
           difference.add(movie);
         }
       }
+      // Calculates the differences between the converted firebase items and sqlite items
       // List<Movie> difference = sqliteMovieForOnlineSync
       //     .toSet()
       //     .difference(firebaseMovieForOnlineSync.toSet())
@@ -260,23 +267,25 @@ class _SyncScreenState extends State<SyncScreen>
       }
 
       // finally update the firebase collection with the new difference list of maps
-      await firebaseInstance.collection('bookmarks').doc(uid!).update(
+      await firebaseInstance.collection('bookmarks-v2.0').doc(uid!).update(
         {'movies': toFirebase},
       );
     } finally {
       setState(() {
         isOnlineMovieSyncFinished = true;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Finished syncing to online bookmark',
-            maxLines: 3,
-            style: kTextSmallBodyStyle,
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              tr("finished_sync_online"),
+              maxLines: 3,
+              style: kTextSmallBodyStyle,
+            ),
+            duration: const Duration(seconds: 2),
           ),
-          duration: Duration(seconds: 2),
-        ),
-      );
+        );
+      }
       getSavedMoviesAndTV();
     }
   }
@@ -291,7 +300,7 @@ class _SyncScreenState extends State<SyncScreen>
     List<Map<String, dynamic>> toFirebase = [];
     try {
       await firebaseInstance
-          .collection('bookmarks')
+          .collection('bookmarks-v2.0')
           .doc(uid!)
           .get()
           .then((value) {
@@ -334,23 +343,25 @@ class _SyncScreenState extends State<SyncScreen>
         toFirebase.add(difference[i].toMap());
       }
 
-      await firebaseInstance.collection('bookmarks').doc(uid!).update(
+      await firebaseInstance.collection('bookmarks-v2.0').doc(uid!).update(
         {'tvShows': toFirebase},
       );
     } finally {
       setState(() {
         isOnlineTVSyncFinished = true;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Finished syncing to online bookmark',
-            maxLines: 3,
-            style: kTextSmallBodyStyle,
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              tr("finished_sync_online"),
+              maxLines: 3,
+              style: kTextSmallBodyStyle,
+            ),
+            duration: const Duration(seconds: 2),
           ),
-          duration: Duration(seconds: 2),
-        ),
-      );
+        );
+      }
       getSavedMoviesAndTV();
     }
   }
@@ -359,7 +370,7 @@ class _SyncScreenState extends State<SyncScreen>
   void deleteMovieFromFirebase(int index) async {
     // Get the document
     DocumentReference documentReference =
-        firebaseInstance.collection('bookmarks').doc(uid!);
+        firebaseInstance.collection('bookmarks-v2.0').doc(uid!);
 
     // Get all list of map/array from firebase
     List<dynamic> array = (await documentReference.get()).get('movies');
@@ -376,7 +387,7 @@ class _SyncScreenState extends State<SyncScreen>
   // Same functionality with deleteMovieFromFirebase()
   void deleteTVFromFirebase(int index) async {
     DocumentReference documentReference =
-        firebaseInstance.collection('bookmarks').doc(uid!);
+        firebaseInstance.collection('bookmarks-v2.0').doc(uid!);
 
     List<dynamic> array = (await documentReference.get()).get('tvShows');
     array.removeAt(index);
@@ -393,7 +404,7 @@ class _SyncScreenState extends State<SyncScreen>
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Sync'),
+        title: Text(tr("sync")),
       ),
       body: isLoading!
           ? const Padding(
@@ -405,17 +416,17 @@ class _SyncScreenState extends State<SyncScreen>
                 Container(
                   color: Colors.grey,
                   child: TabBar(
-                    tabs: const [
+                    tabs: [
                       Tab(
                           child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Padding(
+                          const Padding(
                             padding: EdgeInsets.only(right: 8.0),
                             child: Icon(Icons.movie_creation_rounded),
                           ),
                           Text(
-                            'Movies',
+                            tr("movies"),
                           ),
                         ],
                       )),
@@ -423,11 +434,11 @@ class _SyncScreenState extends State<SyncScreen>
                           child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Padding(
+                          const Padding(
                               padding: EdgeInsets.only(right: 8.0),
                               child: Icon(Icons.live_tv_rounded)),
                           Text(
-                            'TV Series',
+                            tr("tv_series"),
                           ),
                         ],
                       ))
@@ -458,9 +469,9 @@ class _SyncScreenState extends State<SyncScreen>
                               ? Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    const Center(
+                                    Center(
                                       child: Text(
-                                        'You don\'t have any Movies synced to online account',
+                                        tr("no_movies_online"),
                                         textAlign: TextAlign.center,
                                         maxLines: 3,
                                         style: kTextSmallBodyStyle,
@@ -478,9 +489,9 @@ class _SyncScreenState extends State<SyncScreen>
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.center,
                                             children: [
-                                              const Expanded(
+                                              Expanded(
                                                 child: Text(
-                                                  'Sync movies to your online account',
+                                                  tr("online_movie_sync"),
                                                   textAlign: TextAlign.center,
                                                   maxLines: 3,
                                                 ),
@@ -509,8 +520,8 @@ class _SyncScreenState extends State<SyncScreen>
                               : Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    const Text(
-                                      'Movies you have bookmarked online:',
+                                    Text(
+                                      tr("movies_online"),
                                       style: kTextSmallHeaderStyle,
                                     ),
                                     SizedBox(
@@ -530,9 +541,9 @@ class _SyncScreenState extends State<SyncScreen>
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.center,
                                             children: [
-                                              const Expanded(
+                                              Expanded(
                                                 child: Text(
-                                                  'Sync to offline movie bookmark',
+                                                  tr("offline_movie_sync"),
                                                   textAlign: TextAlign.center,
                                                   maxLines: 3,
                                                 ),
@@ -568,9 +579,9 @@ class _SyncScreenState extends State<SyncScreen>
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.center,
                                             children: [
-                                              const Expanded(
+                                              Expanded(
                                                 child: Text(
-                                                  'Sync movies to your online account',
+                                                  tr("online_movie_sync"),
                                                   textAlign: TextAlign.center,
                                                   maxLines: 3,
                                                 ),
@@ -606,9 +617,9 @@ class _SyncScreenState extends State<SyncScreen>
                               ? Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    const Center(
+                                    Center(
                                       child: Text(
-                                        'You don\'t have any TV shows synced to online account',
+                                        tr("no_tv_online"),
                                         textAlign: TextAlign.center,
                                         maxLines: 3,
                                         style: kTextSmallBodyStyle,
@@ -626,9 +637,9 @@ class _SyncScreenState extends State<SyncScreen>
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.center,
                                             children: [
-                                              const Expanded(
+                                              Expanded(
                                                 child: Text(
-                                                  'Sync TV shows to your online account',
+                                                  tr("online_tv_sync"),
                                                   textAlign: TextAlign.center,
                                                   maxLines: 3,
                                                 ),
@@ -657,8 +668,8 @@ class _SyncScreenState extends State<SyncScreen>
                               : Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    const Text(
-                                      'TV shows you have bookmarked online:',
+                                    Text(
+                                      tr("tv_online"),
                                       style: kTextSmallHeaderStyle,
                                     ),
                                     SizedBox(
@@ -678,9 +689,9 @@ class _SyncScreenState extends State<SyncScreen>
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.center,
                                             children: [
-                                              const Expanded(
+                                              Expanded(
                                                 child: Text(
-                                                  'Sync to offline tv bookmark',
+                                                  tr("offline_tv_sync"),
                                                   textAlign: TextAlign.center,
                                                   maxLines: 3,
                                                 ),
@@ -716,9 +727,9 @@ class _SyncScreenState extends State<SyncScreen>
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.center,
                                             children: [
-                                              const Expanded(
+                                              Expanded(
                                                 child: Text(
-                                                  'Sync TV shows to your online account',
+                                                  tr("online_tv_sync"),
                                                   textAlign: TextAlign.center,
                                                   maxLines: 3,
                                                 ),
@@ -790,6 +801,7 @@ class _SyncScreenState extends State<SyncScreen>
                                     fit: BoxFit.cover,
                                   )
                                 : CachedNetworkImage(
+                                    cacheManager: cacheProp(),
                                     fadeOutDuration:
                                         const Duration(milliseconds: 300),
                                     fadeOutCurve: Curves.easeOut,
@@ -897,6 +909,7 @@ class _SyncScreenState extends State<SyncScreen>
                                     fit: BoxFit.cover,
                                   )
                                 : CachedNetworkImage(
+                                    cacheManager: cacheProp(),
                                     fadeOutDuration:
                                         const Duration(milliseconds: 300),
                                     fadeOutCurve: Curves.easeOut,

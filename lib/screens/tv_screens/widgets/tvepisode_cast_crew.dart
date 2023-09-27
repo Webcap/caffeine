@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/api/endpoints.dart';
 import 'package:caffiene/models/credits.dart';
@@ -35,17 +36,14 @@ class _TVEpisodeCastAndCrewState extends State<TVEpisodeCastAndCrew>
 
   @override
   Widget build(BuildContext context) {
-    // print(widget.id);
-    // print(widget.seasonNumber);
+    final lang = Provider.of<SettingsProvider>(context).appLanguage;
     final isDark = Provider.of<SettingsProvider>(context).darktheme;
     return DefaultTabController(
         length: 2,
         child: Scaffold(
           appBar: AppBar(
             elevation: 3,
-            title: const Text(
-              'Cast And Crew',
-            ),
+            title: Text(tr("cast_and_crew")),
             leading: IconButton(
               icon: const Icon(
                 Icons.arrow_back,
@@ -63,18 +61,15 @@ class _TVEpisodeCastAndCrewState extends State<TVEpisodeCastAndCrew>
                   width: double.infinity,
                   child: TabBar(
                     physics: const NeverScrollableScrollPhysics(),
-                    tabs: const [
+                    tabs: [
                       Tab(
                           child: Text(
-                        'Cast',
+                        tr("cast"),
                       )),
+                      Tab(child: Text(tr("guest_stars"))),
                       Tab(
                           child: Text(
-                        'Guest Stars',
-                      )),
-                      Tab(
-                          child: Text(
-                        'Crew',
+                        tr("crew"),
                       )),
                     ],
                     indicatorColor: isDark ? Colors.white : Colors.black,
@@ -98,15 +93,15 @@ class _TVEpisodeCastAndCrewState extends State<TVEpisodeCastAndCrew>
                   controller: tabController,
                   children: [
                     TVEpisodeCastTab(
-                      api: Endpoints.getEpisodeCredits(
-                          widget.id, widget.seasonNumber, widget.episodeNumber),
+                      api: Endpoints.getEpisodeCredits(widget.id,
+                          widget.seasonNumber, widget.episodeNumber, lang),
                     ),
                     TVEpisodeGuestStarsTab(
                         api: Endpoints.getEpisodeCredits(widget.id,
-                            widget.seasonNumber, widget.episodeNumber)),
+                            widget.seasonNumber, widget.episodeNumber, lang)),
                     TVCrewTab(
-                      api: Endpoints.getEpisodeCredits(
-                          widget.id, widget.seasonNumber, widget.episodeNumber),
+                      api: Endpoints.getEpisodeCredits(widget.id,
+                          widget.seasonNumber, widget.episodeNumber, lang),
                     )
                   ],
                 ),

@@ -1,4 +1,5 @@
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/api/tv_api.dart';
 import 'package:caffiene/models/tv.dart';
@@ -40,9 +41,7 @@ class MainTVListState extends State<MainTVList> {
           isLoading = true;
         });
 
-        tvApi()
-            .fetchTV(
-                '${widget.api}&page=$pageNum&include_adult=${widget.includeAdult}')
+        tvApi().fetchTV('${widget.api}&page=$pageNum&include_adult=${widget.includeAdult}')
             .then((value) {
           if (mounted) {
             setState(() {
@@ -59,9 +58,7 @@ class MainTVListState extends State<MainTVList> {
   @override
   void initState() {
     super.initState();
-    tvApi()
-        .fetchTV('${widget.api}&include_adult=${widget.includeAdult}')
-        .then((value) {
+    tvApi().fetchTV('${widget.api}&include_adult=${widget.includeAdult}').then((value) {
       if (mounted) {
         setState(() {
           tvList = value;
@@ -78,7 +75,7 @@ class MainTVListState extends State<MainTVList> {
     final viewType = Provider.of<SettingsProvider>(context).defaultView;
     return Scaffold(
       appBar: AppBar(
-        title: Text('${widget.title} TV shows'),
+        title: Text(tr("genre_tv_title", namedArgs: {"g": widget.title})),
       ),
       body: tvList == null && viewType == 'grid'
           ? moviesAndTVShowGridShimmer(isDark)
@@ -92,8 +89,8 @@ class MainTVListState extends State<MainTVList> {
                       isLoading: isLoading,
                       scrollController: _scrollController))
               : tvList!.isEmpty
-                  ? const Center(
-                      child: Text('Oops! the TV shows don\'t exist :('),
+                  ? Center(
+                      child: Text(tr("tv_404")),
                     )
                   : Column(
                       children: [

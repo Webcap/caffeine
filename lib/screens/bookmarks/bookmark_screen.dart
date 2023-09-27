@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/controller/database_controller.dart';
@@ -11,7 +12,7 @@ import 'package:caffiene/utils/config.dart';
 import 'package:provider/provider.dart';
 
 class BookmarkScreen extends StatefulWidget {
-  const BookmarkScreen({super.key});
+  const BookmarkScreen({Key? key}) : super(key: key);
 
   @override
   State<BookmarkScreen> createState() => _BookmarkScreenState();
@@ -69,58 +70,57 @@ class _BookmarkScreenState extends State<BookmarkScreen>
   @override
   Widget build(BuildContext context) {
     final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    // print(movieList!.length);
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: const Icon(Icons.arrow_back),
-        ),
-        title: const Text('Bookmarks'),
-        actions: [
-          IconButton(
+          leading: IconButton(
               onPressed: () {
-                if (user!.isAnonymous) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text(
-                        'This syncing feature is only available for signed in users. Register to caffiene to synchronize your bookmarked movies and tv shows so that you won\'t lose them.',
-                        style: kTextVerySmallBodyStyle,
-                        maxLines: 6,
-                      ),
-                      duration: Duration(seconds: 10),
-                    ),
-                  );
-                } else {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: ((context) {
-                    return const SyncScreen();
-                  }))).then((value) async {
-                    fetchMovieBookmark();
-                    fetchTVBookmark();
-                  });
-                }
+                Navigator.pop(context);
               },
-              icon: const Icon(Icons.sync_sharp))
-        ],
-      ),
+              icon: const Icon(Icons.arrow_back)),
+          title: Text(tr("bookmarks")),
+          actions: [
+            IconButton(
+                onPressed: () {
+                  if (user!.isAnonymous) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          tr("bookmark_feature_notice"),
+                          style: kTextVerySmallBodyStyle,
+                          maxLines: 6,
+                        ),
+                        duration: const Duration(seconds: 10),
+                      ),
+                    );
+                  } else {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: ((context) {
+                      return const SyncScreen();
+                    }))).then((value) async {
+                      fetchMovieBookmark();
+                      fetchTVBookmark();
+                    });
+                  }
+                },
+                icon: const Icon(Icons.sync_sharp))
+          ]),
       body: Column(
         children: [
           Container(
             color: Colors.grey,
             child: TabBar(
-              tabs: const [
+              tabs: [
                 Tab(
                     child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Padding(
+                    const Padding(
                       padding: EdgeInsets.only(right: 8.0),
                       child: Icon(Icons.movie_creation_rounded),
                     ),
                     Text(
-                      'Movies',
+                      tr("movies"),
                     ),
                   ],
                 )),
@@ -128,11 +128,11 @@ class _BookmarkScreenState extends State<BookmarkScreen>
                     child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Padding(
+                    const Padding(
                         padding: EdgeInsets.only(right: 8.0),
                         child: Icon(Icons.live_tv_rounded)),
                     Text(
-                      'TV Series',
+                      tr("tv_series"),
                     ),
                   ],
                 ))

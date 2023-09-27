@@ -1,7 +1,10 @@
 import 'dart:io';
 
+import 'package:caffiene/models/app_languages.dart';
+import 'package:caffiene/screens/settings/language_choose.dart';
 import 'package:caffiene/screens/settings/player_settings.dart';
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:caffiene/models/watchprovider_countries.dart';
@@ -20,12 +23,15 @@ class _SettingsState extends State<Settings> {
   String initialDropdownValue = 'w500';
   int initialHomeScreenValue = 0;
   CountryData countryData = CountryData();
+  LanguageData languageData = LanguageData();
   String? countryFlag;
   String? countryName;
+  String? languageFlag;
+  String? languageName;
   String? release;
   bool isBelow33 = true;
 
-  void androidVerisonCheck() async {
+  void androidVersionCheck() async {
     if (Platform.isAndroid) {
       var androidInfo = await DeviceInfoPlugin().androidInfo;
       var sdkInt = androidInfo.version.sdkInt;
@@ -39,7 +45,7 @@ class _SettingsState extends State<Settings> {
 
   @override
   void initState() {
-    androidVerisonCheck();
+    androidVersionCheck();
     super.initState();
   }
 
@@ -50,6 +56,7 @@ class _SettingsState extends State<Settings> {
     final imagequalityChange = Provider.of<SettingsProvider>(context);
     final defaultHomeValue = Provider.of<SettingsProvider>(context);
     final country = Provider.of<SettingsProvider>(context).defaultCountry;
+    final appLang = Provider.of<SettingsProvider>(context).appLanguage;
     final viewType = Provider.of<SettingsProvider>(context);
     final m3 = Provider.of<SettingsProvider>(context);
 
@@ -63,9 +70,20 @@ class _SettingsState extends State<Settings> {
       }
     }
 
+    for (int i = 0; i < languageData.langs.length; i++) {
+      if (languageData.langs[i].languageCode.contains(appLang)) {
+        setState(() {
+          languageFlag = languageData.langs[i].languageFlag;
+          languageName = languageData.langs[i].languageName;
+        });
+        break;
+      }
+    }
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Settings'),
+        title: Text(
+          tr("settings"),
+        ),
       ),
       body: Column(
         children: [
@@ -77,7 +95,9 @@ class _SettingsState extends State<Settings> {
               Icons.explicit,
               color: Theme.of(context).colorScheme.primary,
             ),
-            title: const Text('Include Adult'),
+            title: Text(
+              tr("include_adult"),
+            ),
             onChanged: (bool value) {
               setState(() {
                 adultChange.isAdult = value;
@@ -92,7 +112,9 @@ class _SettingsState extends State<Settings> {
               Icons.dark_mode,
               color: Theme.of(context).colorScheme.primary,
             ),
-            title: const Text('Dark mode'),
+            title: Text(
+              tr("dark_mode"),
+            ),
             onChanged: (bool value) {
               setState(() {
                 themeChange.darktheme = value;
@@ -104,7 +126,9 @@ class _SettingsState extends State<Settings> {
               Icons.play_arrow,
               color: Theme.of(context).colorScheme.primary,
             ),
-            title: const Text('Player settings'),
+            title: Text(
+              tr("player_settings"),
+            ),
             onTap: () {
               Navigator.push(context, MaterialPageRoute(builder: ((context) {
                 return const PlayerSettings();
@@ -116,13 +140,17 @@ class _SettingsState extends State<Settings> {
             child: SwitchListTile(
               inactiveThumbColor: Colors.white,
               inactiveTrackColor: const Color(0xFF9B9B9B),
-              subtitle: const Text('beta and works on Android 12+'),
+              subtitle: Text(
+                tr("android_12"),
+              ),
               value: m3.isMaterial3Enabled,
               secondary: Icon(
                 Icons.color_lens,
                 color: Theme.of(context).colorScheme.primary,
               ),
-              title: const Text('Material 3 color theming'),
+              title: Text(
+                tr("material_theming"),
+              ),
               onChanged: (bool value) {
                 setState(() {
                   m3.isMaterial3Enabled = value;
@@ -135,19 +163,27 @@ class _SettingsState extends State<Settings> {
               Icons.image,
               color: Theme.of(context).colorScheme.primary,
             ),
-            title: const Text('Image quality'),
+            title: Text(
+              tr("image_quality"),
+            ),
             trailing: DropdownButton(
                 value: imagequalityChange.imageQuality,
-                items: const [
-                  DropdownMenuItem(value: 'original/', child: Text('High')),
+                items: [
                   DropdownMenuItem(
-                    value: 'w600_and_h900_bestv2/',
-                    child: Text('Medium'),
-                  ),
+                      value: 'original/',
+                      child: Text(
+                        tr("high"),
+                      )),
                   DropdownMenuItem(
-                    value: 'w500/',
-                    child: Text('Low'),
-                  )
+                      value: 'w600_and_h900_bestv2/',
+                      child: Text(
+                        tr("medium"),
+                      )),
+                  DropdownMenuItem(
+                      value: 'w500/',
+                      child: Text(
+                        tr("low"),
+                      ))
                 ],
                 onChanged: (String? value) {
                   setState(() {
@@ -160,34 +196,34 @@ class _SettingsState extends State<Settings> {
               Icons.list,
               color: Theme.of(context).colorScheme.primary,
             ),
-            title: const Text('List view type'),
+            title: Text(
+              tr("list_view_type"),
+            ),
             trailing: DropdownButton(
                 value: viewType.defaultView,
                 items: [
                   DropdownMenuItem(
                       value: 'list',
-                      child: Wrap(
-                        spacing: 3,
-                        children: [
-                          Icon(
-                            Icons.list,
-                            color: Theme.of(context).colorScheme.primary,
-                          ),
-                          const Text('List')
-                        ],
-                      )),
-                  DropdownMenuItem(
-                    value: 'grid',
-                    child: Wrap(
-                      spacing: 3,
-                      children: [
+                      child: Wrap(spacing: 3, children: [
                         Icon(
-                          Icons.grid_view,
+                          Icons.list,
                           color: Theme.of(context).colorScheme.primary,
                         ),
-                        const Text('Grid')
-                      ],
-                    ),
+                        Text(
+                          tr("list"),
+                        )
+                      ])),
+                  DropdownMenuItem(
+                    value: 'grid',
+                    child: Wrap(spacing: 3, children: [
+                      Icon(
+                        Icons.grid_view,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                      Text(
+                        tr("grid"),
+                      )
+                    ]),
                   ),
                 ],
                 onChanged: (String? value) {
@@ -201,26 +237,63 @@ class _SettingsState extends State<Settings> {
               Icons.phone_android_sharp,
               color: Theme.of(context).colorScheme.primary,
             ),
-            title: const Text('Default home screen'),
+            title: Text(
+              tr("default_home_screen"),
+            ),
             trailing: DropdownButton(
                 value: defaultHomeValue.defaultValue,
-                items: const [
-                  DropdownMenuItem(value: 0, child: Text('Movies')),
+                items: [
                   DropdownMenuItem(
-                    value: 1,
-                    child: Text('TV shows'),
-                  ),
-                  DropdownMenuItem(value: 2, child: Text('Discover')),
+                      value: 0,
+                      child: Text(
+                        tr("movies"),
+                      )),
                   DropdownMenuItem(
-                    value: 3,
-                    child: Text('Profile'),
-                  )
+                      value: 1,
+                      child: Text(
+                        tr("tv_shows"),
+                      )),
+                  DropdownMenuItem(
+                      value: 2,
+                      child: Text(
+                        tr("discover"),
+                      )),
+                  DropdownMenuItem(
+                      value: 3,
+                      child: Text(
+                        tr("profile"),
+                      ))
                 ],
                 onChanged: (int? value) {
                   setState(() {
                     defaultHomeValue.defaultValue = value!;
                   });
                 }),
+          ),
+          ListTile(
+            onTap: (() {
+              Navigator.push(context, MaterialPageRoute(builder: ((context) {
+                return const AppLanguageChoose();
+              })));
+            }),
+            leading: Icon(
+              FontAwesomeIcons.language,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+            title: Text(
+              tr("app_language"),
+            ),
+            trailing: Wrap(
+                spacing: 10,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  Image.asset(
+                    languageFlag!,
+                    height: 25,
+                    width: 25,
+                  ),
+                  Text(languageName!)
+                ]),
           ),
           ListTile(
             onTap: (() {
@@ -232,7 +305,9 @@ class _SettingsState extends State<Settings> {
               FontAwesomeIcons.earthAmericas,
               color: Theme.of(context).colorScheme.primary,
             ),
-            title: const Text('Watch Country'),
+            title: Text(
+              tr("watch_country"),
+            ),
             trailing: Wrap(
                 spacing: 10,
                 crossAxisAlignment: WrapCrossAlignment.center,

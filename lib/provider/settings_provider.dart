@@ -15,6 +15,8 @@ class SettingsProvider with ChangeNotifier {
   GeneralSettingsPreferences generalSettingsPreferences =
       GeneralSettingsPreferences();
   VideoPlayerPreferences videoPlayerPreferences = VideoPlayerPreferences();
+  AppLanguagePreferences appLanguagePreferences = AppLanguagePreferences();
+
 
   bool _isAdult = false;
   bool get isAdult => _isAdult;
@@ -68,6 +70,9 @@ class SettingsProvider with ChangeNotifier {
 
   int _subtitleFontSize = 17;
   int get subtitleFontSize => _subtitleFontSize;
+
+  String _appLanguage = 'en';
+  String get appLanguage => _appLanguage;
 
   // theme change
   Future<void> getCurrentThemeMode() async {
@@ -246,6 +251,16 @@ class SettingsProvider with ChangeNotifier {
   set subtitleFontSize(int value) {
     _subtitleFontSize = value;
     videoPlayerPreferences.setSubtitleFont(value);
+    notifyListeners();
+  }
+
+  Future<void> getAppLanguage() async {
+    appLanguage = await appLanguagePreferences.getAppLang();
+  }
+
+  set appLanguage(String value) {
+    _appLanguage = value;
+    appLanguagePreferences.setAppLanguage(value);
     notifyListeners();
   }
 }

@@ -1,5 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:caffiene/models/watch_providers.dart';
+import 'package:caffiene/widgets/common_widgets.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/api/endpoints.dart';
 import 'package:caffiene/api/movies_api.dart';
@@ -126,7 +129,7 @@ class StreamingServicesTVShows extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'TV shows from $providerName',
+          tr("streaming_service_tv", args:[providerName]),
         ),
         leading: IconButton(
           icon: const Icon(
@@ -2004,4 +2007,176 @@ class TVCrewTabState extends State<TVCrewTab>
 
   @override
   bool get wantKeepAlive => true;
+}
+
+class TVWatchProvidersDetails extends StatefulWidget {
+  final String api;
+  final String country;
+  const TVWatchProvidersDetails(
+      {Key? key, required this.api, required this.country})
+      : super(key: key);
+
+  @override
+  State<TVWatchProvidersDetails> createState() =>
+      _TVWatchProvidersDetailsState();
+}
+
+class _TVWatchProvidersDetailsState extends State<TVWatchProvidersDetails>
+    with SingleTickerProviderStateMixin {
+  WatchProviders? watchProviders;
+  late TabController tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    tabController = TabController(length: 5, vsync: this);
+    moviesApi().fetchWatchProviders(widget.api, widget.country).then((value) {
+      if (mounted) {
+        setState(() {
+          watchProviders = value;
+        });
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
+    return Container(
+      child: Column(
+        children: [
+          Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF2b2c30) : const Color(0xFFDFDEDE),
+            ),
+            child: Center(
+              child: TabBar(
+                controller: tabController,
+                isScrollable: true,
+                indicatorWeight: 3,
+                unselectedLabelColor: Colors.white54,
+                labelColor: Colors.white,
+                indicatorSize: TabBarIndicatorSize.tab,
+                tabs: [
+                  Tab(
+                    child: Text(tr("buy"),
+                        style: TextStyle(
+                            fontFamily: 'Poppins',
+                            color: isDark ? Colors.white : Colors.black)),
+                  ),
+                  Tab(
+                    child: Text(tr("stream"),
+                        style: TextStyle(
+                            fontFamily: 'Poppins',
+                            color: isDark ? Colors.white : Colors.black)),
+                  ),
+                  Tab(
+                    child: Text(tr("ads"),
+                        style: TextStyle(
+                            fontFamily: 'Poppins',
+                            color: isDark ? Colors.white : Colors.black)),
+                  ),
+                  Tab(
+                    child: Text(tr("rent"),
+                        style: TextStyle(
+                            fontFamily: 'Poppins',
+                            color: isDark ? Colors.white : Colors.black)),
+                  ),
+                  Tab(
+                    child: Text(tr("free"),
+                        style: TextStyle(
+                            fontFamily: 'Poppins',
+                            color: isDark ? Colors.white : Colors.black)),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Expanded(
+            child: TabBarView(
+              controller: tabController,
+              children: watchProviders == null
+                  ? [
+                      watchProvidersShimmer(isDark),
+                      watchProvidersShimmer(isDark),
+                      watchProvidersShimmer(isDark),
+                      watchProvidersShimmer(isDark),
+                      watchProvidersShimmer(isDark),
+                    ]
+                  : [
+                      watchProvidersTabData(
+                          isDark: isDark,
+                          imageQuality: imageQuality,
+                          noOptionMessage: tr("no_buy_tv"),
+                          watchOptions: watchProviders!.buy),
+                      watchProvidersTabData(
+                          isDark: isDark,
+                          imageQuality: imageQuality,
+                          noOptionMessage: tr("no_stream_tv"),
+                          watchOptions: watchProviders!.flatRate),
+                      watchProvidersTabData(
+                          isDark: isDark,
+                          imageQuality: imageQuality,
+                          noOptionMessage: tr("no_ads_tv"),
+                          watchOptions: watchProviders!.ads),
+                      watchProvidersTabData(
+                          isDark: isDark,
+                          imageQuality: imageQuality,
+                          noOptionMessage: tr("no_rent_tv"),
+                          watchOptions: watchProviders!.rent),
+                      Container(
+                        padding: const EdgeInsets.all(8.0),
+                        child: GridView.builder(
+                            gridDelegate:
+                                const SliverGridDelegateWithMaxCrossAxisExtent(
+                              maxCrossAxisExtent: 100,
+                              childAspectRatio: 0.65,
+                              crossAxisSpacing: 5,
+                              mainAxisSpacing: 5,
+                            ),
+                            itemCount: 1,
+                            itemBuilder: (BuildContext context, int index) {
+                              return Padding(
+                                padding: const EdgeInsets.all(4.0),
+                                child: Column(
+                                  children: [
+                                    Expanded(
+                                      flex: 6,
+                                      child: ClipRRect(
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                        child: const FadeInImage(
+                                          image: AssetImage(
+                                              'assets/images/logo_shadow.png'),
+                                          fit: BoxFit.cover,
+                                          placeholder: AssetImage(
+                                              'assets/images/loading_5.gif'),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      height: 5,
+                                    ),
+                                    Expanded(
+                                        flex: 6,
+                                        child: Text(
+                                          tr("cinemax"),
+                                          textAlign: TextAlign.center,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        )),
+                                  ],
+                                ),
+                              );
+                            }),
+                      ),
+                    ],
+            ),
+          )
+        ],
+      ),
+    );
+  }
 }

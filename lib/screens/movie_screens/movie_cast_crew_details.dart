@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/models/credits.dart';
 import 'package:caffiene/provider/settings_provider.dart';
@@ -30,8 +31,8 @@ class _MovieCastAndCrewState extends State<MovieCastAndCrew>
         child: Scaffold(
           appBar: AppBar(
             elevation: 3,
-            title: const Text(
-              'Cast And Crew',
+            title: Text(
+              tr("cast_and_crew"),
             ),
             leading: IconButton(
               icon: const Icon(
@@ -47,14 +48,14 @@ class _MovieCastAndCrewState extends State<MovieCastAndCrew>
               Container(
                 color: Colors.grey,
                 child: TabBar(
-                  tabs: const [
+                  tabs: [
                     Tab(
                         child: Text(
-                      'Cast',
+                      tr("cast"),
                     )),
                     Tab(
                         child: Text(
-                      'Crew',
+                      tr("crew"),
                     ))
                   ],
                   indicatorColor: isDark ? Colors.white : Colors.black,

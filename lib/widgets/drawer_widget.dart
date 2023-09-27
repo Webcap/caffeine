@@ -1,4 +1,3 @@
-
 import 'package:caffiene/screens/tv_screens/live_tv_screen.dart';
 import 'package:caffiene/screens/watch_history/watch_history_screen.dart';
 import 'package:flutter/material.dart';
@@ -120,7 +119,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                         'Share button click': 'Share',
                       });
                       await Share.share(
-                          'Download the caffiene app for free and watch your favorite movies and TV shows for free! Download the app from the link below.\nhttps://cinemax.rf.gd/');
+                          'Download the caffiene app for free and watch your favorite movies and TV shows for free! Download the app from the link below.\nhttps://caffiene.rf.gd/');
                     },
                   ),
                 ],

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/api/movies_api.dart';
 import 'package:caffiene/models/movie_models.dart';
@@ -38,8 +39,7 @@ class _DiscoverMovieResultState extends State<DiscoverMovieResult> {
         });
 
         if (mounted) {
-          moviesApi()
-              .fetchMovies(
+          moviesApi().fetchMovies(
                   '${widget.api}&include_adult=${widget.includeAdult}&page=$pageNum')
               .then((value) {
             if (mounted) {
@@ -58,8 +58,7 @@ class _DiscoverMovieResultState extends State<DiscoverMovieResult> {
   @override
   void initState() {
     super.initState();
-    moviesApi()
-        .fetchMovies(
+    moviesApi().fetchMovies(
             '${widget.api}&page=${widget.page}&include_adult=${widget.includeAdult}')
         .then((value) {
       if (mounted) {
@@ -78,8 +77,8 @@ class _DiscoverMovieResultState extends State<DiscoverMovieResult> {
     final viewType = Provider.of<SettingsProvider>(context).defaultView;
     return Scaffold(
         appBar: AppBar(
-          title: const Text(
-            'Discover movies',
+          title: Text(
+            tr("discover_movies"),
           ),
           leading: IconButton(
             icon: const Icon(
@@ -102,9 +101,9 @@ class _DiscoverMovieResultState extends State<DiscoverMovieResult> {
                     : moviesList!.isEmpty
                         ? Container(
                             padding: const EdgeInsets.all(8),
-                            child: const Center(
+                            child: Center(
                               child: Text(
-                                'Oops! movies for the parameters you specified doesn\'t exist :(',
+                                tr("parameter_movie_404"),
                                 style: kTextHeaderStyle,
                                 textAlign: TextAlign.center,
                               ),

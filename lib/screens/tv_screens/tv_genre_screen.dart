@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/api/endpoints.dart';
 import 'package:caffiene/models/genres.dart';
@@ -11,11 +12,13 @@ class TVGenre extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final lang = Provider.of<SettingsProvider>(context).appLanguage;
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          '${genres.genreName!} TV shows',
-        ),
+        title: Text(tr(
+          "genre_tv_title",
+          namedArgs: {"g": genres.genreName ?? "Null"},
+        )),
         leading: IconButton(
           icon: const Icon(
             Icons.arrow_back,
@@ -29,7 +32,7 @@ class TVGenre extends StatelessWidget {
         child: ParticularGenreTV(
           includeAdult: Provider.of<SettingsProvider>(context).isAdult,
           genreId: genres.genreID!,
-          api: Endpoints.getTVShowsForGenre(genres.genreID!, 1),
+          api: Endpoints.getTVShowsForGenre(genres.genreID!, 1, lang),
         ),
       ),
     );

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/api/endpoints.dart';
 import 'package:caffiene/controller/database_controller.dart';
@@ -43,7 +44,7 @@ class MovieDetailPageState extends State<MovieDetailPage>
     final mixpanel =
         Provider.of<SettingsProvider>(context, listen: false).mixpanel;
     mixpanel.track('Most viewed movie pages', properties: {
-      'Movie name': '${widget.movie.originalTitle}',
+      'Movie name': '${widget.movie.title}',
       'Movie id': '${widget.movie.id}',
       'Is Movie adult?': '${widget.movie.adult}'
     });
@@ -54,6 +55,7 @@ class MovieDetailPageState extends State<MovieDetailPage>
   @override
   Widget build(BuildContext context) {
     final isDark = Provider.of<SettingsProvider>(context).darktheme;
+
     super.build(context);
     return Scaffold(
       body: CustomScrollView(
@@ -71,42 +73,50 @@ class MovieDetailPageState extends State<MovieDetailPage>
               },
             ),
             title: SABT(
-              child: Text(
-                widget.movie.releaseDate == null
-                    ? widget.movie.title!
-                    : widget.movie.releaseDate == ""
-                        ? widget.movie.title!
-                        : '${widget.movie.title!} (${DateTime.parse(widget.movie.releaseDate!).year})',
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onBackground,
-                ),
+                child: Text(
+              widget.movie.releaseDate == null
+                  ? widget.movie.title!
+                  : widget.movie.releaseDate == ""
+                      ? widget.movie.title!
+                      : '${widget.movie.title!} (${DateTime.parse(widget.movie.releaseDate!).year})',
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onBackground,
               ),
-            ),
+            )),
             expandedHeight: 390,
             flexibleSpace: FlexibleSpaceBar(
               collapseMode: CollapseMode.pin,
               background: Column(
                 children: [
                   MovieDetailQuickInfo(
-                      heroId: widget.heroId, movie: widget.movie),
+                    heroId: widget.heroId,
+                    movie: widget.movie,
+                  ),
                   const SizedBox(height: 18),
-                  // ratings / lists / bookmark options
                   MovieDetailOptions(movie: widget.movie),
                 ],
               ),
             ),
           ),
-          //body
+
+          // body
           SliverList(
             delegate: SliverChildListDelegate.fixed(
-                [MovieAbout(movie: widget.movie)]),
-          )
+              [MovieAbout(movie: widget.movie)],
+            ),
+          ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
           onPressed: () async {
-            await Share.share(
-                'Checkout the movie \'${widget.movie.title}\'!\nIt is rated ${widget.movie.voteAverage!.toStringAsFixed(1)} out of 10\nhttps://themoviedb.org/movie/${widget.movie.id}');
+            await Share.share(tr(
+              "share_movie",
+              namedArgs: {
+                "title": widget.movie.title!,
+                "rating": widget.movie.voteAverage!.toStringAsFixed(1),
+                "id": widget.movie.id.toString()
+              },
+            ));
           },
           child: const Icon(Icons.share)),
     );
@@ -116,11 +126,12 @@ class MovieDetailPageState extends State<MovieDetailPage>
   bool get wantKeepAlive => true;
 
   void modalBottomSheetMenu(String country) {
+    final lang = Provider.of<SettingsProvider>(context).appLanguage;
     showModalBottomSheet(
       context: context,
       builder: (builder) {
         return WatchProvidersDetails(
-          api: Endpoints.getMovieWatchProviders(widget.movie.id!),
+          api: Endpoints.getMovieWatchProviders(widget.movie.id!, lang),
           country: country,
         );
       },

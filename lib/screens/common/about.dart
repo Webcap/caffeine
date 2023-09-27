@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:caffiene/utils/config.dart';
@@ -10,7 +11,7 @@ class AboutPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('About'),
+        title: Text(tr("about")),
       ),
       body: Center(
         child: Padding(
@@ -38,14 +39,16 @@ class AboutPage extends StatelessWidget {
                     ),
                   ],
                 ),
-                const Text(
-                  currentAppVersion,
-                  style: TextStyle(
-                    fontSize: 30.0,
+                Text(
+                  tr("app_version", namedArgs: {
+                    "version": currentAppVersion
+                  }),
+                  style: const TextStyle(
+                    fontSize: 27.0,
                   ),
                 ),
                 const Text(
-                  'this app does not host any content on its server',
+                  'this app does not host any content on its server', // Translate "This App does not host any content on its server"
                   maxLines: 5,
                   textAlign: TextAlign.center,
                   style:
@@ -54,12 +57,12 @@ class AboutPage extends StatelessWidget {
                 const SizedBox(
                   height: 5,
                 ),
-                const Text(
-                  'This product uses the TMDB API but is not endorsed or certified by TMDB.',
-                  maxLines: 15,
+                Text(
+                  tr("endorsment"), // Translate "This product uses the TMDB API but is not endorsed or certified by TMDB."
+                  maxLines: 5,
                   textAlign: TextAlign.center,
-                  style:
-                      TextStyle(fontSize: 20.0, overflow: TextOverflow.visible),
+                  style: const TextStyle(
+                      fontSize: 20.0, overflow: TextOverflow.visible),
                 ),
                 GestureDetector(
                   onTap: () {
@@ -78,24 +81,25 @@ class AboutPage extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: GestureDetector(
-                    child: const Text(
-                      'Noticed any bugs? Inform me on Telegram, click here',
+                    child: Text(
+                      tr("bug_notice"), // Translate "Noticed any bugs? Inform me on Telegram, click here"
                       maxLines: 5,
                       textAlign: TextAlign.center,
-                      style: TextStyle(
-                          decoration: TextDecoration.underline,
-                          decorationStyle: TextDecorationStyle.solid),
+                      style: const TextStyle(
+                        decoration: TextDecoration.underline,
+                        decorationStyle: TextDecorationStyle.solid,
+                      ),
                     ),
                     onTap: () {
-                      // launchUrl(Uri.parse('https://t.me/beamlakaschalew'),
+                      // launchUrl(Uri.parse('https://t.me/'),
                       //     mode: LaunchMode.externalApplication);
                     },
                   ),
                 ),
                 Column(
                   children: [
-                    const Text(
-                      'Follow caffiene on various platforms',
+                    Text(
+                      tr("follow_caffiene"),
                       maxLines: 5,
                       textAlign: TextAlign.center,
                       style: kTextSmallHeaderStyle,
@@ -132,7 +136,7 @@ class AboutPage extends StatelessWidget {
                           ),
                           SocialIconContainer(
                             platformIcon: FontAwesomeIcons.github,
-                            uri: '',
+                            uri: 'https://github.com/Webcap/caffiene',
                           ),
                           SocialIconContainer(
                               platformIcon: Icons.mail,
@@ -142,22 +146,29 @@ class AboutPage extends StatelessWidget {
                     )
                   ],
                 ),
-                const Padding(
-                  padding: EdgeInsets.only(
+                Padding(
+                  padding: const EdgeInsets.only(
                     top: 30,
                     left: 7.0,
                     right: 7.0,
                   ),
                   child: Text(
-                    'Made with ❤️ by webcap media.',
+                    tr("made_with"),
                     maxLines: 5,
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 20.0),
+                    style: const TextStyle(fontSize: 20.0),
                   ),
                 ),
-                const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text('Made Proudy in NYC'),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(tr("made_in")),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(tr("year_range", namedArgs: {
+                    "startYear": "2016",
+                    "endYear": "2023"
+                  })), // Translate "2015 EC, 2023 GC"
                 )
               ],
             ),

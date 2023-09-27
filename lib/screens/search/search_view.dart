@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/api/endpoints.dart';
 import 'package:caffiene/api/movies_api.dart';
@@ -20,9 +21,11 @@ import 'package:shimmer/shimmer.dart';
 class Search extends SearchDelegate<String> {
   final Mixpanel mixpanel;
   final bool includeAdult;
-  Search({required this.mixpanel, required this.includeAdult})
+  final String lang;
+  Search(
+      {required this.mixpanel, required this.includeAdult, required this.lang})
       : super(
-          searchFieldLabel: 'Search for a movie, TV show or a person',
+          searchFieldLabel: tr("search_text"),
         );
 
   @override
@@ -70,7 +73,7 @@ class Search extends SearchDelegate<String> {
               child: TabBar(
                 tabs: [
                   Tab(
-                    child: Text('Movies',
+                    child: Text(tr("movies"),
                         style: TextStyle(
                           fontFamily: 'Poppins',
                           color: !isDark
@@ -79,7 +82,7 @@ class Search extends SearchDelegate<String> {
                         )),
                   ),
                   Tab(
-                    child: Text('TV Shows',
+                    child: Text(tr("tv_shows"),
                         style: TextStyle(
                           fontFamily: 'Poppins',
                           color: !isDark
@@ -88,7 +91,7 @@ class Search extends SearchDelegate<String> {
                         )),
                   ),
                   Tab(
-                    child: Text('Celebrities',
+                    child: Text(tr("celebrities"),
                         style: TextStyle(
                           fontFamily: 'Poppins',
                           color: !isDark
@@ -104,7 +107,7 @@ class Search extends SearchDelegate<String> {
               FutureBuilder<List<Movie>>(
                 future: Future.delayed(const Duration(seconds: 1)).then(
                   (value) => moviesApi().fetchMovies(
-                      Endpoints.movieSearchUrl(query, includeAdult)),
+                      Endpoints.movieSearchUrl(query, includeAdult, lang)),
                 ),
                 builder: (context, snapshot) {
                   if (query.isEmpty) return searchATermWidget(isDark);
@@ -124,8 +127,8 @@ class Search extends SearchDelegate<String> {
               ),
               FutureBuilder<List<TV>>(
                 future: Future.delayed(const Duration(seconds: 1)).then(
-                    (value) => tvApi()
-                        .fetchTV(Endpoints.tvSearchUrl(query, includeAdult))),
+                    (value) => tvApi().fetchTV(
+                        Endpoints.tvSearchUrl(query, includeAdult, lang))),
                 builder: (context, snapshot) {
                   if (query.isEmpty) return searchATermWidget(isDark);
 
@@ -144,7 +147,7 @@ class Search extends SearchDelegate<String> {
               FutureBuilder<List<Person>>(
                 future: Future.delayed(const Duration(seconds: 1)).then(
                     (value) => peoplesApi().fetchPerson(
-                        Endpoints.personSearchUrl(query, includeAdult))),
+                        Endpoints.personSearchUrl(query, includeAdult, lang))),
                 builder: (context, snapshot) {
                   if (query.isEmpty) return searchATermWidget(isDark);
                   switch (snapshot.connectionState) {
@@ -322,7 +325,7 @@ class Search extends SearchDelegate<String> {
         children: [
           Image.asset('assets/images/404.png'),
           Text(
-            'The term you entered didn\'t bring any results',
+            tr("no_result"),
             style: TextStyle(
                 fontFamily: 'Poppins',
                 color: isDark ? Colors.white : Colors.black),
@@ -339,7 +342,7 @@ class Search extends SearchDelegate<String> {
         children: [
           Image.asset('assets/images/search.png'),
           const Padding(padding: EdgeInsets.only(top: 10, bottom: 5)),
-          Text('Enter a word to search',
+          Text(tr("enter_word"),
               style: TextStyle(
                   color: isDark ? Colors.white : Colors.black,
                   fontFamily: 'Poppins'))
@@ -403,6 +406,7 @@ class Search extends SearchDelegate<String> {
                                                 fit: BoxFit.cover,
                                               )
                                             : CachedNetworkImage(
+                                                cacheManager: cacheProp(),
                                                 fadeOutDuration: const Duration(
                                                     milliseconds: 300),
                                                 fadeOutCurve: Curves.easeOut,
@@ -540,6 +544,7 @@ class Search extends SearchDelegate<String> {
                                                 fit: BoxFit.cover,
                                               )
                                             : CachedNetworkImage(
+                                                cacheManager: cacheProp(),
                                                 fadeOutDuration: const Duration(
                                                     milliseconds: 300),
                                                 fadeOutCurve: Curves.easeOut,
@@ -670,6 +675,7 @@ class Search extends SearchDelegate<String> {
                                         fit: BoxFit.cover,
                                       )
                                     : CachedNetworkImage(
+                                        cacheManager: cacheProp(),
                                         fadeOutDuration:
                                             const Duration(milliseconds: 300),
                                         fadeOutCurve: Curves.easeOut,
@@ -690,7 +696,7 @@ class Search extends SearchDelegate<String> {
                                           ),
                                         ),
                                         placeholder: (context, url) =>
-                                            detailCastImageShimmer1(isDark),
+                                            detailCastImageShimmer(isDark),
                                         errorWidget: (context, url, error) =>
                                             Image.asset(
                                           'assets/images/na_rect.png',
@@ -734,7 +740,7 @@ class Search extends SearchDelegate<String> {
   }
 
   Widget buildSuggestionsSuccess(List<TV> moviesList) {
-    return const DefaultTabController(
+    return DefaultTabController(
       length: 3,
       initialIndex: 0,
       child: Scaffold(
@@ -743,13 +749,13 @@ class Search extends SearchDelegate<String> {
             TabBar(
               tabs: [
                 Tab(
-                  text: 'Movies',
+                  text: tr("movies"),
                 ),
                 Tab(
-                  text: 'TV',
+                  text: tr("tv"),
                 ),
                 Tab(
-                  text: 'Person',
+                  text: tr("celebrities"),
                 )
               ],
             ),
