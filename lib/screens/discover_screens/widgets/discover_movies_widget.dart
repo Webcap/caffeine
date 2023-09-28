@@ -14,7 +14,7 @@ import 'package:provider/provider.dart';
 
 class DiscoverMovies extends StatefulWidget {
   const DiscoverMovies({
-    Key? key,
+    Key? key, required bool includeAdult,
   }) : super(key: key);
   @override
   DiscoverMoviesState createState() => DiscoverMoviesState();

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/api/endpoints.dart';
 import 'package:caffiene/models/person.dart';
@@ -6,6 +7,7 @@ import 'package:caffiene/screens/person/widgets/person_widget.dart';
 import 'package:caffiene/screens/tv_screens/widgets/person_widget.dart';
 import 'package:provider/provider.dart';
 
+// ignore: must_be_immutable
 class SearchedPersonAbout extends StatefulWidget {
   SearchedPersonAbout(
       {Key? key,
@@ -25,6 +27,7 @@ class _SearchedPersonAboutState extends State<SearchedPersonAbout> {
   @override
   Widget build(BuildContext context) {
     final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final lang = Provider.of<SettingsProvider>(context).appLanguage;
     return SingleChildScrollView(
       child: Container(
         decoration: const BoxDecoration(
@@ -47,19 +50,19 @@ class _SearchedPersonAboutState extends State<SearchedPersonAbout> {
                   labelColor: Colors.white,
                   tabs: [
                     Tab(
-                      child: Text('About',
+                      child: Text(tr("about"),
                           style: TextStyle(
                               fontFamily: 'Poppins',
                               color: isDark ? Colors.white : Colors.black)),
                     ),
                     Tab(
-                      child: Text('Movies',
+                      child: Text(tr("movies"),
                           style: TextStyle(
                               fontFamily: 'Poppins',
                               color: isDark ? Colors.white : Colors.black)),
                     ),
                     Tab(
-                      child: Text('TV Shows',
+                      child: Text(tr("tv_shows"),
                           style: TextStyle(
                               fontFamily: 'Poppins',
                               color: isDark ? Colors.white : Colors.black)),
@@ -86,22 +89,22 @@ class _SearchedPersonAboutState extends State<SearchedPersonAbout> {
                                       children: [
                                         PersonAboutWidget(
                                             api: Endpoints.getPersonDetails(
-                                                widget.person!.id!)),
+                                                widget.person!.id!, lang)),
                                         PersonSocialLinks(
                                           api: Endpoints
                                               .getExternalLinksForPerson(
-                                                  widget.person!.id!),
+                                                  widget.person!.id!, lang),
                                         ),
                                         PersonImagesDisplay(
                                           personName: widget.person!.name!,
                                           api: Endpoints.getPersonImages(
                                             widget.person!.id!,
                                           ),
-                                          title: 'Images',
+                                          title: tr("images"),
                                         ),
                                         PersonDataTable(
                                           api: Endpoints.getPersonDetails(
-                                              widget.person!.id!),
+                                              widget.person!.id!, lang),
                                         ),
                                       ],
                                     ),
@@ -117,7 +120,7 @@ class _SearchedPersonAboutState extends State<SearchedPersonAbout> {
                                   Provider.of<SettingsProvider>(context)
                                       .isAdult,
                               api: Endpoints.getMovieCreditsForPerson(
-                                  widget.person!.id!),
+                                  widget.person!.id!, lang),
                             ),
                           ),
                           Container(
@@ -127,7 +130,7 @@ class _SearchedPersonAboutState extends State<SearchedPersonAbout> {
                                     Provider.of<SettingsProvider>(context)
                                         .isAdult,
                                 api: Endpoints.getTVCreditsForPerson(
-                                    widget.person!.id!)),
+                                    widget.person!.id!, lang)),
                           ),
                         ],
                       ),

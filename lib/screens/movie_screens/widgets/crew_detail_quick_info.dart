@@ -1,19 +1,19 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/material.dart';
 import 'package:caffiene/provider/settings_provider.dart';
-import 'package:caffiene/screens/person/guest_star_details.dart';
+import 'package:caffiene/screens/movie_screens/crew_detail.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/widgets/shimmer_widget.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class GuestStarDetailQuickInfo extends StatelessWidget {
-  const GuestStarDetailQuickInfo({
+class CrewDetailQuickInfo extends StatelessWidget {
+  const CrewDetailQuickInfo({
     Key? key,
     required this.widget,
     required this.imageQuality,
   }) : super(key: key);
 
-  final GuestStarDetailPage widget;
+  final CrewDetailPage widget;
   final String imageQuality;
 
   @override
@@ -46,7 +46,7 @@ class GuestStarDetailQuickInfo extends StatelessWidget {
                             child: SizedBox(
                               width: 120,
                               height: 120,
-                              child: widget.cast!.profilePath == null
+                              child: widget.crew!.profilePath == null
                                   ? Image.asset(
                                       'assets/images/na_logo.png',
                                       fit: BoxFit.cover,
@@ -63,7 +63,7 @@ class GuestStarDetailQuickInfo extends StatelessWidget {
                                       ),
                                       imageUrl: TMDB_BASE_IMAGE_URL +
                                           imageQuality +
-                                          widget.cast!.profilePath!,
+                                          widget.crew!.profilePath!,
                                     ),
                             ),
                           ),
@@ -77,14 +77,14 @@ class GuestStarDetailQuickInfo extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          widget.cast!.name!,
+                          widget.crew!.name!,
                           maxLines: 3,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
                               fontSize: 25, fontFamily: 'PoppinsSB'),
                         ),
                         Text(
-                          widget.cast!.department!,
+                          widget.crew!.department!,
                           maxLines: 3,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(

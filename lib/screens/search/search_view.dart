@@ -696,7 +696,7 @@ class Search extends SearchDelegate<String> {
                                           ),
                                         ),
                                         placeholder: (context, url) =>
-                                            detailCastImageShimmer(isDark),
+                                            detailCastImageShimmer1(isDark),
                                         errorWidget: (context, url, error) =>
                                             Image.asset(
                                           'assets/images/na_rect.png',

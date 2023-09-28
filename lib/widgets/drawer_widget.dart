@@ -1,5 +1,6 @@
 import 'package:caffiene/screens/tv_screens/live_tv_screen.dart';
 import 'package:caffiene/screens/watch_history/watch_history_screen.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:caffiene/provider/settings_provider.dart';
@@ -53,7 +54,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                       FontAwesomeIcons.tv,
                       color: Theme.of(context).colorScheme.primary,
                     ),
-                    title: const Text('Live TV (beta)'),
+                    title: Text(tr("live_tv")),
                     onTap: () {
                       nextScreen(context, const LiveTV());
                     },
@@ -73,7 +74,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                       FontAwesomeIcons.bookmark,
                       color: Theme.of(context).colorScheme.primary,
                     ),
-                    title: const Text('Bookmark'),
+                    title: Text(tr("bookmarks")),
                     onTap: () {
                       nextScreen(context, const BookmarkScreen());
                     },
@@ -83,7 +84,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                       Icons.info_outline,
                       color: Theme.of(context).colorScheme.primary,
                     ),
-                    title: const Text('About'),
+                    title: Text(tr("about")),
                     onTap: () {
                       nextScreen(context, const AboutPage());
                     },
@@ -93,7 +94,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                       Icons.update,
                       color: Theme.of(context).colorScheme.primary,
                     ),
-                    title: const Text('Check for an update'),
+                    title: Text(tr("check_for_update")),
                     onTap: () {
                       nextScreen(context, const UpdateScreen());
                     },
@@ -103,7 +104,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                       Icons.settings,
                       color: Theme.of(context).colorScheme.primary,
                     ),
-                    title: const Text('Settings'),
+                    title: Text(tr("settings")),
                     onTap: () {
                       nextScreen(context, const Settings());
                     },
@@ -113,13 +114,12 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                       Icons.share_sharp,
                       color: Theme.of(context).colorScheme.primary,
                     ),
-                    title: const Text('Share the app'),
+                    title: Text(tr("shared_the_app")),
                     onTap: () async {
                       mixpanel.track('Share button data', properties: {
                         'Share button click': 'Share',
                       });
-                      await Share.share(
-                          'Download the caffiene app for free and watch your favorite movies and TV shows for free! Download the app from the link below.\nhttps://caffiene.rf.gd/');
+                      await Share.share(tr("share_text"));
                     },
                   ),
                 ],

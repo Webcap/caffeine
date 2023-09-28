@@ -28,52 +28,63 @@ class _MainMoviesDisplayState extends State<MainMoviesDisplay> {
   @override
   Widget build(BuildContext context) {
     bool includeAdult = Provider.of<SettingsProvider>(context).isAdult;
+    final lang = Provider.of<SettingsProvider>(context).appLanguage;
     var rMovies = Provider.of<RecentProvider>(context).movies;
     return Container(
-        child: ListView(
-      children: [
-        const DiscoverMovies(),
-        ScrollingMovies(
-          title: 'Popular',
-          api: Endpoints.popularMoviesUrl(1),
-          discoverType: tr('popular'),
-          isTrending: false,
-          includeAdult: includeAdult,
-        ),
-        rMovies.isEmpty
-          ? Container()
-          : ScrollingRecentMovies(moviesList: rMovies),
-        ScrollingMovies(
-          title: tr('trending_this_week'),
-          api: Endpoints.trendingMoviesUrl(1),
-          discoverType: 'Trending',
-          isTrending: true,
-          includeAdult: includeAdult,
-        ),
-        ScrollingMovies(
-          title: 'Top Rated',
-          api: Endpoints.topRatedUrl(1),
-          discoverType: 'top_rated',
-          isTrending: false,
-          includeAdult: includeAdult,
-        ),
-        ScrollingMovies(
-          title: 'Now Playing',
-          api: Endpoints.nowPlayingMoviesUrl(1),
-          discoverType: 'now_playing',
-          isTrending: false,
-          includeAdult: includeAdult,
-        ),
-        ScrollingMovies(
-          title: 'Upcoming',
-          api: Endpoints.upcomingMoviesUrl(1),
-          discoverType: 'upcoming',
-          isTrending: false,
-          includeAdult: includeAdult,
-        ),
-        GenreListGrid(api: Endpoints.movieGenresUrl()),
-        const MoviesFromWatchProviders(),
-      ],
-    ));
+      child: ListView(
+        children: [
+          DiscoverMovies(
+            includeAdult: includeAdult,
+          ),
+          ScrollingMovies(
+            title: tr("popular"),
+            api: Endpoints.popularMoviesUrl(1, lang),
+            discoverType: 'popular',
+            isTrending: false,
+            includeAdult: includeAdult,
+          ),
+          // UnityBannerAd(
+          //   placementId: 'Movies_one',
+          //   onLoad: (placementId) => print('Banner loaded: $placementId'),
+          //   onClick: (placementId) => print('Banner clicked: $placementId'),
+          //   onFailed: (placementId, error, message) =>
+          //       print('Banner Ad $placementId failed: $error $message'),
+          // ),
+          rMovies.isEmpty
+              ? Container()
+              : ScrollingRecentMovies(moviesList: rMovies),
+          ScrollingMovies(
+            title: tr("trending_this_week"),
+            api: Endpoints.trendingMoviesUrl(1, includeAdult, lang),
+            discoverType: 'Trending',
+            isTrending: true,
+            includeAdult: includeAdult,
+          ),
+          ScrollingMovies(
+            title: tr("top_rated"),
+            api: Endpoints.topRatedUrl(1, lang),
+            discoverType: 'top_rated',
+            isTrending: false,
+            includeAdult: includeAdult,
+          ),
+          ScrollingMovies(
+            title: tr("now_playing"),
+            api: Endpoints.nowPlayingMoviesUrl(1, lang),
+            discoverType: 'now_playing',
+            isTrending: false,
+            includeAdult: includeAdult,
+          ),
+          ScrollingMovies(
+            title: tr("upcoming"),
+            api: Endpoints.upcomingMoviesUrl(1, lang),
+            discoverType: 'upcoming',
+            isTrending: false,
+            includeAdult: includeAdult,
+          ),
+          GenreListGrid(api: Endpoints.movieGenresUrl(lang)),
+          const MoviesFromWatchProviders(),
+        ],
+      ),
+    );
   }
 }

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/api/endpoints.dart';
 import 'package:caffiene/models/credits.dart';
@@ -6,6 +7,7 @@ import 'package:caffiene/screens/person/widgets/person_widget.dart';
 import 'package:caffiene/screens/tv_screens/widgets/person_widget.dart';
 import 'package:provider/provider.dart';
 
+// ignore: must_be_immutable
 class GuestStarDetailAbout extends StatefulWidget {
   GuestStarDetailAbout(
       {Key? key,
@@ -25,6 +27,7 @@ class _GuestStarDetailAboutState extends State<GuestStarDetailAbout> {
   @override
   Widget build(BuildContext context) {
     final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final lang = Provider.of<SettingsProvider>(context).appLanguage;
     return SingleChildScrollView(
       child: Container(
         decoration: const BoxDecoration(
@@ -47,19 +50,19 @@ class _GuestStarDetailAboutState extends State<GuestStarDetailAbout> {
                   labelColor: Colors.white,
                   tabs: [
                     Tab(
-                      child: Text('About',
+                      child: Text(tr("about"),
                           style: TextStyle(
                               fontFamily: 'Poppins',
                               color: isDark ? Colors.white : Colors.black)),
                     ),
                     Tab(
-                      child: Text('Movies',
+                      child: Text(tr("movies"),
                           style: TextStyle(
                               fontFamily: 'Poppins',
                               color: isDark ? Colors.white : Colors.black)),
                     ),
                     Tab(
-                      child: Text('TV Shows',
+                      child: Text(tr("tv_shows"),
                           style: TextStyle(
                               fontFamily: 'Poppins',
                               color: isDark ? Colors.white : Colors.black)),
@@ -86,22 +89,22 @@ class _GuestStarDetailAboutState extends State<GuestStarDetailAbout> {
                                       children: [
                                         PersonAboutWidget(
                                             api: Endpoints.getPersonDetails(
-                                                widget.cast!.id!)),
+                                                widget.cast!.id!, lang)),
                                         PersonSocialLinks(
                                           api: Endpoints
                                               .getExternalLinksForPerson(
-                                                  widget.cast!.id!),
+                                                  widget.cast!.id!, lang),
                                         ),
                                         PersonImagesDisplay(
                                           personName: widget.cast!.name!,
                                           api: Endpoints.getPersonImages(
                                             widget.cast!.id!,
                                           ),
-                                          title: 'Images',
+                                          title: tr("images"),
                                         ),
                                         PersonDataTable(
                                           api: Endpoints.getPersonDetails(
-                                              widget.cast!.id!),
+                                              widget.cast!.id!, lang),
                                         ),
                                       ],
                                     ),
@@ -117,7 +120,7 @@ class _GuestStarDetailAboutState extends State<GuestStarDetailAbout> {
                                   Provider.of<SettingsProvider>(context)
                                       .isAdult,
                               api: Endpoints.getMovieCreditsForPerson(
-                                  widget.cast!.id!),
+                                  widget.cast!.id!, lang),
                             ),
                           ),
                           Container(
@@ -127,7 +130,7 @@ class _GuestStarDetailAboutState extends State<GuestStarDetailAbout> {
                                     Provider.of<SettingsProvider>(context)
                                         .isAdult,
                                 api: Endpoints.getTVCreditsForPerson(
-                                    widget.cast!.id!)),
+                                    widget.cast!.id!, lang)),
                           ),
                         ],
                       ),

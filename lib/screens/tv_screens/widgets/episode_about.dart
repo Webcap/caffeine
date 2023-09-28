@@ -1,3 +1,6 @@
+import 'package:caffiene/screens/tv_screens/widgets/tv_epi_image.dart';
+import 'package:caffiene/screens/tv_screens/widgets/watch_now_tv.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/api/endpoints.dart';
 import 'package:caffiene/api/tv_api.dart';
@@ -16,8 +19,8 @@ class EpisodeAbout extends StatefulWidget {
     required this.episodeList,
     this.episodes,
     this.tvId,
+    required this.posterPath,
     this.seriesName,
-    required this.posterPath
   }) : super(key: key);
   final EpisodeList episodeList;
   final List<EpisodeList>? episodes;
@@ -30,23 +33,19 @@ class EpisodeAbout extends StatefulWidget {
 }
 
 class _EpisodeAboutState extends State<EpisodeAbout> {
-  bool? isVisible = false;
-  double? buttonWidth = 150;
-  TVDetails? tvDetails;
-
   @override
   Widget build(BuildContext context) {
-    final mixpanel = Provider.of<SettingsProvider>(context).mixpanel;
+    final lang = Provider.of<SettingsProvider>(context).appLanguage;
     return Container(
       child: SingleChildScrollView(
         child: Column(
           children: <Widget>[
-            const Row(
+            Row(
               children: <Widget>[
                 Padding(
-                  padding: EdgeInsets.only(left: 8.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: Text(
-                    'Overview',
+                    tr("overview"),
                     style: kTextHeaderStyle,
                   ),
                 ),
@@ -56,14 +55,14 @@ class _EpisodeAboutState extends State<EpisodeAbout> {
               padding: const EdgeInsets.all(8.0),
               child: ReadMoreText(
                 widget.episodeList.overview!.isEmpty
-                    ? 'This episode doesn\'t have an overview'
+                    ? ''
                     : widget.episodeList.overview!,
                 trimLines: 4,
                 style: const TextStyle(fontFamily: 'Poppins'),
                 colorClickableText: Theme.of(context).colorScheme.primary,
                 trimMode: TrimMode.Line,
-                trimCollapsedText: 'read more',
-                trimExpandedText: 'read less',
+                trimCollapsedText: tr("read_more"),
+                trimExpandedText: tr("read_less"),
                 lessStyle: TextStyle(
                     fontSize: 14,
                     color: Theme.of(context).colorScheme.primary,
@@ -77,12 +76,13 @@ class _EpisodeAboutState extends State<EpisodeAbout> {
             Row(
               children: <Widget>[
                 Padding(
-                  padding: const EdgeInsets.only(left: 8.0, bottom: 4.0),
+                  padding:
+                      const EdgeInsets.only(left: 8.0, bottom: 4.0, right: 8.0),
                   child: Text(
                     widget.episodeList.airDate == null ||
                             widget.episodeList.airDate!.isEmpty
-                        ? 'Episode air date: N/A'
-                        : 'Episode air date:  ${DateTime.parse(widget.episodeList.airDate!).day} ${DateFormat("MMMM").format(DateTime.parse(widget.episodeList.airDate!))}, ${DateTime.parse(widget.episodeList.airDate!).year}',
+                        ? tr("episode_air_empty")
+                        : '${tr("episode_air")}  ${DateTime.parse(widget.episodeList.airDate!).day} ${DateFormat("MMMM").format(DateTime.parse(widget.episodeList.airDate!))}, ${DateTime.parse(widget.episodeList.airDate!).year}',
                     style: const TextStyle(
                       fontFamily: 'PoppinsSB',
                     ),
@@ -90,89 +90,14 @@ class _EpisodeAboutState extends State<EpisodeAbout> {
                 ),
               ],
             ),
-            Container(
-              child: TextButton(
-                style: ButtonStyle(
-                    maximumSize:
-                        MaterialStateProperty.all(Size(buttonWidth!, 50)),
-                    backgroundColor: MaterialStateProperty.all(
-                      Theme.of(context).colorScheme.primary,
-                    )),
-                onPressed: () async {
-                  mixpanel.track('Most viewed TV series', properties: {
-                    'TV series name': '${widget.seriesName}',
-                    'TV series id': '${widget.tvId}',
-                    'TV series episode name': '${widget.episodeList.name}',
-                    'TV series season number':
-                        '${widget.episodeList.seasonNumber}',
-                    'TV series episode number':
-                        '${widget.episodeList.episodeNumber}'
-                  });
-                  setState(() {
-                    isVisible = true;
-                    buttonWidth = 180;
-                  });
-                  tvApi()
-                      .fetchTVDetails(Endpoints.tvDetailsUrl(widget.tvId!))
-                      .then((value) {
-                    if (mounted) {
-                      setState(() {
-                        isVisible = false;
-                        buttonWidth = 150;
-                        tvDetails = value;
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) {
-                           return TVVideoLoader(
-                            download: false,
-                            metadata: [
-                              widget.episodeList.episodeId,
-                              widget.seriesName!,
-                              widget.episodeList.name,
-                              widget.episodeList.episodeNumber!,
-                              widget.episodeList.seasonNumber!,
-                              value.numberOfSeasons!,
-                              value.backdropPath,
-                              widget.posterPath,
-                              0
-                            ],
-                          );
-                        }));
-                      });
-                    }
-                  });
-                },
-                child: Row(
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.only(right: 10),
-                      child: Icon(
-                        Icons.play_circle,
-                        color: Colors.white,
-                      ),
-                    ),
-                    const Text(
-                      'WATCH NOW',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    Visibility(
-                      visible: isVisible!,
-                      child: const Padding(
-                        padding: EdgeInsets.only(
-                          left: 10.0,
-                        ),
-                        child: SizedBox(
-                          height: 16,
-                          width: 16,
-                          child: CircularProgressIndicator(
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+            const SizedBox(height: 20),
+            WatchNowButtonTV(
+              episodeList: widget.episodeList,
+              seriesName: widget.seriesName!,
+              tvId: widget.tvId!,
+              posterPath: widget.posterPath!,
             ),
+            const SizedBox(height: 15),
             ScrollingTVEpisodeCasts(
               passedFrom: 'episode_detail',
               seasonNumber: widget.episodeList.seasonNumber!,
@@ -181,16 +106,17 @@ class _EpisodeAboutState extends State<EpisodeAbout> {
               api: Endpoints.getEpisodeCredits(
                   widget.tvId!,
                   widget.episodeList.seasonNumber!,
+                  widget.episodeList.episodeNumber!,
+                  lang),
+            ),
+            TVEpisodeImagesDisplay(
+              title: tr("images"),
+              name: '${widget.seriesName}_${widget.episodeList.name}',
+              api: Endpoints.getTVEpisodeImagesUrl(
+                  widget.tvId!,
+                  widget.episodeList.seasonNumber!,
                   widget.episodeList.episodeNumber!),
             ),
-            // TVEpisodeImagesDisplay(
-            //   title: 'Images',
-            //   name: '${widget.seriesName}_${widget.episodeList.name}',
-            //   api: Endpoints.getTVEpisodeImagesUrl(
-            //       widget.tvId!,
-            //       widget.episodeList.seasonNumber!,
-            //       widget.episodeList.episodeNumber!),
-            // ),
             // TVVideosDisplay(
             //   api: Endpoints.getTVEpisodeVideosUrl(
             //       widget.tvId!,

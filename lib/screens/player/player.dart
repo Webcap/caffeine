@@ -160,12 +160,12 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
         title: widget.movieMetadata!.elementAt(1),
         backdropPath: widget.movieMetadata!.elementAt(4));
 
-    double precentage = (elapsed / duration) * 100;
+    double percentage = (elapsed / duration) * 100;
 
     if (!isBookmarked) {
       prv.addMovie(rMov);
     } else {
-      if (precentage <= 90) {
+      if (percentage <= 85) {
         prv.updateMovie(rMov, widget.movieMetadata!.elementAt(0));
       } else {
         prv.deleteMovie(widget.movieMetadata!.elementAt(0));
@@ -201,11 +201,11 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
         episodeNum: widget.tvMetadata!.elementAt(3),
         seasonNum: widget.tvMetadata!.elementAt(4));
 
-    double precentage = (elapsed / duration) * 100;
+    double percentage = (elapsed / duration) * 100;
     if (!isBookmarked) {
       prv.addEpisode(rEpisode);
     } else {
-      if (precentage <= 95) {
+      if (percentage <= 85) {
         prv.updateEpisode(rEpisode, widget.tvMetadata!.elementAt(0),
             widget.tvMetadata!.elementAt(3), widget.tvMetadata!.elementAt(4));
       } else {
@@ -216,11 +216,17 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
     final isInBackground = (state == AppLifecycleState.paused) ||
         (state == AppLifecycleState.inactive);
     if (isInBackground) {
       if (_betterPlayerController.isVideoInitialized()!) {
+        await _betterPlayerController.videoPlayerController!.position
+            .then((value) {
+          _betterPlayerController.videoPlayerController!
+              .seekTo(Duration(seconds: value!.inSeconds - 2));
+        });
+
         widget.mediaType == MediaType.movie
             ? insertRecentMovieData()
             : insertRecentEpisodeData();
@@ -239,7 +245,6 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
     return WillPopScope(
       onWillPop: () async {
         if (_betterPlayerController.isVideoInitialized()!) {
-          Wakelock.disable();
           widget.mediaType == MediaType.movie
               ? insertRecentMovieData()
               : insertRecentEpisodeData();

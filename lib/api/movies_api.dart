@@ -1,11 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-
-import 'package:caffiene/models/watch_history.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 import 'package:caffiene/models/credits.dart';
 import 'package:caffiene/models/genres.dart';
@@ -74,7 +70,7 @@ class moviesApi {
 
   Future<List<MovieResults>> fetchMoviesForStream(String api) async {
     MovieStream movieStream;
-    print('ftc mov');
+    print(api);
     try {
       print(api);
       var res = await retryOptions.retry(
@@ -268,6 +264,7 @@ class moviesApi {
   }
 
   Future<Moviedetail> fetchMovieDetails(String api) async {
+    print(api);
     Moviedetail movieDetails;
     try {
       var res = await retryOptions.retry(

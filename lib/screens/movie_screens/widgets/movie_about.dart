@@ -1,4 +1,5 @@
 import 'package:caffiene/widgets/download_button_widget.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/api/endpoints.dart';
 import 'package:caffiene/models/movie_models.dart';
@@ -31,6 +32,7 @@ class _MovieAboutState extends State<MovieAbout> {
   double? buttonWidth = 150;
   @override
   Widget build(BuildContext context) {
+    final lang = Provider.of<SettingsProvider>(context).appLanguage;
     return SingleChildScrollView(
       // physics: const BouncingScrollPhysics(),
       child: Container(
@@ -41,14 +43,14 @@ class _MovieAboutState extends State<MovieAbout> {
         child: Column(
           children: <Widget>[
             GenreDisplay(
-              api: Endpoints.movieDetailsUrl(widget.movie.id!),
+              api: Endpoints.movieDetailsUrl(widget.movie.id!, lang),
             ),
-            const Row(
+            Row(
               children: <Widget>[
                 Padding(
-                  padding: EdgeInsets.only(left: 8.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: Text(
-                    'Overview',
+                    tr("overview"),
                     style: kTextHeaderStyle,
                   ),
                 ),
@@ -57,15 +59,15 @@ class _MovieAboutState extends State<MovieAbout> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: widget.movie.overview!.isEmpty
-                  ? const Text('There is no overview for this movie')
+                  ? Text(tr("no_overview_movie"))
                   : ReadMoreText(
                       widget.movie.overview!,
                       trimLines: 4,
                       style: const TextStyle(fontFamily: 'Poppins'),
                       colorClickableText: Theme.of(context).colorScheme.primary,
                       trimMode: TrimMode.Line,
-                      trimCollapsedText: 'read more',
-                      trimExpandedText: 'read less',
+                      trimCollapsedText: tr("read_more"),
+                      trimExpandedText: tr("read_less"),
                       lessStyle: TextStyle(
                           fontSize: 14,
                           color: Theme.of(context).colorScheme.primary,
@@ -78,18 +80,24 @@ class _MovieAboutState extends State<MovieAbout> {
             ),
             Row(
               children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(left: 8.0, bottom: 4.0),
-                  child: Text(
-                    widget.movie.releaseDate == null ||
-                            widget.movie.releaseDate!.isEmpty
-                        ? 'Release date: N/A'
-                        : 'Release date : ${DateTime.parse(widget.movie.releaseDate!).day} ${DateFormat("MMMM").format(DateTime.parse(widget.movie.releaseDate!))}, ${DateTime.parse(widget.movie.releaseDate!).year}',
-                    style: const TextStyle(fontFamily: 'PoppinsSB'),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                        left: 8.0, bottom: 4.0, right: 8.0),
+                    child: Text(
+                      widget.movie.releaseDate == null ||
+                              widget.movie.releaseDate!.isEmpty
+                          ? tr("no_release_date")
+                          : '${tr("release_date")} : ${DateTime.parse(widget.movie.releaseDate!).day} ${DateFormat("MMMM").format(DateTime.parse(widget.movie.releaseDate!))}, ${DateTime.parse(widget.movie.releaseDate!).year}',
+                      style: const TextStyle(fontFamily: 'PoppinsSB'),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                 ),
               ],
             ),
+            const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -100,9 +108,9 @@ class _MovieAboutState extends State<MovieAbout> {
                   adult: widget.movie.adult,
                   posterPath: widget.movie.posterPath,
                   backdropPath: widget.movie.backdropPath,
-                  api: Endpoints.movieDetailsUrl(widget.movie.id!),
+                  api: Endpoints.movieDetailsUrl(widget.movie.id!, lang),
                 ),
-                // SizedBox(
+                // const SizedBox(
                 //   width: 15,
                 // ),
                 // DownloadMovie(
@@ -115,43 +123,42 @@ class _MovieAboutState extends State<MovieAbout> {
                 // )
               ],
             ),
+            const SizedBox(height: 15),
             ScrollingArtists(
-              api: Endpoints.getCreditsUrl(widget.movie.id!),
-              title: 'Cast',
+              api: Endpoints.getCreditsUrl(widget.movie.id!, lang),
+              title: tr("cast"),
             ),
             MovieImagesDisplay(
-              title: 'Images',
+              title: tr("images"),
               api: Endpoints.getImages(widget.movie.id!),
               name: widget.movie.title,
             ),
             MovieVideosDisplay(
               api: Endpoints.getVideos(widget.movie.id!),
-              title: 'Videos',
+              title: tr("videos"),
             ),
             MovieSocialLinks(
-              api: Endpoints.getExternalLinksForMovie(
-                widget.movie.id!,
-              ),
+              api: Endpoints.getExternalLinksForMovie(widget.movie.id!, lang),
             ),
             BelongsToCollectionWidget(
-              api: Endpoints.movieDetailsUrl(widget.movie.id!),
+              api: Endpoints.movieDetailsUrl(widget.movie.id!, lang),
             ),
             MovieInfoTable(
-              api: Endpoints.movieDetailsUrl(widget.movie.id!),
+              api: Endpoints.movieDetailsUrl(widget.movie.id!, lang),
             ),
             const SizedBox(
               height: 10,
             ),
             MovieRecommendationsTab(
               includeAdult: Provider.of<SettingsProvider>(context).isAdult,
-              api: Endpoints.getMovieRecommendations(widget.movie.id!, 1),
+              api: Endpoints.getMovieRecommendations(widget.movie.id!, 1, lang),
               movieId: widget.movie.id!,
             ),
             SimilarMoviesTab(
                 movieName: widget.movie.title!,
                 includeAdult: Provider.of<SettingsProvider>(context).isAdult,
                 movieId: widget.movie.id!,
-                api: Endpoints.getSimilarMovies(widget.movie.id!, 1)),
+                api: Endpoints.getSimilarMovies(widget.movie.id!, 1, lang)),
             // DidYouKnow(
             //   api: Endpoints.getExternalLinksForMovie(
             //     widget.movie.id!,

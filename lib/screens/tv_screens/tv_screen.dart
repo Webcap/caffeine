@@ -1,3 +1,5 @@
+import 'package:caffiene/provider/recently_watched_provider.dart';
+import 'package:caffiene/screens/tv_screens/widgets/scrolling_recent_tv_episode.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/api/endpoints.dart';
@@ -25,6 +27,8 @@ class _MainTVDisplayState extends State<MainTVDisplay> {
 
   @override
   Widget build(BuildContext context) {
+    var rEpisodes = Provider.of<RecentProvider>(context).episodes;
+    final lang = Provider.of<SettingsProvider>(context).appLanguage;
     return Container(
       child: ListView(
         children: [
@@ -32,40 +36,43 @@ class _MainTVDisplayState extends State<MainTVDisplay> {
               includeAdult: Provider.of<SettingsProvider>(context).isAdult),
           ScrollingTV(
             includeAdult: Provider.of<SettingsProvider>(context).isAdult,
-            title: tr('popular'),
-            api: Endpoints.popularTVUrl(1),
+            title: tr("popular"),
+            api: Endpoints.popularTVUrl(1, lang),
             discoverType: 'popular',
             isTrending: false,
           ),
+          rEpisodes.isEmpty
+              ? Container()
+              : ScrollingRecentEpisodes(episodesList: rEpisodes),
           ScrollingTV(
             includeAdult: Provider.of<SettingsProvider>(context).isAdult,
-            title: 'Trending this week',
-            api: Endpoints.trendingTVUrl(1),
+            title: tr("trending_this_week"),
+            api: Endpoints.trendingTVUrl(1, lang),
             discoverType: 'trending',
             isTrending: true,
           ),
           ScrollingTV(
             includeAdult: Provider.of<SettingsProvider>(context).isAdult,
-            title: 'Top Rated',
-            api: Endpoints.topRatedTVUrl(1),
+            title: tr("top_rated"),
+            api: Endpoints.topRatedTVUrl(1, lang),
             discoverType: 'top_rated',
             isTrending: false,
           ),
           ScrollingTV(
             includeAdult: Provider.of<SettingsProvider>(context).isAdult,
-            title: 'Airing today',
-            api: Endpoints.airingTodayUrl(1),
+            title: tr("airing_today"),
+            api: Endpoints.airingTodayUrl(1, lang),
             discoverType: 'airing_today',
             isTrending: false,
           ),
           ScrollingTV(
             includeAdult: Provider.of<SettingsProvider>(context).isAdult,
-            title: 'On the air',
-            api: Endpoints.onTheAirUrl(1),
+            title: tr("on_the_air"),
+            api: Endpoints.onTheAirUrl(1, lang),
             discoverType: 'on_the_air',
             isTrending: false,
           ),
-          TVGenreListGrid(api: Endpoints.tvGenresUrl()),
+          TVGenreListGrid(api: Endpoints.tvGenresUrl(lang)),
           const TVShowsFromWatchProviders(),
         ],
       ),

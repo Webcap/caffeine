@@ -1,29 +1,30 @@
-import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/material.dart';
+// ignore: must_be_immutable
 import 'package:caffiene/api/endpoints.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/screens/person/widgets/person_widget.dart';
 import 'package:caffiene/screens/tv_screens/widgets/person_widget.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '/models/credits.dart' as cre;
 
-// ignore: must_be_immutable
-class CastDetailAbout extends StatefulWidget {
-  CastDetailAbout(
+class CrewDetailAbout extends StatefulWidget {
+  CrewDetailAbout(
       {Key? key,
-      required this.cast,
+      required this.crew,
       required this.selectedIndex,
       required this.tabController})
       : super(key: key);
+
   int selectedIndex;
-  final cre.Cast? cast;
   final TabController tabController;
+  final cre.Crew? crew;
 
   @override
-  State<CastDetailAbout> createState() => _CastDetailAboutState();
+  State<CrewDetailAbout> createState() => _CrewDetailAboutState();
 }
 
-class _CastDetailAboutState extends State<CastDetailAbout> {
+class _CrewDetailAboutState extends State<CrewDetailAbout> {
   @override
   Widget build(BuildContext context) {
     final isDark = Provider.of<SettingsProvider>(context).darktheme;
@@ -89,22 +90,22 @@ class _CastDetailAboutState extends State<CastDetailAbout> {
                                       children: [
                                         PersonAboutWidget(
                                             api: Endpoints.getPersonDetails(
-                                                widget.cast!.id!, lang)),
+                                                widget.crew!.id!, lang)),
                                         PersonSocialLinks(
                                           api: Endpoints
                                               .getExternalLinksForPerson(
-                                                  widget.cast!.id!, lang),
+                                                  widget.crew!.id!, lang),
                                         ),
                                         PersonImagesDisplay(
-                                          personName: widget.cast!.name!,
+                                          personName: widget.crew!.name!,
                                           api: Endpoints.getPersonImages(
-                                            widget.cast!.id!,
+                                            widget.crew!.id!,
                                           ),
                                           title: tr("images"),
                                         ),
                                         PersonDataTable(
                                           api: Endpoints.getPersonDetails(
-                                              widget.cast!.id!, lang),
+                                              widget.crew!.id!, lang),
                                         ),
                                       ],
                                     ),
@@ -115,22 +116,22 @@ class _CastDetailAboutState extends State<CastDetailAbout> {
                           ),
                           Container(
                             child: PersonMovieListWidget(
-                              isPersonAdult: widget.cast!.adult!,
+                              isPersonAdult: widget.crew!.adult!,
                               includeAdult:
                                   Provider.of<SettingsProvider>(context)
                                       .isAdult,
                               api: Endpoints.getMovieCreditsForPerson(
-                                  widget.cast!.id!, lang),
+                                  widget.crew!.id!, lang),
                             ),
                           ),
                           Container(
                             child: PersonTVListWidget(
-                                isPersonAdult: widget.cast!.adult!,
+                                isPersonAdult: widget.crew!.adult!,
                                 includeAdult:
                                     Provider.of<SettingsProvider>(context)
                                         .isAdult,
                                 api: Endpoints.getTVCreditsForPerson(
-                                    widget.cast!.id!, lang)),
+                                    widget.crew!.id!, lang)),
                           ),
                         ],
                       ),

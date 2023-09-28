@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/screens/common/landing_screen.dart';
@@ -16,15 +17,15 @@ class UserState extends StatelessWidget {
             return const caffieneHomePage();
           } else if (userSnapshot.connectionState == ConnectionState.active) {
             if (userSnapshot.hasData) {
-              //  print('The user is already logged in');
+              print('The user is already logged in');
               return const caffieneHomePage();
             } else {
-              // print('The user didn\'t login yet');
+              print('The user didn\'t login yet');
               return const LandingScreen();
             }
           } else {
-            return const Center(
-              child: Text('Error occured'),
+            return Center(
+              child: Text(tr("error_occured")),
             );
           }
         });

@@ -5,6 +5,7 @@ import 'package:caffiene/screens/tv_screens/widgets/tv_seasons_list.dart';
 import 'package:caffiene/screens/tv_screens/widgets/tv_social_links.dart';
 import 'package:caffiene/screens/tv_screens/widgets/tv_widgets.dart';
 import 'package:caffiene/widgets/common_widgets.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/api/endpoints.dart';
 import 'package:caffiene/models/tv.dart';
@@ -27,6 +28,7 @@ class TVAbout extends StatefulWidget {
 class _TVAboutState extends State<TVAbout> {
   @override
   Widget build(BuildContext context) {
+    final lang = Provider.of<SettingsProvider>(context).appLanguage;
     return SingleChildScrollView(
       //  physics: const BouncingScrollPhysics(),
       child: Container(
@@ -37,14 +39,14 @@ class _TVAboutState extends State<TVAbout> {
         child: Column(
           children: <Widget>[
             TVGenreDisplay(
-              api: Endpoints.tvDetailsUrl(widget.tvSeries.id!),
+              api: Endpoints.tvDetailsUrl(widget.tvSeries.id!, lang),
             ),
-            const Row(
+            Row(
               children: <Widget>[
                 Padding(
-                  padding: EdgeInsets.only(left: 8.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: Text(
-                    'Overview',
+                    tr("overview"),
                     style: kTextHeaderStyle,
                   ),
                 ),
@@ -54,15 +56,15 @@ class _TVAboutState extends State<TVAbout> {
               padding: const EdgeInsets.all(8.0),
               child: widget.tvSeries.overview!.isEmpty ||
                       widget.tvSeries.overview == null
-                  ? const Text('There is no overview for this TV series :(')
+                  ? Text(tr("no_overview_tv"))
                   : ReadMoreText(
                       widget.tvSeries.overview!,
                       trimLines: 4,
                       style: const TextStyle(fontFamily: 'Poppins'),
                       colorClickableText: Theme.of(context).colorScheme.primary,
                       trimMode: TrimMode.Line,
-                      trimCollapsedText: 'read more',
-                      trimExpandedText: 'read less',
+                      trimCollapsedText: tr("read_more"),
+                      trimExpandedText: tr("read_less"),
                       lessStyle: TextStyle(
                           fontSize: 14,
                           color: Theme.of(context).colorScheme.primary,
@@ -75,15 +77,20 @@ class _TVAboutState extends State<TVAbout> {
             ),
             Row(
               children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(left: 8.0, bottom: 4.0),
-                  child: Text(
-                    widget.tvSeries.firstAirDate == null ||
-                            widget.tvSeries.firstAirDate!.isEmpty
-                        ? 'First episode air date: N/A'
-                        : 'First episode air date : ${DateTime.parse(widget.tvSeries.firstAirDate!).day} ${DateFormat("MMMM").format(DateTime.parse(widget.tvSeries.firstAirDate!))}, ${DateTime.parse(widget.tvSeries.firstAirDate!).year}',
-                    style: const TextStyle(
-                      fontFamily: 'PoppinsSB',
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                        left: 8.0, bottom: 4.0, right: 8.0),
+                    child: Text(
+                      widget.tvSeries.firstAirDate == null ||
+                              widget.tvSeries.firstAirDate!.isEmpty
+                          ? tr("first_episode_air_empty")
+                          : '${tr("first_episode_air")} ${DateTime.parse(widget.tvSeries.firstAirDate!).day} ${DateFormat("MMMM").format(DateTime.parse(widget.tvSeries.firstAirDate!))}, ${DateTime.parse(widget.tvSeries.firstAirDate!).year}',
+                      style: const TextStyle(
+                        fontFamily: 'PoppinsSB',
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ),
@@ -91,50 +98,51 @@ class _TVAboutState extends State<TVAbout> {
             ),
             ScrollingTVArtists(
               passedFrom: 'tv_detail',
-              api: Endpoints.getTVCreditsUrl(widget.tvSeries.id!),
-              title: 'Cast',
+              api: Endpoints.getTVCreditsUrl(widget.tvSeries.id!, lang),
+              title: tr("cast"),
               id: widget.tvSeries.id!,
             ),
             ScrollingTVCreators(
-              api: Endpoints.tvDetailsUrl(widget.tvSeries.id!),
-              title: 'Created by',
+              api: Endpoints.tvDetailsUrl(widget.tvSeries.id!, lang),
+              title: tr("created_by"),
             ),
             SeasonsList(
               tvId: widget.tvSeries.id!,
               seriesName: widget.tvSeries.name!,
-              title: 'Seasons',
-              api: Endpoints.getTVSeasons(widget.tvSeries.id!)
+              title: tr("seasons"),
+              api: Endpoints.getTVSeasons(widget.tvSeries.id!, lang),
             ),
             TVImagesDisplay(
-              title: 'Images',
+              title: tr("images"),
               api: Endpoints.getTVImages(widget.tvSeries.id!),
               name: widget.tvSeries.originalName,
             ),
             TVVideosDisplay(
               api: Endpoints.getTVVideos(widget.tvSeries.id!),
-              api2: Endpoints.tvDetailsUrl(widget.tvSeries.id!),
-              title: 'Videos',
+              api2: Endpoints.tvDetailsUrl(widget.tvSeries.id!, lang),
+              title: tr("videos"),
             ),
             TVSocialLinks(
-              api: Endpoints.getExternalLinksForTV(widget.tvSeries.id!),
+              api: Endpoints.getExternalLinksForTV(widget.tvSeries.id!, lang),
             ),
             TVInfoTable(
-              api: Endpoints.tvDetailsUrl(widget.tvSeries.id!),
+              api: Endpoints.tvDetailsUrl(widget.tvSeries.id!, lang),
             ),
             TVRecommendationsTab(
                 includeAdult: Provider.of<SettingsProvider>(context).isAdult,
                 tvId: widget.tvSeries.id!,
-                api: Endpoints.getTVRecommendations(widget.tvSeries.id!, 1)),
+                api: Endpoints.getTVRecommendations(
+                    widget.tvSeries.id!, 1, lang)),
             SimilarTVTab(
                 includeAdult: Provider.of<SettingsProvider>(context).isAdult,
                 tvId: widget.tvSeries.id!,
                 tvName: widget.tvSeries.name!,
-                api: Endpoints.getSimilarTV(widget.tvSeries.id!, 1)),
-            DidYouKnow(
-              api: Endpoints.getExternalLinksForTV(
-                widget.tvSeries.id!,
-              ),
-            ),
+                api: Endpoints.getSimilarTV(widget.tvSeries.id!, 1, lang)),
+            // DidYouKnow(
+            //   api: Endpoints.getExternalLinksForTV(
+            //     widget.tvSeries.id!,
+            //   ),
+            // ),
           ],
         ),
       ),

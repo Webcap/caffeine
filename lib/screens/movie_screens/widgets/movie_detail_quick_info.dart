@@ -24,6 +24,7 @@ class MovieDetailQuickInfo extends StatelessWidget {
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     final watchCountry = Provider.of<SettingsProvider>(context).defaultCountry;
     final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final appLang = Provider.of<SettingsProvider>(context).appLanguage;
     return SizedBox(
       height: 310,
       width: double.infinity,
@@ -70,6 +71,7 @@ class MovieDetailQuickInfo extends StatelessWidget {
                                       fit: BoxFit.cover,
                                     )
                                   : CachedNetworkImage(
+                                      cacheManager: cacheProp(),
                                       fit: BoxFit.cover,
                                       placeholder: (context, url) =>
                                           Image.asset(
@@ -93,11 +95,13 @@ class MovieDetailQuickInfo extends StatelessWidget {
                             bottom: 0,
                             child: SafeArea(
                               child: Container(
-                                alignment: Alignment.topRight,
+                                alignment: appLang == 'ar'
+                                    ? Alignment.topLeft
+                                    : Alignment.topRight,
                                 child: GestureDetector(
                                   child: WatchProvidersButton(
                                     api: Endpoints.getMovieWatchProviders(
-                                        movie.id!),
+                                        movie.id!, appLang),
                                     country: watchCountry,
                                     onTap: () {
                                       showModalBottomSheet(
@@ -106,7 +110,7 @@ class MovieDetailQuickInfo extends StatelessWidget {
                                           return WatchProvidersDetails(
                                             api: Endpoints
                                                 .getMovieWatchProviders(
-                                                    movie.id!),
+                                                    movie.id!, appLang),
                                             country: watchCountry,
                                           );
                                         },
@@ -138,36 +142,40 @@ class MovieDetailQuickInfo extends StatelessWidget {
                   // poster
                   Hero(
                     tag: heroId,
-                    child: ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: Container(
-                          padding: const EdgeInsets.fromLTRB(0, 0, 8, 0),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
-                            child: SizedBox(
-                              width: 94,
-                              height: 140,
-                              child: movie.posterPath == null
-                                  ? Image.asset(
-                                      'assets/images/na_logo.png',
-                                      fit: BoxFit.cover,
-                                    )
-                                  : CachedNetworkImage(
-                                      fit: BoxFit.fill,
-                                      placeholder: (context, url) =>
-                                          scrollingImageShimmer1(isDark),
-                                      errorWidget: (context, url, error) =>
-                                          Image.asset(
+                    child: Material(
+                      type: MaterialType.transparency,
+                      child: ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Container(
+                            padding: const EdgeInsets.fromLTRB(0, 0, 8, 0),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: SizedBox(
+                                width: 94,
+                                height: 140,
+                                child: movie.posterPath == null
+                                    ? Image.asset(
                                         'assets/images/na_logo.png',
                                         fit: BoxFit.cover,
+                                      )
+                                    : CachedNetworkImage(
+                                        cacheManager: cacheProp(),
+                                        fit: BoxFit.fill,
+                                        placeholder: (context, url) =>
+                                            scrollingImageShimmer1(isDark),
+                                        errorWidget: (context, url, error) =>
+                                            Image.asset(
+                                          'assets/images/na_logo.png',
+                                          fit: BoxFit.cover,
+                                        ),
+                                        imageUrl: TMDB_BASE_IMAGE_URL +
+                                            imageQuality +
+                                            movie.posterPath!,
                                       ),
-                                      imageUrl: TMDB_BASE_IMAGE_URL +
-                                          imageQuality +
-                                          movie.posterPath!,
-                                    ),
+                              ),
                             ),
-                          ),
-                        )),
+                          )),
+                    ),
                   ),
                   const SizedBox(width: 16),
                   //  titles

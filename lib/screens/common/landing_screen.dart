@@ -69,7 +69,7 @@ class _LandingScreenState extends State<LandingScreen> {
                     width: 350,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
-                      color: const Color(0xFFF57C00),
+                      color: maincolor,
                     ),
                     child: Center(
                         child: SizedBox(
@@ -95,8 +95,7 @@ class _LandingScreenState extends State<LandingScreen> {
                                   tag: 'logo_shadow',
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
-                                    child: Image.asset(
-                                        'assets/images/logo_shadow.png'),
+                                    child: Image.asset(appConfig.app_icon),
                                   ),
                                 ),
                               ),
@@ -141,7 +140,7 @@ class _LandingScreenState extends State<LandingScreen> {
                             Padding(
                               padding: const EdgeInsets.only(top: 10.0),
                               child: Text(
-                                tr("unlimited_on_cinemax"),
+                                tr("unlimited_on_caffiene"),
                                 style: const TextStyle(
                                   color: Colors.black,
                                   fontSize: 20,
@@ -173,7 +172,7 @@ class _LandingScreenState extends State<LandingScreen> {
                                 ),
                               ),
                               backgroundColor: MaterialStateProperty.all(
-                                  const Color(0xFFf57c00))),
+                                  maincolor2)),
                           onPressed: () async {
                             // updateFirstRunData();
                             Navigator.push(context,

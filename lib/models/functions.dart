@@ -44,7 +44,7 @@ Future checkForUpdate(String api) async {
 
 Future<List<Channel>> fetchChannels(String api) async {
   ChannelsList channelsList;
-  print('fetchChan');
+  print(api);
   try {
     var res = await retryOptions.retry(
       () => http.get(Uri.parse(api)),

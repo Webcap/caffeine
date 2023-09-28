@@ -46,6 +46,7 @@ class _caffieneHomePageState extends State<caffieneHomePage>
   @override
   Widget build(BuildContext context) {
     final mixpanel = Provider.of<SettingsProvider>(context).mixpanel;
+    final lang = Provider.of<SettingsProvider>(context).appLanguage;
     return Scaffold(
       key: _scaffoldKey,
       drawer: const Drawer(child: DrawerWidget()),
@@ -75,7 +76,7 @@ class _caffieneHomePageState extends State<caffieneHomePage>
                         mixpanel: mixpanel,
                         includeAdult: Provider.of<SettingsProvider>(context,
                                 listen: false)
-                            .isAdult));
+                            .isAdult, lang: lang));
               },
               icon: const Icon(Icons.search)),
           // IconButton(
@@ -113,22 +114,18 @@ class _caffieneHomePageState extends State<caffieneHomePage>
                 tabs: [
                   GButton(
                     icon: FontAwesomeIcons.clapperboard,
-                    text: 'Movies',
                     iconColor: Theme.of(context).colorScheme.primaryContainer,
                   ),
                   GButton(
                     icon: FontAwesomeIcons.tv,
-                    text: ' TV Shows',
                     iconColor: Theme.of(context).colorScheme.primaryContainer,
                   ),
                   GButton(
                     icon: FontAwesomeIcons.compass,
-                    text: 'Discover',
                     iconColor: Theme.of(context).colorScheme.primaryContainer,
                   ),
                   GButton(
                     icon: FontAwesomeIcons.user,
-                    text: 'Profile',
                     iconColor: Theme.of(context).colorScheme.primaryContainer,
                   ),
                 ],
@@ -143,8 +140,7 @@ class _caffieneHomePageState extends State<caffieneHomePage>
           ),
         ),
       ),
-      body: Container(
-        child: IndexedStack(
+      body: IndexedStack(
           index: selectedIndex,
           children: const <Widget>[
             MainMoviesDisplay(),
@@ -152,8 +148,6 @@ class _caffieneHomePageState extends State<caffieneHomePage>
             DiscoverPage(),
             ProfilePage()
           ],
-        ),
-      ),
-    );
+        ));
   }
 }

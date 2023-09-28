@@ -24,6 +24,7 @@ class TVDetailQuickInfo extends StatelessWidget {
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     final watchCountry = Provider.of<SettingsProvider>(context).defaultCountry;
     final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final appLang = Provider.of<SettingsProvider>(context).appLanguage;
     return SizedBox(
       height: 310,
       width: double.infinity,
@@ -70,6 +71,7 @@ class TVDetailQuickInfo extends StatelessWidget {
                                       fit: BoxFit.cover,
                                     )
                                   : CachedNetworkImage(
+                                      cacheManager: cacheProp(),
                                       fit: BoxFit.cover,
                                       placeholder: (context, url) =>
                                           Image.asset(
@@ -93,12 +95,14 @@ class TVDetailQuickInfo extends StatelessWidget {
                             bottom: 0,
                             child: SafeArea(
                               child: Container(
-                                alignment: Alignment.topRight,
+                                alignment: appLang == 'ar'
+                                    ? Alignment.topLeft
+                                    : Alignment.topRight,
                                 child: GestureDetector(
                                   child: WatchProvidersButton(
                                     country: watchCountry,
                                     api: Endpoints.getMovieWatchProviders(
-                                        tvSeries.id!),
+                                        tvSeries.id!, appLang),
                                     onTap: () {
                                       showModalBottomSheet(
                                         context: context,
@@ -106,7 +110,7 @@ class TVDetailQuickInfo extends StatelessWidget {
                                           return WatchProvidersDetails(
                                             country: watchCountry,
                                             api: Endpoints.getTVWatchProviders(
-                                                tvSeries.id!),
+                                                tvSeries.id!, appLang),
                                           );
                                         },
                                       );
@@ -137,36 +141,40 @@ class TVDetailQuickInfo extends StatelessWidget {
                   // poster
                   Hero(
                     tag: heroId,
-                    child: ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: Container(
-                          padding: const EdgeInsets.fromLTRB(0, 0, 8, 0),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
-                            child: SizedBox(
-                              width: 94,
-                              height: 140,
-                              child: tvSeries.posterPath == null
-                                  ? Image.asset(
-                                      'assets/images/na_logo.png',
-                                      fit: BoxFit.cover,
-                                    )
-                                  : CachedNetworkImage(
-                                      fit: BoxFit.fill,
-                                      placeholder: (context, url) =>
-                                          scrollingImageShimmer1(isDark),
-                                      errorWidget: (context, url, error) =>
-                                          Image.asset(
+                    child: Material(
+                      type: MaterialType.transparency,
+                      child: ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Container(
+                            padding: const EdgeInsets.fromLTRB(0, 0, 8, 0),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: SizedBox(
+                                width: 94,
+                                height: 140,
+                                child: tvSeries.posterPath == null
+                                    ? Image.asset(
                                         'assets/images/na_logo.png',
                                         fit: BoxFit.cover,
+                                      )
+                                    : CachedNetworkImage(
+                                        cacheManager: cacheProp(),
+                                        fit: BoxFit.fill,
+                                        placeholder: (context, url) =>
+                                            scrollingImageShimmer1(isDark),
+                                        errorWidget: (context, url, error) =>
+                                            Image.asset(
+                                          'assets/images/na_logo.png',
+                                          fit: BoxFit.cover,
+                                        ),
+                                        imageUrl: TMDB_BASE_IMAGE_URL +
+                                            imageQuality +
+                                            tvSeries.posterPath!,
                                       ),
-                                      imageUrl: TMDB_BASE_IMAGE_URL +
-                                          imageQuality +
-                                          tvSeries.posterPath!,
-                                    ),
+                              ),
                             ),
-                          ),
-                        )),
+                          )),
+                    ),
                   ),
                   const SizedBox(width: 16),
                   //  titles
