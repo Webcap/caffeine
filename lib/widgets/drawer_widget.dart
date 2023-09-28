@@ -1,6 +1,5 @@
 import 'package:caffiene/screens/common/server_status_screen.dart';
 import 'package:caffiene/screens/tv_screens/live_tv_screen.dart';
-import 'package:caffiene/screens/watch_history/watch_history_screen.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
