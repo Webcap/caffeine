@@ -57,7 +57,7 @@ const kTextSmallHeaderStyle = TextStyle(
   overflow: TextOverflow.ellipsis,
 );
 
-const String currentAppVersion = '1.3.0-dev';
+const String currentAppVersion = '1.3.0';
 
 const kTextHeaderStyle = TextStyle(
   fontFamily: 'PoppinsSB',
