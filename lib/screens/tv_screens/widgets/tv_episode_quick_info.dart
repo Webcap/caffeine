@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/models/tv.dart';
 import 'package:caffiene/provider/settings_provider.dart';
@@ -23,6 +24,7 @@ class TVEpisodeQuickInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final appLang = Provider.of<SettingsProvider>(context).appLanguage;
     return SizedBox(
       height: 310,
       width: double.infinity,
@@ -69,6 +71,7 @@ class TVEpisodeQuickInfo extends StatelessWidget {
                                       fit: BoxFit.cover,
                                     )
                                   : CachedNetworkImage(
+                                      cacheManager: cacheProp(),
                                       fit: BoxFit.cover,
                                       placeholder: (context, url) =>
                                           Image.asset(
@@ -92,9 +95,10 @@ class TVEpisodeQuickInfo extends StatelessWidget {
                             bottom: 0,
                             child: SafeArea(
                               child: Container(
-                                alignment: Alignment.topRight,
-                                child:
-                                    const TopButton(buttonText: 'Open Season'),
+                                alignment: appLang == 'ar'
+                                    ? Alignment.topLeft
+                                    : Alignment.topRight,
+                                child: TopButton(buttonText: tr("open_season")),
                               ),
                             ),
                           ),

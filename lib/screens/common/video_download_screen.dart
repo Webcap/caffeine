@@ -4,7 +4,6 @@ import 'package:caffiene/models/download_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-
 class VideoDownloadScreen extends StatefulWidget {
   const VideoDownloadScreen({Key? key}) : super(key: key);
 
@@ -16,7 +15,7 @@ class _VideoDownloadScreenState extends State<VideoDownloadScreen> {
   // double _progress = 0.0;
 
   // Future<void> _convertM3U8toMP4() async {
-  //   Directory? appDir = Directory("storage/emulated/0/Cinemax/Backdrops");
+  //   Directory? appDir = Directory("storage/emulated/0/caffiene/Backdrops");
 
   //   String outputPath = "${appDir!.path}/output1.mp4";
   //   String _outputPath;

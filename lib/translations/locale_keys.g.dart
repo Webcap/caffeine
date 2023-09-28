@@ -445,7 +445,7 @@ abstract class LocaleKeys {
   static const no_stream_tv = 'no_stream_tv';
   static const no_rent_tv = 'no_rent_tv';
   static const no_ads_tv = 'no_ads_tv';
-  static const cinemax = 'cinemax';
+  static const caffiene = 'caffiene';
   static const no_cast = 'no_cast';
   static const no_overview_tv = 'no_overview_tv';
   static const first_episode_air_empty = 'first_episode_air_empty';

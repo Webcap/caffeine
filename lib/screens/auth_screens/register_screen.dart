@@ -108,12 +108,12 @@ class _SignupScreenState extends State<SignupScreen> {
               .set({'uname': _userName.trim().toLowerCase(), 'uid': uid});
 
           await FirebaseFirestore.instance
-              .collection('bookmarks-v2.0')
+              .collection('bookmarks')
               .doc(uid)
               .set({});
 
           subscription = await FirebaseFirestore.instance
-              .collection('bookmarks-v2.0')
+              .collection('bookmarks')
               .doc(uid)
               .get();
 
@@ -121,7 +121,7 @@ class _SignupScreenState extends State<SignupScreen> {
 
           if (docData.containsKey('movies') == false) {
             await FirebaseFirestore.instance
-                .collection('bookmarks-v2.0')
+                .collection('bookmarks')
                 .doc(uid)
                 .update(
               {'movies': []},
@@ -130,7 +130,7 @@ class _SignupScreenState extends State<SignupScreen> {
 
           if (docData.containsKey('tvShows') == false) {
             await FirebaseFirestore.instance
-                .collection('bookmarks-v2.0')
+                .collection('bookmarks')
                 .doc(uid)
                 .update(
               {'tvShows': []},
@@ -202,7 +202,7 @@ class _SignupScreenState extends State<SignupScreen> {
                             width: 90,
                             height: 90,
                             child:
-                                Image.asset('assets/images/logo_shadow.png')),
+                                Image.asset(appConfig.app_icon)),
                       ),
                     ),
                     const SizedBox(

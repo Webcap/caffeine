@@ -1,6 +1,7 @@
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:caffiene/screens/person/guest_star_details.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/api/movies_api.dart';
 import 'package:caffiene/api/tv_api.dart';
@@ -51,9 +52,7 @@ class ScrollingTVState extends State<ScrollingTV>
           isLoading = true;
         });
 
-        tvApi()
-            .fetchTV(
-                '${widget.api}&page=$pageNum&include_adult=${widget.includeAdult}')
+        tvApi().fetchTV('${widget.api}&page=$pageNum&include_adult=${widget.includeAdult}')
             .then((value) {
           if (mounted) {
             setState(() {
@@ -71,8 +70,7 @@ class ScrollingTVState extends State<ScrollingTV>
   void initState() {
     super.initState();
     tvApi()
-        .fetchTV('${widget.api}&include_adult=${widget.includeAdult}')
-        .then((value) {
+        .fetchTV('${widget.api}&include_adult=${widget.includeAdult}').then((value) {
       if (mounted) {
         setState(() {
           tvList = value;
@@ -98,11 +96,13 @@ class ScrollingTVState extends State<ScrollingTV>
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                widget.title,
-                style: kTextHeaderStyle,
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(widget.title,
+                    style: kTextHeaderStyle,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis),
               ),
             ),
             Padding(
@@ -126,9 +126,9 @@ class ScrollingTVState extends State<ScrollingTV>
                           RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20.0),
                       ))),
-                  child: const Padding(
-                    padding: EdgeInsets.only(left: 8.0, right: 8.0),
-                    child: Text('View all'),
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                    child: Text(tr("view_all")),
                   ),
                 )),
           ],
@@ -168,93 +168,99 @@ class ScrollingTVState extends State<ScrollingTV>
                                       child: Hero(
                                         tag:
                                             '${tvList![index].id}${widget.title}',
-                                        child: Stack(
-                                          alignment: Alignment.center,
-                                          children: [
-                                            ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(8.0),
-                                              child: tvList![index]
-                                                          .posterPath ==
-                                                      null
-                                                  ? Image.asset(
-                                                      'assets/images/na_rect.png',
-                                                      fit: BoxFit.cover,
-                                                    )
-                                                  : CachedNetworkImage(
-                                                      fadeOutDuration:
-                                                          const Duration(
-                                                              milliseconds:
-                                                                  300),
-                                                      fadeOutCurve:
-                                                          Curves.easeOut,
-                                                      fadeInDuration:
-                                                          const Duration(
-                                                              milliseconds:
-                                                                  700),
-                                                      fadeInCurve:
-                                                          Curves.easeIn,
-                                                      imageUrl: tvList![index]
-                                                                  .posterPath ==
-                                                              null
-                                                          ? ''
-                                                          : TMDB_BASE_IMAGE_URL +
-                                                              imageQuality +
-                                                              tvList![index]
-                                                                  .posterPath!,
-                                                      imageBuilder: (context,
-                                                              imageProvider) =>
-                                                          Container(
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          image:
-                                                              DecorationImage(
-                                                            image:
-                                                                imageProvider,
-                                                            fit: BoxFit.cover,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      placeholder: (context,
-                                                              url) =>
-                                                          scrollingImageShimmer1(
-                                                              isDark),
-                                                      errorWidget: (context,
-                                                              url, error) =>
-                                                          Image.asset(
+                                        child: Material(
+                                          type: MaterialType.transparency,
+                                          child: Stack(
+                                            alignment: Alignment.center,
+                                            children: [
+                                              ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                                child: tvList![index]
+                                                            .posterPath ==
+                                                        null
+                                                    ? Image.asset(
                                                         'assets/images/na_rect.png',
                                                         fit: BoxFit.cover,
+                                                      )
+                                                    : CachedNetworkImage(
+                                                        cacheManager:
+                                                            cacheProp(),
+                                                        fadeOutDuration:
+                                                            const Duration(
+                                                                milliseconds:
+                                                                    300),
+                                                        fadeOutCurve:
+                                                            Curves.easeOut,
+                                                        fadeInDuration:
+                                                            const Duration(
+                                                                milliseconds:
+                                                                    700),
+                                                        fadeInCurve:
+                                                            Curves.easeIn,
+                                                        imageUrl: tvList![index]
+                                                                    .posterPath ==
+                                                                null
+                                                            ? ''
+                                                            : TMDB_BASE_IMAGE_URL +
+                                                                imageQuality +
+                                                                tvList![index]
+                                                                    .posterPath!,
+                                                        imageBuilder: (context,
+                                                                imageProvider) =>
+                                                            Container(
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            image:
+                                                                DecorationImage(
+                                                              image:
+                                                                  imageProvider,
+                                                              fit: BoxFit.cover,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        placeholder: (context,
+                                                                url) =>
+                                                            scrollingImageShimmer1(
+                                                                isDark),
+                                                        errorWidget: (context,
+                                                                url, error) =>
+                                                            Image.asset(
+                                                          'assets/images/na_rect.png',
+                                                          fit: BoxFit.cover,
+                                                        ),
                                                       ),
-                                                    ),
-                                            ),
-                                            Positioned(
-                                              top: 0,
-                                              left: 0,
-                                              child: Container(
-                                                margin: const EdgeInsets.all(3),
-                                                alignment: Alignment.topLeft,
-                                                width: 50,
-                                                height: 25,
-                                                decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            8),
-                                                    color: isDark
-                                                        ? Colors.black45
-                                                        : Colors.white60),
-                                                child: Row(
-                                                  children: [
-                                                    const Icon(
-                                                      Icons.star,
-                                                    ),
-                                                    Text(tvList![index]
-                                                        .voteAverage!
-                                                        .toStringAsFixed(1))
-                                                  ],
+                                              ),
+                                              Positioned(
+                                                top: 0,
+                                                left: 0,
+                                                child: Container(
+                                                  margin:
+                                                      const EdgeInsets.all(3),
+                                                  alignment: Alignment.topLeft,
+                                                  width: 50,
+                                                  height: 25,
+                                                  decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8),
+                                                      color: isDark
+                                                          ? Colors.black45
+                                                          : Colors.white60),
+                                                  child: Row(
+                                                    children: [
+                                                      const Icon(
+                                                        Icons.star,
+                                                      ),
+                                                      Text(tvList![index]
+                                                          .voteAverage!
+                                                          .toStringAsFixed(1))
+                                                    ],
+                                                  ),
                                                 ),
                                               ),
-                                            ),
-                                          ],
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -288,8 +294,8 @@ class ScrollingTVState extends State<ScrollingTV>
                   ],
                 ),
         ),
-        const Divider(
-          color: Colors.white54,
+        Divider(
+          color: !isDark ? Colors.black54 : Colors.white54,
           thickness: 1,
           endIndent: 20,
           indent: 10,
@@ -301,6 +307,7 @@ class ScrollingTVState extends State<ScrollingTV>
   @override
   bool get wantKeepAlive => true;
 }
+
 
 class ScrollingTVArtists extends StatefulWidget {
   final String? api, title, tapButtonText;

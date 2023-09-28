@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/controller/database_controller.dart';
 import 'package:caffiene/models/tv.dart';
@@ -42,69 +43,83 @@ class _TVDetailOptionsState extends State<TVDetailOptions> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         // user score circle percent indicator
-        Padding(
-          padding: const EdgeInsets.fromLTRB(10, 0, 18, 0),
-          child: Row(
-            children: [
-              CircularPercentIndicator(
-                radius: 30,
-                percent: (widget.tvSeries.voteAverage! / 10),
-                curve: Curves.ease,
-                animation: true,
-                animationDuration: 2500,
-                progressColor: Theme.of(context).colorScheme.primary,
-                center: Text(
-                  '${widget.tvSeries.voteAverage!.toStringAsFixed(1)}/10',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w700,
+        Expanded(
+          flex: 2,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(10, 0, 18, 0),
+            child: Row(
+              children: [
+                CircularPercentIndicator(
+                  radius: 30,
+                  percent: (widget.tvSeries.voteAverage! / 10),
+                  curve: Curves.ease,
+                  animation: true,
+                  animationDuration: 2500,
+                  progressColor: Theme.of(context).colorScheme.primary,
+                  center: Text(
+                    '${widget.tvSeries.voteAverage!.toStringAsFixed(1)}/10',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                 ),
+                const SizedBox(width: 4),
+                Expanded(
+                  child: Text(
+                    tr("rating"),
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+
+        Expanded(
+          flex: 2,
+          child: Row(children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+              // height: 46,
+              // width: 46,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primary,
+                borderRadius: BorderRadius.circular(12),
               ),
-              const SizedBox(width: 4),
-              const Text(
-                'User\nScore',
+              child: Text(
+                widget.tvSeries.voteCount!.toString(),
+                style: const TextStyle(
+                  fontSize: 18,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            const SizedBox(width: 4),
+            Expanded(
+              child: Text(
+                tr("total_ratings"),
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
                 ),
               ),
-            ],
-          ),
+            ),
+          ]),
         ),
 
-        Row(children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-            // height: 46,
-            // width: 46,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Text(
-              widget.tvSeries.voteCount!.toString(),
-              style: const TextStyle(
-                fontSize: 18,
-                color: Colors.white,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-          const SizedBox(width: 4),
-          const Text(
-            'Vote\nCounts',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-        ]),
-
         Padding(
-          padding: const EdgeInsets.only(left: 25),
+          padding: const EdgeInsets.only(left: 10, right: 8),
           child: Container(
             child: ElevatedButton(
                 onPressed: () {

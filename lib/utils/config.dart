@@ -57,7 +57,7 @@ const kTextSmallHeaderStyle = TextStyle(
   overflow: TextOverflow.ellipsis,
 );
 
-const String currentAppVersion = '1.3-dev';
+const String currentAppVersion = '1.3.0-dev';
 
 const kTextHeaderStyle = TextStyle(
   fontFamily: 'PoppinsSB',
@@ -106,19 +106,8 @@ const retryOptions = RetryOptions(
 const timeOut = Duration(seconds: 10);
 
 final List<String> appNames = [
-  'caffiene-v1.0.5-dev-v2.apk',
-  'caffiene-v1.0.6.apk',
-  'caffiene-v1.0.8.apk',
-  'caffiene-v1.1.0.apk',
-  'caffiene-v1.2.0.apk',
-  'caffiene-v1.2.1.apk',
-  'caffiene-v1.2.2.apk',
-  'caffiene-v1.0.6-dev.apk',
-  'caffiene-v1.0.8-dev.apk',
-  'caffiene-v1.1.0-dev.apk',
-  'caffiene-v1.2.0-dev.apk',
-  'caffiene-v1.2.1-dev.apk',
-  'caffiene-v1.2.2-dev.apk',
+  'caffiene-v1.3.0-dev.apk',
+  'caffiene-v1.3.0.apk',
 ];
 
 CacheManager cacheProp() {

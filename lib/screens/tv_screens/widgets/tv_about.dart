@@ -4,7 +4,6 @@ import 'package:caffiene/screens/tv_screens/widgets/tv_recc_tab.dart';
 import 'package:caffiene/screens/tv_screens/widgets/tv_seasons_list.dart';
 import 'package:caffiene/screens/tv_screens/widgets/tv_social_links.dart';
 import 'package:caffiene/screens/tv_screens/widgets/tv_widgets.dart';
-import 'package:caffiene/widgets/common_widgets.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/api/endpoints.dart';

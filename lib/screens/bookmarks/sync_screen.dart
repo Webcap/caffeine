@@ -49,7 +49,7 @@ class _SyncScreenState extends State<SyncScreen>
 
   Future<bool> checkIfDocExists(String docId) async {
     try {
-      var collectionRef = firebaseInstance.collection('bookmarks-v2.0');
+      var collectionRef = firebaseInstance.collection('bookmarks');
       var doc = await collectionRef.doc(docId).get();
       return doc.exists;
     } catch (e) {
@@ -68,29 +68,29 @@ class _SyncScreenState extends State<SyncScreen>
 
     // Checks if a bookmark document exists for a signed in user
     if (await checkIfDocExists(uid!) == false) {
-      await firebaseInstance.collection('bookmarks-v2.0').doc(uid!).set({});
+      await firebaseInstance.collection('bookmarks').doc(uid!).set({});
     }
 
     // Checks if a movie and tvShow collection exists for a signed in user and creates a collection if it doesn't exist
     subscription =
-        await firebaseInstance.collection('bookmarks-v2.0').doc(uid!).get();
+        await firebaseInstance.collection('bookmarks').doc(uid!).get();
     final docData = subscription.data() as Map<String, dynamic>;
 
     if (docData.containsKey('movies') == false) {
-      await firebaseInstance.collection('bookmarks-v2.0').doc(uid!).update(
+      await firebaseInstance.collection('bookmarks').doc(uid!).update(
         {'movies': []},
       );
     }
 
     if (docData.containsKey('tvShows') == false) {
-      await firebaseInstance.collection('bookmarks-v2.0').doc(uid!).update(
+      await firebaseInstance.collection('bookmarks').doc(uid!).update(
         {'tvShows': []},
       );
     }
 
     // Fetches movies and tvShows of the signed in user and converts the map into a Movie/TV object/list
     await firebaseInstance
-        .collection('bookmarks-v2.0')
+        .collection('bookmarks')
         .doc(uid!)
         .get()
         .then((value) {
@@ -105,7 +105,7 @@ class _SyncScreenState extends State<SyncScreen>
     });
 
     await firebaseInstance
-        .collection('bookmarks-v2.0')
+        .collection('bookmarks')
         .doc(uid!)
         .get()
         .then((value) {
@@ -220,7 +220,7 @@ class _SyncScreenState extends State<SyncScreen>
     try {
       // fetches movie map from firebase and converts it into a list of movie
       await firebaseInstance
-          .collection('bookmarks-v2.0')
+          .collection('bookmarks')
           .doc(uid!)
           .get()
           .then((value) {
@@ -267,7 +267,7 @@ class _SyncScreenState extends State<SyncScreen>
       }
 
       // finally update the firebase collection with the new difference list of maps
-      await firebaseInstance.collection('bookmarks-v2.0').doc(uid!).update(
+      await firebaseInstance.collection('bookmarks').doc(uid!).update(
         {'movies': toFirebase},
       );
     } finally {
@@ -300,7 +300,7 @@ class _SyncScreenState extends State<SyncScreen>
     List<Map<String, dynamic>> toFirebase = [];
     try {
       await firebaseInstance
-          .collection('bookmarks-v2.0')
+          .collection('bookmarks')
           .doc(uid!)
           .get()
           .then((value) {
@@ -343,7 +343,7 @@ class _SyncScreenState extends State<SyncScreen>
         toFirebase.add(difference[i].toMap());
       }
 
-      await firebaseInstance.collection('bookmarks-v2.0').doc(uid!).update(
+      await firebaseInstance.collection('bookmarks').doc(uid!).update(
         {'tvShows': toFirebase},
       );
     } finally {
@@ -370,7 +370,7 @@ class _SyncScreenState extends State<SyncScreen>
   void deleteMovieFromFirebase(int index) async {
     // Get the document
     DocumentReference documentReference =
-        firebaseInstance.collection('bookmarks-v2.0').doc(uid!);
+        firebaseInstance.collection('bookmarks').doc(uid!);
 
     // Get all list of map/array from firebase
     List<dynamic> array = (await documentReference.get()).get('movies');
@@ -387,7 +387,7 @@ class _SyncScreenState extends State<SyncScreen>
   // Same functionality with deleteMovieFromFirebase()
   void deleteTVFromFirebase(int index) async {
     DocumentReference documentReference =
-        firebaseInstance.collection('bookmarks-v2.0').doc(uid!);
+        firebaseInstance.collection('bookmarks').doc(uid!);
 
     List<dynamic> array = (await documentReference.get()).get('tvShows');
     array.removeAt(index);

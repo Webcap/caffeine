@@ -66,7 +66,7 @@ class DeleteAccountScreenState extends State<DeleteAccountScreen> {
               .delete()
               .then((value) async {
             await FirebaseFirestore.instance
-                .collection('bookmarks-v2.0')
+                .collection('bookmarks')
                 .doc(uid)
                 .delete()
                 .then((value) async {

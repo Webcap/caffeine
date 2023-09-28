@@ -151,7 +151,6 @@ class StreamingServicesTVShows extends StatelessWidget {
   }
 }
 
-
 class TVStreamingServicesWidget extends StatelessWidget {
   final String imagePath;
   final String title;
@@ -2163,7 +2162,7 @@ class _TVWatchProvidersDetailsState extends State<TVWatchProvidersDetails>
                                     Expanded(
                                         flex: 6,
                                         child: Text(
-                                          tr("cinemax"),
+                                          tr("caffiene"),
                                           textAlign: TextAlign.center,
                                           maxLines: 2,
                                           overflow: TextOverflow.ellipsis,

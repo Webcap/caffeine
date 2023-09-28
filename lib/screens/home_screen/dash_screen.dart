@@ -1,5 +1,3 @@
-import 'package:caffiene/screens/common/video_download_screen.dart';
-import 'package:caffiene/utils/next_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
@@ -99,7 +97,7 @@ class _caffieneHomePageState extends State<caffieneHomePage>
           child: SafeArea(
             child: Padding(
               padding:
-                  const EdgeInsets.symmetric(horizontal: 15.0, vertical: 8),
+                  const EdgeInsets.symmetric(horizontal: 30.0, vertical: 7.5),
               child: GNav(
                 rippleColor: Colors.grey[300]!,
                 hoverColor: Colors.grey[100]!,

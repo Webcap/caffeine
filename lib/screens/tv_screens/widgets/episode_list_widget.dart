@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/api/tv_api.dart';
 import 'package:caffiene/models/tv.dart';
@@ -52,10 +53,10 @@ class EpisodeListWidgetState extends State<EpisodeListWidget>
             ? Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Padding(
-                    padding: EdgeInsets.all(8.0),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
                     child: Text(
-                      'Episodes',
+                      tr("episodes"),
                       style: kTextHeaderStyle,
                     ),
                   ),
@@ -70,6 +71,7 @@ class EpisodeListWidgetState extends State<EpisodeListWidget>
                               top: 0.0,
                               bottom: 8.0,
                               left: 10,
+                              right: 10,
                             ),
                             child: Column(
                               children: [
@@ -157,17 +159,17 @@ class EpisodeListWidgetState extends State<EpisodeListWidget>
                 ],
               )
             : tvDetails!.episodes!.isEmpty
-                ? const Center(
-                    child: Text('No episodes found :(',
-                        style: kTextSmallHeaderStyle),
+                ? Center(
+                    child:
+                        Text(tr("no_episodes"), style: kTextSmallHeaderStyle),
                   )
                 : Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
                         child: Text(
-                          'Episodes',
+                          tr("episodes"),
                           style: kTextHeaderStyle,
                         ),
                       ),
@@ -192,10 +194,10 @@ class EpisodeListWidgetState extends State<EpisodeListWidget>
                                 color: Colors.transparent,
                                 child: Padding(
                                   padding: const EdgeInsets.only(
-                                    top: 0.0,
-                                    bottom: 8.0,
-                                    left: 10,
-                                  ),
+                                      top: 0.0,
+                                      bottom: 8.0,
+                                      left: 10,
+                                      right: 10),
                                   child: Column(
                                     children: [
                                       Row(
@@ -207,7 +209,7 @@ class EpisodeListWidgetState extends State<EpisodeListWidget>
                                               .toString()),
                                           Padding(
                                             padding: const EdgeInsets.only(
-                                                right: 10.0, left: 5.0),
+                                                right: 10.0, left: 10.0),
                                             child: SizedBox(
                                               height: 56.4,
                                               width: 100,
@@ -228,6 +230,8 @@ class EpisodeListWidgetState extends State<EpisodeListWidget>
                                                         fit: BoxFit.cover,
                                                       )
                                                     : CachedNetworkImage(
+                                                        cacheManager:
+                                                            cacheProp(),
                                                         fadeOutDuration:
                                                             const Duration(
                                                                 milliseconds:
@@ -309,7 +313,7 @@ class EpisodeListWidgetState extends State<EpisodeListWidget>
                                                               .episodes![index]
                                                               .airDate!
                                                               .isEmpty
-                                                      ? 'Air date unknown'
+                                                      ? tr("air_date_unknown")
                                                       : '${DateTime.parse(tvDetails!.episodes![index].airDate!).day} ${DateFormat("MMMM").format(DateTime.parse(tvDetails!.episodes![index].airDate!))}, ${DateTime.parse(tvDetails!.episodes![index].airDate!).year}',
                                                   style: TextStyle(
                                                     color: isDark
