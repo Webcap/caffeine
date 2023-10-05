@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:better_player/better_player.dart';
 import 'package:provider/provider.dart';
-import 'package:wakelock/wakelock.dart';
+//import 'package:wakelock/wakelock.dart';
 
 class Player extends StatefulWidget {
   const Player(

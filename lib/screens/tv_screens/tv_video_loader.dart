@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:caffiene/api/endpoints.dart';
 import 'package:caffiene/api/tv_api.dart';
 import 'package:caffiene/models/tv_stream.dart';
-import 'package:caffiene/models/functions.dart';
+import 'package:caffiene/functions/functions.dart';
 import 'package:caffiene/screens/player/player.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:provider/provider.dart';

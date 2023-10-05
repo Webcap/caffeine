@@ -1,3 +1,4 @@
+import 'package:caffiene/utils/config.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
@@ -60,7 +61,7 @@ class _caffieneHomePageState extends State<caffieneHomePage>
           },
         ),
         title: Text(
-          'caffiene',
+          appConfig.app_name,
           style: TextStyle(fontFamily: 'PoppinsSB', color: Theme.of(context).primaryColor),
         ),
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,

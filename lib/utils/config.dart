@@ -18,7 +18,7 @@ const String IMDB_BASE_URL = "https://imdb.com/title/";
 const String TWOEMBED_BASE_URL = "https://2embed.biz";
 const String CAFFEINE_UPDATE_URL =
     "https://webcap.github.io/caffiene/res/update.json";
-const String TAG_LINE1 = "Unlimted, for free, anytime on Caffiene";
+const String TAG_LINE1 = "Unlimted, for free, anytime on Caffeine";
 const String SIGN_IN = "Log In";
 const String SIGN_UP = "Sign Up";
 const String ERROROCCURRED = "an error has occurred";
@@ -30,6 +30,7 @@ final client = HttpClient();
 
 class appConfig {
   static const app_icon = "assets/logo.png";
+  static const app_name = "caffeine";
 }
 
 String mixpanelKey = "c8ff0b487c27b501b6524084dc0b83a9";
@@ -57,7 +58,7 @@ const kTextSmallHeaderStyle = TextStyle(
   overflow: TextOverflow.ellipsis,
 );
 
-const String currentAppVersion = '1.3.0-dev';
+const String currentAppVersion = '1.3.1-dev';
 
 const kTextHeaderStyle = TextStyle(
   fontFamily: 'PoppinsSB',

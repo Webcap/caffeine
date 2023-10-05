@@ -10,7 +10,7 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:caffiene/api/endpoints.dart';
 import 'package:caffiene/api/movies_api.dart';
 import 'package:caffiene/models/movie_stream.dart';
-import 'package:caffiene/models/functions.dart';
+import 'package:caffiene/functions/functions.dart';
 import 'package:caffiene/screens/player/player.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:better_player/better_player.dart';

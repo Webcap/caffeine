@@ -1,5 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:caffiene/models/functions.dart';
+import 'package:caffiene/functions/functions.dart';
 import 'package:caffiene/models/live_tv.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/screens/player/live_player.dart';

@@ -1,7 +1,7 @@
 import 'package:better_player/better_player.dart';
 import 'package:caffiene/api/endpoints.dart';
 import 'package:caffiene/api/movies_api.dart';
-import 'package:caffiene/models/functions.dart';
+import 'package:caffiene/functions/functions.dart';
 import 'package:caffiene/models/movie_stream.dart';
 import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:caffiene/provider/settings_provider.dart';
