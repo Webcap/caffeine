@@ -54,7 +54,7 @@ class SettingsProvider with ChangeNotifier {
   int _defaultVideoResolution = 0;
   int get defaultVideoResolution => _defaultVideoResolution;
 
-  String _defaultSubtitleLanguage = 'English';
+  String _defaultSubtitleLanguage = 'en';
   String get defaultSubtitleLanguage => _defaultSubtitleLanguage;
 
   bool _defaultViewMode = true;
