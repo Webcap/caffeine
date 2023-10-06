@@ -26,8 +26,6 @@ const String CONSUMET_INFO_API = 'https://consumet.beamlak.dev/';
 const String STREAMING_SERVER = "vidcloud";
 String openSubtitlesKey = dotenv.env['OPENSUBTITLES_API_KEY']!;
 
-final client = HttpClient();
-
 class appConfig {
   static const app_icon = "assets/logo.png";
   static const app_name = "caffeine";
@@ -100,11 +98,13 @@ const kTableLeftStyle =
     TextStyle(overflow: TextOverflow.ellipsis, fontWeight: FontWeight.bold);
 
 const String grid_landing_photo = "assets/images/grid_final.jpg";
+
+final client = HttpClient();
 const retryOptions = RetryOptions(
     maxDelay: Duration(milliseconds: 300),
     delayFactor: Duration(seconds: 0),
     maxAttempts: 100000);
-const timeOut = Duration(seconds: 10);
+const timeOut = Duration(seconds: 15);
 
 final List<String> appNames = [
   'caffiene-v1.3.0-dev.apk',

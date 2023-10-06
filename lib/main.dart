@@ -44,6 +44,8 @@ Future<void> appInitialize() async {
   await recentProvider.fetchMovies();
   await recentProvider.fetchEpisodes();
   await appDependencyProvider.getConsumetUrl();
+  await appDependencyProvider.getOpenSubKey();
+  await appDependencyProvider.getStreamingServer();
   await settingsProvider.getSubtitleSize();
   await settingsProvider.getForegroundSubtitleColor();
   await settingsProvider.getBackgroundSubtitleColor();
@@ -62,11 +64,10 @@ void main() async {
     fallbackLocale: Translation.all[0],
     startLocale: Locale(settingsProvider.appLanguage),
     child: caffeine(
-        settingsProvider: settingsProvider,
-        recentProvider: recentProvider,
-        appDependencyProvider: appDependencyProvider,
-        init: _initialization,
+      settingsProvider: settingsProvider,
+      recentProvider: recentProvider,
+      appDependencyProvider: appDependencyProvider,
+      init: _initialization,
     ),
   ));
 }
-

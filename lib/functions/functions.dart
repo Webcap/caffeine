@@ -93,9 +93,9 @@ Future<MovieInfoTMDBRoute> getMovieStreamEpisodesTMDB(String api) async {
 
   return movieInfo;
 }
-
 Future<TVTMDBRoute> getTVStreamEpisodesTMDB(String api) async {
   TVTMDBRoute tvInfo;
+  print(api);
   try {
     var res = await retryOptions.retry(
       (() => http.get(Uri.parse(api)).timeout(timeOut)),
