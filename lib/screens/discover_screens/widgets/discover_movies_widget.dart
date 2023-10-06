@@ -13,9 +13,9 @@ import 'package:caffiene/widgets/shimmer_widget.dart';
 import 'package:provider/provider.dart';
 
 class DiscoverMovies extends StatefulWidget {
-  const DiscoverMovies({
-    Key? key, required bool includeAdult,
-  }) : super(key: key);
+  const DiscoverMovies({Key? key, required this.includeAdult})
+      : super(key: key);
+  final bool includeAdult;
   @override
   DiscoverMoviesState createState() => DiscoverMoviesState();
 }
@@ -25,23 +25,43 @@ class DiscoverMoviesState extends State<DiscoverMovies>
   List<Movie>? moviesList;
   late double deviceHeight;
   YearDropdownData yearDropdownData = YearDropdownData();
-  MovieGenreFilterChipData movieGenreFilterChipData =
-      MovieGenreFilterChipData();
   @override
   void initState() {
     super.initState();
     getData();
   }
 
+  List<MovieGenreFilterChipWidget> movieGenreFilterdata =
+      <MovieGenreFilterChipWidget>[
+    MovieGenreFilterChipWidget(genreName: tr('action'), genreValue: '28'),
+    MovieGenreFilterChipWidget(genreName: tr('adventure'), genreValue: '12'),
+    MovieGenreFilterChipWidget(genreName: tr('animation'), genreValue: '16'),
+    MovieGenreFilterChipWidget(genreName: tr('comedy'), genreValue: '35'),
+    MovieGenreFilterChipWidget(genreName: tr('crime'), genreValue: '80'),
+    MovieGenreFilterChipWidget(genreName: tr('documentary'), genreValue: '99'),
+    MovieGenreFilterChipWidget(genreName: tr('drama'), genreValue: '18'),
+    MovieGenreFilterChipWidget(genreName: tr('family'), genreValue: '10751'),
+    MovieGenreFilterChipWidget(genreName: tr('fantasy'), genreValue: '14'),
+    MovieGenreFilterChipWidget(genreName: tr('history'), genreValue: '36'),
+    MovieGenreFilterChipWidget(genreName: tr('horror'), genreValue: '27'),
+    MovieGenreFilterChipWidget(genreName: tr('music'), genreValue: '10402'),
+    MovieGenreFilterChipWidget(genreName: tr('mystery'), genreValue: '9648'),
+    MovieGenreFilterChipWidget(genreName: tr('romance'), genreValue: '10749'),
+    MovieGenreFilterChipWidget(
+        genreName: tr('science_fiction'), genreValue: '878'),
+    MovieGenreFilterChipWidget(genreName: tr('tv_movie'), genreValue: '10770'),
+    MovieGenreFilterChipWidget(genreName: tr('thriller'), genreValue: '53'),
+    MovieGenreFilterChipWidget(genreName: tr('war'), genreValue: '10752'),
+    MovieGenreFilterChipWidget(genreName: tr('western'), genreValue: '37'),
+  ];
+
   void getData() {
     List<String> years = yearDropdownData.yearsList.getRange(1, 25).toList();
-    List<MovieGenreFilterChipWidget> genres =
-        movieGenreFilterChipData.movieGenreFilterdata;
+    List<MovieGenreFilterChipWidget> genres = movieGenreFilterdata;
     years.shuffle();
     genres.shuffle();
-    moviesApi()
-        .fetchMovies(
-            '$TMDB_API_BASE_URL/discover/movie?api_key=$TMDB_API_KEY&sort_by=popularity.desc&watch_region=US&include_adult=false&primary_release_year=${years.first}&with_genres=${genres.first.genreValue}')
+    moviesApi().fetchMovies(
+            '$TMDB_API_BASE_URL/discover/movie?api_key=$TMDB_API_KEY&sort_by=popularity.desc&watch_region=US&include_adult=${widget.includeAdult}&primary_release_year=${years.first}&with_genres=${genres.first.genreValue}')
         .then((value) {
       if (mounted) {
         setState(() {
@@ -63,7 +83,7 @@ class DiscoverMoviesState extends State<DiscoverMovies>
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Padding(
-              padding: EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(8.0),
               child: Text(
                 tr('featured_movies'),
                 style: kTextHeaderStyle,
@@ -78,9 +98,9 @@ class DiscoverMoviesState extends State<DiscoverMovies>
           child: moviesList == null
               ? discoverMoviesAndTVShimmer1(isDark)
               : moviesList!.isEmpty
-                  ? const Center(
+                  ? Center(
                       child: Text(
-                        'Wow, that\'s odd :/',
+                        tr("wow_odd"),
                         style: kTextSmallBodyStyle,
                       ),
                     )

@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:caffiene/widgets/common_widgets.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/api/endpoints.dart';
@@ -187,14 +188,8 @@ class Search extends SearchDelegate<String> {
                       ),
                       child: Column(
                         children: [
-                          Shimmer.fromColors(
-                            baseColor: isDark
-                                ? Colors.grey.shade800
-                                : Colors.grey.shade300,
-                            highlightColor: isDark
-                                ? Colors.grey.shade700
-                                : Colors.grey.shade100,
-                            direction: ShimmerDirection.ltr,
+                          ShimmerBase(
+                            isDark: isDark,
                             child: Row(
                               children: [
                                 Padding(
@@ -273,11 +268,8 @@ class Search extends SearchDelegate<String> {
           ),
           child: Column(
             children: [
-              Shimmer.fromColors(
-                baseColor: isDark ? Colors.grey.shade800 : Colors.grey.shade300,
-                highlightColor:
-                    isDark ? Colors.grey.shade700 : Colors.grey.shade100,
-                direction: ShimmerDirection.ltr,
+              ShimmerBase(
+                isDark: isDark,
                 child: Row(
                   children: [
                     Padding(

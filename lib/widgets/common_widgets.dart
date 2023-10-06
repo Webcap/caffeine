@@ -4,6 +4,7 @@ import 'package:caffiene/api/movies_api.dart';
 import 'package:caffiene/models/movie_models.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/widgets/shimmer_widget.dart';
+import 'package:shimmer/shimmer.dart';
 
 Widget watchProvidersTabData(
         {required bool isDark,
@@ -208,6 +209,24 @@ class _DidYouKnowState extends State<DidYouKnow> {
           )
         ],
       ),
+    );
+  }
+}
+
+class ShimmerBase extends StatelessWidget {
+  const ShimmerBase({Key? key, required this.child, required this.isDark})
+      : super(key: key);
+
+  final Widget child;
+  final bool isDark;
+
+  @override
+  Widget build(BuildContext context) {
+    return Shimmer.fromColors(
+      baseColor: isDark ? Colors.grey.shade900 : Colors.grey.shade300,
+      highlightColor:
+          isDark ? Colors.grey.shade800.withOpacity(0.1) : Colors.grey.shade200,
+      child: child,
     );
   }
 }
