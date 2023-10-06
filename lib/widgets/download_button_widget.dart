@@ -1,4 +1,5 @@
 import 'package:caffiene/screens/movie_screens/widgets/movie_video_loader.dart';
+import 'package:caffiene/utils/config.dart';
 import 'package:flutter/material.dart';
 
 class DownloadMovie extends StatelessWidget {
@@ -35,7 +36,8 @@ class DownloadMovie extends StatelessWidget {
         )),
         onPressed: () async {
           Navigator.push(context, MaterialPageRoute(builder: ((context) {
-            return MovieVideoLoaderNoAds(
+            return MovieVideoLoader(
+              route: StreamRoute.tmDB,
               metadata: [movieId, movieName, thumbnail, releaseYear, 0.0],
               download: true,
             );

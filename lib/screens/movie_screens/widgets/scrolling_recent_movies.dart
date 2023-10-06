@@ -84,7 +84,7 @@ class _ScrollingRecentMoviesState extends State<ScrollingRecentMovies> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => MovieVideoLoaderNoAds(
+                                  builder: (context) => MovieVideoLoader(
                                         download: false,
                                         metadata: [
                                           widget.moviesList[index].id,
@@ -93,7 +93,8 @@ class _ScrollingRecentMoviesState extends State<ScrollingRecentMovies> {
                                           widget.moviesList[index].releaseYear,
                                           widget.moviesList[index].backdropPath,
                                           widget.moviesList[index].elapsed
-                                        ],
+                                        ], 
+                                        route: StreamRoute.tmDB,
                                       )));
                         },
                         child: SizedBox(

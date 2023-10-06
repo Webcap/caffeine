@@ -313,8 +313,36 @@ class Endpoints {
   }
 
   static String getMovieTVStreamLinks(
-      String episodeId, String mediaId, String baseUrl) {
+      String episodeId, String mediaId, String baseUrl, String server) {
     return '$baseUrl'
-        'movies/flixhq/watch?episodeId=$episodeId&mediaId=$mediaId&server=vidcloud';
+        'movies/flixhq/watch?episodeId=$episodeId&mediaId=$mediaId&server=$server';
+  }
+
+  static String getMovieTVStreamInfoTMDB(
+      String id, String media, String baseUrl) {
+    return '$baseUrl' 'meta/tmdb/info/' '$id' '?type=$media';
+  }
+
+  static String getMovieTVStreamLinksTMDB(
+      String baseUrl, String episodeId, String mediaId, String server) {
+    return '$baseUrl'
+        'meta/tmdb/watch/'
+        '$episodeId'
+        '?id=$mediaId&server=$server';
+  }
+
+  static String searchExternalMovieSubtitles(String imdbId, String language) {
+    return '$opensubtitlesBaseUrl'
+        '/subtitles?imdb_id=$imdbId&languages=$language&ai_translated=exclude';
+  }
+
+  static String searchExternalEpisodeSubtitles(
+      String imdbId, int episodeNum, int seasonNum, String language) {
+    return '$opensubtitlesBaseUrl'
+        '/subtitles?imdb_id=$imdbId&languages=$language&ai_translated=exclude&season_number=$seasonNum&episode_number=$episodeNum';
+  }
+
+  static String externalSubtitleDownload() {
+    return '$opensubtitlesBaseUrl' '/download';
   }
 }

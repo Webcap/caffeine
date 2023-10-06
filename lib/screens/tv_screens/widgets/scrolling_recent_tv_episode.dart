@@ -5,6 +5,7 @@ import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/screens/tv_screens/tv_video_loader.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/widgets/shimmer_widget.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -27,13 +28,13 @@ class _ScrollingRecentEpisodesState extends State<ScrollingRecentEpisodes> {
     final isDark = Provider.of<SettingsProvider>(context).darktheme;
     return Column(
       children: <Widget>[
-        const Row(
+        Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Padding(
-              padding: EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(8.0),
               child: Text(
-                'Recently Watched',
+                tr("recently_watched"),
                 style: kTextHeaderStyle,
               ),
             ),
@@ -89,6 +90,7 @@ class _ScrollingRecentEpisodesState extends State<ScrollingRecentEpisodes> {
                               MaterialPageRoute(
                                   builder: (context) => TVVideoLoader(
                                         download: false,
+                                        route: StreamRoute.tmDB,
                                         metadata: [
                                           widget.episodesList[index].id,
                                           widget.episodesList[index].seriesName,
@@ -96,12 +98,9 @@ class _ScrollingRecentEpisodesState extends State<ScrollingRecentEpisodes> {
                                               .episodesList[index].episodeName,
                                           widget.episodesList[index].episodeNum,
                                           widget.episodesList[index].seasonNum,
-                                          widget
-                                              .episodesList[index].totalSeasons,
-                                          widget
-                                              .episodesList[index].backdropPath,
                                           widget.episodesList[index].posterPath,
-                                          widget.episodesList[index].elapsed
+                                          widget.episodesList[index].elapsed,
+                                          widget.episodesList[index].seriesId,
                                         ],
                                       )));
                         },

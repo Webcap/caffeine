@@ -8,6 +8,7 @@ import 'package:caffiene/models/tv.dart';
 import 'package:caffiene/provider/recently_watched_provider.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/screens/tv_screens/tv_video_loader.dart';
+import 'package:caffiene/utils/config.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -148,7 +149,8 @@ class _WatchNowButtonTVState extends State<WatchNowButtonTV> {
                       value.backdropPath,
                       widget.posterPath,
                       elapsed
-                    ],
+                    ], 
+                    route: StreamRoute.tmDB,
                   );
                 })));
               }

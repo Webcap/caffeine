@@ -130,7 +130,7 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
       _betterPlayerController.videoPlayerController!.seekTo(Duration(
           seconds: widget.mediaType == MediaType.movie
               ? widget.movieMetadata!.elementAt(5)
-              : widget.tvMetadata!.elementAt(8)));
+              : widget.tvMetadata!.elementAt(6)));
       duration = _betterPlayerController
           .videoPlayerController!.value.duration!.inSeconds;
     });
@@ -192,14 +192,14 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
         dateTime: dt,
         elapsed: elapsed,
         id: widget.tvMetadata!.elementAt(0),
-        posterPath: widget.tvMetadata!.elementAt(7),
-        totalSeasons: widget.tvMetadata!.elementAt(5),
+        posterPath: widget.tvMetadata!.elementAt(5),
         remaining: remaining,
         seriesName: widget.tvMetadata!.elementAt(1),
-        backdropPath: widget.tvMetadata!.elementAt(6),
         episodeName: widget.tvMetadata!.elementAt(2),
         episodeNum: widget.tvMetadata!.elementAt(3),
-        seasonNum: widget.tvMetadata!.elementAt(4));
+        seasonNum: widget.tvMetadata!.elementAt(4),
+        seriesId: widget.tvMetadata!.elementAt(7)
+        );
 
     double percentage = (elapsed / duration) * 100;
     if (!isBookmarked) {

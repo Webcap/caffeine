@@ -16,6 +16,7 @@ const String INSTAGRAM_BASE_URL = "https://instagram.com/";
 const String TWITTER_BASE_URL = "https://twitter.com/";
 const String IMDB_BASE_URL = "https://imdb.com/title/";
 const String TWOEMBED_BASE_URL = "https://2embed.biz";
+const String opensubtitlesBaseUrl = "https://api.opensubtitles.com/api/v1";
 const String CAFFEINE_UPDATE_URL =
     "https://webcap.github.io/caffiene/res/update.json";
 const String TAG_LINE1 = "Unlimted, for free, anytime on Caffeine";
@@ -25,6 +26,8 @@ const String ERROROCCURRED = "an error has occurred";
 const String CONSUMET_API = 'https://consumet-api-1p19.onrender.com/';
 const String CONSUMET_INFO_API = 'https://consumet-api-1p19.onrender.com/';
 const String PROCESSING_VIDEO = "Please Wait while we process the video";
+const String STREAMING_SERVER = "vidcloud";
+const String openSubtitlesKey = "v2D7GUfWFY8RQeWExzCqMla7P16Pq5zE";
 
 final client = HttpClient();
 
@@ -109,6 +112,7 @@ const timeOut = Duration(seconds: 10);
 final List<String> appNames = [
   'caffiene-v1.3.0-dev.apk',
   'caffiene-v1.3.0.apk',
+  'caffiene-v1.3.1.apk',
 ];
 
 CacheManager cacheProp() {
@@ -117,3 +121,5 @@ CacheManager cacheProp() {
 }
 
 enum MediaType { movie, tvShow }
+
+enum StreamRoute { flixHQ, tmDB }

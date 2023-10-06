@@ -1,10 +1,12 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:async';
 import 'dart:math';
 
 import 'package:caffiene/controller/recently_watched_database_controller.dart';
 import 'package:caffiene/provider/recently_watched_provider.dart';
 import 'package:caffiene/provider/settings_provider.dart';
-import 'package:caffiene/screens/movie_screens/movie_video_loader1.dart';
+import 'package:caffiene/utils/config.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/screens/movie_screens/widgets/movie_video_loader.dart';
@@ -119,7 +121,8 @@ class WatchNowButtonState extends State<WatchNowButton> {
             buttonWidth = 160;
           });
           Navigator.push(context, MaterialPageRoute(builder: ((context) {
-            return MovieVideoLoaderOne(
+            return MovieVideoLoader(
+              route: StreamRoute.tmDB,
               download: false,
               metadata: [
                 widget.movieId,
