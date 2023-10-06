@@ -1,10 +1,11 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:retry/retry.dart';
 
 const String TMDB_API_BASE_URL = "https://api.themoviedb.org/3";
-String TMDB_API_KEY = 'b9c827ddc7e3741ed414d8731814ecc9';
+String TMDB_API_KEY = dotenv.env['TMDB_API_KEY']!;
 const String TMDB_BASE_IMAGE_URL = "https://image.tmdb.org/t/p/";
 const String EMBED_BASE_MOVIE_URL =
     "https://www.2embed.to/embed/tmdb/movie?id=";
@@ -19,15 +20,11 @@ const String TWOEMBED_BASE_URL = "https://2embed.biz";
 const String opensubtitlesBaseUrl = "https://api.opensubtitles.com/api/v1";
 const String CAFFEINE_UPDATE_URL =
     "https://webcap.github.io/caffiene/res/update.json";
-const String TAG_LINE1 = "Unlimted, for free, anytime on Caffeine";
-const String SIGN_IN = "Log In";
-const String SIGN_UP = "Sign Up";
 const String ERROROCCURRED = "an error has occurred";
-const String CONSUMET_API = 'https://consumet-api-1p19.onrender.com/';
-const String CONSUMET_INFO_API = 'https://consumet-api-1p19.onrender.com/';
-const String PROCESSING_VIDEO = "Please Wait while we process the video";
+const String CONSUMET_API = 'https://consumet-api-opal.vercel.app/';
+const String CONSUMET_INFO_API = 'https://consumet.beamlak.dev/';
 const String STREAMING_SERVER = "vidcloud";
-const String openSubtitlesKey = "v2D7GUfWFY8RQeWExzCqMla7P16Pq5zE";
+String openSubtitlesKey = dotenv.env['OPENSUBTITLES_API_KEY']!;
 
 final client = HttpClient();
 
@@ -36,7 +33,7 @@ class appConfig {
   static const app_name = "caffeine";
 }
 
-String mixpanelKey = "c8ff0b487c27b501b6524084dc0b83a9";
+String mixpanelKey = dotenv.env['MIXPANEL_API_KEY']!;
 
 const Color darkmode = Colors.white;
 const List<String> backimage = [
