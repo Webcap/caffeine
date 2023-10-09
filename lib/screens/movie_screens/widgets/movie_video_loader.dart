@@ -1,14 +1,10 @@
-import 'dart:io';
-
-import 'package:caffiene/main.dart';
-import 'package:caffiene/models/download_manager.dart';
+// ignore_for_file: use_build_context_synchronously
 import 'package:caffiene/models/sub_languages.dart';
 import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:caffiene/provider/settings_provider.dart';
-import 'package:easy_ads_flutter/easy_ads_flutter.dart';
+import 'package:caffiene/utils/report_error_widget.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:caffiene/api/endpoints.dart';
 import 'package:caffiene/api/movies_api.dart';
 import 'package:caffiene/models/movie_stream.dart';
@@ -97,20 +93,24 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
                 setState(() {
                   epi = value;
                 });
-                await moviesApi()
-                    .getMovieStreamLinksAndSubs(
-                        Endpoints.getMovieTVStreamLinks(
-                            epi![0].id!,
-                            movies![i].id!,
-                            appDep.consumetUrl,
-                            appDep.streamingServer))
-                    .then((value) {
-                  setState(() {
-                    movieVideoSources = value;
+                if (epi!.isNotEmpty) {
+                  await moviesApi()
+                      .getMovieStreamLinksAndSubs(
+                          Endpoints.getMovieTVStreamLinks(
+                              epi![0].id!,
+                              movies![i].id!,
+                              appDep.consumetUrl,
+                              appDep.streamingServer))
+                      .then((value) {
+                    if (mounted) {
+                      setState(() {
+                        movieVideoSources = value;
+                      });
+                    }
+                    movieVideoLinks = movieVideoSources!.videoLinks;
+                    movieVideoSubs = movieVideoSources!.videoSubtitles;
                   });
-                  movieVideoLinks = movieVideoSources!.videoLinks;
-                  movieVideoSubs = movieVideoSources!.videoSubtitles;
-                });
+                }
               });
 
               break;
@@ -138,7 +138,7 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
                         appDep.consumetUrl,
                         episode!.episodeId!,
                         episode!.id!,
-                        appDependencyProvider.streamingServer))
+                        appDep.streamingServer))
                 .then((value) {
               if (mounted) {
                 setState(() {
@@ -171,7 +171,6 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
             if (mounted) {
               setState(() {
                 loadProgress = (i / movieVideoSubs!.length) * 100;
-                print(loadProgress);
               });
             }
             await getVttFileAsString(movieVideoSubs![i].url!).then((value) {
@@ -214,20 +213,21 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
               });
             });
           } else {
-            print("CALLEDDDDDDDDDDD");
             await moviesApi()
                 .fetchSocialLinks(
               Endpoints.getExternalLinksForMovie(
                   widget.metadata.elementAt(0), "en"),
             ).then((value) async {
-              await getExternalSubtitle(Endpoints.searchExternalMovieSubtitles(
-                      value.imdbId!,
-                      supportedLanguages[foundIndex].languageCode))
+              await getExternalSubtitle(
+                      Endpoints.searchExternalMovieSubtitles(value.imdbId!,
+                          supportedLanguages[foundIndex].languageCode),
+                      appDep.opensubtitlesKey)
                   .then((value) async {
                 if (value.isNotEmpty) {
                   await downloadExternalSubtitle(
                           Endpoints.externalSubtitleDownload(),
-                          value[0].attr!.files![0].fileId)
+                          value[0].attr!.files![0].fileId,
+                          appDep.opensubtitlesKey)
                       .then((value) async {
                     subs.addAll({
                       BetterPlayerSubtitlesSource(
@@ -273,35 +273,26 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
         ));
       } else {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                tr("movie_vid_404"),
-                maxLines: 3,
-                style: kTextSmallBodyStyle,
-              ),
-              duration: const Duration(seconds: 3),
-            ),
-          );
           Navigator.pop(context);
+          showModalBottomSheet(
+              builder: (context) {
+                return ReportErrorWidget(
+                  error: tr("tv_vid_404"),
+                );
+              },
+              context: context);
         }
       }
     } on Exception catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              tr(
-                "movie_vid_404_desc",
-                namedArgs: {"error": e.toString()},
-              ),
-              maxLines: 3,
-              style: kTextSmallBodyStyle,
-            ),
-            duration: const Duration(seconds: 3),
-          ),
-        );
         Navigator.pop(context);
+        showModalBottomSheet(
+            builder: (context) {
+              return ReportErrorWidget(
+                error: "${tr("tv_vid_404")}\n$e",
+              );
+            },
+            context: context);
       }
     }
   }

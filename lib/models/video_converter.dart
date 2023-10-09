@@ -2,11 +2,9 @@ import 'package:ffmpeg_kit_flutter/ffmpeg_kit.dart';
 import 'package:ffmpeg_kit_flutter/ffmpeg_kit_config.dart';
 import 'package:ffmpeg_kit_flutter/ffprobe_kit.dart';
 import 'package:ffmpeg_kit_flutter/media_information_session.dart';
-import 'package:ffmpeg_kit_flutter/return_code.dart';
-import 'package:ffmpeg_kit_flutter/statistics.dart';
-import 'package:provider/provider.dart';
 
-import 'download_manager.dart';
+import 'package:ffmpeg_kit_flutter/statistics.dart';
+
 
 class VideoConverter {
   Statistics? _statistics;

@@ -58,11 +58,18 @@ class _caffeineState extends State<caffeine>
     _fetchConfig();
   }
 
-  void _fetchConfig() async {
+Future _fetchConfig() async {
     await _remoteConfig.fetchAndActivate();
-    appDependencyProvider.consumetUrl = _remoteConfig.getString('consumet_url');
-    appDependencyProvider.caffieneLogo =
-        _remoteConfig.getString('caffiene_logo');
+    if (mounted) {
+      appDependencyProvider.consumetUrl =
+          _remoteConfig.getString('consumet_url');
+      appDependencyProvider.opensubtitlesKey =
+          _remoteConfig.getString('opensubtitles_key');
+      appDependencyProvider.streamingServer =
+          _remoteConfig.getString('streaming_server');
+      // appDependencyProvider.enableADS = _remoteConfig.getBool('ads_enabled');
+      // appDependencyProvider.fetchRoute = _remoteConfig.getString('route');
+    }
   }
 
   @override

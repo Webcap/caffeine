@@ -1,4 +1,4 @@
-import 'package:json_annotation/json_annotation.dart';
+
 import 'package:caffiene/models/genres.dart';
 import 'package:caffiene/models/source.dart';
 

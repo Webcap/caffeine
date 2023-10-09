@@ -1,15 +1,19 @@
 import 'dart:io';
 
 import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_download_manager/flutter_download_manager.dart';
 import 'package:caffiene/functions/functions.dart';
 import 'package:caffiene/models/update.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/utils/config.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:open_file_plus/open_file_plus.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:path_provider/path_provider.dart';
+
 
 class UpdateScreen extends StatefulWidget {
   const UpdateScreen({Key? key}) : super(key: key);
@@ -32,7 +36,7 @@ class _UpdateScreenState extends State<UpdateScreen> {
         });
       }
     });
-    getApplicationSupportDirectory().then((value) {
+    getApplicationCacheDirectory().then((value) {
       if (mounted) {
         setState(() {
           savedDir = value.path;
@@ -192,7 +196,7 @@ class _ListItemState extends State<ListItem> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
-                      'Caffiene v${widget.appVersion}',
+                      'FlixQuest v${widget.appVersion}',
                       overflow: TextOverflow.ellipsis,
                       style: kTextSmallBodyStyle,
                     ),
@@ -302,6 +306,131 @@ class _ListItemState extends State<ListItem> {
                     },
                     child: Text(tr("download")))
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class UpdateBottom extends StatefulWidget {
+  const UpdateBottom({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  State<UpdateBottom> createState() => _UpdateBottomState();
+}
+
+class _UpdateBottomState extends State<UpdateBottom> {
+  String? appVersion =
+      FirebaseRemoteConfig.instance.getString("latest_version");
+  bool visible = false;
+  bool disableCheck = false;
+
+  String? ignoreVersion;
+
+  Future getData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      ignoreVersion = prefs.getString("ignore_version") ?? "";
+      visible = ignoreVersion != appVersion! &&
+          appVersion != null &&
+          appVersion != currentAppVersion;
+    });
+  }
+
+  Future checkAction(bool value) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (value && appVersion != null) {
+      prefs.setString("ignore_version", appVersion!);
+    } else {
+      prefs.setString("ignore_version", "");
+    }
+  }
+
+  @override
+  void initState() {
+    getData();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Visibility(
+      visible: visible,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 8),
+        child: Container(
+          decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.primaryContainer,
+              borderRadius: BorderRadius.circular(10)),
+          width: double.infinity,
+          child: Stack(
+            children: [
+              Column(children: [
+                Text(
+                  tr("update_available"),
+                  style: kTextHeaderStyle,
+                  maxLines: 3,
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  tr("new_version", namedArgs: {"v": appVersion ?? ""}),
+                  style: kTextSmallBodyStyle,
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: ((context) {
+                        return const UpdateScreen();
+                      })));
+                    },
+                    child: Text(tr("goto_update"))),
+                const SizedBox(
+                  height: 10,
+                ),
+                ListTile(
+                  title: Row(
+                    children: [
+                      Checkbox(
+                          value: disableCheck,
+                          onChanged: (value) {
+                            setState(() {
+                              disableCheck = value!;
+                            });
+                            checkAction(value!);
+                          }),
+                      Expanded(
+                        child: Text(
+                          tr("disable_notification_version"),
+                          maxLines: 3,
+                          textAlign: TextAlign.center,
+                        ),
+                      )
+                    ],
+                  ),
+                )
+              ]),
+              Align(
+                alignment: Alignment.topRight,
+                child: IconButton(
+                    onPressed: () {
+                      setState(() {
+                        visible = false;
+                      });
+                    },
+                    icon: const Icon(FontAwesomeIcons.xmark)),
+              ),
+            ],
+          ),
         ),
       ),
     );

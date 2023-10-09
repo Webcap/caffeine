@@ -110,7 +110,7 @@ Future<TVTMDBRoute> getTVStreamEpisodesTMDB(String api) async {
   return tvInfo;
 }
 
-Future<List<SubtitleData>> getExternalSubtitle(String api) async {
+Future<List<SubtitleData>> getExternalSubtitle(String api, String opensubtitlesKey) async {
   ExternalSubtitle subData;
 
   try {
@@ -131,7 +131,7 @@ Future<List<SubtitleData>> getExternalSubtitle(String api) async {
 }
 
 Future<SubtitleDownload> downloadExternalSubtitle(
-    String api, int fileId) async {
+    String api, int fileId, String opensubtitlesKey) async {
   SubtitleDownload sub;
   final Map<String, String> headers = {
     'User-Agent': 'Cinemax v2.4.0',

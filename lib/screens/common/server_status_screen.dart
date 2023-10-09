@@ -1,6 +1,7 @@
 import 'package:caffiene/api/movies_api.dart';
-import 'package:caffiene/main.dart';
 import 'package:caffiene/utils/config.dart';
+
+import '/main.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../models/movie_stream.dart';
@@ -27,7 +28,7 @@ class _ServerStatusScreenState extends State<ServerStatusScreen> {
       checking = true;
     });
     await moviesApi().getMovieStreamLinksAndSubs(
-            "${appDependencyProvider.consumetUrl}movies/flixhq/watch?episodeId=97708&mediaId=movie/watch-no-hard-feelings-97708")
+            "${appDependencyProvider.consumetUrl}movies/flixhq/watch?episodeId=97708&mediaId=movie/watch-no-hard-feelings-97708&server=${appDependencyProvider.streamingServer}")
         .then((value) {
       if (mounted) {
         setState(() {
@@ -79,11 +80,12 @@ class _ServerStatusScreenState extends State<ServerStatusScreen> {
                   ),
                   Text(
                     resultMessage,
-                    style: TextStyle(
+                    style: kTextHeaderStyle.copyWith(
                         color:
                             movieVideoLinks == null || movieVideoLinks!.isEmpty
                                 ? Colors.red
-                                : Colors.green),
+                                : Colors.green,
+                        fontSize: 30),
                     textAlign: TextAlign.center,
                   ),
                   Visibility(

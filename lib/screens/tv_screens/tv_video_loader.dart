@@ -4,6 +4,7 @@ import 'package:caffiene/main.dart';
 import 'package:caffiene/models/sub_languages.dart';
 import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:caffiene/provider/settings_provider.dart';
+import 'package:caffiene/utils/report_error_widget.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/api/endpoints.dart';
@@ -117,9 +118,11 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
                                     appDep.consumetUrl,
                                     appDep.streamingServer))
                             .then((value) {
-                          setState(() {
-                            tvVideoSources = value;
-                          });
+                          if (mounted) {
+                            setState(() {
+                              tvVideoSources = value;
+                            });
+                          }
                           tvVideoLinks = tvVideoSources!.videoLinks;
                           tvVideoSubs = tvVideoSources!.videoSubtitles;
                         });
@@ -192,7 +195,7 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
                     tvInfoTMDB!.seasons![widget.metadata.elementAt(4) - 1]
                         .episodes![widget.metadata.elementAt(3) - 1].id!,
                     tvInfoTMDB!.id!,
-                    appDependencyProvider.streamingServer))
+                    appDep.streamingServer))
                 .then((value) {
               setState(() {
                 tvVideoSources = value;
@@ -274,12 +277,14 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
                           value.imdbId!,
                           widget.metadata.elementAt(3),
                           widget.metadata.elementAt(4),
-                          supportedLanguages[foundIndex].languageCode))
+                          supportedLanguages[foundIndex].languageCode),
+                      appDep.opensubtitlesKey)
                   .then((value) async {
                 if (value.isNotEmpty) {
                   await downloadExternalSubtitle(
                           Endpoints.externalSubtitleDownload(),
-                          value[0].attr!.files![0].fileId)
+                          value[0].attr!.files![0].fileId,
+                          appDep.opensubtitlesKey)
                       .then((value) async {
                     subs.addAll({
                       BetterPlayerSubtitlesSource(
@@ -323,32 +328,36 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
         ));
       } else {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                tr("tv_vid_404"),
-                maxLines: 3,
-                style: kTextSmallBodyStyle,
-              ),
-              duration: const Duration(seconds: 3),
-            ),
-          );
           Navigator.pop(context);
+          showModalBottomSheet(
+              builder: (context) {
+                return ReportErrorWidget(
+                  error: tr("tv_vid_404"),
+                );
+              },
+              context: context);
+          // ScaffoldMessenger.of(context).showSnackBar(
+          //   SnackBar(
+          //     content: Text(
+          //       tr("tv_vid_404"),
+          //       maxLines: 3,
+          //       style: kTextSmallBodyStyle,
+          //     ),
+          //     duration: const Duration(seconds: 3),
+          //   ),
+          // );
         }
       }
     } on Exception catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              tr("tv_vid_404_desc", namedArgs: {"err": e.toString()}),
-              maxLines: 3,
-              style: kTextSmallBodyStyle,
-            ),
-            duration: const Duration(seconds: 3),
-          ),
-        );
         Navigator.pop(context);
+        showModalBottomSheet(
+            builder: (context) {
+              return ReportErrorWidget(
+                error: "${tr("tv_vid_404")}\n$e",
+              );
+            },
+            context: context);
       }
     }
   }

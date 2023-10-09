@@ -315,7 +315,6 @@ class moviesApi {
     try {
       final url = '$baseUrl/movie/$id?$apiKey';
       final response = await _dio.get(url);
-      var movies = response.data;
       Moviedetail movie = Moviedetail.fromJson(response.data);
       return movie;
     } catch (error, stacktrace) {
