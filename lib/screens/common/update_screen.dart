@@ -196,7 +196,7 @@ class _ListItemState extends State<ListItem> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
-                      'FlixQuest v${widget.appVersion}',
+                      'caffeine v${widget.appVersion}',
                       overflow: TextOverflow.ellipsis,
                       style: kTextSmallBodyStyle,
                     ),

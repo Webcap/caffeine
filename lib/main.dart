@@ -15,6 +15,12 @@ import 'package:caffiene/utils/config.dart';
 
 Future<void> _messageHandler(RemoteMessage message) async {}
 
+bool isTablet(BuildContext context) {
+  double screenWidth = MediaQuery.of(context).size.width;
+  double threshold = 1000.0;
+  return screenWidth > threshold;
+}
+
 SettingsProvider settingsProvider = SettingsProvider();
 DownloadProvider downloadProvider = DownloadProvider();
 RecentProvider recentProvider = RecentProvider();

@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/api/movies_api.dart';
 import 'package:caffiene/models/credits.dart';
@@ -42,13 +43,12 @@ class TVEpisodeGuestStarsTabState extends State<TVEpisodeGuestStarsTab>
             padding: const EdgeInsets.all(8),
             child: searchedPersonShimmer(isDark))
         : credits!.cast!.isEmpty
-            ? Container(
-                color:
-                    isDark ? const Color(0xFF000000) : const Color(0xFFFFFFFF),
-                child: const Center(
-                  child: Text(
-                      'There is no data available for this TV episode Guest stars',
-                      style: kTextSmallHeaderStyle),
+            ? Center(
+                child: Text(
+                  tr("no_guest_episode"),
+                  style: kTextSmallHeaderStyle,
+                  textAlign: TextAlign.center,
+                  maxLines: 4,
                 ),
               )
             : Container(

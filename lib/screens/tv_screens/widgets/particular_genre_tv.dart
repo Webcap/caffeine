@@ -74,13 +74,10 @@ class ParticularGenreTVState extends State<ParticularGenreTV> {
     return tvList == null && viewType == 'grid'
         ? moviesAndTVShowGridShimmer(isDark)
         : tvList == null && viewType == 'list'
-            ? Container(
-                color:
-                    isDark ? const Color(0xFF000000) : const Color(0xFFFFFFFF),
-                child: mainPageVerticalScrollShimmer1(
-                    isDark: isDark,
-                    isLoading: isLoading,
-                    scrollController: _scrollController))
+            ? mainPageVerticalScrollShimmer1(
+                isDark: isDark,
+                isLoading: isLoading,
+                scrollController: _scrollController)
             : tvList!.isEmpty
                 ? Container(
                     child: const Center(

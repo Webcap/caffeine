@@ -36,6 +36,8 @@ class _LivePlayerState extends State<LivePlayer> {
       enableFullscreen: true,
       backgroundColor: widget.colors.elementAt(1).withOpacity(0.6),
       progressBarBackgroundColor: Colors.white,
+      muteIcon: Icons.volume_off_rounded,
+      unMuteIcon: Icons.volume_up_rounded,
       pauseIcon: Icons.pause_outlined,
       pipMenuIcon: Icons.picture_in_picture_sharp,
       playIcon: Icons.play_arrow_sharp,

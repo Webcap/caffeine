@@ -67,7 +67,7 @@ Future _fetchConfig() async {
           _remoteConfig.getString('opensubtitles_key');
       appDependencyProvider.streamingServer =
           _remoteConfig.getString('streaming_server');
-      // appDependencyProvider.enableADS = _remoteConfig.getBool('ads_enabled');
+      appDependencyProvider.enableADS = _remoteConfig.getBool('ads_enabled');
       // appDependencyProvider.fetchRoute = _remoteConfig.getString('route');
     }
   }

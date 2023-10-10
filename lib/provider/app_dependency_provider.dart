@@ -17,6 +17,12 @@ class AppDependencyProvider extends ChangeNotifier {
   String _opensubtitlesKey = openSubtitlesKey;
   String get opensubtitlesKey => _opensubtitlesKey;
 
+  bool _enableADS = false;
+  bool get enableADS => _enableADS;
+
+  String _fetchRoute = "tmDB";
+  String get fetchRoute => _fetchRoute;
+
   Future<void> getConsumetUrl() async {
     consumetUrl = await appDependencies.getConsumetUrl();
   }
@@ -54,6 +60,16 @@ class AppDependencyProvider extends ChangeNotifier {
   set streamingServer(String value) {
     _streamingServer = value;
     appDependencies.setStreamServer(value);
+    notifyListeners();
+  }
+
+  set enableADS(bool value) {
+    _enableADS = value;
+    notifyListeners();
+  }
+
+  set fetchRoute(String value) {
+    _fetchRoute = value;
     notifyListeners();
   }
 }

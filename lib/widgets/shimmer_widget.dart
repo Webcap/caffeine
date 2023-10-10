@@ -1,3 +1,4 @@
+import 'package:caffiene/widgets/common_widgets.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
@@ -1558,7 +1559,75 @@ Widget castAndCrewTabImageShimmer1(isDark) => Shimmer.fromColors(
           borderRadius: BorderRadius.circular(100.0), color: Colors.white),
     ));
 
-Widget movieCastAndCrewTabShimmer() => Container(
+Widget movieCastAndCrewTabShimmer(isDark) => Container(
+    child: ListView.builder(
+        itemCount: 20,
+        shrinkWrap: true,
+        scrollDirection: Axis.vertical,
+        physics: const NeverScrollableScrollPhysics(),
+        itemBuilder: (BuildContext context, int index) {
+          return Container(
+            child: ShimmerBase(
+              isDark: isDark,
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  top: 0.0,
+                  bottom: 5.0,
+                  left: 10,
+                ),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(right: 20.0, left: 10),
+                          child: SizedBox(
+                            height: 80,
+                            width: 80,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(100.0),
+                                color: Colors.grey.shade600,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 8.0),
+                                child: Container(
+                                  width: 150,
+                                  height: 25,
+                                  color: Colors.grey.shade600,
+                                ),
+                              ),
+                              Container(
+                                width: 100,
+                                height: 20,
+                                color: Colors.grey.shade600,
+                              ),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                    Divider(
+                      color: !isDark ? Colors.black54 : Colors.white54,
+                      thickness: 1,
+                      endIndent: 20,
+                      indent: 10,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        }));
+
+Widget movieCastAndCrewTabShimmer1() => Container(
     color: const Color(0xFFFFFFFF),
     child: ListView.builder(
         itemCount: 10,
@@ -2052,6 +2121,80 @@ Widget tvCastAndCrewTabShimmer() => Container(
                     ),
                     const Divider(
                       color: Colors.white54,
+                      thickness: 1,
+                      endIndent: 20,
+                      indent: 10,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        }));
+
+Widget tvCastAndCrewTabShimmer1(isDark) => Container(
+    child: ListView.builder(
+        itemCount: 10,
+        scrollDirection: Axis.vertical,
+        itemBuilder: (BuildContext context, int index) {
+          return Container(
+            child: ShimmerBase(
+              isDark: isDark,
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  top: 8.0,
+                  bottom: 5.0,
+                  left: 10,
+                ),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(right: 20.0, left: 10),
+                          child: SizedBox(
+                            height: 80,
+                            width: 80,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(100.0),
+                                color: Colors.grey.shade600,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 4.0),
+                                child: Container(
+                                  width: 150,
+                                  height: 25,
+                                  color: Colors.grey.shade600,
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 4.0),
+                                child: Container(
+                                  width: 130,
+                                  height: 20,
+                                  color: Colors.grey.shade600,
+                                ),
+                              ),
+                              Container(
+                                width: 100,
+                                height: 20,
+                                color: Colors.grey.shade600,
+                              ),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                    Divider(
+                      color: !isDark ? Colors.black54 : Colors.white54,
                       thickness: 1,
                       endIndent: 20,
                       indent: 10,

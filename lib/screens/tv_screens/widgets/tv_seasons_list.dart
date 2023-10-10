@@ -1,4 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:caffiene/widgets/common_widgets.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/api/tv_api.dart';
 import 'package:caffiene/models/tv.dart';
@@ -49,11 +51,20 @@ class SeasonsListState extends State<SeasonsList> {
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                widget.title!,
-                style: kTextHeaderStyle,
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    const LeadingDot(),
+                    Expanded(
+                      child: Text(
+                        widget.title!,
+                        style: kTextHeaderStyle,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
@@ -64,13 +75,9 @@ class SeasonsListState extends State<SeasonsList> {
           child: tvDetails == null
               ? horizontalScrollingSeasonsList1(isDark)
               : tvDetails!.seasons!.isEmpty
-                  ? Container(
-                      color: const Color(0xFF000000),
-                      child: const Center(
-                        child: Text(
-                            'There is no season available for this TV show',
-                            textAlign: TextAlign.center),
-                      ),
+                  ? Center(
+                      child:
+                          Text(tr("no_season_tv"), textAlign: TextAlign.center),
                     )
                   : Row(
                       children: [
@@ -115,6 +122,7 @@ class SeasonsListState extends State<SeasonsList> {
                                                       fit: BoxFit.cover,
                                                     )
                                                   : CachedNetworkImage(
+                                                      cacheManager: cacheProp(),
                                                       fadeOutDuration:
                                                           const Duration(
                                                               milliseconds:

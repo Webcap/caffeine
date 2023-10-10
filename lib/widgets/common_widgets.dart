@@ -1,9 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:caffiene/provider/settings_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/api/movies_api.dart';
 import 'package:caffiene/models/movie_models.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/widgets/shimmer_widget.dart';
+import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 
 Widget watchProvidersTabData(
@@ -227,6 +229,23 @@ class ShimmerBase extends StatelessWidget {
       highlightColor:
           isDark ? Colors.grey.shade800.withOpacity(0.1) : Colors.grey.shade200,
       child: child,
+    );
+  }
+}
+
+class LeadingDot extends StatelessWidget {
+  const LeadingDot({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    String appLang = Provider.of<SettingsProvider>(context).appLanguage;
+    return Container(
+      color: Theme.of(context).primaryColor,
+      width: 13,
+      height: 13,
+      margin: appLang == 'ar'
+          ? const EdgeInsets.only(left: 8)
+          : const EdgeInsets.only(right: 8),
     );
   }
 }
