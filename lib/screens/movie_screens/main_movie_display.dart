@@ -1,4 +1,5 @@
 import 'package:caffiene/provider/recently_watched_provider.dart';
+import 'package:caffiene/screens/common/update_screen.dart';
 import 'package:caffiene/screens/movie_screens/widgets/scrolling_recent_movies.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -36,6 +37,7 @@ class _MainMoviesDisplayState extends State<MainMoviesDisplay> {
           DiscoverMovies(
             includeAdult: includeAdult,
           ),
+          UpdateBottom(),
           ScrollingMovies(
             title: tr("popular"),
             api: Endpoints.popularMoviesUrl(1, lang),

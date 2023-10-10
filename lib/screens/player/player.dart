@@ -1,11 +1,14 @@
 import 'package:caffiene/controller/recently_watched_database_controller.dart';
+import 'package:caffiene/functions/functions.dart';
 import 'package:caffiene/models/recently_watched.dart';
 import 'package:caffiene/provider/recently_watched_provider.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/utils/config.dart';
+import 'package:caffiene/widgets/common_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:better_player/better_player.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 //import 'package:wakelock/wakelock.dart';
 
@@ -42,6 +45,11 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
       RecentlyWatchedEpisodeController();
   late int duration;
 
+  final GlobalKey _betterPlayerKey = GlobalKey();
+
+  int totalMinutesWatched = 0;
+  bool isVideoPaused = false;
+
   @override
   void initState() {
     super.initState();
@@ -61,12 +69,23 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
       minBufferMs: 15000,
     );
     betterPlayerControlsConfiguration = BetterPlayerControlsConfiguration(
+      onFullScreenChange: () {
+        widget.mediaType == MediaType.movie
+            ? insertRecentMovieData()
+            : insertRecentEpisodeData();
+      },
       enableFullscreen: true,
+      name: widget.mediaType == MediaType.movie
+          ? "${widget.movieMetadata!.elementAt(1)} (${widget.movieMetadata!.elementAt(3)})"
+          : "${widget.tvMetadata!.elementAt(1)} | ${widget.tvMetadata!.elementAt(2)} | ${episodeSeasonFormatter(widget.tvMetadata!.elementAt(3), widget.tvMetadata!.elementAt(4))}",
       backgroundColor: widget.colors.elementAt(1).withOpacity(0.6),
       progressBarBackgroundColor: Colors.white,
-      pauseIcon: Icons.pause_outlined,
-      pipMenuIcon: Icons.picture_in_picture_sharp,
-      playIcon: Icons.play_arrow_sharp,
+      controlBarColor: Colors.black.withOpacity(0.3),
+      muteIcon: Icons.volume_off_rounded,
+      unMuteIcon: Icons.volume_up_rounded,
+      pauseIcon: Icons.pause_rounded,
+      pipMenuIcon: Icons.picture_in_picture_rounded,
+      playIcon: Icons.play_arrow_rounded,
       showControlsOnInitialize: false,
       loadingColor: widget.colors.first,
       iconsColor: widget.colors.first,
@@ -76,6 +95,14 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
           Duration(seconds: widget.settings.defaultSeekDuration).inMilliseconds,
       progressBarPlayedColor: widget.colors.first,
       progressBarBufferedColor: Colors.black45,
+      skipForwardIcon: FontAwesomeIcons.rotateRight,
+      skipBackIcon: FontAwesomeIcons.rotateLeft,
+      fullscreenEnableIcon: Icons.fullscreen_rounded,
+      fullscreenDisableIcon: Icons.fullscreen_exit_rounded,
+      overflowMenuIcon: Icons.menu_rounded,
+      subtitlesIcon: Icons.closed_caption_rounded,
+      qualitiesIcon: Icons.hd_rounded,
+      enableAudioTracks: false,
     );
 
     BetterPlayerConfiguration betterPlayerConfiguration =
@@ -134,6 +161,7 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
       duration = _betterPlayerController
           .videoPlayerController!.value.duration!.inSeconds;
     });
+    _betterPlayerController.setBetterPlayerGlobalKey(_betterPlayerKey);
   }
 
   Future<void> insertRecentMovieData() async {
@@ -198,8 +226,7 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
         episodeName: widget.tvMetadata!.elementAt(2),
         episodeNum: widget.tvMetadata!.elementAt(3),
         seasonNum: widget.tvMetadata!.elementAt(4),
-        seriesId: widget.tvMetadata!.elementAt(7)
-        );
+        seriesId: widget.tvMetadata!.elementAt(7));
 
     double percentage = (elapsed / duration) * 100;
     if (!isBookmarked) {
@@ -221,12 +248,6 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
         (state == AppLifecycleState.inactive);
     if (isInBackground) {
       if (_betterPlayerController.isVideoInitialized()!) {
-        await _betterPlayerController.videoPlayerController!.position
-            .then((value) {
-          _betterPlayerController.videoPlayerController!
-              .seekTo(Duration(seconds: value!.inSeconds - 2));
-        });
-
         widget.mediaType == MediaType.movie
             ? insertRecentMovieData()
             : insertRecentEpisodeData();
@@ -241,7 +262,6 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    // print(widget.movieMetadata!.elementAt(0));
     return WillPopScope(
       onWillPop: () async {
         if (_betterPlayerController.isVideoInitialized()!) {
@@ -258,9 +278,23 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
             width: double.infinity,
             child: BetterPlayer(
               controller: _betterPlayerController,
+              key: _betterPlayerKey,
             ),
           ),
         ),
+        floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              if (mounted) {
+                showModalBottomSheet(
+                    builder: (context) {
+                      return ExternalPlay(
+                        sources: widget.sources,
+                      );
+                    },
+                    context: context);
+              }
+            },
+            child: const Icon(FontAwesomeIcons.arrowUpRightFromSquare)),
       ),
     );
   }

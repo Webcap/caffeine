@@ -85,7 +85,6 @@ class _LoginPage423State extends State<LoginPage423> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
 
     return Scaffold(
       backgroundColor: const Color(0xFFdedede),

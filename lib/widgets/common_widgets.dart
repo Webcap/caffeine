@@ -7,6 +7,7 @@ import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/widgets/shimmer_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 Widget watchProvidersTabData(
         {required bool isDark,
@@ -246,6 +247,53 @@ class LeadingDot extends StatelessWidget {
       margin: appLang == 'ar'
           ? const EdgeInsets.only(left: 8)
           : const EdgeInsets.only(right: 8),
+    );
+  }
+}
+
+class ExternalPlay extends StatelessWidget {
+  const ExternalPlay({Key? key, required this.sources}) : super(key: key);
+
+  final Map<String, String> sources;
+
+  @override
+  Widget build(BuildContext context) {
+    List<Widget> items = [];
+
+    for (int i = 0; i < sources.length; i++) {
+      final url = Uri.encodeFull(sources.entries.elementAt(i).value);
+      items.add(TextButton(
+          onPressed: () async {
+            if (await canLaunchUrl(Uri.parse(url))) {
+              await launchUrl(Uri.parse(sources.entries.elementAt(i).value),
+                  mode: LaunchMode.externalNonBrowserApplication);
+            }
+          },
+          child: Text(sources.entries.elementAt(i).key)));
+    }
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: SizedBox(
+        height: 200,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'Open in external player',
+              style: Theme.of(context).textTheme.headlineSmall,
+              maxLines: 3,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            Wrap(
+              spacing: 10,
+              children: items,
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

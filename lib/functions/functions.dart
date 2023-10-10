@@ -6,6 +6,7 @@ import 'package:caffiene/models/external_subtitles.dart';
 import 'package:caffiene/models/live_tv.dart';
 import 'package:caffiene/models/movie_stream.dart';
 import 'package:caffiene/models/tv_stream.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:caffiene/models/update.dart';
 import 'package:caffiene/utils/config.dart';
@@ -152,5 +153,19 @@ Future<SubtitleDownload> downloadExternalSubtitle(
   }
 
   return sub;
+}
+
+Future<bool> checkConnection() async {
+  bool isInternetWorking;
+  try {
+    final response = await InternetAddress.lookup('google.com');
+
+    isInternetWorking = response.isNotEmpty;
+  } on SocketException catch (e) {
+    debugPrint(e.toString());
+    isInternetWorking = false;
+  }
+
+  return isInternetWorking;
 }
 

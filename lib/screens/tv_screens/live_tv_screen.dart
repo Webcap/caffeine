@@ -7,7 +7,6 @@ import 'package:caffiene/utils/config.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:startapp_sdk/startapp.dart';
 
 class LiveTV extends StatefulWidget {
   const LiveTV({Key? key}) : super(key: key);
@@ -151,7 +150,7 @@ class _ChannelListState extends State<ChannelList> {
   @override
   void initState() {
     fetchChannels(
-            'https://raw.githubusercontent.com/Webcap/caffiene_live_channels/main/${widget.catName}.json')
+            'https://raw.githubusercontent.com/BeamlakAschalew/cinemax_live_channels/master/${widget.catName}.json')
         .then((value) {
       setState(() {
         channels = value;
@@ -172,21 +171,30 @@ class _ChannelListState extends State<ChannelList> {
         padding: const EdgeInsets.all(8.0),
         child: channels == null
             ? const Center(child: CircularProgressIndicator())
-            : Column(
-                children: [
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: channels!.length,
-                      itemBuilder: (context, index) {
-                        return ChannelWidget(
-                          channel: channels![index],
-                          catName: widget.catName,
-                        );
-                      },
+            : channels!.isEmpty
+                ? Center(
+                    child: Text(
+                      tr("no_channels"),
+                      style: kTextHeaderStyle,
+                      maxLines: 2,
+                      textAlign: TextAlign.center,
                     ),
+                  )
+                : Column(
+                    children: [
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: channels!.length,
+                          itemBuilder: (context, index) {
+                            return ChannelWidget(
+                              channel: channels![index],
+                              catName: widget.catName,
+                            );
+                          },
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
       ),
     );
   }
@@ -246,6 +254,7 @@ class _ChannelWidgetState extends State<ChannelWidget> {
 
               Navigator.push(context, MaterialPageRoute(builder: ((context) {
                 return LivePlayer(
+                  channelName: widget.channel.channelName!,
                   sources: reversedVids,
                   autoFullScreen: autoFS,
                   colors: [

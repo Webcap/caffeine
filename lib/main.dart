@@ -9,7 +9,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/utils/config.dart';
 
@@ -61,9 +60,9 @@ Future<void> appInitialize() async {
 
 void main() async {
   await appInitialize();
-  if (showAds) {
-    MobileAds.instance.initialize();
-  }
+  // if (showAds) {
+  //   MobileAds.instance.initialize();
+  // }
   runApp(EasyLocalization(
     supportedLocales: Translation.all,
     path: 'assets/translations',

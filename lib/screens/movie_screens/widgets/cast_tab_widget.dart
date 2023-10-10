@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/models/credits.dart';
 import 'package:caffiene/provider/settings_provider.dart';
@@ -174,6 +175,7 @@ class CastTabState extends State<CastTab>
 
 class CrewTab extends StatefulWidget {
   const CrewTab({Key? key, required this.credits}) : super(key: key);
+
   final Credits credits;
 
   @override
@@ -188,10 +190,10 @@ class CrewTabState extends State<CrewTab>
     final isDark = Provider.of<SettingsProvider>(context).darktheme;
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     return widget.credits.crew!.isEmpty
-        ? Container(
-            color: const Color(0xFF000000),
-            child: const Center(
-              child: Text('There is no data available for this TV show cast'),
+        ? Center(
+            child: Text(
+              tr("no_crew_movie"),
+              textAlign: TextAlign.center,
             ),
           )
         : Container(
@@ -243,6 +245,7 @@ class CrewTabState extends State<CrewTab>
                                                 fit: BoxFit.cover,
                                               )
                                             : CachedNetworkImage(
+                                                cacheManager: cacheProp(),
                                                 fadeOutDuration: const Duration(
                                                     milliseconds: 300),
                                                 fadeOutCurve: Curves.easeOut,
@@ -289,10 +292,13 @@ class CrewTabState extends State<CrewTab>
                                             fontFamily: 'PoppinsSB',
                                             fontSize: 20),
                                       ),
-                                      Text(
-                                        'Job : '
-                                        '${widget.credits.crew![index].department!.isEmpty ? 'N/A' : widget.credits.crew![index].department!}',
-                                      ),
+                                      Text(widget.credits.crew![index]
+                                              .department!.isEmpty
+                                          ? tr("job_empty")
+                                          : tr("job", namedArgs: {
+                                              "job": widget.credits.crew![index]
+                                                  .department!
+                                            })),
                                     ],
                                   ),
                                 )

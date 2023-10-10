@@ -25,14 +25,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.0.1"
-  applovin_max:
-    dependency: transitive
-    description:
-      name: applovin_max
-      sha256: c763ecd636ed783700aff7dd911021187e641a4d22b2b869adf80f20e56b4c0e
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.6.0"
   archive:
     dependency: transitive
     description:
@@ -60,11 +52,10 @@ packages:
   better_player:
     dependency: "direct main"
     description:
-      name: better_player
-      sha256: f2e5d57ea49fb7c4d93838d23846ca5ddf78af6f946e103aeacf2afdd01909b3
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.83"
+      path: "C:\\Users\\solox\\Desktop\\Projects\\flixquest-betterplayer"
+      relative: false
+    source: path
+    version: "0.0.82"
   boolean_selector:
     dependency: transitive
     description:
@@ -273,22 +264,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.6.6"
-  easy_ads_flutter:
-    dependency: "direct main"
-    description:
-      name: easy_ads_flutter
-      sha256: "6a9972b96b512b8a093bfb352d8eae4eb8e3a922fb87128305aa9ea1a0140458"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.3.3"
-  easy_audience_network:
-    dependency: transitive
-    description:
-      name: easy_audience_network
-      sha256: "3bd9f76785163e898683cf59d2c1799f8cd6d04afcd601dd981ced03763bbe93"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.6"
   easy_localization:
     dependency: "direct main"
     description:
@@ -305,6 +280,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.0.2"
+  fading_edge_scrollview:
+    dependency: transitive
+    description:
+      name: fading_edge_scrollview
+      sha256: c25c2231652ce774cc31824d0112f11f653881f43d7f5302c05af11942052031
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.0"
   fake_async:
     dependency: transitive
     description:
@@ -621,14 +604,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.2.1"
-  google_mobile_ads:
-    dependency: "direct main"
-    description:
-      name: google_mobile_ads
-      sha256: "010b7a7a81b5c8f760eb2e5add8eaa7e429b4982dc8c8e465b709611f52887be"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.4.0"
   google_nav_bar:
     dependency: "direct main"
     description:
@@ -749,14 +724,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.1"
-  logger:
-    dependency: transitive
-    description:
-      name: logger
-      sha256: "7ad7215c15420a102ec687bb320a7312afd449bac63bfb1c60d9787c27b9767f"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.4.0"
   logging:
     dependency: transitive
     description:
@@ -765,6 +732,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.0"
+  marquee:
+    dependency: transitive
+    description:
+      name: marquee
+      sha256: "4b5243d2804373bdc25fc93d42c3b402d6ec1f4ee8d0bb72276edd04ae7addb8"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.3"
   matcher:
     dependency: transitive
     description:
@@ -1258,14 +1233,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.3.2"
-  unity_ads_plugin:
-    dependency: transitive
-    description:
-      name: unity_ads_plugin
-      sha256: "2b19ff02089e5a0d1a6549a2cd9d2baf5f8733bdda296d947d411a293f0bffda"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.3.8"
   universal_io:
     dependency: transitive
     description:
@@ -1382,10 +1349,10 @@ packages:
     dependency: transitive
     description:
       name: visibility_detector
-      sha256: "15c54a459ec2c17b4705450483f3d5a2858e733aee893dcee9d75fd04814940d"
+      sha256: ec932527913f32f65aa01d3a393504240b9e9021ecc77123f017755605e48832
       url: "https://pub.dev"
     source: hosted
-    version: "0.3.3"
+    version: "0.2.2"
   wakelock:
     dependency: "direct main"
     description:
