@@ -1,3 +1,4 @@
+import 'package:caffiene/widgets/common_widgets.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -138,9 +139,16 @@ class _DiscoverMoviesTabState extends State<DiscoverMoviesTab> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              tr("sort_by"),
-              style: kTextHeaderStyle,
+            Row(
+              children: [
+                const LeadingDot(),
+                Expanded(
+                  child: Text(
+                    tr("sort_by"),
+                    style: kTextHeaderStyle,
+                  ),
+                ),
+              ],
             ),
             Wrap(
               spacing: 3,
@@ -159,9 +167,16 @@ class _DiscoverMoviesTabState extends State<DiscoverMoviesTab> {
                       ))
                   .toList(),
             ),
-            Text(
-              tr("include_adult"),
-              style: kTextHeaderStyle,
+            Row(
+              children: [
+                const LeadingDot(),
+                Expanded(
+                  child: Text(
+                    tr("include_adult"),
+                    style: kTextHeaderStyle,
+                  ),
+                ),
+              ],
             ),
             Wrap(
               spacing: 3,
@@ -182,9 +197,16 @@ class _DiscoverMoviesTabState extends State<DiscoverMoviesTab> {
                       ))
                   .toList(),
             ),
-            Text(
-              tr("release_year"),
-              style: kTextHeaderStyle,
+            Row(
+              children: [
+                const LeadingDot(),
+                Expanded(
+                  child: Text(
+                    tr("release_year"),
+                    style: kTextHeaderStyle,
+                  ),
+                ),
+              ],
             ),
             DropdownButton<String>(
               items: getDropdownItems(),
@@ -201,9 +223,18 @@ class _DiscoverMoviesTabState extends State<DiscoverMoviesTab> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      tr("total_results"),
-                      style: kTextHeaderStyle,
+                    Expanded(
+                      child: Row(
+                        children: [
+                          const LeadingDot(),
+                          Expanded(
+                            child: Text(
+                              tr("total_ratings"),
+                              style: kTextHeaderStyle,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                     Checkbox(
                       activeColor: Theme.of(context).colorScheme.primary,
@@ -240,9 +271,16 @@ class _DiscoverMoviesTabState extends State<DiscoverMoviesTab> {
                 ),
               ],
             ),
-            Text(
-              tr("with_genres"),
-              style: kTextHeaderStyle,
+            Row(
+              children: [
+                const LeadingDot(),
+                Expanded(
+                  child: Text(
+                    tr("with_genres"),
+                    style: kTextHeaderStyle,
+                  ),
+                ),
+              ],
             ),
             Wrap(
               spacing: 3,
@@ -277,9 +315,16 @@ class _DiscoverMoviesTabState extends State<DiscoverMoviesTab> {
                       ))
                   .toList(),
             ),
-            Text(
-              tr("with_streaming_services"),
-              style: kTextHeaderStyle,
+            Row(
+              children: [
+                const LeadingDot(),
+                Expanded(
+                  child: Text(
+                    tr("with_streaming_services"),
+                    style: kTextHeaderStyle,
+                  ),
+                ),
+              ],
             ),
             Wrap(
               spacing: 3,

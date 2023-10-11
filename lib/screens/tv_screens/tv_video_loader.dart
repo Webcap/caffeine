@@ -268,7 +268,8 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
             });
           } else {
             print("EXTERNAL CALLED");
-            await moviesApi().fetchSocialLinks(
+            await moviesApi()
+                .fetchSocialLinks(
               Endpoints.getExternalLinksForTV(
                   widget.metadata.elementAt(7), "en"),
             ).then((value) async {

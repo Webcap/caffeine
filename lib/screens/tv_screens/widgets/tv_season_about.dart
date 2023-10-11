@@ -1,6 +1,7 @@
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/screens/tv_screens/widgets/episode_list_widget.dart';
 import 'package:caffiene/screens/tv_screens/widgets/tv_season_images.dart';
+import 'package:caffiene/widgets/common_widgets.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/api/endpoints.dart';
@@ -39,13 +40,25 @@ class _TVSeasonAboutState extends State<TVSeasonAbout> {
                 bottomRight: Radius.circular(8.0))),
         child: Column(
           children: [
+            const SizedBox(
+              height: 5,
+            ),
             Row(
               children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Text(
-                    tr("overview"),
-                    style: kTextHeaderStyle,
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Row(
+                      children: [
+                        const LeadingDot(),
+                        Expanded(
+                          child: Text(
+                            tr("overview"),
+                            style: kTextHeaderStyle,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],

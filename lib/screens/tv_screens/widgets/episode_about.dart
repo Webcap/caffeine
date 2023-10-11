@@ -1,12 +1,11 @@
 import 'package:caffiene/screens/tv_screens/widgets/tv_epi_image.dart';
 import 'package:caffiene/screens/tv_screens/widgets/watch_now_tv.dart';
+import 'package:caffiene/widgets/common_widgets.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/api/endpoints.dart';
-import 'package:caffiene/api/tv_api.dart';
 import 'package:caffiene/models/tv.dart';
 import 'package:caffiene/provider/settings_provider.dart';
-import 'package:caffiene/screens/tv_screens/tv_video_loader.dart';
 import 'package:caffiene/screens/tv_screens/widgets/scrolling_tv_widget.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:provider/provider.dart';
@@ -42,11 +41,20 @@ class _EpisodeAboutState extends State<EpisodeAbout> {
           children: <Widget>[
             Row(
               children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Text(
-                    tr("overview"),
-                    style: kTextHeaderStyle,
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Row(
+                      children: [
+                        const LeadingDot(),
+                        Expanded(
+                          child: Text(
+                            tr("overview"),
+                            style: kTextHeaderStyle,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],

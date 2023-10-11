@@ -1,6 +1,7 @@
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:caffiene/screens/person/guest_star_details.dart';
+import 'package:caffiene/widgets/common_widgets.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/api/movies_api.dart';
@@ -69,8 +70,7 @@ class ScrollingTVState extends State<ScrollingTV>
   @override
   void initState() {
     super.initState();
-    tvApi()
-        .fetchTV('${widget.api}&include_adult=${widget.includeAdult}').then((value) {
+    tvApi().fetchTV('${widget.api}&include_adult=${widget.includeAdult}').then((value) {
       if (mounted) {
         setState(() {
           tvList = value;
@@ -99,10 +99,17 @@ class ScrollingTVState extends State<ScrollingTV>
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Text(widget.title,
-                    style: kTextHeaderStyle,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis),
+                child: Row(
+                  children: [
+                    const LeadingDot(),
+                    Expanded(
+                      child: Text(widget.title,
+                          style: kTextHeaderStyle,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis),
+                    ),
+                  ],
+                ),
               ),
             ),
             Padding(
@@ -308,7 +315,6 @@ class ScrollingTVState extends State<ScrollingTV>
   bool get wantKeepAlive => true;
 }
 
-
 class ScrollingTVArtists extends StatefulWidget {
   final String? api, title, tapButtonText;
   final int id;
@@ -325,7 +331,6 @@ class ScrollingTVArtists extends StatefulWidget {
       this.seasonNumber,
       required this.passedFrom})
       : super(key: key);
-
   @override
   ScrollingTVArtistsState createState() => ScrollingTVArtistsState();
 }
@@ -333,7 +338,6 @@ class ScrollingTVArtists extends StatefulWidget {
 class ScrollingTVArtistsState extends State<ScrollingTVArtists>
     with AutomaticKeepAliveClientMixin {
   Credits? credits;
-
   @override
   void initState() {
     super.initState();
@@ -356,11 +360,20 @@ class ScrollingTVArtistsState extends State<ScrollingTVArtists>
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Text(
-                'Cast',
-                style: kTextHeaderStyle,
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    const LeadingDot(),
+                    Expanded(
+                      child: Text(
+                        tr("cast"),
+                        style: kTextHeaderStyle,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
             TextButton(
@@ -396,7 +409,7 @@ class ScrollingTVArtistsState extends State<ScrollingTVArtists>
                     ),
                   ),
                 ),
-                child: const Text('See all cast and crew'))
+                child: Text(tr("see_all_cast_crew")))
           ],
         ),
         SizedBox(
@@ -405,14 +418,14 @@ class ScrollingTVArtistsState extends State<ScrollingTVArtists>
           child: credits == null
               ? detailCastShimmer1(isDark)
               : credits!.cast!.isEmpty
-                  ? const Padding(
-                      padding: EdgeInsets.all(8.0),
+                  ? Padding(
+                      padding: const EdgeInsets.all(8.0),
                       child: SizedBox(
                         height: 160,
                         width: double.infinity,
                         child: Center(
                             child: Text(
-                          'There are no casts available for this TV show',
+                          tr("no_cast_tv"),
                         )),
                       ))
                   : ListView.builder(
@@ -455,6 +468,7 @@ class ScrollingTVArtistsState extends State<ScrollingTVArtists>
                                                   fit: BoxFit.cover,
                                                 )
                                               : CachedNetworkImage(
+                                                  cacheManager: cacheProp(),
                                                   fadeOutDuration:
                                                       const Duration(
                                                           milliseconds: 300),

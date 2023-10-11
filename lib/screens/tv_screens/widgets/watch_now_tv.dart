@@ -1,10 +1,8 @@
 import 'dart:async';
 import 'dart:math';
-
-import 'package:caffiene/api/endpoints.dart';
-import 'package:caffiene/api/tv_api.dart';
 import 'package:caffiene/controller/recently_watched_database_controller.dart';
 import 'package:caffiene/models/tv.dart';
+import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:caffiene/provider/recently_watched_provider.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/screens/tv_screens/tv_video_loader.dart';
@@ -66,7 +64,7 @@ class _WatchNowButtonTVState extends State<WatchNowButtonTV> {
   @override
   Widget build(BuildContext context) {
     final mixpanel = Provider.of<SettingsProvider>(context).mixpanel;
-    final lang = Provider.of<SettingsProvider>(context).appLanguage;
+    final fetchRoute = Provider.of<AppDependencyProvider>(context).fetchRoute;
     return AnimatedContainer(
       duration: const Duration(seconds: 1),
       decoration: BoxDecoration(
@@ -100,62 +98,48 @@ class _WatchNowButtonTVState extends State<WatchNowButtonTV> {
             isVisible = true;
             buttonWidth = 200;
           });
-          tvApi().fetchTVDetails(Endpoints.tvDetailsUrl(widget.tvId, lang))
-              .then((value) async {
-            if (mounted) {
-              setState(() {
-                tvDetails = value;
-                mixpanel.track('Most viewed TV series', properties: {
-                  'TV series name': widget.seriesName,
-                  'TV series id': '${widget.tvId}',
-                  'TV series episode name': '${widget.episodeList.name}',
-                  'TV series season number':
-                      '${widget.episodeList.seasonNumber}',
-                  'TV series episode number':
-                      '${widget.episodeList.episodeNumber}'
-                });
-              });
-              var isBookmarked = await recentlyWatchedEpisodeController
-                  .contain(widget.episodeList.episodeId!);
-              int elapsed = 0;
-              if (isBookmarked) {
-                if (mounted) {
-                  var rEpisodes =
-                      Provider.of<RecentProvider>(context, listen: false)
-                          .episodes;
-
-                  int index = rEpisodes.indexWhere(
-                      (element) => element.id == widget.episodeList.episodeId);
-                  setState(() {
-                    elapsed = rEpisodes[index].elapsed!;
-                  });
-                }
-              }
-              setState(() {
-                isVisible = false;
-                buttonWidth = 160;
-              });
+          if (mounted) {
+            var isBookmarked = await recentlyWatchedEpisodeController
+                .contain(widget.episodeList.episodeId!);
+            int elapsed = 0;
+            if (isBookmarked) {
               if (mounted) {
-                Navigator.push(context, MaterialPageRoute(builder: ((context) {
-                  return TVVideoLoader(
-                    download: false,
-                    metadata: [
-                      widget.episodeList.episodeId,
-                      widget.seriesName,
-                      widget.episodeList.name,
-                      widget.episodeList.episodeNumber!,
-                      widget.episodeList.seasonNumber!,
-                      value.numberOfSeasons!,
-                      value.backdropPath,
-                      widget.posterPath,
-                      elapsed
-                    ], 
-                    route: StreamRoute.tmDB,
-                  );
-                })));
+                var rEpisodes =
+                    Provider.of<RecentProvider>(context, listen: false)
+                        .episodes;
+
+                int index = rEpisodes.indexWhere(
+                    (element) => element.id == widget.episodeList.episodeId);
+                setState(() {
+                  elapsed = rEpisodes[index].elapsed!;
+                });
               }
             }
-          });
+            setState(() {
+              isVisible = false;
+              buttonWidth = 160;
+            });
+            if (mounted) {
+              Navigator.push(context, MaterialPageRoute(builder: ((context) {
+                return TVVideoLoader(
+                  download: false,
+                  route: fetchRoute == "flixHQ"
+                      ? StreamRoute.flixHQ
+                      : StreamRoute.tmDB,
+                  metadata: [
+                    widget.episodeList.episodeId,
+                    widget.seriesName,
+                    widget.episodeList.name,
+                    widget.episodeList.episodeNumber!,
+                    widget.episodeList.seasonNumber!,
+                    widget.posterPath,
+                    elapsed,
+                    widget.tvId,
+                  ],
+                );
+              })));
+            }
+          }
         },
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,

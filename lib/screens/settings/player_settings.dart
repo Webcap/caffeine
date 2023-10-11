@@ -1,5 +1,6 @@
 import 'package:caffiene/screens/common/sublanguage_choose.dart';
 import 'package:caffiene/utils/config.dart';
+import 'package:caffiene/widgets/common_widgets.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -88,9 +89,16 @@ class _PlayerSettingsState extends State<PlayerSettings> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                tr("subtitle"),
-                style: kTextHeaderStyle,
+              Row(
+                children: [
+                  const LeadingDot(),
+                  Expanded(
+                    child: Text(
+                      tr("subtitle"),
+                      style: kTextHeaderStyle,
+                    ),
+                  ),
+                ],
               ),
               Container(
                 margin: const EdgeInsets.only(left: 10, right: 10, bottom: 15),
@@ -174,12 +182,19 @@ class _PlayerSettingsState extends State<PlayerSettings> {
               const SizedBox(
                 height: 25,
               ),
-              Text(
-                tr("general"),
-                style: kTextHeaderStyle,
+              Row(
+                children: [
+                  const LeadingDot(),
+                  Expanded(
+                    child: Text(
+                      tr("general"),
+                      style: kTextHeaderStyle,
+                    ),
+                  ),
+                ],
               ),
               ListTile(
-                  leading: const Icon(Icons.fullscreen),
+                  leading: const Icon(FontAwesomeIcons.expand),
                   title: Text(
                     tr("auto_full_screen"),
                   ),
@@ -194,7 +209,7 @@ class _PlayerSettingsState extends State<PlayerSettings> {
                     }),
                   )),
               ListTile(
-                leading: const Icon(Icons.forward_10),
+                leading: const Icon(FontAwesomeIcons.rotateRight),
                 title: Text(
                   tr("seek_second"),
                 ),
@@ -225,7 +240,7 @@ class _PlayerSettingsState extends State<PlayerSettings> {
                           value: const Duration(seconds: 15).inMilliseconds,
                           child: const Text('15s')),
                       DropdownMenuItem(
-                          value: const Duration(seconds: 15).inMilliseconds,
+                          value: const Duration(seconds: 30).inMilliseconds,
                           child: const Text('30s')),
                       DropdownMenuItem(
                           value: const Duration(seconds: 45).inMilliseconds,
@@ -248,6 +263,21 @@ class _PlayerSettingsState extends State<PlayerSettings> {
                       DropdownMenuItem(
                           value: const Duration(seconds: 240).inMilliseconds,
                           child: const Text('240s')),
+                      DropdownMenuItem(
+                          value: const Duration(seconds: 300).inMilliseconds,
+                          child: const Text('300s')),
+                      DropdownMenuItem(
+                          value: const Duration(seconds: 360).inMilliseconds,
+                          child: const Text('360s')),
+                      DropdownMenuItem(
+                          value: const Duration(seconds: 420).inMilliseconds,
+                          child: const Text('420s')),
+                      DropdownMenuItem(
+                          value: const Duration(seconds: 500).inMilliseconds,
+                          child: const Text('500s')),
+                      DropdownMenuItem(
+                          value: const Duration(seconds: 600).inMilliseconds,
+                          child: const Text('600s')),
                     ],
                     onChanged: (int? value) {
                       setState(() {

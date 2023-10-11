@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:caffiene/widgets/common_widgets.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/api/movies_api.dart';
@@ -684,48 +685,63 @@ class _PersonAboutWidgetState extends State<PersonAboutWidget>
   void initState() {
     super.initState();
     moviesApi().fetchPersonDetails(widget.api).then((value) {
-      setState(() {
-        personDetails = value;
-      });
+      if (mounted) {
+        setState(() {
+          personDetails = value;
+        });
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    //final isDark = Provider.of<DarkthemeProvider>(context).darktheme;
+    final isDark = Provider.of<SettingsProvider>(context).darktheme;
     return personDetails == null
-        ? personAboutSimmer()
+        ? personAboutSimmer(isDark)
         : Column(
             children: [
               Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Padding(
-                    padding: EdgeInsets.only(top: 8.0, bottom: 8),
-                    child: Text(
-                      'Biography',
-                      style: TextStyle(fontSize: 20),
-                    ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 8.0, bottom: 8),
+                          child: Row(
+                            children: [
+                              const LeadingDot(),
+                              Expanded(
+                                child: Text(
+                                  tr("biography"),
+                                  style: kTextHeaderStyle,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   ReadMoreText(
                     personDetails?.biography != ""
                         ? personDetails!.biography!
-                        : 'We don\'t have a biography for this person',
+                        : tr("no_biography_person"),
                     trimLines: 4,
                     style: kTextSmallAboutBodyStyle,
-                    colorClickableText: const Color(0xFFF57C00),
+                    colorClickableText: Theme.of(context).colorScheme.primary,
                     trimMode: TrimMode.Line,
-                    trimCollapsedText: 'read more',
-                    trimExpandedText: 'read less',
-                    lessStyle: const TextStyle(
+                    trimCollapsedText: tr("read_more"),
+                    trimExpandedText: tr("read_less"),
+                    lessStyle: TextStyle(
                         fontSize: 14,
-                        color: Color(0xFFF57C00),
+                        color: Theme.of(context).colorScheme.primary,
                         fontWeight: FontWeight.bold),
-                    moreStyle: const TextStyle(
+                    moreStyle: TextStyle(
                         fontSize: 14,
-                        color: Color(0xFFF57C00),
+                        color: Theme.of(context).colorScheme.primary,
                         fontWeight: FontWeight.bold),
                   ),
                 ],
@@ -737,127 +753,6 @@ class _PersonAboutWidgetState extends State<PersonAboutWidget>
   @override
   bool get wantKeepAlive => true;
 }
-
-// class PersonSocialLinks extends StatefulWidget {
-//   final String? api;
-//   const PersonSocialLinks({
-//     Key? key,
-//     this.api,
-//   }) : super(key: key);
-
-//   @override
-//   PersonSocialLinksState createState() => PersonSocialLinksState();
-// }
-
-// class PersonSocialLinksState extends State<PersonSocialLinks> {
-//   ExternalLinks? externalLinks;
-//   bool? isAllNull;
-//   @override
-//   void initState() {
-//     super.initState();
-//     fetchSocialLinks(widget.api!).then((value) {
-//       setState(() {
-//         externalLinks = value;
-//       });
-//     });
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     //final isDark = Provider.of<DarkthemeProvider>(context).darktheme;
-//     return Padding(
-//       padding: const EdgeInsets.only(top: 10.0),
-//       child: Container(
-//         child: Column(
-//           mainAxisAlignment: MainAxisAlignment.start,
-//           crossAxisAlignment: CrossAxisAlignment.start,
-//           children: [
-//             const Text(
-//               'Social media links',
-//               style: TextStyle(fontSize: 20),
-//             ),
-//             SizedBox(
-//               height: 55,
-//               width: double.infinity,
-//               child: externalLinks == null
-//                   ? socialMediaShimmer(isDark)
-//                   : externalLinks?.facebookUsername == null &&
-//                           externalLinks?.instagramUsername == null &&
-//                           externalLinks?.twitterUsername == null &&
-//                           externalLinks?.imdbId == null
-//                       ? const Center(
-//                           child: Text(
-//                             'This person doesn\'t have social media links provided :(',
-//                             textAlign: TextAlign.center,
-//                             style: kTextSmallBodyStyle,
-//                           ),
-//                         )
-//                       : Container(
-//                           decoration: BoxDecoration(
-//                             borderRadius: BorderRadius.circular(8),
-//                             color: isDark
-//                                 ? Colors.transparent
-//                                 : const Color(0xFFDFDEDE),
-//                           ),
-//                           child: ListView(
-//                             scrollDirection: Axis.horizontal,
-//                             children: [
-//                               SocialIconWidget(
-//                                 isNull: externalLinks?.facebookUsername == null,
-//                                 url: externalLinks?.facebookUsername == null
-//                                     ? ''
-//                                     : FACEBOOK_BASE_URL +
-//                                         externalLinks!.facebookUsername!,
-//                                 icon: const Icon(
-//                                   SocialIcons.facebook_f,
-//                                   color: Color(0xFFF57C00),
-//                                 ),
-//                               ),
-//                               SocialIconWidget(
-//                                 isNull:
-//                                     externalLinks?.instagramUsername == null,
-//                                 url: externalLinks?.instagramUsername == null
-//                                     ? ''
-//                                     : INSTAGRAM_BASE_URL +
-//                                         externalLinks!.instagramUsername!,
-//                                 icon: const Icon(
-//                                   SocialIcons.instagram,
-//                                   color: Color(0xFFF57C00),
-//                                 ),
-//                               ),
-//                               SocialIconWidget(
-//                                 isNull: externalLinks?.twitterUsername == null,
-//                                 url: externalLinks?.twitterUsername == null
-//                                     ? ''
-//                                     : TWITTER_BASE_URL +
-//                                         externalLinks!.twitterUsername!,
-//                                 icon: const Icon(
-//                                   SocialIcons.twitter,
-//                                   color: Color(0xFFF57C00),
-//                                 ),
-//                               ),
-//                               SocialIconWidget(
-//                                 isNull: externalLinks?.imdbId == null,
-//                                 url: externalLinks?.imdbId == null
-//                                     ? ''
-//                                     : IMDB_BASE_URL + externalLinks!.imdbId!,
-//                                 icon: const Center(
-//                                   child: FaIcon(
-//                                     FontAwesomeIcons.imdb,
-//                                     size: 30,
-//                                   ),
-//                                 ),
-//                               ),
-//                             ],
-//                           ),
-//                         ),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
 
 class PersonDataTable extends StatefulWidget {
   const PersonDataTable({required this.api, Key? key}) : super(key: key);

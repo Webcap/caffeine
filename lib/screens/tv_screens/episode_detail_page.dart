@@ -32,7 +32,6 @@ class EpisodeDetailPageState extends State<EpisodeDetailPage>
     with
         SingleTickerProviderStateMixin,
         AutomaticKeepAliveClientMixin<EpisodeDetailPage> {
-  late TabController tabController;
   bool? isVisible = false;
   double? buttonWidth = 150;
   ExternalLinks? externalLinks;
@@ -41,7 +40,6 @@ class EpisodeDetailPageState extends State<EpisodeDetailPage>
   @override
   void initState() {
     super.initState();
-    tabController = TabController(length: 4, vsync: this);
     mixpanelUpload(context);
   }
 

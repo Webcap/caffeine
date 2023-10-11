@@ -201,7 +201,7 @@ class Search extends SearchDelegate<String> {
                                       decoration: BoxDecoration(
                                           borderRadius:
                                               BorderRadius.circular(10.0),
-                                          color: Colors.white),
+                                          color: Colors.grey.shade600),
                                     ),
                                   ),
                                 ),
@@ -216,7 +216,7 @@ class Search extends SearchDelegate<String> {
                                         child: Container(
                                             height: 20,
                                             width: 150,
-                                            color: Colors.white),
+                                            color: Colors.grey.shade600),
                                       ),
                                       Row(
                                         children: <Widget>[
@@ -226,13 +226,13 @@ class Search extends SearchDelegate<String> {
                                             child: Container(
                                               height: 20,
                                               width: 20,
-                                              color: Colors.white,
+                                              color: Colors.grey.shade600,
                                             ),
                                           ),
                                           Container(
                                               height: 20,
                                               width: 30,
-                                              color: Colors.white),
+                                              color: Colors.grey.shade600),
                                         ],
                                       ),
                                     ],
@@ -280,7 +280,7 @@ class Search extends SearchDelegate<String> {
                         child: Container(
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(100.0),
-                              color: Colors.white),
+                              color: Colors.grey.shade600),
                         ),
                       ),
                     ),
@@ -291,7 +291,7 @@ class Search extends SearchDelegate<String> {
                           Container(
                             height: 20,
                             width: 140,
-                            color: Colors.white,
+                            color: Colors.grey.shade600,
                           )
                         ],
                       ),

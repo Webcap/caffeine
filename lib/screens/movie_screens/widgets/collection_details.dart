@@ -5,6 +5,7 @@ import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/screens/common/sabth.dart';
 import 'package:caffiene/screens/movie_screens/widgets/collecrions_widget.dart';
 import 'package:caffiene/utils/config.dart';
+import 'package:caffiene/widgets/common_widgets.dart';
 import 'package:caffiene/widgets/shimmer_widget.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -227,13 +228,21 @@ class CollectionDetailsWidgetState extends State<CollectionDetailsWidget>
                 physics: const BouncingScrollPhysics(),
                 child: Column(
                   children: <Widget>[
+                    const SizedBox(
+                      height: 10,
+                    ),
                     Row(
                       children: <Widget>[
                         Padding(
                           padding: const EdgeInsets.only(left: 8.0),
-                          child: Text(
-                            tr("overview"),
-                            style: kTextHeaderStyle,
+                          child: Row(
+                            children: [
+                              const LeadingDot(),
+                              Text(
+                                tr("overview"),
+                                style: kTextHeaderStyle,
+                              ),
+                            ],
                           ),
                         ),
                       ],

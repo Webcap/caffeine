@@ -86,7 +86,7 @@ class MovieEpisodes {
 }
 
 class MovieVideoSources {
-  MovieVideoSources();
+  MovieVideoSources({required this.videoLinks, required this.videoSubtitles});
 
   List<MovieVideoLinks>? videoLinks;
   List<MovieVideoSubtitles>? videoSubtitles;
@@ -132,13 +132,14 @@ class MovieVideoSubtitles {
 }
 
 /// TMDB route
+
 class MovieInfoTMDBRoute {
   MovieInfoTMDBRoute(
       {required this.id, required this.episodeId, required this.type});
 
-  late String id;
-  late String episodeId;
-  late String type;
+  String? id;
+  String? episodeId;
+  String? type;
 
   MovieInfoTMDBRoute.fromJson(Map<String, dynamic> json) {
     id = json['id'];

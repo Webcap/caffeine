@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:caffiene/widgets/common_widgets.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/api/tv_api.dart';
@@ -8,7 +9,7 @@ import 'package:caffiene/screens/tv_screens/episode_detail_page.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
-import 'package:shimmer/shimmer.dart';
+
 
 class EpisodeListWidget extends StatefulWidget {
   final int? tvId;
@@ -53,12 +54,25 @@ class EpisodeListWidgetState extends State<EpisodeListWidget>
             ? Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      tr("episodes"),
-                      style: kTextHeaderStyle,
-                    ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            children: [
+                              const LeadingDot(),
+                              Expanded(
+                                child: Text(
+                                  tr("episodes"),
+                                  style: kTextHeaderStyle,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   ListView.builder(
                       shrinkWrap: true,
@@ -75,20 +89,14 @@ class EpisodeListWidgetState extends State<EpisodeListWidget>
                             ),
                             child: Column(
                               children: [
-                                Shimmer.fromColors(
-                                  baseColor: isDark
-                                      ? Colors.grey.shade800
-                                      : Colors.grey.shade300,
-                                  highlightColor: isDark
-                                      ? Colors.grey.shade700
-                                      : Colors.grey.shade100,
-                                  direction: ShimmerDirection.ltr,
+                                ShimmerBase(
+                                  isDark: isDark,
                                   child: Row(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
                                       Container(
-                                          color: Colors.white,
+                                          color: Colors.grey.shade600,
                                           width: 10,
                                           height: 15),
                                       Padding(
@@ -100,7 +108,7 @@ class EpisodeListWidgetState extends State<EpisodeListWidget>
                                           decoration: BoxDecoration(
                                             borderRadius:
                                                 BorderRadius.circular(6.0),
-                                            color: Colors.white,
+                                            color: Colors.grey.shade600,
                                           ),
                                         ),
                                       ),
@@ -113,7 +121,7 @@ class EpisodeListWidgetState extends State<EpisodeListWidget>
                                               padding: const EdgeInsets.only(
                                                   bottom: 2.0),
                                               child: Container(
-                                                  color: Colors.white,
+                                                  color: Colors.grey.shade600,
                                                   height: 19,
                                                   width: 150),
                                             ),
@@ -121,7 +129,7 @@ class EpisodeListWidgetState extends State<EpisodeListWidget>
                                               padding: const EdgeInsets.only(
                                                   bottom: 2.0),
                                               child: Container(
-                                                  color: Colors.white,
+                                                  color: Colors.grey.shade600,
                                                   height: 19,
                                                   width: 110),
                                             ),
@@ -130,12 +138,12 @@ class EpisodeListWidgetState extends State<EpisodeListWidget>
                                                 padding: const EdgeInsets.only(
                                                     right: 3.0),
                                                 child: Container(
-                                                    color: Colors.white,
+                                                    color: Colors.grey.shade600,
                                                     height: 20,
                                                     width: 20),
                                               ),
                                               Container(
-                                                  color: Colors.white,
+                                                  color: Colors.grey.shade600,
                                                   height: 20,
                                                   width: 25),
                                             ]),
@@ -166,12 +174,25 @@ class EpisodeListWidgetState extends State<EpisodeListWidget>
                 : Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          tr("episodes"),
-                          style: kTextHeaderStyle,
-                        ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                children: [
+                                  const LeadingDot(),
+                                  Expanded(
+                                    child: Text(
+                                      tr("episodes"),
+                                      style: kTextHeaderStyle,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                       ListView.builder(
                           shrinkWrap: true,
@@ -264,25 +285,13 @@ class EpisodeListWidgetState extends State<EpisodeListWidget>
                                                             ),
                                                           ),
                                                         ),
-                                                        placeholder: (context,
-                                                                url) =>
-                                                            Shimmer.fromColors(
-                                                          baseColor: isDark
-                                                              ? Colors
-                                                                  .grey.shade800
-                                                              : Colors.grey
-                                                                  .shade300,
-                                                          highlightColor: isDark
-                                                              ? Colors
-                                                                  .grey.shade700
-                                                              : Colors.grey
-                                                                  .shade100,
-                                                          direction:
-                                                              ShimmerDirection
-                                                                  .ltr,
+                                                        placeholder:
+                                                            (context, url) =>
+                                                                ShimmerBase(
+                                                          isDark: isDark,
                                                           child: Container(
-                                                              color:
-                                                                  Colors.white),
+                                                              color: Colors.grey
+                                                                  .shade600),
                                                         ),
                                                         errorWidget: (context,
                                                                 url, error) =>

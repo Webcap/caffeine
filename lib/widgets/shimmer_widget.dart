@@ -1,5 +1,7 @@
+import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/widgets/common_widgets.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -1038,21 +1040,26 @@ Widget personImageShimmer() => Row(
       ],
     );
 
-Widget personAboutSimmer() => Column(
+    Widget personAboutSimmer(isDark) => Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
-          padding: EdgeInsets.only(top: 8.0, bottom: 8),
-          child: Text(
-            'Biography',
-            style: TextStyle(fontSize: 20),
+        Padding(
+          padding: const EdgeInsets.only(top: 8.0, bottom: 8),
+          child: Row(
+            children: [
+              const LeadingDot(),
+              Expanded(
+                child: Text(
+                  tr("biography"),
+                  style: kTextHeaderStyle,
+                ),
+              ),
+            ],
           ),
         ),
-        Shimmer.fromColors(
-          baseColor: Colors.grey.shade300,
-          highlightColor: Colors.grey.shade100,
-          direction: ShimmerDirection.ltr,
+        ShimmerBase(
+          isDark: isDark,
           child: Column(
             children: [
               Padding(
@@ -1060,7 +1067,7 @@ Widget personAboutSimmer() => Column(
                 child: Container(
                   width: double.infinity,
                   height: 20,
-                  color: Colors.white,
+                  color: Colors.grey.shade600,
                 ),
               ),
               Padding(
@@ -1068,7 +1075,7 @@ Widget personAboutSimmer() => Column(
                 child: Container(
                   width: double.infinity,
                   height: 20,
-                  color: Colors.white,
+                  color: Colors.grey.shade600,
                 ),
               ),
               Padding(
@@ -1076,7 +1083,7 @@ Widget personAboutSimmer() => Column(
                 child: Container(
                   width: double.infinity,
                   height: 20,
-                  color: Colors.white,
+                  color: Colors.grey.shade600,
                 ),
               ),
               Padding(
@@ -1084,7 +1091,7 @@ Widget personAboutSimmer() => Column(
                 child: Container(
                   width: double.infinity,
                   height: 20,
-                  color: Colors.white,
+                  color: Colors.grey.shade600,
                 ),
               ),
             ],
@@ -1092,6 +1099,61 @@ Widget personAboutSimmer() => Column(
         ),
       ],
     );
+
+// Widget personAboutSimmer() => Column(
+//       mainAxisAlignment: MainAxisAlignment.start,
+//       crossAxisAlignment: CrossAxisAlignment.start,
+//       children: [
+//         const Padding(
+//           padding: EdgeInsets.only(top: 8.0, bottom: 8),
+//           child: Text(
+//             'Biography',
+//             style: TextStyle(fontSize: 20),
+//           ),
+//         ),
+//         Shimmer.fromColors(
+//           baseColor: Colors.grey.shade300,
+//           highlightColor: Colors.grey.shade100,
+//           direction: ShimmerDirection.ltr,
+//           child: Column(
+//             children: [
+//               Padding(
+//                 padding: const EdgeInsets.only(bottom: 8.0),
+//                 child: Container(
+//                   width: double.infinity,
+//                   height: 20,
+//                   color: Colors.white,
+//                 ),
+//               ),
+//               Padding(
+//                 padding: const EdgeInsets.only(bottom: 8.0),
+//                 child: Container(
+//                   width: double.infinity,
+//                   height: 20,
+//                   color: Colors.white,
+//                 ),
+//               ),
+//               Padding(
+//                 padding: const EdgeInsets.only(bottom: 8.0),
+//                 child: Container(
+//                   width: double.infinity,
+//                   height: 20,
+//                   color: Colors.white,
+//                 ),
+//               ),
+//               Padding(
+//                 padding: const EdgeInsets.only(bottom: 8.0),
+//                 child: Container(
+//                   width: double.infinity,
+//                   height: 20,
+//                   color: Colors.white,
+//                 ),
+//               ),
+//             ],
+//           ),
+//         ),
+//       ],
+//     );
 
 Widget moviesAndTVShowGridShimmer(isDark) => Container(
       padding: const EdgeInsets.only(top: 8),

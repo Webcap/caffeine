@@ -1,3 +1,5 @@
+import 'package:caffiene/provider/settings_provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:caffiene/api/movies_api.dart';
@@ -6,6 +8,9 @@ import 'package:caffiene/models/social_icons_icons.dart';
 import 'package:caffiene/screens/movie_screens/widgets/movie_social_links.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/widgets/shimmer_widget.dart';
+import 'package:provider/provider.dart';
+
+import '../../../widgets/common_widgets.dart';
 
 class PersonSocialLinks extends StatefulWidget {
   final String? api;
@@ -25,15 +30,17 @@ class PersonSocialLinksState extends State<PersonSocialLinks> {
   void initState() {
     super.initState();
     moviesApi().fetchSocialLinks(widget.api!).then((value) {
-      setState(() {
-        externalLinks = value;
-      });
+      if (mounted) {
+        setState(() {
+          externalLinks = value;
+        });
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    // final isDark = Provider.of<DarkthemeProvider>(context).darktheme;
+    final isDark = Provider.of<SettingsProvider>(context).darktheme;
     return Padding(
       padding: const EdgeInsets.only(top: 10.0),
       child: Container(
@@ -41,22 +48,29 @@ class PersonSocialLinksState extends State<PersonSocialLinks> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Social media links',
-              style: TextStyle(fontSize: 20),
+            Row(
+              children: [
+                const LeadingDot(),
+                Expanded(
+                  child: Text(
+                    tr("social_media_links"),
+                    style: kTextHeaderStyle,
+                  ),
+                ),
+              ],
             ),
             SizedBox(
               height: 55,
               width: double.infinity,
               child: externalLinks == null
-                  ? socialMediaShimmer()
+                  ? socialMediaShimmer1(isDark)
                   : externalLinks?.facebookUsername == null &&
                           externalLinks?.instagramUsername == null &&
                           externalLinks?.twitterUsername == null &&
                           externalLinks?.imdbId == null
-                      ? const Center(
+                      ? Center(
                           child: Text(
-                            'This person doesn\'t have social media links provided :(',
+                            tr("no_social_link_person"),
                             textAlign: TextAlign.center,
                             style: kTextSmallBodyStyle,
                           ),
@@ -64,7 +78,9 @@ class PersonSocialLinksState extends State<PersonSocialLinks> {
                       : Container(
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8),
-                            color: const Color(0xFFDFDEDE),
+                            color: isDark
+                                ? Colors.transparent
+                                : const Color(0xFFDFDEDE),
                           ),
                           child: ListView(
                             scrollDirection: Axis.horizontal,
@@ -77,7 +93,6 @@ class PersonSocialLinksState extends State<PersonSocialLinks> {
                                         externalLinks!.facebookUsername!,
                                 icon: const Icon(
                                   SocialIcons.facebook_f,
-                                  color: Color(0xFFF57C00),
                                 ),
                               ),
                               SocialIconWidget(
@@ -89,7 +104,6 @@ class PersonSocialLinksState extends State<PersonSocialLinks> {
                                         externalLinks!.instagramUsername!,
                                 icon: const Icon(
                                   SocialIcons.instagram,
-                                  color: Color(0xFFF57C00),
                                 ),
                               ),
                               SocialIconWidget(
@@ -100,7 +114,6 @@ class PersonSocialLinksState extends State<PersonSocialLinks> {
                                         externalLinks!.twitterUsername!,
                                 icon: const Icon(
                                   SocialIcons.twitter,
-                                  color: Color(0xFFF57C00),
                                 ),
                               ),
                               SocialIconWidget(

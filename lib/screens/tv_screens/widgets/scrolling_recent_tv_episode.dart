@@ -1,9 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:caffiene/models/recently_watched.dart';
+import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:caffiene/provider/recently_watched_provider.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/screens/tv_screens/tv_video_loader.dart';
 import 'package:caffiene/utils/config.dart';
+import 'package:caffiene/widgets/common_widgets.dart';
 import 'package:caffiene/widgets/shimmer_widget.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -26,16 +28,26 @@ class _ScrollingRecentEpisodesState extends State<ScrollingRecentEpisodes> {
   Widget build(BuildContext context) {
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final fetchRoute = Provider.of<AppDependencyProvider>(context).fetchRoute;
     return Column(
       children: <Widget>[
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                tr("recently_watched"),
-                style: kTextHeaderStyle,
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    const LeadingDot(),
+                    Expanded(
+                      child: Text(
+                        tr("recently_watched"),
+                        style: kTextHeaderStyle,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
             // Padding(
@@ -90,7 +102,9 @@ class _ScrollingRecentEpisodesState extends State<ScrollingRecentEpisodes> {
                               MaterialPageRoute(
                                   builder: (context) => TVVideoLoader(
                                         download: false,
-                                        route: StreamRoute.tmDB,
+                                        route: fetchRoute == "flixHQ"
+                                            ? StreamRoute.flixHQ
+                                            : StreamRoute.tmDB,
                                         metadata: [
                                           widget.episodesList[index].id,
                                           widget.episodesList[index].seriesName,
