@@ -39,6 +39,13 @@ class _MainMoviesDisplayState extends State<MainMoviesDisplay> {
           ),
           UpdateBottom(),
           ScrollingMovies(
+            title: tr("halloween_movies"),
+            api: Endpoints.halloweenMoviesUrl(1, lang),
+            discoverType: 'horror',
+            isTrending: false,
+            includeAdult: includeAdult,
+          ),
+          ScrollingMovies(
             title: tr("popular"),
             api: Endpoints.popularMoviesUrl(1, lang),
             discoverType: 'popular',

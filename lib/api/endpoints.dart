@@ -36,6 +36,13 @@ class Endpoints {
         '&page=$page&language=$l';
   }
 
+  static String halloweenMoviesUrl(int page, String l) {
+    return '$TMDB_API_BASE_URL'
+        '/discover/movie?api_key='
+        '$TMDB_API_KEY'
+        '&page=$page&language=$l&sort_by=popularity.desc&with_genres=27';
+  }
+
   static String trendingMoviesUrl(int page, bool includeAdult, String l) {
     return '$TMDB_API_BASE_URL'
         '/trending/movie/week?api_key='

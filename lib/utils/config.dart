@@ -22,7 +22,7 @@ const String CAFFEINE_UPDATE_URL =
     "https://webcap.github.io/caffiene/res/update.json";
 const String ERROROCCURRED = "an error has occurred";
 const String CONSUMET_API = 'https://consumet-api-opal.vercel.app/';
-const String CONSUMET_INFO_API = 'https://consumet.beamlak.dev/';
+const String SUPABASE_URL = 'https://quzrpdvpbnydfjzigcoi.supabase.co';
 const String STREAMING_SERVER = "vidcloud";
 String openSubtitlesKey = dotenv.env['OPENSUBTITLES_API_KEY']!;
 
@@ -56,7 +56,7 @@ const kTextSmallHeaderStyle = TextStyle(
   overflow: TextOverflow.ellipsis,
 );
 
-const String currentAppVersion = '1.3.3';
+const String currentAppVersion = '1.3.4-dev';
 
 const kTextHeaderStyle = TextStyle(
   fontFamily: 'PoppinsSB',
@@ -112,6 +112,7 @@ final List<String> appNames = [
   'caffiene-v1.3.1.apk',
   'caffeine-v1.3.2.apk',
   'caffeine-v1.3.3.apk',
+  'caffeine-v1.3.4.apk',
 ];
 
 CacheManager cacheProp() {

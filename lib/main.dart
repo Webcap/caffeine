@@ -12,6 +12,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/utils/config.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 Future<void> _messageHandler(RemoteMessage message) async {}
 
@@ -58,6 +59,10 @@ Future<void> appInitialize() async {
   await settingsProvider.getBackgroundSubtitleColor();
   await settingsProvider.getAppLanguage();
   await _initialization;
+  await Supabase.initialize(
+    url: SUPABASE_URL,
+    anonKey: dotenv.env['SUPABASE_ANNON_KEY']!,
+  );
 }
 
 void main() async {

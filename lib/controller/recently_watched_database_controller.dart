@@ -1,9 +1,9 @@
 import 'dart:io';
 
+import 'package:caffiene/caffiene_main.dart';
 import 'package:caffiene/models/recently_watched.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
-
 
 class RecentlyWatchedMoviesController {
   static RecentlyWatchedMoviesController? _recentlyWatchedMoviesController;
@@ -55,6 +55,11 @@ class RecentlyWatchedMoviesController {
     var result = await db.insert(tableName, rMovie.toMap());
     return result;
   }
+
+  // Future<int> insertMovieSUPA(RecentMovie rMovie) async {
+  //   var result = await supabase.from('recently_watched').insert(tableName, rMovie.toMap());
+  //   return result;
+  // }
 
   Future<int> updateMovie(RecentMovie rMovie, int id) async {
     var db = await database;

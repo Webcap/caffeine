@@ -15,6 +15,7 @@ import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class caffeine extends StatefulWidget {
   const caffeine(
@@ -33,6 +34,8 @@ class caffeine extends StatefulWidget {
   @override
   State<caffeine> createState() => _caffeineState();
 }
+
+final supabase = Supabase.instance.client;
 
 class _caffeineState extends State<caffeine>
     with ChangeNotifier, WidgetsBindingObserver {
