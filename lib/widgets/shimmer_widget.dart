@@ -1003,13 +1003,11 @@ Widget detailVideoShimmer() => SizedBox(
       ),
     );
 
-Widget personImageShimmer() => Row(
+Widget personImageShimmer(isDark) => Row(
       children: [
         Expanded(
-          child: Shimmer.fromColors(
-            baseColor: Colors.grey.shade300,
-            highlightColor: Colors.grey.shade100,
-            direction: ShimmerDirection.ltr,
+          child: ShimmerBase(
+            isDark: isDark,
             child: ListView.builder(
               physics: const BouncingScrollPhysics(),
               itemCount: 5,
@@ -1026,7 +1024,7 @@ Widget personImageShimmer() => Row(
                           child: Container(
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(8.0),
-                                color: Colors.white),
+                                color: Colors.grey.shade600),
                           ),
                         ),
                       ],

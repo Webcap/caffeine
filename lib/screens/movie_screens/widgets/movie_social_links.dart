@@ -1,3 +1,5 @@
+import 'package:caffiene/widgets/common_widgets.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:caffiene/api/movies_api.dart';
@@ -7,7 +9,6 @@ import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/widgets/shimmer_widget.dart';
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class MovieSocialLinks extends StatefulWidget {
   final String? api;
@@ -45,9 +46,16 @@ class MovieSocialLinksState extends State<MovieSocialLinks> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Social media links',
-              style: kTextHeaderStyle,
+            Row(
+              children: [
+                const LeadingDot(),
+                Expanded(
+                  child: Text(
+                    tr("social_media_links"),
+                    style: kTextHeaderStyle,
+                  ),
+                ),
+              ],
             ),
             SizedBox(
               height: 55,
@@ -58,9 +66,9 @@ class MovieSocialLinksState extends State<MovieSocialLinks> {
                           externalLinks?.instagramUsername == null &&
                           externalLinks?.twitterUsername == null &&
                           externalLinks?.imdbId == null
-                      ? const Center(
+                      ? Center(
                           child: Text(
-                            'This movie doesn\'t have social media links provided :(',
+                            tr("no_social_link_movie"),
                             textAlign: TextAlign.center,
                           ),
                         )
@@ -125,42 +133,5 @@ class MovieSocialLinksState extends State<MovieSocialLinks> {
         ),
       ),
     );
-  }
-}
-
-class SocialIconWidget extends StatelessWidget {
-  const SocialIconWidget({
-    Key? key,
-    this.url,
-    this.icon,
-    this.isNull,
-  }) : super(key: key);
-
-  final String? url;
-  final Widget? icon;
-  final bool? isNull;
-
-  @override
-  Widget build(BuildContext context) {
-    return isNull == true
-        ? Container()
-        : Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: GestureDetector(
-              onTap: () {
-                launchUrl(Uri.parse(url!),
-                    mode: LaunchMode.externalApplication);
-              },
-              child: Container(
-                height: 50,
-                width: 40,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10.0),
-                  color: Colors.white,
-                ),
-                child: icon,
-              ),
-            ),
-          );
   }
 }

@@ -1,4 +1,6 @@
 
+import 'package:caffiene/widgets/common_widgets.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/api/movies_api.dart';
 import 'package:caffiene/models/genres.dart';
@@ -34,21 +36,29 @@ class TVGenreListGridState extends State<TVGenreListGrid>
 
   @override
   bool get wantKeepAlive => true;
-
   @override
   Widget build(BuildContext context) {
     super.build(context);
     final isDark = Provider.of<SettingsProvider>(context).darktheme;
     return Column(
       children: [
-        const Row(
+        Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Text(
-                'Genres',
-                style: kTextHeaderStyle,
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    const LeadingDot(),
+                    Expanded(
+                      child: Text(
+                        tr("genres"),
+                        style: kTextHeaderStyle,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
@@ -86,7 +96,7 @@ class TVGenreListGridState extends State<TVGenreListGrid>
                                           borderRadius:
                                               BorderRadius.circular(15)),
                                       child: Text(
-                                        genreList![index].genreName!,
+                                        genreList![index].genreName ?? "Null",
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
                                           color: Theme.of(context)

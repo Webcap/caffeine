@@ -297,3 +297,40 @@ class ExternalPlay extends StatelessWidget {
     );
   }
 }
+
+class SocialIconWidget extends StatelessWidget {
+  const SocialIconWidget({
+    Key? key,
+    this.url,
+    this.icon,
+    this.isNull,
+  }) : super(key: key);
+
+  final String? url;
+  final Widget? icon;
+  final bool? isNull;
+
+  @override
+  Widget build(BuildContext context) {
+    return isNull == true
+        ? Container()
+        : Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: GestureDetector(
+              onTap: () {
+                launchUrl(Uri.parse(url!),
+                    mode: LaunchMode.externalApplication);
+              },
+              child: Container(
+                height: 50,
+                width: 40,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10.0),
+                  color: Colors.white,
+                ),
+                child: icon,
+              ),
+            ),
+          );
+  }
+}

@@ -1,5 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:caffiene/widgets/common_widgets.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/api/movies_api.dart';
 import 'package:caffiene/models/videos.dart';
@@ -39,27 +41,45 @@ class MovieVideosState extends State<MovieVideosDisplay> {
     return Column(
       children: [
         movieVideos == null
-            ? Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  children: <Widget>[
-                    Text(
-                      widget.title!,
-                      style:
-                          kTextHeaderStyle, /* style: widget.themeData!.textTheme.bodyText1*/
+            ? Row(
+                children: [
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        children: [
+                          const LeadingDot(),
+                          Expanded(
+                            child: Text(
+                              widget.title!,
+                              style:
+                                  kTextHeaderStyle, /* style: widget.themeData!.textTheme.bodyText1*/
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               )
             : Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      widget.title!,
-                      style:
-                          kTextHeaderStyle, /*style: widget.themeData!.textTheme.bodyText1*/
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        children: [
+                          const LeadingDot(),
+                          Expanded(
+                            child: Text(
+                              widget.title!,
+                              style:
+                                  kTextHeaderStyle, /*style: widget.themeData!.textTheme.bodyText1*/
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],
@@ -71,12 +91,11 @@ class MovieVideosState extends State<MovieVideosDisplay> {
             child: movieVideos == null
                 ? detailVideoShimmer1(isDark)
                 : movieVideos!.result!.isEmpty
-                    ? const SizedBox(
+                    ? SizedBox(
                         width: double.infinity,
                         height: 80,
                         child: Center(
-                          child: Text(
-                              'This movie doesn\'t have a video provided',
+                          child: Text(tr("no_video_movie"),
                               textAlign: TextAlign.center),
                         ),
                       )
@@ -118,6 +137,7 @@ class MovieVideosState extends State<MovieVideosDisplay> {
                                                 fit: StackFit.expand,
                                                 children: [
                                                   CachedNetworkImage(
+                                                    cacheManager: cacheProp(),
                                                     fadeOutDuration:
                                                         const Duration(
                                                             milliseconds: 300),

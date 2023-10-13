@@ -1,4 +1,5 @@
 import 'package:caffiene/caffiene_main.dart';
+import 'package:caffiene/functions/functions.dart';
 import 'package:caffiene/models/download_manager.dart';
 import 'package:caffiene/models/translation.dart';
 import 'package:caffiene/provider/app_dependency_provider.dart';
@@ -29,6 +30,7 @@ final Future<FirebaseApp> _initialization = Firebase.initializeApp();
 
 Future<void> appInitialize() async {
   WidgetsFlutterBinding.ensureInitialized();
+  requestNotificationPermissions();
   await dotenv.load(fileName: ".env");
   await EasyLocalization.ensureInitialized();
   FirebaseMessaging.onBackgroundMessage(_messageHandler);

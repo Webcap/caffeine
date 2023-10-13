@@ -1,4 +1,3 @@
-import 'package:caffiene/widgets/download_button_widget.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/api/endpoints.dart';
@@ -47,11 +46,20 @@ class _MovieAboutState extends State<MovieAbout> {
             ),
             Row(
               children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Text(
-                    tr("overview"),
-                    style: kTextHeaderStyle,
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Row(
+                      children: [
+                        const LeadingDot(),
+                        Expanded(
+                          child: Text(
+                            tr("overview"),
+                            style: kTextHeaderStyle,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],
@@ -140,8 +148,14 @@ class _MovieAboutState extends State<MovieAbout> {
             MovieSocialLinks(
               api: Endpoints.getExternalLinksForMovie(widget.movie.id!, lang),
             ),
+            const SizedBox(
+              height: 10,
+            ),
             BelongsToCollectionWidget(
               api: Endpoints.movieDetailsUrl(widget.movie.id!, lang),
+            ),
+            const SizedBox(
+              height: 10,
             ),
             MovieInfoTable(
               api: Endpoints.movieDetailsUrl(widget.movie.id!, lang),

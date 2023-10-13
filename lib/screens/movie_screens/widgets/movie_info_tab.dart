@@ -1,3 +1,5 @@
+import 'package:caffiene/widgets/common_widgets.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/api/movies_api.dart';
 import 'package:caffiene/models/movie_models.dart';
@@ -39,9 +41,16 @@ class MovieInfoTableState extends State<MovieInfoTable> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Movie Info',
-            style: kTextHeaderStyle,
+          Row(
+            children: [
+              const LeadingDot(),
+              Expanded(
+                child: Text(
+                  tr("movie_info"),
+                  style: kTextHeaderStyle,
+                ),
+              ),
+            ],
           ),
           Container(
             child: SingleChildScrollView(
@@ -51,9 +60,9 @@ class MovieInfoTableState extends State<MovieInfoTable> {
                 child: movieDetails == null
                     ? detailInfoTableShimmer1(isDark)
                     : DataTable(dataRowMinHeight: 40, columns: [
-                        const DataColumn(
+                        DataColumn(
                             label: Text(
-                          'Original Title',
+                          tr("original_title"),
                           style: kTableLeftStyle,
                         )),
                         DataColumn(
@@ -65,26 +74,28 @@ class MovieInfoTableState extends State<MovieInfoTable> {
                         ),
                       ], rows: [
                         DataRow(cells: [
-                          const DataCell(Text(
-                            'Status',
+                          DataCell(Text(
+                            tr("status"),
                             style: kTableLeftStyle,
                           )),
                           DataCell(Text(movieDetails!.status!.isEmpty
-                              ? 'unknown'
+                              ? tr("unknown")
                               : movieDetails!.status!)),
                         ]),
                         DataRow(cells: [
-                          const DataCell(Text(
-                            'Runtime',
+                          DataCell(Text(
+                            tr("runtime"),
                             style: kTableLeftStyle,
                           )),
                           DataCell(Text(movieDetails!.runtime! == 0
-                              ? 'N/A'
-                              : '${movieDetails!.runtime!} mins')),
+                              ? tr("not_available")
+                              : tr("runtime_mins", namedArgs: {
+                                  "mins": movieDetails!.runtime!.toString()
+                                }))),
                         ]),
                         DataRow(cells: [
-                          const DataCell(Text(
-                            'Spoken language',
+                          DataCell(Text(
+                            tr("spoken_language"),
                             style: kTableLeftStyle,
                           )),
                           DataCell(SizedBox(
@@ -102,7 +113,7 @@ class MovieInfoTableState extends State<MovieInfoTable> {
                                             const EdgeInsets.only(right: 5.0),
                                         child: Text(movieDetails!
                                                 .spokenLanguages!.isEmpty
-                                            ? 'N/A'
+                                            ? tr("not_available")
                                             : '${movieDetails!.spokenLanguages![index].englishName},'),
                                       );
                                     },
@@ -110,8 +121,8 @@ class MovieInfoTableState extends State<MovieInfoTable> {
                           )),
                         ]),
                         DataRow(cells: [
-                          const DataCell(Text(
-                            'Budget',
+                          DataCell(Text(
+                            tr("budget"),
                             style: kTableLeftStyle,
                           )),
                           DataCell(movieDetails!.budget == 0
@@ -121,8 +132,8 @@ class MovieInfoTableState extends State<MovieInfoTable> {
                                   .toString())),
                         ]),
                         DataRow(cells: [
-                          const DataCell(Text(
-                            'Revenue',
+                          DataCell(Text(
+                            tr("revenue"),
                             style: kTableLeftStyle,
                           )),
                           DataCell(movieDetails!.budget == 0
@@ -132,8 +143,8 @@ class MovieInfoTableState extends State<MovieInfoTable> {
                                   .toString())),
                         ]),
                         DataRow(cells: [
-                          const DataCell(Text(
-                            'Tagline',
+                          DataCell(Text(
+                            tr("tagline"),
                             style: kTableLeftStyle,
                           )),
                           DataCell(
@@ -147,8 +158,8 @@ class MovieInfoTableState extends State<MovieInfoTable> {
                           ),
                         ]),
                         DataRow(cells: [
-                          const DataCell(Text(
-                            'Production companies',
+                          DataCell(Text(
+                            tr("production_companies"),
                             style: kTableLeftStyle,
                           )),
                           DataCell(SizedBox(
@@ -166,7 +177,7 @@ class MovieInfoTableState extends State<MovieInfoTable> {
                                             const EdgeInsets.only(right: 5.0),
                                         child: Text(movieDetails!
                                                 .productionCompanies!.isEmpty
-                                            ? 'N/A'
+                                            ? tr("not_available")
                                             : '${movieDetails!.productionCompanies![index].name},'),
                                       );
                                     },
@@ -179,8 +190,8 @@ class MovieInfoTableState extends State<MovieInfoTable> {
                               ),
                         ]),
                         DataRow(cells: [
-                          const DataCell(Text(
-                            'Production countries',
+                          DataCell(Text(
+                            tr("production_countries"),
                             style: kTableLeftStyle,
                           )),
                           DataCell(SizedBox(
@@ -198,7 +209,7 @@ class MovieInfoTableState extends State<MovieInfoTable> {
                                             const EdgeInsets.only(right: 5.0),
                                         child: Text(movieDetails!
                                                 .productionCountries!.isEmpty
-                                            ? 'N/A'
+                                            ? tr("not_available")
                                             : '${movieDetails!.productionCountries![index].name},'),
                                       );
                                     },

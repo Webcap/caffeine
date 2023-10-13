@@ -1,3 +1,5 @@
+import 'package:caffiene/widgets/common_widgets.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/screens/movie_screens/streaming_service_screen.dart';
 import 'package:caffiene/utils/config.dart';
@@ -17,12 +19,25 @@ class MoviesFromWatchProvidersState extends State<MoviesFromWatchProviders> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Text(
-              'Streaming services',
-              style: kTextHeaderStyle,
-            ),
+          Row(
+            children: [
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      const LeadingDot(),
+                      Expanded(
+                        child: Text(
+                          tr("streaming_services"),
+                          style: kTextHeaderStyle,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
           SizedBox(
             width: double.infinity,
@@ -96,7 +111,6 @@ class MoviesFromWatchProvidersState extends State<MoviesFromWatchProviders> {
         ]);
   }
 }
-
 class StreamingServicesWidget extends StatelessWidget {
   final String imagePath;
   final String title;

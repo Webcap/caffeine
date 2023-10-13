@@ -37,12 +37,25 @@ class TVShowsFromWatchProvidersState extends State<TVShowsFromWatchProviders> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Text(
-              'Streaming services',
-              style: kTextHeaderStyle,
-            ),
+          Row(
+            children: [
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      const LeadingDot(),
+                      Expanded(
+                        child: Text(
+                          tr("streaming_services"),
+                          style: kTextHeaderStyle,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
           SizedBox(
             width: double.infinity,
@@ -580,11 +593,20 @@ class TVImagesDisplayState extends State<TVImagesDisplay> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  widget.title!,
-                  style: kTextHeaderStyle,
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      const LeadingDot(),
+                      Expanded(
+                        child: Text(
+                          widget.title!,
+                          style: kTextHeaderStyle,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -722,8 +744,20 @@ class TVImagesDisplayState extends State<TVImagesDisplay> {
                                                                 .poster!
                                                                 .length ==
                                                             1
-                                                        ? '${tvImages!.poster!.length} Poster'
-                                                        : '${tvImages!.poster!.length} Posters'),
+                                                        ? tr("poster_singular",
+                                                            namedArgs: {
+                                                                "poster": tvImages!
+                                                                    .poster!
+                                                                    .length
+                                                                    .toString()
+                                                              })
+                                                        : tr("poster_plural",
+                                                            namedArgs: {
+                                                                "poster": tvImages!
+                                                                    .poster!
+                                                                    .length
+                                                                    .toString()
+                                                              })),
                                                   ),
                                                 )
                                               ]),
@@ -852,8 +886,21 @@ class TVImagesDisplayState extends State<TVImagesDisplay> {
                                                                 .backdrop!
                                                                 .length ==
                                                             1
-                                                        ? '${tvImages!.backdrop!.length} Backdrop'
-                                                        : '${tvImages!.backdrop!.length} Backdrops'),
+                                                        ? tr(
+                                                            "backdrop_singular",
+                                                            namedArgs: {
+                                                                "backdrop": tvImages!
+                                                                    .backdrop!
+                                                                    .length
+                                                                    .toString()
+                                                              })
+                                                        : tr("backdrop_plural",
+                                                            namedArgs: {
+                                                                "backdrop": tvImages!
+                                                                    .backdrop!
+                                                                    .length
+                                                                    .toString()
+                                                              })),
                                                   ),
                                                 )
                                               ]),
@@ -904,26 +951,44 @@ class TVVideosDisplayState extends State<TVVideosDisplay> {
     return Column(
       children: [
         tvVideos == null
-            ? Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  children: <Widget>[
-                    Text(widget.title!,
-                        style:
-                            kTextHeaderStyle /* style: widget.themeData!.textTheme.bodyText1*/
-                        ),
-                  ],
-                ),
+            ? Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        children: [
+                          const LeadingDot(),
+                          Expanded(
+                            child: Text(widget.title!,
+                                style:
+                                    kTextHeaderStyle /* style: widget.themeData!.textTheme.bodyText1*/
+                                ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               )
             : Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(widget.title!,
-                        style:
-                            kTextHeaderStyle /*style: widget.themeData!.textTheme.bodyText1*/
-                        ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        children: [
+                          const LeadingDot(),
+                          Expanded(
+                            child: Text(widget.title!,
+                                style:
+                                    kTextHeaderStyle /*style: widget.themeData!.textTheme.bodyText1*/
+                                ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -934,14 +999,14 @@ class TVVideosDisplayState extends State<TVVideosDisplay> {
             child: tvVideos == null
                 ? detailVideoShimmer1(isDark)
                 : tvVideos!.result!.isEmpty
-                    ? const SizedBox(
+                    ? SizedBox(
                         width: double.infinity,
                         height: 100,
                         child: Center(
                             child: Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Text('No video found :(',
-                              textAlign: TextAlign.center),
+                          padding: const EdgeInsets.all(8.0),
+                          child:
+                              Text(tr("no_video"), textAlign: TextAlign.center),
                         )),
                       )
                     : SizedBox(
@@ -1072,179 +1137,195 @@ class TVInfoTableState extends State<TVInfoTable> {
   void initState() {
     super.initState();
     tvApi().fetchTVDetails(widget.api!).then((value) {
-      setState(() {
-        tvDetails = value;
-      });
+      if (mounted) {
+        setState(() {
+          tvDetails = value;
+        });
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    // final isDark = Provider.of<DarkthemeProvider>(context).darktheme;
-    return Column(
-      children: [
-        const Text(
-          'TV series Info',
-          style: kTextHeaderStyle,
-        ),
-        Container(
-          child: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
+    final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const LeadingDot(),
+              Expanded(
+                child: Text(
+                  tr("tv_series_info"),
+                  style: kTextHeaderStyle,
+                ),
+              ),
+            ],
+          ),
+          Container(
             child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: tvDetails == null
-                  ? detailInfoTableShimmer()
-                  : DataTable(dataRowMinHeight: 40, columns: [
-                      const DataColumn(
+              scrollDirection: Axis.vertical,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: tvDetails == null
+                    ? detailInfoTableShimmer1(isDark)
+                    : DataTable(dataRowMinHeight: 40, columns: [
+                        DataColumn(
+                            label: Text(
+                          tr("original_title"),
+                          style: kTableLeftStyle,
+                        )),
+                        DataColumn(
                           label: Text(
-                        'Original Title',
-                        style: kTableLeftStyle,
-                      )),
-                      DataColumn(
-                        label: Text(
-                          tvDetails!.originalTitle!,
-                          style: kTableLeftStyle,
-                        ),
-                      ),
-                    ], rows: [
-                      DataRow(cells: [
-                        const DataCell(Text(
-                          'Status',
-                          style: kTableLeftStyle,
-                        )),
-                        DataCell(Text(tvDetails!.status!.isEmpty
-                            ? 'unknown'
-                            : tvDetails!.status!)),
-                      ]),
-                      DataRow(cells: [
-                        const DataCell(Text(
-                          'Runtime',
-                          style: kTableLeftStyle,
-                        )),
-                        DataCell(Text(tvDetails!.runtime!.isEmpty
-                            ? '-'
-                            : tvDetails!.runtime![0] == 0
-                                ? 'N/A'
-                                : '${tvDetails!.runtime![0]} mins')),
-                      ]),
-                      DataRow(cells: [
-                        const DataCell(Text(
-                          'Spoken languages',
-                          style: kTableLeftStyle,
-                        )),
-                        DataCell(SizedBox(
-                          height: 20,
-                          width: 200,
-                          child: tvDetails!.spokenLanguages!.isEmpty
-                              ? const Text('-')
-                              : ListView.builder(
-                                  scrollDirection: Axis.horizontal,
-                                  itemCount: tvDetails!.spokenLanguages!.length,
-                                  itemBuilder: (context, index) {
-                                    return Padding(
-                                      padding:
-                                          const EdgeInsets.only(right: 5.0),
-                                      child: Text(tvDetails!
-                                              .spokenLanguages!.isEmpty
-                                          ? 'N/A'
-                                          : '${tvDetails!.spokenLanguages![index].englishName},'),
-                                    );
-                                  },
-                                ),
-                        )),
-                      ]),
-                      DataRow(cells: [
-                        const DataCell(Text(
-                          'Total seasons',
-                          style: kTableLeftStyle,
-                        )),
-                        DataCell(Text(tvDetails!.numberOfSeasons! == 0
-                            ? '-'
-                            : '${tvDetails!.numberOfSeasons!}')),
-                      ]),
-                      DataRow(cells: [
-                        const DataCell(Text(
-                          'Total episodes',
-                          style: kTableLeftStyle,
-                        )),
-                        DataCell(Text(tvDetails!.numberOfEpisodes! == 0
-                            ? '-'
-                            : '${tvDetails!.numberOfEpisodes!}')),
-                      ]),
-                      DataRow(cells: [
-                        const DataCell(Text(
-                          'Tagline',
-                          style: kTableLeftStyle,
-                        )),
-                        DataCell(
-                          Text(
-                            tvDetails!.tagline!.isEmpty
-                                ? '-'
-                                : tvDetails!.tagline!,
-                            style: const TextStyle(
-                                overflow: TextOverflow.ellipsis),
+                            tvDetails!.originalTitle!,
+                            style: kTableLeftStyle,
                           ),
                         ),
+                      ], rows: [
+                        DataRow(cells: [
+                          DataCell(Text(
+                            tr("status"),
+                            style: kTableLeftStyle,
+                          )),
+                          DataCell(Text(tvDetails!.status!.isEmpty
+                              ? tr("unknown")
+                              : tvDetails!.status!)),
+                        ]),
+                        DataRow(cells: [
+                          DataCell(Text(
+                            tr("runtime"),
+                            style: kTableLeftStyle,
+                          )),
+                          DataCell(Text(tvDetails!.runtime!.isEmpty
+                              ? '-'
+                              : tvDetails!.runtime![0] == 0
+                                  ? tr("not_available")
+                                  : tr("runtime_mins", namedArgs: {
+                                      "mins": tvDetails!.runtime![0].toString()
+                                    }))),
+                        ]),
+                        DataRow(cells: [
+                          DataCell(Text(
+                            tr("spoken_language"),
+                            style: kTableLeftStyle,
+                          )),
+                          DataCell(SizedBox(
+                            height: 20,
+                            width: 200,
+                            child: tvDetails!.spokenLanguages!.isEmpty
+                                ? const Text('-')
+                                : ListView.builder(
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount:
+                                        tvDetails!.spokenLanguages!.length,
+                                    itemBuilder: (context, index) {
+                                      return Padding(
+                                        padding:
+                                            const EdgeInsets.only(right: 5.0),
+                                        child: Text(tvDetails!
+                                                .spokenLanguages!.isEmpty
+                                            ? tr("not_available")
+                                            : '${tvDetails!.spokenLanguages![index].englishName},'),
+                                      );
+                                    },
+                                  ),
+                          )),
+                        ]),
+                        DataRow(cells: [
+                          DataCell(Text(
+                            tr("total_seasons"),
+                            style: kTableLeftStyle,
+                          )),
+                          DataCell(Text(tvDetails!.numberOfSeasons! == 0
+                              ? '-'
+                              : '${tvDetails!.numberOfSeasons!}')),
+                        ]),
+                        DataRow(cells: [
+                          DataCell(Text(
+                            tr("total_episodes"),
+                            style: kTableLeftStyle,
+                          )),
+                          DataCell(Text(tvDetails!.numberOfEpisodes! == 0
+                              ? '-'
+                              : '${tvDetails!.numberOfEpisodes!}')),
+                        ]),
+                        DataRow(cells: [
+                          DataCell(Text(
+                            tr("tagline"),
+                            style: kTableLeftStyle,
+                          )),
+                          DataCell(
+                            Text(
+                              tvDetails!.tagline!.isEmpty
+                                  ? '-'
+                                  : tvDetails!.tagline!,
+                              style: const TextStyle(
+                                  overflow: TextOverflow.ellipsis),
+                            ),
+                          ),
+                        ]),
+                        DataRow(cells: [
+                          DataCell(Text(
+                            tr("production_companies"),
+                            style: kTableLeftStyle,
+                          )),
+                          DataCell(SizedBox(
+                            height: 20,
+                            width: 200,
+                            child: tvDetails!.productionCompanies!.isEmpty
+                                ? const Text('-')
+                                : ListView.builder(
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount:
+                                        tvDetails!.productionCompanies!.length,
+                                    itemBuilder: (context, index) {
+                                      return Padding(
+                                        padding:
+                                            const EdgeInsets.only(right: 5.0),
+                                        child: Text(tvDetails!
+                                                .productionCompanies!.isEmpty
+                                            ? tr("not_available")
+                                            : '${tvDetails!.productionCompanies![index].name},'),
+                                      );
+                                    },
+                                  ),
+                          )),
+                        ]),
+                        DataRow(cells: [
+                          DataCell(Text(
+                            tr("production_countries"),
+                            style: kTableLeftStyle,
+                          )),
+                          DataCell(SizedBox(
+                            height: 20,
+                            width: 200,
+                            child: tvDetails!.productionCountries!.isEmpty
+                                ? const Text('-')
+                                : ListView.builder(
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount:
+                                        tvDetails!.productionCountries!.length,
+                                    itemBuilder: (context, index) {
+                                      return Padding(
+                                        padding:
+                                            const EdgeInsets.only(right: 5.0),
+                                        child: Text(tvDetails!
+                                                .productionCountries!.isEmpty
+                                            ? tr("not_available")
+                                            : '${tvDetails!.productionCountries![index].name},'),
+                                      );
+                                    },
+                                  ),
+                          )),
+                        ]),
                       ]),
-                      DataRow(cells: [
-                        const DataCell(Text(
-                          'Production companies',
-                          style: kTableLeftStyle,
-                        )),
-                        DataCell(SizedBox(
-                          height: 20,
-                          width: 200,
-                          child: tvDetails!.productionCompanies!.isEmpty
-                              ? const Text('-')
-                              : ListView.builder(
-                                  scrollDirection: Axis.horizontal,
-                                  itemCount:
-                                      tvDetails!.productionCompanies!.length,
-                                  itemBuilder: (context, index) {
-                                    return Padding(
-                                      padding:
-                                          const EdgeInsets.only(right: 5.0),
-                                      child: Text(tvDetails!
-                                              .productionCompanies!.isEmpty
-                                          ? 'N/A'
-                                          : '${tvDetails!.productionCompanies![index].name},'),
-                                    );
-                                  },
-                                ),
-                        )),
-                      ]),
-                      DataRow(cells: [
-                        const DataCell(Text(
-                          'Production countries',
-                          style: kTableLeftStyle,
-                        )),
-                        DataCell(SizedBox(
-                          height: 20,
-                          width: 200,
-                          child: tvDetails!.productionCountries!.isEmpty
-                              ? const Text('-')
-                              : ListView.builder(
-                                  scrollDirection: Axis.horizontal,
-                                  itemCount:
-                                      tvDetails!.productionCountries!.length,
-                                  itemBuilder: (context, index) {
-                                    return Padding(
-                                      padding:
-                                          const EdgeInsets.only(right: 5.0),
-                                      child: Text(tvDetails!
-                                              .productionCountries!.isEmpty
-                                          ? 'N/A'
-                                          : '${tvDetails!.productionCountries![index].name},'),
-                                    );
-                                  },
-                                ),
-                        )),
-                      ]),
-                    ]),
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

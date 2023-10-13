@@ -3,6 +3,7 @@ import 'package:caffiene/api/movies_api.dart';
 import 'package:caffiene/models/images.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/utils/config.dart';
+import 'package:caffiene/widgets/common_widgets.dart';
 import 'package:caffiene/widgets/hero_photoview.dart';
 import 'package:caffiene/widgets/shimmer_widget.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -40,26 +41,44 @@ class TVEpisodeImagesDisplayState extends State<TVEpisodeImagesDisplay> {
     return Column(
       children: [
         tvImages == null
-            ? Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  children: <Widget>[
-                    Text(widget.title!,
-                        style:
-                            kTextHeaderStyle /* style: widget.themeData!.textTheme.bodyText1*/
-                        ),
-                  ],
-                ),
+            ? Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        children: [
+                          const LeadingDot(),
+                          Expanded(
+                            child: Text(widget.title!,
+                                style:
+                                    kTextHeaderStyle /* style: widget.themeData!.textTheme.bodyText1*/
+                                ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               )
             : Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(widget.title!,
-                        style:
-                            kTextHeaderStyle /*style: widget.themeData!.textTheme.bodyText1*/
-                        ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        children: [
+                          const LeadingDot(),
+                          Expanded(
+                            child: Text(widget.title!,
+                                style:
+                                    kTextHeaderStyle /*style: widget.themeData!.textTheme.bodyText1*/
+                                ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ],
               ),

@@ -1,10 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:caffiene/models/recently_watched.dart';
+import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:caffiene/provider/recently_watched_provider.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/screens/movie_screens/widgets/movie_video_loader.dart';
 import 'package:caffiene/utils/config.dart';
+import 'package:caffiene/widgets/common_widgets.dart';
 import 'package:caffiene/widgets/shimmer_widget.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -24,16 +27,26 @@ class _ScrollingRecentMoviesState extends State<ScrollingRecentMovies> {
   Widget build(BuildContext context) {
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final fetchRoute = Provider.of<AppDependencyProvider>(context).fetchRoute;
     return Column(
       children: <Widget>[
-        const Row(
+        Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Text(
-                'Recently Watched',
-                style: kTextHeaderStyle,
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    const LeadingDot(),
+                    Expanded(
+                      child: Text(
+                        tr("recently_watched"),
+                        style: kTextHeaderStyle,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
             // Padding(
@@ -86,6 +99,9 @@ class _ScrollingRecentMoviesState extends State<ScrollingRecentMovies> {
                               MaterialPageRoute(
                                   builder: (context) => MovieVideoLoader(
                                         download: false,
+                                        route: fetchRoute == "flixHQ"
+                                            ? StreamRoute.flixHQ
+                                            : StreamRoute.tmDB,
                                         metadata: [
                                           widget.moviesList[index].id,
                                           widget.moviesList[index].title,
@@ -93,8 +109,7 @@ class _ScrollingRecentMoviesState extends State<ScrollingRecentMovies> {
                                           widget.moviesList[index].releaseYear,
                                           widget.moviesList[index].backdropPath,
                                           widget.moviesList[index].elapsed
-                                        ], 
-                                        route: StreamRoute.tmDB,
+                                        ],
                                       )));
                         },
                         child: SizedBox(

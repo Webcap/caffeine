@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:caffiene/screens/common/hero_photoview.dart';
 import 'package:caffiene/widgets/common_widgets.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -40,9 +41,11 @@ class _PersonImagesDisplayState extends State<PersonImagesDisplay>
   void initState() {
     super.initState();
     moviesApi().fetchPersonImages(widget.api).then((value) {
-      setState(() {
-        personImages = value;
-      });
+      if (mounted) {
+        setState(() {
+          personImages = value;
+        });
+      }
     });
   }
 
@@ -50,6 +53,7 @@ class _PersonImagesDisplayState extends State<PersonImagesDisplay>
   Widget build(BuildContext context) {
     super.build(context);
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
+    final isDark = Provider.of<SettingsProvider>(context).darktheme;
     return Padding(
       padding: const EdgeInsets.only(top: 8.0),
       child: Column(
@@ -57,11 +61,20 @@ class _PersonImagesDisplayState extends State<PersonImagesDisplay>
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.only(bottom: 8.0),
-                child: Text(
-                  widget.title,
-                  style: const TextStyle(fontSize: 20),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 8.0),
+                  child: Row(
+                    children: [
+                      const LeadingDot(),
+                      Expanded(
+                        child: Text(
+                          widget.title,
+                          style: kTextHeaderStyle,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -70,10 +83,10 @@ class _PersonImagesDisplayState extends State<PersonImagesDisplay>
             width: double.infinity,
             height: 150,
             child: personImages == null
-                ? personImageShimmer()
+                ? personImageShimmer(isDark)
                 : personImages!.profile!.isEmpty
-                    ? const Center(
-                        child: Text('No images available for this person'),
+                    ? Center(
+                        child: Text(tr("no_images_person")),
                       )
                     : Row(
                         children: [
@@ -96,6 +109,7 @@ class _PersonImagesDisplayState extends State<PersonImagesDisplay>
                                             borderRadius:
                                                 BorderRadius.circular(8.0),
                                             child: CachedNetworkImage(
+                                              cacheManager: cacheProp(),
                                               fadeOutDuration: const Duration(
                                                   milliseconds: 300),
                                               fadeOutCurve: Curves.easeOut,
@@ -110,23 +124,23 @@ class _PersonImagesDisplayState extends State<PersonImagesDisplay>
                                                   (context, imageProvider) =>
                                                       GestureDetector(
                                                 onTap: () {
-                                                  // Navigator.push(context,
-                                                  //     MaterialPageRoute(
-                                                  //         builder: ((context) {
-                                                  //   return HeroPhotoView(
-                                                  //     imageProvider:
-                                                  //         imageProvider,
-                                                  //     currentIndex: index,
-                                                  //     heroId:
-                                                  //         TMDB_BASE_IMAGE_URL +
-                                                  //             imageQuality +
-                                                  //             personImages!
-                                                  //                 .profile![
-                                                  //                     index]
-                                                  //                 .filePath!,
-                                                  //     name: widget.personName,
-                                                  //   );
-                                                  // })));
+                                                  Navigator.push(context,
+                                                      MaterialPageRoute(
+                                                          builder: ((context) {
+                                                    return HeroPhotoView(
+                                                      imageProvider:
+                                                          imageProvider,
+                                                      currentIndex: index,
+                                                      heroId:
+                                                          TMDB_BASE_IMAGE_URL +
+                                                              imageQuality +
+                                                              personImages!
+                                                                  .profile![
+                                                                      index]
+                                                                  .filePath!,
+                                                      name: widget.personName,
+                                                    );
+                                                  })));
                                                 },
                                                 child: Container(
                                                   decoration: BoxDecoration(
@@ -138,11 +152,11 @@ class _PersonImagesDisplayState extends State<PersonImagesDisplay>
                                                 ),
                                               ),
                                               placeholder: (context, url) =>
-                                                  scrollingImageShimmer(),
+                                                  scrollingImageShimmer1(isDark),
                                               errorWidget:
                                                   (context, url, error) =>
                                                       Image.asset(
-                                                'assets/images/na_square.png',
+                                                'assets/images/na_rect.png',
                                                 fit: BoxFit.cover,
                                               ),
                                             ),

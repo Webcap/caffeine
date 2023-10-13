@@ -1,4 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:caffiene/widgets/common_widgets.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/api/movies_api.dart';
 import 'package:caffiene/models/credits.dart';
@@ -38,48 +40,71 @@ class ScrollingArtistsState extends State<ScrollingArtists> {
   @override
   Widget build(BuildContext context) {
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
-    final mixpanel = Provider.of<SettingsProvider>(context).mixpanel;
     final isDark = Provider.of<SettingsProvider>(context).darktheme;
     return Column(
       children: <Widget>[
         credits == null
-            ? const Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Row(
-                  children: <Widget>[
-                    Text(
-                      'Cast',
-                      style: kTextHeaderStyle,
+            ? Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        children: [
+                          const LeadingDot(),
+                          Expanded(
+                            child: Text(
+                              tr("cast"),
+                              style: kTextHeaderStyle,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               )
             : credits!.cast!.isEmpty
-                ? const Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Cast',
-                          style: kTextHeaderStyle,
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          children: [
+                            const LeadingDot(),
+                            Expanded(
+                              child: Text(
+                                tr("cast"),
+                                style: kTextHeaderStyle,
+                              ),
+                            ),
+                          ],
                         ),
-                        Center(
-                            child: Text(
-                                'There are no casts available for this movie',
-                                textAlign: TextAlign.center)),
-                      ],
-                    ),
+                      ),
+                      Center(
+                          child: Text(tr("no_cast_movie"),
+                              textAlign: TextAlign.center)),
+                    ],
                   )
                 : Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text(
-                          'Cast',
-                          style: kTextHeaderStyle,
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            children: [
+                              const LeadingDot(),
+                              Expanded(
+                                child: Text(
+                                  tr("cast"),
+                                  style: kTextHeaderStyle,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                       TextButton(
@@ -103,7 +128,7 @@ class ScrollingArtistsState extends State<ScrollingArtists> {
                             ),
                           ),
                         ),
-                        child: const Text('See all cast and crew'),
+                        child: Text(tr("see_all_cast_crew")),
                       )
                     ],
                   ),
@@ -111,7 +136,7 @@ class ScrollingArtistsState extends State<ScrollingArtists> {
           width: double.infinity,
           height: 160,
           child: credits == null
-              ? detailCastShimmer()
+              ? detailCastShimmer1(isDark)
               : ListView.builder(
                   physics: const BouncingScrollPhysics(),
                   itemCount: credits!.cast!.length,
@@ -121,16 +146,12 @@ class ScrollingArtistsState extends State<ScrollingArtists> {
                       padding: const EdgeInsets.all(8.0),
                       child: GestureDetector(
                         onTap: () {
-                          mixpanel
-                              .track('Most viewed person pages', properties: {
-                            'Person name': '${credits!.cast![index].name}',
-                            'Person id': '${credits!.cast![index].id}'
-                          });
                           Navigator.push(context,
                               MaterialPageRoute(builder: (context) {
                             return CastDetailPage(
                               cast: credits!.cast![index],
-                              heroId: '${credits!.cast![index].id}',
+                              heroId: '${credits!.cast![index].id}'
+                                  '${credits!.cast![index].creditId}',
                             );
                           }));
                         },
@@ -151,10 +172,11 @@ class ScrollingArtistsState extends State<ScrollingArtists> {
                                                   .cast![index].profilePath ==
                                               null
                                           ? Image.asset(
-                                              'assets/images/na_square.png',
+                                              'assets/images/na_rect.png',
                                               fit: BoxFit.cover,
                                             )
                                           : CachedNetworkImage(
+                                              cacheManager: cacheProp(),
                                               fadeOutDuration: const Duration(
                                                   milliseconds: 300),
                                               fadeOutCurve: Curves.easeOut,
@@ -176,11 +198,12 @@ class ScrollingArtistsState extends State<ScrollingArtists> {
                                                 ),
                                               ),
                                               placeholder: (context, url) =>
-                                                  detailCastImageShimmer(),
+                                                  detailCastImageShimmer1(
+                                                      isDark),
                                               errorWidget:
                                                   (context, url, error) =>
                                                       Image.asset(
-                                                'assets/images/na_square.png',
+                                                'assets/images/na_rect.png',
                                                 fit: BoxFit.cover,
                                               ),
                                             ),

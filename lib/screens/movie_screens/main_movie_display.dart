@@ -8,7 +8,7 @@ import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/screens/discover_screens/widgets/discover_movies_widget.dart';
 import 'package:caffiene/screens/movie_screens/widgets/genre_list_grid.dart';
 import 'package:caffiene/screens/movie_screens/widgets/movies_from_watch_providers.dart';
-import 'package:caffiene/screens/movie_screens/widgets/scrolling_widget.dart';
+import 'package:caffiene/screens/movie_screens/widgets/scrolling_movie_list.dart';
 import 'package:provider/provider.dart';
 
 class MainMoviesDisplay extends StatefulWidget {

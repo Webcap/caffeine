@@ -554,9 +554,11 @@ class ScrollingTVCreatorsState extends State<ScrollingTVCreators>
   void initState() {
     super.initState();
     tvApi().fetchTVDetails(widget.api!).then((value) {
-      setState(() {
-        tvDetails = value;
-      });
+      if (mounted) {
+        setState(() {
+          tvDetails = value;
+        });
+      }
     });
   }
 
@@ -564,31 +566,39 @@ class ScrollingTVCreatorsState extends State<ScrollingTVCreators>
   Widget build(BuildContext context) {
     super.build(context);
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
-    // final isDark = Provider.of<DarkthemeProvider>(context).darktheme;
+    final isDark = Provider.of<SettingsProvider>(context).darktheme;
     return Column(
       children: <Widget>[
-        const Padding(
-          padding: EdgeInsets.all(8.0),
-          child: Row(
-            children: <Widget>[
-              Text(
-                'Created by',
-                style: kTextHeaderStyle,
+        Row(
+          children: <Widget>[
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    const LeadingDot(),
+                    Expanded(
+                      child: Text(
+                        tr("created_by"),
+                        style: kTextHeaderStyle,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
         SizedBox(
           width: double.infinity,
           height: 160,
           child: tvDetails == null
-              ? detailCastShimmer()
+              ? detailCastShimmer1(isDark)
               : tvDetails!.createdBy!.isEmpty
-                  ? const Padding(
-                      padding: EdgeInsets.all(8.0),
+                  ? Padding(
+                      padding: const EdgeInsets.all(8.0),
                       child: Center(
-                          child: Text(
-                              'There is/are no creator/s available for this TV show',
+                          child: Text(tr("no_creators"),
                               textAlign: TextAlign.center)),
                     )
                   : ListView.builder(
@@ -604,7 +614,8 @@ class ScrollingTVCreatorsState extends State<ScrollingTVCreators>
                                   MaterialPageRoute(builder: (context) {
                                 return CreatedByPersonDetailPage(
                                   createdBy: tvDetails!.createdBy![index],
-                                  heroId: '${tvDetails!.createdBy![index].id}',
+                                  heroId: '${tvDetails!.createdBy![index].id}'
+                                      '${tvDetails!.createdBy![index].name}',
                                 );
                               }));
                             },
@@ -626,10 +637,11 @@ class ScrollingTVCreatorsState extends State<ScrollingTVCreators>
                                                       .profilePath ==
                                                   null
                                               ? Image.asset(
-                                                  'assets/images/na_square.png',
+                                                  'assets/images/na_rect.png',
                                                   fit: BoxFit.cover,
                                                 )
                                               : CachedNetworkImage(
+                                                  cacheManager: cacheProp(),
                                                   fadeOutDuration:
                                                       const Duration(
                                                           milliseconds: 300),
@@ -655,11 +667,12 @@ class ScrollingTVCreatorsState extends State<ScrollingTVCreators>
                                                     ),
                                                   ),
                                                   placeholder: (context, url) =>
-                                                      detailCastImageShimmer(),
+                                                      detailCastImageShimmer1(
+                                                          isDark),
                                                   errorWidget:
                                                       (context, url, error) =>
                                                           Image.asset(
-                                                    'assets/images/na_sqaure.png',
+                                                    'assets/images/na_rect.png',
                                                     fit: BoxFit.cover,
                                                   ),
                                                 ),

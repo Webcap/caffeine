@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:caffiene/screens/common/sabth.dart';
 import 'package:caffiene/screens/movie_screens/widgets/collection_details.dart';
+import 'package:caffiene/widgets/common_widgets.dart';
 import 'package:caffiene/widgets/shimmer_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/api/endpoints.dart';
@@ -269,24 +270,13 @@ class PartsList extends StatefulWidget {
 
 class PartsListState extends State<PartsList> {
   List<Movie>? collectionMovieList;
-  bool requestFailed = false;
   @override
   void initState() {
     super.initState();
-    getData();
-  }
-
-  void getData() {
     moviesApi().fetchCollectionMovies(widget.api!).then((value) {
-      setState(() {
-        collectionMovieList = value;
-      });
-    });
-    Future.delayed(const Duration(seconds: 11), () {
-      if (collectionMovieList == null) {
+      if (mounted) {
         setState(() {
-          requestFailed = true;
-          collectionMovieList = [Movie()];
+          collectionMovieList = value;
         });
       }
     });
@@ -295,17 +285,26 @@ class PartsListState extends State<PartsList> {
   @override
   Widget build(BuildContext context) {
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
-    // final isDark = Provider.of<DarkthemeProvider>(context).darktheme;
+    final isDark = Provider.of<SettingsProvider>(context).darktheme;
     return Column(
       children: <Widget>[
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                widget.title!,
-                style: kTextHeaderStyle,
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    const LeadingDot(),
+                    Expanded(
+                      child: Text(
+                        widget.title!,
+                        style: kTextHeaderStyle,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
@@ -317,10 +316,8 @@ class PartsListState extends State<PartsList> {
               ? Row(
                   children: [
                     Expanded(
-                      child: Shimmer.fromColors(
-                        baseColor: Colors.grey.shade300,
-                        highlightColor: Colors.grey.shade100,
-                        direction: ShimmerDirection.ltr,
+                      child: ShimmerBase(
+                        isDark: isDark,
                         child: ListView.builder(
                           physics: const BouncingScrollPhysics(),
                           itemCount: 3,
@@ -336,7 +333,7 @@ class PartsListState extends State<PartsList> {
                                       flex: 6,
                                       child: Container(
                                         decoration: BoxDecoration(
-                                          color: Colors.white,
+                                          color: Colors.grey.shade600,
                                           borderRadius:
                                               BorderRadius.circular(8.0),
                                         ),
@@ -352,7 +349,7 @@ class PartsListState extends State<PartsList> {
                                           decoration: BoxDecoration(
                                               borderRadius:
                                                   BorderRadius.circular(5.0),
-                                              color: Colors.white),
+                                              color: Colors.grey.shade600),
                                         ),
                                       ),
                                     )
@@ -366,49 +363,50 @@ class PartsListState extends State<PartsList> {
                     ),
                   ],
                 )
-              : requestFailed == true
-                  ? retryWidget()
-                  : Row(
-                      children: [
-                        Expanded(
-                          child: ListView.builder(
-                            physics: const BouncingScrollPhysics(),
-                            itemCount: collectionMovieList!.length,
-                            scrollDirection: Axis.horizontal,
-                            itemBuilder: (BuildContext context, int index) {
-                              return Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: GestureDetector(
-                                  onTap: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => MovieDetailPage(
-                                                movie:
-                                                    collectionMovieList![index],
-                                                heroId:
-                                                    '${collectionMovieList![index].id}')));
-                                  },
-                                  child: SizedBox(
-                                    width: 105,
-                                    child: Column(
-                                      children: <Widget>[
-                                        Expanded(
-                                          flex: 6,
-                                          child: Hero(
-                                            tag:
-                                                '${collectionMovieList![index].id}',
-                                            child: ClipRRect(
+              : Row(
+                  children: [
+                    Expanded(
+                      child: ListView.builder(
+                        physics: const BouncingScrollPhysics(),
+                        itemCount: collectionMovieList!.length,
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => MovieDetailPage(
+                                            movie: collectionMovieList![index],
+                                            heroId:
+                                                '${collectionMovieList![index].id}')));
+                              },
+                              child: SizedBox(
+                                width: 105,
+                                child: Column(
+                                  children: <Widget>[
+                                    Expanded(
+                                      flex: 6,
+                                      child: Hero(
+                                        tag:
+                                            '${collectionMovieList![index].id}',
+                                        child: Stack(
+                                          alignment: Alignment.center,
+                                          children: [
+                                            ClipRRect(
                                               borderRadius:
                                                   BorderRadius.circular(8.0),
                                               child: collectionMovieList![index]
                                                           .posterPath ==
                                                       null
                                                   ? Image.asset(
-                                                      'assets/images/na_logo.png',
+                                                      'assets/images/na_rect.png',
                                                       fit: BoxFit.cover,
                                                     )
                                                   : CachedNetworkImage(
+                                                      cacheManager: cacheProp(),
                                                       fadeOutDuration:
                                                           const Duration(
                                                               milliseconds:
@@ -440,86 +438,74 @@ class PartsListState extends State<PartsList> {
                                                           ),
                                                         ),
                                                       ),
-                                                      placeholder:
-                                                          (context, url) =>
-                                                              Image.asset(
-                                                        'assets/images/loading.gif',
-                                                        fit: BoxFit.cover,
-                                                      ),
+                                                      placeholder: (context,
+                                                              url) =>
+                                                          scrollingImageShimmer1(
+                                                              isDark),
                                                       errorWidget: (context,
                                                               url, error) =>
                                                           Image.asset(
-                                                        'assets/images/na_logo.png',
+                                                        'assets/images/na_rect.png',
                                                         fit: BoxFit.cover,
                                                       ),
                                                     ),
                                             ),
-                                          ),
-                                        ),
-                                        Expanded(
-                                          flex: 3,
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Text(
-                                              collectionMovieList![index]
-                                                  .title!,
-                                              maxLines: 2,
-                                              textAlign: TextAlign.center,
-                                              overflow: TextOverflow.ellipsis,
+                                            Positioned(
+                                              top: 0,
+                                              left: 0,
+                                              child: Container(
+                                                margin: const EdgeInsets.all(3),
+                                                alignment: Alignment.topLeft,
+                                                width: 50,
+                                                height: 25,
+                                                decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8),
+                                                    color: isDark
+                                                        ? Colors.black45
+                                                        : Colors.white60),
+                                                child: Row(
+                                                  children: [
+                                                    const Icon(
+                                                      Icons.star,
+                                                    ),
+                                                    Text(collectionMovieList![
+                                                            index]
+                                                        .voteAverage!
+                                                        .toStringAsFixed(1))
+                                                  ],
+                                                ),
+                                              ),
                                             ),
-                                          ),
-                                        )
-                                      ],
+                                          ],
+                                        ),
+                                      ),
                                     ),
-                                  ),
+                                    Expanded(
+                                      flex: 3,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text(
+                                          collectionMovieList![index].title!,
+                                          maxLines: 2,
+                                          textAlign: TextAlign.center,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    )
+                                  ],
                                 ),
-                              );
-                            },
-                          ),
-                        ),
-                      ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
                     ),
+                  ],
+                ),
         ),
       ],
-    );
-  }
-
-  Widget retryWidget() {
-    return Center(
-      child: Container(
-          width: double.infinity,
-          color: const Color(0xFFFFFFFF),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset('assets/images/network-signal.png',
-                  width: 60, height: 60),
-              const Padding(
-                padding: EdgeInsets.only(top: 8.0),
-                child: Text('Please connect to the Internet and try again',
-                    textAlign: TextAlign.center),
-              ),
-              TextButton(
-                  style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all(const Color(0x0DF57C00)),
-                      maximumSize:
-                          MaterialStateProperty.all(const Size(200, 60)),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5.0),
-                              side:
-                                  const BorderSide(color: Color(0xFFF57C00))))),
-                  onPressed: () {
-                    setState(() {
-                      requestFailed = false;
-                      collectionMovieList = null;
-                    });
-                    getData();
-                  },
-                  child: const Text('Retry')),
-            ],
-          )),
     );
   }
 }

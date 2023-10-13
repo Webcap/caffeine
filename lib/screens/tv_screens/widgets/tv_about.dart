@@ -4,6 +4,7 @@ import 'package:caffiene/screens/tv_screens/widgets/tv_recc_tab.dart';
 import 'package:caffiene/screens/tv_screens/widgets/tv_seasons_list.dart';
 import 'package:caffiene/screens/tv_screens/widgets/tv_social_links.dart';
 import 'package:caffiene/screens/tv_screens/widgets/tv_widgets.dart';
+import 'package:caffiene/widgets/common_widgets.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/api/endpoints.dart';
@@ -42,11 +43,20 @@ class _TVAboutState extends State<TVAbout> {
             ),
             Row(
               children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Text(
-                    tr("overview"),
-                    style: kTextHeaderStyle,
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Row(
+                      children: [
+                        const LeadingDot(),
+                        Expanded(
+                          child: Text(
+                            tr("overview"),
+                            style: kTextHeaderStyle,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],
@@ -124,8 +134,14 @@ class _TVAboutState extends State<TVAbout> {
             TVSocialLinks(
               api: Endpoints.getExternalLinksForTV(widget.tvSeries.id!, lang),
             ),
+            const SizedBox(
+              height: 10,
+            ),
             TVInfoTable(
               api: Endpoints.tvDetailsUrl(widget.tvSeries.id!, lang),
+            ),
+            const SizedBox(
+              height: 10,
             ),
             TVRecommendationsTab(
                 includeAdult: Provider.of<SettingsProvider>(context).isAdult,

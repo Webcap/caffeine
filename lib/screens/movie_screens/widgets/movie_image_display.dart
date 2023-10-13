@@ -1,5 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:caffiene/widgets/common_widgets.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/api/movies_api.dart';
 import 'package:caffiene/models/images.dart';
@@ -44,12 +46,21 @@ class MovieImagesState extends State<MovieImagesDisplay> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  widget.title!,
-                  style:
-                      kTextHeaderStyle, /*style: widget.themeData!.textTheme.bodyText1*/
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      const LeadingDot(),
+                      Expanded(
+                        child: Text(
+                          widget.title!,
+                          style:
+                              kTextHeaderStyle, /*style: widget.themeData!.textTheme.bodyText1*/
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -106,6 +117,8 @@ class MovieImagesState extends State<MovieImagesDisplay> {
                                                               fit: BoxFit.cover,
                                                             )
                                                           : CachedNetworkImage(
+                                                              cacheManager:
+                                                                  cacheProp(),
                                                               fadeOutDuration:
                                                                   const Duration(
                                                                       milliseconds:
@@ -192,8 +205,21 @@ class MovieImagesState extends State<MovieImagesDisplay> {
                                                                   .poster!
                                                                   .length ==
                                                               1
-                                                          ? '${movieImages!.poster!.length} Poster'
-                                                          : '${movieImages!.poster!.length} Posters'),
+                                                          ? tr(
+                                                              "poster_singular",
+                                                              namedArgs: {
+                                                                  "poster": movieImages!
+                                                                      .poster!
+                                                                      .length
+                                                                      .toString()
+                                                                })
+                                                          : tr("poster_plural",
+                                                              namedArgs: {
+                                                                  "poster": movieImages!
+                                                                      .poster!
+                                                                      .length
+                                                                      .toString()
+                                                                })),
                                                     ),
                                                   )
                                                 ]),
@@ -237,6 +263,8 @@ class MovieImagesState extends State<MovieImagesDisplay> {
                                                               fit: BoxFit.cover,
                                                             )
                                                           : CachedNetworkImage(
+                                                              cacheManager:
+                                                                  cacheProp(),
                                                               fadeOutDuration:
                                                                   const Duration(
                                                                       milliseconds:
@@ -323,8 +351,22 @@ class MovieImagesState extends State<MovieImagesDisplay> {
                                                                   .backdrop!
                                                                   .length ==
                                                               1
-                                                          ? '${movieImages!.backdrop!.length} Backdrop'
-                                                          : '${movieImages!.backdrop!.length} Backdrops'),
+                                                          ? tr(
+                                                              "backdrop_singular",
+                                                              namedArgs: {
+                                                                  "backdrop": movieImages!
+                                                                      .backdrop!
+                                                                      .length
+                                                                      .toString()
+                                                                })
+                                                          : tr(
+                                                              "backdrop_plural",
+                                                              namedArgs: {
+                                                                  "backdrop": movieImages!
+                                                                      .backdrop!
+                                                                      .length
+                                                                      .toString()
+                                                                })),
                                                     ),
                                                   )
                                                 ]),

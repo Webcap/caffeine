@@ -3,7 +3,9 @@ import 'package:caffiene/models/tv.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/screens/tv_screens/widgets/horizontal_scrolling_tv_list.dart';
 import 'package:caffiene/utils/config.dart';
+import 'package:caffiene/widgets/common_widgets.dart';
 import 'package:caffiene/widgets/shimmer_widget.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -82,11 +84,19 @@ class SimilarTVTabState extends State<SimilarTVTab>
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    'TV Shows similar with ${widget.tvName}',
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: kTextHeaderStyle,
+                  child: Row(
+                    children: [
+                      const LeadingDot(),
+                      Expanded(
+                        child: Text(
+                          tr("tv_similar_with",
+                              namedArgs: {"show": widget.tvName}),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: kTextHeaderStyle,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -98,8 +108,8 @@ class SimilarTVTabState extends State<SimilarTVTab>
             child: tvList == null || widget.includeAdult == null
                 ? scrollingMoviesAndTVShimmer1(isDark)
                 : tvList!.isEmpty
-                    ? const Text(
-                        'There are no similars available for this TV Show',
+                    ? Text(
+                        tr("no_similars_tv"),
                         textAlign: TextAlign.center,
                       )
                     : Row(

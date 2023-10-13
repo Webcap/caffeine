@@ -1,3 +1,5 @@
+import 'package:caffiene/widgets/common_widgets.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/api/movies_api.dart';
 import 'package:caffiene/models/genre_movies.dart';
@@ -21,6 +23,7 @@ class GenreListGrid extends StatefulWidget {
 class GenreListGridState extends State<GenreListGrid>
     with AutomaticKeepAliveClientMixin<GenreListGrid> {
   List<Genres>? genreList;
+
   @override
   void initState() {
     super.initState();
@@ -39,14 +42,23 @@ class GenreListGridState extends State<GenreListGrid>
     final isDark = Provider.of<SettingsProvider>(context).darktheme;
     return Column(
       children: [
-        const Row(
+        Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Text(
-                'Genres',
-                style: kTextHeaderStyle,
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    const LeadingDot(),
+                    Expanded(
+                      child: Text(
+                        tr("genres"),
+                        style: kTextHeaderStyle,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
@@ -57,7 +69,7 @@ class GenreListGridState extends State<GenreListGrid>
             width: double.infinity,
             height: 80,
             child: genreList == null
-                ? genreListGridShimmer()
+                ? genreListGridShimmer1(isDark)
                 : Row(
                     children: [
                       Expanded(
@@ -85,11 +97,12 @@ class GenreListGridState extends State<GenreListGrid>
                                         borderRadius:
                                             BorderRadius.circular(15)),
                                     child: Text(
-                                      genreList![index].genreName!,
+                                      genreList![index].genreName ?? "Null",
                                       style: TextStyle(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .onPrimaryContainer),
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onPrimaryContainer,
+                                      ),
                                       textAlign: TextAlign.center,
                                     ),
                                   ),

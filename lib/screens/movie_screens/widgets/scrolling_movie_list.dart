@@ -1,4 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:caffiene/widgets/common_widgets.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/api/movies_api.dart';
 import 'package:caffiene/models/movie_models.dart';
@@ -44,8 +46,8 @@ class ScrollingMoviesState extends State<ScrollingMovies>
           isLoading = true;
         });
         if (mounted) {
-          moviesApi()
-              .fetchMovies('${widget.api}&include_adult=false&page=$pageNum')
+          moviesApi().fetchMovies(
+                  '${widget.api}&include_adult=${widget.includeAdult}&page=$pageNum')
               .then((value) {
             if (mounted) {
               setState(() {
@@ -63,7 +65,9 @@ class ScrollingMoviesState extends State<ScrollingMovies>
   @override
   void initState() {
     super.initState();
-    moviesApi().fetchMovies('${widget.api}&include_adult=false').then((value) {
+    moviesApi()
+        .fetchMovies('${widget.api}&include_adult=${widget.includeAdult}')
+        .then((value) {
       if (mounted) {
         setState(() {
           moviesList = value;
@@ -89,11 +93,20 @@ class ScrollingMoviesState extends State<ScrollingMovies>
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                widget.title,
-                style: kTextHeaderStyle,
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    const LeadingDot(),
+                    Expanded(
+                      child: Text(widget.title,
+                          style: kTextHeaderStyle,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis),
+                    ),
+                  ],
+                ),
               ),
             ),
             Padding(
@@ -116,11 +129,11 @@ class ScrollingMoviesState extends State<ScrollingMovies>
                           MaterialStateProperty.all(const Size(200, 60)),
                       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20.0),
-                            ))),
-                  child: const Padding(
-                    padding: EdgeInsets.only(left: 8.0, right: 8.0),
-                    child: Text('View all'),
+                        borderRadius: BorderRadius.circular(20.0),
+                      ))),
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                    child: Text(tr("view_all")),
                   ),
                 )),
           ],
@@ -172,11 +185,12 @@ class ScrollingMoviesState extends State<ScrollingMovies>
                                                             .posterPath ==
                                                         null
                                                     ? Image.asset(
-                                                        'assets/images/na_logo.png',
+                                                        'assets/images/na_rect.png',
                                                         fit: BoxFit.cover,
                                                       )
                                                     : CachedNetworkImage(
-                                                        cacheManager: cacheProp(),
+                                                        cacheManager:
+                                                            cacheProp(),
                                                         fadeOutDuration:
                                                             const Duration(
                                                                 milliseconds:
@@ -219,7 +233,7 @@ class ScrollingMoviesState extends State<ScrollingMovies>
                                                         errorWidget: (context,
                                                                 url, error) =>
                                                             Image.asset(
-                                                          'assets/images/na_logo.png',
+                                                          'assets/images/na_rect.png',
                                                           fit: BoxFit.cover,
                                                         ),
                                                       ),
@@ -287,8 +301,8 @@ class ScrollingMoviesState extends State<ScrollingMovies>
                   ],
                 ),
         ),
-        const Divider(
-          color: Colors.white54,
+        Divider(
+          color: !isDark ? Colors.black54 : Colors.white54,
           thickness: 1,
           endIndent: 20,
           indent: 10,
