@@ -17,7 +17,7 @@ import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/widgets/shimmer_widget.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:shimmer/shimmer.dart';
+
 
 class Search extends SearchDelegate<String> {
   final Mixpanel mixpanel;
@@ -106,10 +106,15 @@ class Search extends SearchDelegate<String> {
             Expanded(
                 child: TabBarView(children: [
               FutureBuilder<List<Movie>>(
-                future: Future.delayed(const Duration(seconds: 1)).then(
-                  (value) => moviesApi().fetchMovies(
-                      Endpoints.movieSearchUrl(query, includeAdult, lang)),
-                ),
+                future: Future.delayed(const Duration(seconds: 3))
+                    .then((value) async {
+                  if (query.isNotEmpty) {
+                    mixpanel
+                        .track("Searched query", properties: {"query": query});
+                  }
+                  return await moviesApi().fetchMovies(
+                      Endpoints.movieSearchUrl(query, includeAdult, lang));
+                }),
                 builder: (context, snapshot) {
                   if (query.isEmpty) return searchATermWidget(isDark);
 

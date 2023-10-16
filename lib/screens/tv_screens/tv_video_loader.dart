@@ -1,6 +1,7 @@
+// ignore_for_file: use_build_context_synchronously, avoid_print
+
 import 'package:better_player/better_player.dart';
 import 'package:caffiene/api/movies_api.dart';
-import 'package:caffiene/main.dart';
 import 'package:caffiene/models/sub_languages.dart';
 import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:caffiene/provider/settings_provider.dart';
@@ -14,6 +15,7 @@ import 'package:caffiene/functions/functions.dart';
 import 'package:caffiene/screens/player/player.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:provider/provider.dart';
+import 'package:startapp_sdk/startapp.dart';
 
 class TVVideoLoader extends StatefulWidget {
   const TVVideoLoader(
@@ -47,10 +49,28 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
   /// TMDB Route
   TVTMDBRoute? tvInfoTMDB;
 
+  var startAppSdk = StartAppSdk();
+  StartAppInterstitialAd? interstitialAd;
+
   @override
   void initState() {
     super.initState();
+    if (appDep.enableADS) {
+      loadInterstitialAd();
+    }
     loadVideo();
+  }
+
+  Future<void> loadInterstitialAd() async {
+    startAppSdk.loadInterstitialAd().then((interstitialAd) {
+      setState(() {
+        this.interstitialAd = interstitialAd;
+      });
+    }).onError<StartAppException>((ex, stackTrace) {
+      debugPrint("Error loading Interstitial ad: ${ex.message}");
+    }).onError((error, stackTrace) {
+      debugPrint("Error loading Interstitial ad: $error");
+    });
   }
 
   String processVttFileTimestamps(String vttFile) {
@@ -82,21 +102,30 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
             .then(
           (value) async {
             totalSeasons = value.numberOfSeasons!;
-            print(totalSeasons);
             await tvApi()
                 .fetchTVForStream(Endpoints.searchMovieTVForStream(
-                    widget.metadata.elementAt(1), appDep.consumetUrl))
+                    removeCharacters(widget.metadata.elementAt(1)),
+                    appDep.consumetUrl))
                 .then((value) async {
               if (mounted) {
                 setState(() {
                   tvShows = value;
                 });
               }
-              print("point 1");
+              if (tvShows == null || tvShows!.isEmpty) {
+                Navigator.pop(context);
+                showModalBottomSheet(
+                    builder: (context) {
+                      return ReportErrorWidget(
+                        error: tr("tv_vid_404"),
+                        hideButton: true,
+                      );
+                    },
+                    context: context);
+              }
               for (int i = 0; i < tvShows!.length; i++) {
                 if (tvShows![i].seasons == totalSeasons &&
                     tvShows![i].type == 'TV Series') {
-                  print("point 2");
                   await tvApi()
                       .getTVStreamEpisodes(Endpoints.getMovieTVStreamInfo(
                           tvShows![i].id!, appDep.consumetUrl))
@@ -109,7 +138,6 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
                     for (int k = 0; k < epi!.length; k++) {
                       if (epi![k].episode == widget.metadata.elementAt(3) &&
                           epi![k].season == widget.metadata.elementAt(4)) {
-                        print("point 3");
                         await tvApi()
                             .getTVStreamLinksAndSubs(
                                 Endpoints.getMovieTVStreamLinks(
@@ -118,10 +146,24 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
                                     appDep.consumetUrl,
                                     appDep.streamingServer))
                             .then((value) {
-                          if (mounted) {
-                            setState(() {
-                              tvVideoSources = value;
-                            });
+                          if (value.messageExists == null &&
+                              value.videoLinks != null &&
+                              value.videoLinks!.isNotEmpty) {
+                            if (mounted) {
+                              setState(() {
+                                tvVideoSources = value;
+                              });
+                            }
+                          } else if (value.messageExists != null) {
+                            Navigator.pop(context);
+                            showModalBottomSheet(
+                                builder: (context) {
+                                  return ReportErrorWidget(
+                                    error: tr("tv_vid_server_error"),
+                                    hideButton: false,
+                                  );
+                                },
+                                context: context);
                           }
                           tvVideoLinks = tvVideoSources!.videoLinks;
                           tvVideoSubs = tvVideoSources!.videoSubtitles;
@@ -136,7 +178,6 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
 
                 if (tvShows![i].seasons == (totalSeasons - 1) &&
                     tvShows![i].type == 'TV Series') {
-                  print("point 4");
                   await tvApi()
                       .getTVStreamEpisodes(Endpoints.getMovieTVStreamInfo(
                           tvShows![i].id!, appDep.consumetUrl))
@@ -149,7 +190,6 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
                     for (int k = 0; k < epi!.length; k++) {
                       if (epi![k].episode == widget.metadata.elementAt(3) &&
                           epi![k].season == widget.metadata.elementAt(4)) {
-                        print("point 5");
                         await tvApi()
                             .getTVStreamLinksAndSubs(
                                 Endpoints.getMovieTVStreamLinks(
@@ -172,6 +212,17 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
                   break;
                 }
               }
+              if (tvVideoLinks == null || tvVideoLinks!.isEmpty) {
+                Navigator.pop(context);
+                showModalBottomSheet(
+                    builder: (context) {
+                      return ReportErrorWidget(
+                        error: tr("tv_vid_404"),
+                        hideButton: true,
+                      );
+                    },
+                    context: context);
+              }
             });
           },
         );
@@ -184,25 +235,50 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
           setState(() {
             tvInfoTMDB = value;
           });
-          if (tvInfoTMDB!.id != null &&
-              tvInfoTMDB!.seasons != null &&
-              tvInfoTMDB!.seasons![widget.metadata.elementAt(4) - 1]
-                      .episodes![widget.metadata.elementAt(3) - 1].id !=
-                  null) {
-            await tvApi()
-                .getTVStreamLinksAndSubs(Endpoints.getMovieTVStreamLinksTMDB(
-                    appDep.consumetUrl,
-                    tvInfoTMDB!.seasons![widget.metadata.elementAt(4) - 1]
-                        .episodes![widget.metadata.elementAt(3) - 1].id!,
-                    tvInfoTMDB!.id!,
-                    appDep.streamingServer))
-                .then((value) {
-              setState(() {
-                tvVideoSources = value;
+          if (widget.metadata.elementAt(4) != 0) {
+            if (tvInfoTMDB!.id != null &&
+                tvInfoTMDB!.seasons != null &&
+                tvInfoTMDB!.seasons![widget.metadata.elementAt(4) - 1]
+                        .episodes![widget.metadata.elementAt(3) - 1].id !=
+                    null) {
+              await tvApi().getTVStreamLinksAndSubs(Endpoints.getMovieTVStreamLinksTMDB(
+                      appDep.consumetUrl,
+                      tvInfoTMDB!.seasons![widget.metadata.elementAt(4) - 1]
+                          .episodes![widget.metadata.elementAt(3) - 1].id!,
+                      tvInfoTMDB!.id!,
+                      appDep.streamingServer))
+                  .then((value) {
+                if (value.messageExists == null &&
+                    value.videoLinks != null &&
+                    value.videoLinks!.isNotEmpty) {
+                  setState(() {
+                    tvVideoSources = value;
+                  });
+                } else if (value.messageExists != null) {
+                  Navigator.pop(context);
+                  showModalBottomSheet(
+                      builder: (context) {
+                        return ReportErrorWidget(
+                          error: tr("tv_vid_server_error"),
+                          hideButton: false,
+                        );
+                      },
+                      context: context);
+                }
+                tvVideoLinks = tvVideoSources!.videoLinks;
+                tvVideoSubs = tvVideoSources!.videoSubtitles;
               });
-              tvVideoLinks = tvVideoSources!.videoLinks;
-              tvVideoSubs = tvVideoSources!.videoSubtitles;
-            });
+            } else {
+              Navigator.pop(context);
+              showModalBottomSheet(
+                  builder: (context) {
+                    return ReportErrorWidget(
+                      error: tr("tv_vid_404"),
+                      hideButton: true,
+                    );
+                  },
+                  context: context);
+            }
           }
         });
       }
@@ -219,7 +295,7 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
           break;
         }
       }
-      if (tvVideoSubs != null) {
+      if (tvVideoSubs != null && tvVideoSubs!.isNotEmpty) {
         if (supportedLanguages[foundIndex].englishName == '') {
           for (int i = 0; i < tvVideoSubs!.length - 1; i++) {
             setState(() {
@@ -247,57 +323,83 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
               .where((element) => element.language!
                   .startsWith(supportedLanguages[foundIndex].englishName))
               .isNotEmpty) {
-            await getVttFileAsString(tvVideoSubs!
-                    .where((element) => element.language!
-                        .startsWith(supportedLanguages[foundIndex].englishName))
-                    .first
-                    .url!)
-                .then((value) {
-              print(processVttFileTimestamps(value));
-              subs.addAll({
-                BetterPlayerSubtitlesSource(
-                    name: tvVideoSubs!
-                        .where((element) => element.language!.startsWith(
-                            supportedLanguages[foundIndex].englishName))
-                        .first
-                        .language,
-                    content: processVttFileTimestamps(value),
-                    selectedByDefault: true,
-                    type: BetterPlayerSubtitlesSourceType.memory)
+            if (settings.fetchSpecificLangSubs) {
+              print('fetchSpecificLangSubs');
+              for (int i = 0; i < tvVideoSubs!.length; i++) {
+                if (tvVideoSubs![i]
+                    .language!
+                    .startsWith(supportedLanguages[foundIndex].englishName)) {
+                  await getVttFileAsString(tvVideoSubs![i].url!).then((value) {
+                    subs.add(
+                      BetterPlayerSubtitlesSource(
+                          name: tvVideoSubs![i].language,
+                          selectedByDefault: true,
+                          content: processVttFileTimestamps(value),
+                          type: BetterPlayerSubtitlesSourceType.memory),
+                    );
+                  });
+                }
+              }
+            } else {
+              await getVttFileAsString(tvVideoSubs!
+                      .where((element) => element.language!.startsWith(
+                          supportedLanguages[foundIndex].englishName))
+                      .first
+                      .url!)
+                  .then((value) {
+                print(processVttFileTimestamps(value));
+                subs.addAll({
+                  BetterPlayerSubtitlesSource(
+                      name: tvVideoSubs!
+                          .where((element) => element.language!.startsWith(
+                              supportedLanguages[foundIndex].englishName))
+                          .first
+                          .language,
+                      content: processVttFileTimestamps(value),
+                      selectedByDefault: true,
+                      type: BetterPlayerSubtitlesSourceType.memory)
+                });
               });
-            });
+            }
           } else {
-            print("EXTERNAL CALLED");
-            await moviesApi()
-                .fetchSocialLinks(
-              Endpoints.getExternalLinksForTV(
-                  widget.metadata.elementAt(7), "en"),
-            ).then((value) async {
-              await getExternalSubtitle(
-                      Endpoints.searchExternalEpisodeSubtitles(
-                          value.imdbId!,
-                          widget.metadata.elementAt(3),
-                          widget.metadata.elementAt(4),
-                          supportedLanguages[foundIndex].languageCode),
-                      appDep.opensubtitlesKey)
-                  .then((value) async {
-                if (value.isNotEmpty) {
-                  await downloadExternalSubtitle(
-                          Endpoints.externalSubtitleDownload(),
-                          value[0].attr!.files![0].fileId,
+            if (appDep.useExternalSubtitles) {
+              print("EXTERNAL CALLED");
+              await moviesApi().fetchSocialLinks(
+                Endpoints.getExternalLinksForTV(
+                    widget.metadata.elementAt(7), "en"),
+              ).then((value) async {
+                if (value.imdbId != null) {
+                  await getExternalSubtitle(
+                          Endpoints.searchExternalEpisodeSubtitles(
+                              value.imdbId!,
+                              widget.metadata.elementAt(3),
+                              widget.metadata.elementAt(4),
+                              supportedLanguages[foundIndex].languageCode),
                           appDep.opensubtitlesKey)
                       .then((value) async {
-                    subs.addAll({
-                      BetterPlayerSubtitlesSource(
-                          name: supportedLanguages[foundIndex].englishName,
-                          urls: [value.link],
-                          selectedByDefault: true,
-                          type: BetterPlayerSubtitlesSourceType.network)
-                    });
+                    if (value.isNotEmpty &&
+                        value[0].attr!.files![0].fileId != null) {
+                      await downloadExternalSubtitle(
+                              Endpoints.externalSubtitleDownload(),
+                              value[0].attr!.files![0].fileId!,
+                              appDep.opensubtitlesKey)
+                          .then((value) async {
+                        if (value.link != null) {
+                          subs.addAll({
+                            BetterPlayerSubtitlesSource(
+                                name:
+                                    supportedLanguages[foundIndex].englishName,
+                                urls: [value.link],
+                                selectedByDefault: true,
+                                type: BetterPlayerSubtitlesSourceType.network)
+                          });
+                        }
+                      });
+                    }
                   });
                 }
               });
-            });
+            }
           }
         }
       }
@@ -313,20 +415,24 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
       Map<String, String> reversedVids = Map.fromEntries(reversedVideoList);
 
       if (tvVideoLinks != null && mounted) {
-        Navigator.pushReplacement(context, MaterialPageRoute(
-          builder: (context) {
-            return Player(
-                mediaType: MediaType.tvShow,
-                sources: reversedVids,
-                subs: subs,
-                colors: [
-                  Theme.of(context).primaryColor,
-                  Theme.of(context).colorScheme.background
-                ],
-                settings: settings,
-                tvMetadata: widget.metadata);
-          },
-        ));
+        if (interstitialAd != null) {
+          interstitialAd!.show();
+          loadInterstitialAd().whenComplete(
+              () => Navigator.pushReplacement(context, MaterialPageRoute(
+                    builder: (context) {
+                      return Player(
+                          mediaType: MediaType.tvShow,
+                          sources: reversedVids,
+                          subs: subs,
+                          colors: [
+                            Theme.of(context).primaryColor,
+                            Theme.of(context).colorScheme.background
+                          ],
+                          settings: settings,
+                          tvMetadata: widget.metadata);
+                    },
+                  )));
+        }
       } else {
         if (mounted) {
           Navigator.pop(context);
@@ -334,6 +440,7 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
               builder: (context) {
                 return ReportErrorWidget(
                   error: tr("tv_vid_404"),
+                  hideButton: true,
                 );
               },
               context: context);
@@ -356,6 +463,7 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
             builder: (context) {
               return ReportErrorWidget(
                 error: "${tr("tv_vid_404")}\n$e",
+                hideButton: false,
               );
             },
             context: context);
@@ -367,36 +475,43 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: Center(
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          color: Theme.of(context).colorScheme.onBackground,
-        ),
-        height: 120,
-        width: 180,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Image.asset(
-              appConfig.app_icon,
-              height: 65,
-              width: 65,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: Theme.of(context).colorScheme.onBackground,
             ),
-            const SizedBox(
-              height: 15,
+            height: 120,
+            width: 180,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Image.asset(
+                  appConfig.app_icon,
+                  height: 65,
+                  width: 65,
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                const SizedBox(width: 160, child: LinearProgressIndicator()),
+                Visibility(
+                  visible:
+                      settings.defaultSubtitleLanguage != '' ? false : true,
+                  child: Text(
+                    '${loadProgress.toStringAsFixed(0).toString()}%',
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.background),
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(width: 160, child: LinearProgressIndicator()),
-            Visibility(
-              visible: settings.defaultSubtitleLanguage != '' ? false : true,
-              child: Text(
-                '${loadProgress.toStringAsFixed(0).toString()}%',
-                style:
-                    TextStyle(color: Theme.of(context).colorScheme.background),
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     ));
   }

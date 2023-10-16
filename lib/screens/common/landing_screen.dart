@@ -1,5 +1,6 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:caffiene/functions/functions.dart';
+import 'package:caffiene/utils/next_screen.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +23,8 @@ class LandingScreen extends StatefulWidget {
 class _LandingScreenState extends State<LandingScreen> {
   final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
       GlobalKey<ScaffoldMessengerState>();
+
+  bool anonButtonVisible = true;
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +75,7 @@ class _LandingScreenState extends State<LandingScreen> {
                       width: 350,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
-                        color: maincolor,
+                        color: maincolor3,
                       ),
                       child: Center(
                           child: SizedBox(
@@ -136,10 +139,6 @@ class _LandingScreenState extends State<LandingScreen> {
                                           textTitle: tr("popular_tv_shows"),
                                           animationDuration: 90,
                                           fontSize: 25),
-                                      animatedTextWIdget(
-                                          textTitle: tr("live_tv_shows"),
-                                          animationDuration: 90,
-                                          fontSize: 25),
                                     ],
                                   ),
                                 ),
@@ -179,13 +178,10 @@ class _LandingScreenState extends State<LandingScreen> {
                                   ),
                                 ),
                                 backgroundColor:
-                                    MaterialStateProperty.all(maincolor3)),
+                                    MaterialStateProperty.all(maincolor)),
                             onPressed: () async {
                               // updateFirstRunData();
-                              Navigator.push(context,
-                                  MaterialPageRoute(builder: (context) {
-                                return const LoginScreen();
-                              }));
+                              nextScreen(context, const LoginScreen());
                             },
                             child: Text(
                               tr("log_in"),
@@ -208,10 +204,7 @@ class _LandingScreenState extends State<LandingScreen> {
                                     MaterialStateProperty.all(Colors.white)),
                             onPressed: () async {
                               // updateFirstRunData();
-                              Navigator.push(context,
-                                  MaterialPageRoute(builder: (context) {
-                                return const SignupScreen();
-                              }));
+                              nextScreen(context, const SignupScreen());
                             },
                             child: Text(
                               tr("sign_up"),
@@ -220,83 +213,57 @@ class _LandingScreenState extends State<LandingScreen> {
                         const SizedBox(
                           height: 40,
                         ),
-                        ElevatedButton(
-                            style: ButtonStyle(
-                                minimumSize: MaterialStateProperty.all(
-                                    const Size(150, 50)),
-                                shape: MaterialStateProperty.all<
-                                    RoundedRectangleBorder>(
-                                  RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20.0),
-                                  ),
-                                ),
-                                backgroundColor: MaterialStateProperty.all(
-                                    const Color(0xFFfad2aa))),
-                            onPressed: () async {
-                              await checkConnection().then((value) {
-                                if (value && mounted) {
-                                  showDialog(
-                                      context: context,
-                                      builder: (BuildContext ctx) {
-                                        return AlertDialog(
-                                          title: Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Text(
-                                              tr("login_anonymously"),
-                                            ),
-                                          ),
-                                          content: Text(
-                                            tr("login_anon_question"),
-                                          ),
-                                          actions: [
-                                            ElevatedButton(
-                                                onPressed: () async {
-                                                  Navigator.pop(context);
-                                                },
-                                                child: Text(
-                                                  tr("go_back"),
-                                                )),
-                                            TextButton(
-                                                onPressed: () async {
-                                                  await auth
-                                                      .signInAnonymously()
-                                                      .then((value) {
-                                                    mixpanel.track(
-                                                      'Anonymous Login',
-                                                    );
-                                                    Navigator.push(context,
-                                                        MaterialPageRoute(
-                                                            builder: (context) {
-                                                      return const caffieneHomePage();
-                                                    }));
-                                                  });
-                                                },
-                                                child: Text(
-                                                  tr("proceed_anon"),
-                                                  style: const TextStyle(
-                                                      color: Colors.red),
-                                                ))
-                                          ],
-                                        );
-                                      });
-                                } else {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        tr("check_connection"),
-                                        maxLines: 3,
-                                        style: kTextSmallBodyStyle,
+                        anonButtonVisible
+                            ? ElevatedButton(
+                                style: ButtonStyle(
+                                    minimumSize: MaterialStateProperty.all(
+                                        const Size(150, 50)),
+                                    shape: MaterialStateProperty.all<
+                                        RoundedRectangleBorder>(
+                                      RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(20.0),
                                       ),
-                                      duration: const Duration(seconds: 3),
                                     ),
-                                  );
-                                }
-                              });
-                            },
-                            child: Text(
-                              tr("continue_anonymously"),
-                              style: const TextStyle(color: Colors.black),
-                            )),
+                                    backgroundColor: MaterialStateProperty.all(
+                                        const Color(0xFFfad2aa))),
+                                onPressed: () async {
+                                  setState(() {
+                                    anonButtonVisible = false;
+                                  });
+                                  await checkConnection().then((value) async {
+                                    if (value && mounted) {
+                                      await auth
+                                          .signInAnonymously()
+                                          .then((value) {
+                                        mixpanel.track(
+                                          'Anonymous Login',
+                                        );
+                                        setState(() {
+                                          anonButtonVisible = true;
+                                        });
+                                        nextScreen(context, caffieneHomePage());
+                                      });
+                                    } else {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                            tr("check_connection"),
+                                            maxLines: 3,
+                                            style: kTextSmallBodyStyle,
+                                          ),
+                                          duration: const Duration(seconds: 3),
+                                        ),
+                                      );
+                                    }
+                                  });
+                                },
+                                child: Text(
+                                  tr("continue_anonymously"),
+                                  style: const TextStyle(color: Colors.black),
+                                ))
+                            : const CircularProgressIndicator()
                       ],
                     ),
                   ),

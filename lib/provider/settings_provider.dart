@@ -1,4 +1,3 @@
-import 'package:caffiene/models/general_settings.dart';
 import 'package:caffiene/models/setting_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/utils/config.dart';
@@ -12,11 +11,8 @@ class SettingsProvider with ChangeNotifier {
   ViewPreferences viewPreferences = ViewPreferences();
   CountryPreferences countryPreferences = CountryPreferences();
   Material3Preferences material3preferences = Material3Preferences();
-  GeneralSettingsPreferences generalSettingsPreferences =
-      GeneralSettingsPreferences();
   VideoPlayerPreferences videoPlayerPreferences = VideoPlayerPreferences();
   AppLanguagePreferences appLanguagePreferences = AppLanguagePreferences();
-
 
   bool _isAdult = false;
   bool get isAdult => _isAdult;
@@ -48,7 +44,7 @@ class SettingsProvider with ChangeNotifier {
   // int _defaultMinBufferDuration = 120000;
   // int get defaultMinBufferDuration => _defaultMinBufferDuration;
 
-  int _defaultMaxBufferDuration = 240000;
+  int _defaultMaxBufferDuration = 360000;
   int get defaultMaxBufferDuration => _defaultMaxBufferDuration;
 
   int _defaultVideoResolution = 0;
@@ -74,6 +70,9 @@ class SettingsProvider with ChangeNotifier {
   String _appLanguage = 'en';
   String get appLanguage => _appLanguage;
 
+  bool _fetchSpecificLangSubs = false;
+  bool get fetchSpecificLangSubs => _fetchSpecificLangSubs;
+
   // theme change
   Future<void> getCurrentThemeMode() async {
     darktheme = await themeModePreferences.getThemeMode();
@@ -95,11 +94,6 @@ class SettingsProvider with ChangeNotifier {
     material3preferences.setMaterial3Mode(value);
     notifyListeners();
   }
-
-  // // subtitle status
-  // Future<void> getCurrentSubtitleStatus() async {
-  //   subtitleStatus = await generalSettingsPreferences.getSubtitleStatus();
-  // }
 
   // adult preference change
   Future<void> getCurrentAdultMode() async {
@@ -145,6 +139,13 @@ class SettingsProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  // mixpanel
+  Future<void> initMixpanel() async {
+    mixpanel = await Mixpanel.init(mixpanelKey,
+        optOutTrackingDefault: false, trackAutomaticEvents: true);
+    notifyListeners();
+  }
+
   // view preference
   Future<void> getCurrentViewType() async {
     defaultView = await viewPreferences.getViewType();
@@ -153,13 +154,6 @@ class SettingsProvider with ChangeNotifier {
   set defaultView(String value) {
     _defaultView = value;
     viewPreferences.setViewType(value);
-    notifyListeners();
-  }
-
-  // mixpanel
-  Future<void> initMixpanel() async {
-    mixpanel = await Mixpanel.init(mixpanelKey,
-        optOutTrackingDefault: false, trackAutomaticEvents: true);
     notifyListeners();
   }
 
@@ -261,6 +255,16 @@ class SettingsProvider with ChangeNotifier {
   set appLanguage(String value) {
     _appLanguage = value;
     appLanguagePreferences.setAppLanguage(value);
+    notifyListeners();
+  }
+
+  Future<void> getSubtitleMode() async {
+    fetchSpecificLangSubs = await videoPlayerPreferences.getSubtitleMode();
+  }
+
+  set fetchSpecificLangSubs(bool value) {
+    _fetchSpecificLangSubs = value;
+    videoPlayerPreferences.setSubtitleMode(value);
     notifyListeners();
   }
 }

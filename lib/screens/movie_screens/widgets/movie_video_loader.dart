@@ -13,6 +13,7 @@ import 'package:caffiene/screens/player/player.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:better_player/better_player.dart';
 import 'package:provider/provider.dart';
+import 'package:startapp_sdk/startapp.dart';
 
 class MovieVideoLoader extends StatefulWidget {
   const MovieVideoLoader(
@@ -45,10 +46,28 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
   /// TMDB Route
   MovieInfoTMDBRoute? episode;
 
+  var startAppSdk = StartAppSdk();
+  StartAppInterstitialAd? interstitialAd;
+
   @override
   void initState() {
     super.initState();
+    if (appDep.enableADS) {
+      loadInterstitialAd();
+    }
     loadVideo();
+  }
+
+  Future<void> loadInterstitialAd() async {
+    startAppSdk.loadInterstitialAd().then((interstitialAd) {
+      setState(() {
+        this.interstitialAd = interstitialAd;
+      });
+    }).onError<StartAppException>((ex, stackTrace) {
+      debugPrint("Error loading Interstitial ad: ${ex.message}");
+    }).onError((error, stackTrace) {
+      debugPrint("Error loading Interstitial ad: $error");
+    });
   }
 
   String processVttFileTimestamps(String vttFile) {
@@ -73,13 +92,26 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
   void loadVideo() async {
     try {
       if (widget.route == StreamRoute.flixHQ) {
-        await moviesApi().fetchMoviesForStream(Endpoints.searchMovieTVForStream(
-                widget.metadata.elementAt(1), appDep.consumetUrl))
+        await moviesApi()
+            .fetchMoviesForStream(Endpoints.searchMovieTVForStream(
+                removeCharacters(widget.metadata.elementAt(1)),
+                appDep.consumetUrl))
             .then((value) async {
           if (mounted) {
             setState(() {
               movies = value;
             });
+            if (movies == null || movies!.isEmpty) {
+              Navigator.pop(context);
+              showModalBottomSheet(
+                  builder: (context) {
+                    return ReportErrorWidget(
+                      error: tr("movie_vid_404"),
+                      hideButton: true,
+                    );
+                  },
+                  context: context);
+            }
           }
 
           for (int i = 0; i < movies!.length; i++) {
@@ -93,7 +125,7 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
                 setState(() {
                   epi = value;
                 });
-                if (epi!.isNotEmpty) {
+                if (epi != null && epi!.isNotEmpty) {
                   await moviesApi()
                       .getMovieStreamLinksAndSubs(
                           Endpoints.getMovieTVStreamLinks(
@@ -103,9 +135,23 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
                               appDep.streamingServer))
                       .then((value) {
                     if (mounted) {
-                      setState(() {
-                        movieVideoSources = value;
-                      });
+                      if (value.messageExists == null &&
+                          value.videoLinks != null &&
+                          value.videoLinks!.isNotEmpty) {
+                        setState(() {
+                          movieVideoSources = value;
+                        });
+                      } else if (value.messageExists != null) {
+                        Navigator.pop(context);
+                        showModalBottomSheet(
+                            builder: (context) {
+                              return ReportErrorWidget(
+                                error: tr("movie_vid_server_error"),
+                                hideButton: false,
+                              );
+                            },
+                            context: context);
+                      }
                     }
                     movieVideoLinks = movieVideoSources!.videoLinks;
                     movieVideoSubs = movieVideoSources!.videoSubtitles;
@@ -131,23 +177,48 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
 
           if (episode != null &&
               episode!.id != null &&
-              episode!.episodeId != null) {
+              episode!.id!.isNotEmpty &&
+              episode!.episodeId != null &&
+              episode!.episodeId!.isNotEmpty) {
             await moviesApi()
-                .getMovieStreamLinksAndSubs(
-                    Endpoints.getMovieTVStreamLinksTMDB(
-                        appDep.consumetUrl,
-                        episode!.episodeId!,
-                        episode!.id!,
-                        appDep.streamingServer))
+                .getMovieStreamLinksAndSubs(Endpoints.getMovieTVStreamLinksTMDB(
+                    appDep.consumetUrl,
+                    episode!.episodeId!,
+                    episode!.id!,
+                    appDep.streamingServer))
                 .then((value) {
               if (mounted) {
-                setState(() {
-                  movieVideoSources = value;
-                });
+                if (value.messageExists == null &&
+                    value.videoLinks != null &&
+                    value.videoLinks!.isNotEmpty) {
+                  setState(() {
+                    movieVideoSources = value;
+                  });
+                } else if (value.messageExists != null) {
+                  Navigator.pop(context);
+                  showModalBottomSheet(
+                      builder: (context) {
+                        return ReportErrorWidget(
+                          error: tr("movie_vid_server_error"),
+                          hideButton: false,
+                        );
+                      },
+                      context: context);
+                }
               }
               movieVideoLinks = movieVideoSources!.videoLinks;
               movieVideoSubs = movieVideoSources!.videoSubtitles;
             });
+          } else {
+            Navigator.pop(context);
+            showModalBottomSheet(
+                builder: (context) {
+                  return ReportErrorWidget(
+                    error: tr("movie_vid_404"),
+                    hideButton: true,
+                  );
+                },
+                context: context);
           }
         });
       }
@@ -165,7 +236,7 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
         }
       }
 
-      if (movieVideoSubs != null) {
+      if (movieVideoSubs != null && movieVideoSubs!.isNotEmpty) {
         if (supportedLanguages[foundIndex].englishName == '') {
           for (int i = 0; i < movieVideoSubs!.length - 1; i++) {
             if (mounted) {
@@ -193,53 +264,81 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
               .where((element) => element.language!
                   .startsWith(supportedLanguages[foundIndex].englishName))
               .isNotEmpty) {
-            await getVttFileAsString((movieVideoSubs!.where((element) =>
-                        element.language!.startsWith(
-                            supportedLanguages[foundIndex].englishName)))
-                    .first
-                    .url!)
-                .then((value) {
-              subs.addAll({
-                BetterPlayerSubtitlesSource(
-                    name: movieVideoSubs!
-                        .where((element) => element.language!.startsWith(
-                            supportedLanguages[foundIndex].englishName))
-                        .first
-                        .language,
-                    //  urls: [movieVideoSubs![i].url],
-                    selectedByDefault: true,
-                    content: processVttFileTimestamps(value),
-                    type: BetterPlayerSubtitlesSourceType.memory),
+            if (settings.fetchSpecificLangSubs) {
+              for (int i = 0; i < movieVideoSubs!.length; i++) {
+                if (movieVideoSubs![i]
+                    .language!
+                    .startsWith(supportedLanguages[foundIndex].englishName)) {
+                  await getVttFileAsString(movieVideoSubs![i].url!)
+                      .then((value) {
+                    subs.add(
+                      BetterPlayerSubtitlesSource(
+                          name: movieVideoSubs![i].language,
+                          selectedByDefault: true,
+                          content: processVttFileTimestamps(value),
+                          type: BetterPlayerSubtitlesSourceType.memory),
+                    );
+                  });
+                }
+              }
+            } else {
+              await getVttFileAsString((movieVideoSubs!.where((element) =>
+                          element.language!.startsWith(
+                              supportedLanguages[foundIndex].englishName)))
+                      .first
+                      .url!)
+                  .then((value) {
+                subs.addAll({
+                  BetterPlayerSubtitlesSource(
+                      name: movieVideoSubs!
+                          .where((element) => element.language!.startsWith(
+                              supportedLanguages[foundIndex].englishName))
+                          .first
+                          .language,
+                      //  urls: [movieVideoSubs![i].url],
+                      selectedByDefault: true,
+                      content: processVttFileTimestamps(value),
+                      type: BetterPlayerSubtitlesSourceType.memory),
+                });
               });
-            });
+            }
           } else {
-            await moviesApi()
-                .fetchSocialLinks(
-              Endpoints.getExternalLinksForMovie(
-                  widget.metadata.elementAt(0), "en"),
-            ).then((value) async {
-              await getExternalSubtitle(
-                      Endpoints.searchExternalMovieSubtitles(value.imdbId!,
-                          supportedLanguages[foundIndex].languageCode),
-                      appDep.opensubtitlesKey)
+            if (appDep.useExternalSubtitles) {
+              await moviesApi()
+                  .fetchSocialLinks(
+                Endpoints.getExternalLinksForMovie(
+                    widget.metadata.elementAt(0), "en"),
+              )
                   .then((value) async {
-                if (value.isNotEmpty) {
-                  await downloadExternalSubtitle(
-                          Endpoints.externalSubtitleDownload(),
-                          value[0].attr!.files![0].fileId,
+                if (value.imdbId != null) {
+                  await getExternalSubtitle(
+                          Endpoints.searchExternalMovieSubtitles(value.imdbId!,
+                              supportedLanguages[foundIndex].languageCode),
                           appDep.opensubtitlesKey)
                       .then((value) async {
-                    subs.addAll({
-                      BetterPlayerSubtitlesSource(
-                          name: supportedLanguages[foundIndex].englishName,
-                          urls: [value.link],
-                          selectedByDefault: true,
-                          type: BetterPlayerSubtitlesSourceType.network)
-                    });
+                    if (value.isNotEmpty &&
+                        value[0].attr!.files![0].fileId != null) {
+                      await downloadExternalSubtitle(
+                              Endpoints.externalSubtitleDownload(),
+                              value[0].attr!.files![0].fileId!,
+                              appDep.opensubtitlesKey)
+                          .then((value) async {
+                        if (value.link != null) {
+                          subs.addAll({
+                            BetterPlayerSubtitlesSource(
+                                name:
+                                    supportedLanguages[foundIndex].englishName,
+                                urls: [value.link],
+                                selectedByDefault: true,
+                                type: BetterPlayerSubtitlesSourceType.network)
+                          });
+                        }
+                      });
+                    }
                   });
                 }
               });
-            });
+            }
           }
         }
       }
@@ -257,20 +356,24 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
       Map<String, String> reversedVids = Map.fromEntries(reversedVideoList);
 
       if (movieVideoLinks != null && mounted) {
-        Navigator.pushReplacement(context, MaterialPageRoute(
-          builder: (context) {
-            return Player(
-                mediaType: MediaType.movie,
-                sources: reversedVids,
-                subs: subs,
-                colors: [
-                  Theme.of(context).primaryColor,
-                  Theme.of(context).colorScheme.background
-                ],
-                settings: settings,
-                movieMetadata: widget.metadata);
-          },
-        ));
+        if (interstitialAd != null) {
+          interstitialAd!.show();
+          loadInterstitialAd().whenComplete(
+              () => Navigator.pushReplacement(context, MaterialPageRoute(
+                    builder: (context) {
+                      return Player(
+                          mediaType: MediaType.movie,
+                          sources: reversedVids,
+                          subs: subs,
+                          colors: [
+                            Theme.of(context).primaryColor,
+                            Theme.of(context).colorScheme.background
+                          ],
+                          settings: settings,
+                          movieMetadata: widget.metadata);
+                    },
+                  )));
+        }
       } else {
         if (mounted) {
           Navigator.pop(context);
@@ -278,6 +381,7 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
               builder: (context) {
                 return ReportErrorWidget(
                   error: tr("tv_vid_404"),
+                  hideButton: true,
                 );
               },
               context: context);
@@ -290,6 +394,7 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
             builder: (context) {
               return ReportErrorWidget(
                 error: "${tr("tv_vid_404")}\n$e",
+                hideButton: false,
               );
             },
             context: context);
@@ -301,36 +406,43 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: Center(
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          color: Theme.of(context).colorScheme.onBackground,
-        ),
-        height: 120,
-        width: 180,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Image.asset(
-              appConfig.app_icon,
-              height: 65,
-              width: 65,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: Theme.of(context).colorScheme.onBackground,
             ),
-            const SizedBox(
-              height: 15,
+            height: 120,
+            width: 180,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Image.asset(
+                  appConfig.app_icon,
+                  height: 65,
+                  width: 65,
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                const SizedBox(width: 160, child: LinearProgressIndicator()),
+                Visibility(
+                  visible:
+                      settings.defaultSubtitleLanguage != '' ? false : true,
+                  child: Text(
+                    '${loadProgress.toStringAsFixed(0).toString()}%',
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.background),
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(width: 160, child: LinearProgressIndicator()),
-            Visibility(
-              visible: settings.defaultSubtitleLanguage != '' ? false : true,
-              child: Text(
-                '${loadProgress.toStringAsFixed(0).toString()}%',
-                style:
-                    TextStyle(color: Theme.of(context).colorScheme.background),
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     ));
   }

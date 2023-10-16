@@ -4,6 +4,8 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:caffiene/controller/recently_watched_database_controller.dart';
+import 'package:caffiene/functions/functions.dart';
+import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:caffiene/provider/recently_watched_provider.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/utils/config.dart';
@@ -70,6 +72,7 @@ class WatchNowButtonState extends State<WatchNowButton> {
   Widget build(BuildContext context) {
     RecentlyWatchedMoviesController recentlyWatchedMoviesController =
         RecentlyWatchedMoviesController();
+    final fetchRoute = Provider.of<AppDependencyProvider>(context).fetchRoute;
     return AnimatedContainer(
       duration: const Duration(seconds: 1),
       decoration: BoxDecoration(
@@ -120,20 +123,36 @@ class WatchNowButtonState extends State<WatchNowButton> {
             isVisible = false;
             buttonWidth = 160;
           });
-          Navigator.push(context, MaterialPageRoute(builder: ((context) {
-            return MovieVideoLoader(
-              route: StreamRoute.tmDB,
-              download: false,
-              metadata: [
-                widget.movieId,
-                widget.movieName,
-                widget.posterPath,
-                widget.releaseYear,
-                widget.backdropPath,
-                elapsed
-              ],
-            );
-          })));
+          await checkConnection().then((value) {
+            value
+                ? Navigator.push(context,
+                    MaterialPageRoute(builder: ((context) {
+                    return MovieVideoLoader(
+                      route: fetchRoute == "flixHQ"
+                          ? StreamRoute.flixHQ
+                          : StreamRoute.tmDB,
+                      download: false,
+                      metadata: [
+                        widget.movieId,
+                        widget.movieName,
+                        widget.posterPath,
+                        widget.releaseYear,
+                        widget.backdropPath,
+                        elapsed
+                      ],
+                    );
+                  })))
+                : ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        tr("check_connection"),
+                        maxLines: 3,
+                        style: kTextSmallBodyStyle,
+                      ),
+                      duration: const Duration(seconds: 3),
+                    ),
+                  );
+          });
         },
         child: Row(
           children: [

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:caffiene/controller/recently_watched_database_controller.dart';
+import 'package:caffiene/functions/functions.dart';
 import 'package:caffiene/models/tv.dart';
 import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:caffiene/provider/recently_watched_provider.dart';
@@ -120,24 +121,38 @@ class _WatchNowButtonTVState extends State<WatchNowButtonTV> {
               buttonWidth = 160;
             });
             if (mounted) {
-              Navigator.push(context, MaterialPageRoute(builder: ((context) {
-                return TVVideoLoader(
-                  download: false,
-                  route: fetchRoute == "flixHQ"
-                      ? StreamRoute.flixHQ
-                      : StreamRoute.tmDB,
-                  metadata: [
-                    widget.episodeList.episodeId,
-                    widget.seriesName,
-                    widget.episodeList.name,
-                    widget.episodeList.episodeNumber!,
-                    widget.episodeList.seasonNumber!,
-                    widget.posterPath,
-                    elapsed,
-                    widget.tvId,
-                  ],
-                );
-              })));
+              await checkConnection().then((value) {
+                value
+                    ? Navigator.push(context,
+                        MaterialPageRoute(builder: ((context) {
+                        return TVVideoLoader(
+                          download: false,
+                          route: fetchRoute == "flixHQ"
+                              ? StreamRoute.flixHQ
+                              : StreamRoute.tmDB,
+                          metadata: [
+                            widget.episodeList.episodeId,
+                            widget.seriesName,
+                            widget.episodeList.name,
+                            widget.episodeList.episodeNumber!,
+                            widget.episodeList.seasonNumber!,
+                            widget.posterPath,
+                            elapsed,
+                            widget.tvId,
+                          ],
+                        );
+                      })))
+                    : ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            tr("check_connection"),
+                            maxLines: 3,
+                            style: kTextSmallBodyStyle,
+                          ),
+                          duration: const Duration(seconds: 3),
+                        ),
+                      );
+              });
             }
           }
         },

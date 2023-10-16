@@ -109,15 +109,18 @@ class _MovieAboutState extends State<MovieAbout> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                WatchNowButton(
-                  releaseYear: DateTime.parse(widget.movie.releaseDate!).year,
-                  movieId: widget.movie.id!,
-                  movieName: widget.movie.title,
-                  adult: widget.movie.adult,
-                  posterPath: widget.movie.posterPath,
-                  backdropPath: widget.movie.backdropPath,
-                  api: Endpoints.movieDetailsUrl(widget.movie.id!, lang),
-                ),
+                widget.movie.releaseDate!.isNotEmpty
+                    ? WatchNowButton(
+                        releaseYear:
+                            DateTime.parse(widget.movie.releaseDate!).year,
+                        movieId: widget.movie.id!,
+                        movieName: widget.movie.title,
+                        adult: widget.movie.adult,
+                        posterPath: widget.movie.posterPath,
+                        backdropPath: widget.movie.backdropPath,
+                        api: Endpoints.movieDetailsUrl(widget.movie.id!, lang),
+                      )
+                    : Container()
                 // const SizedBox(
                 //   width: 15,
                 // ),

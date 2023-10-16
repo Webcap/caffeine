@@ -127,7 +127,7 @@ class VideoPlayerPreferences {
 
   Future<int> getMaxBuffer() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getInt(MAX_BUFFER_PREFERENCE) ?? 240000;
+    return prefs.getInt(MAX_BUFFER_PREFERENCE) ?? 360000;
   }
 
   static const DEFAULT_VIDEO_QUALITY = 'video_quality';
@@ -141,7 +141,7 @@ class VideoPlayerPreferences {
     return prefs.getInt(DEFAULT_VIDEO_QUALITY) ?? 0;
   }
 
-  static const DEFAULT_SUBTITLE = 'default_subtitle';
+  static const DEFAULT_SUBTITLE = 'default_subtitle_v2';
   setDefaultSubtitle(String language) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString(DEFAULT_SUBTITLE, language);
@@ -162,7 +162,8 @@ class VideoPlayerPreferences {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getBool(DEFAULT_FULL_SCREEN) ?? true;
   }
-    static const SUBTITLE_FOREGROUND_COLOR = 'subtitle_foreground_color';
+
+  static const SUBTITLE_FOREGROUND_COLOR = 'subtitle_foreground_color';
   setSubtitleForeground(String color) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString(SUBTITLE_FOREGROUND_COLOR, color);
@@ -193,6 +194,17 @@ class VideoPlayerPreferences {
   Future<int> subtitleFont() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getInt(SUBTITLE_FONT_SIZE) ?? 17;
+  }
+
+  static const SUBTITLE_MODE = 'subtitle_mode';
+  setSubtitleMode(bool mode) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool(SUBTITLE_MODE, mode);
+  }
+
+  Future<bool> getSubtitleMode() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(SUBTITLE_MODE) ?? false;
   }
 }
 

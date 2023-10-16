@@ -17,6 +17,9 @@ class Styles {
           : ThemeData.light().textTheme.apply(
                 fontFamily: 'Poppins',
               ),
+      bottomSheetTheme: BottomSheetThemeData(
+          backgroundColor:
+              isDarkTheme ? Colors.grey.shade900 : Colors.grey.shade400),
       appBarTheme: AppBarTheme(
         backgroundColor: isM3Enabled
             ? isDarkTheme
@@ -40,7 +43,8 @@ class Styles {
             fontSize: 21),
       ),
       dialogTheme: DialogTheme(
-          backgroundColor: isDarkTheme ? const Color(0xFF171717) : const Color(0xFFdedede)),
+          backgroundColor:
+              isDarkTheme ? const Color(0xFF171717) : const Color(0xFFdedede)),
       primaryColor: isM3Enabled
           ? isDarkTheme
               ? darkDynamicColor?.primary ?? maincolor
@@ -153,11 +157,14 @@ class Styles {
         trackColor: MaterialStatePropertyAll(
           isM3Enabled
               ? isDarkTheme
-                  ? darkDynamicColor?.primaryContainer ?? const Color(0xFF994d02)
-                  : lightDynamicColor?.primaryContainer ?? const Color(0xFF994d02)
+                  ? darkDynamicColor?.primaryContainer ??
+                      const Color(0xFF994d02)
+                  : lightDynamicColor?.primaryContainer ??
+                      const Color(0xFF994d02)
               : const Color(0xFF994d02),
         ),
-      ), colorScheme: ColorScheme(
+      ),
+      colorScheme: ColorScheme(
         primary: isM3Enabled
             ? isDarkTheme
                 ? darkDynamicColor?.primary ?? maincolor
@@ -179,8 +186,10 @@ class Styles {
                 : const Color(0xFF755846),
         secondaryContainer: isM3Enabled
             ? isDarkTheme
-                ? darkDynamicColor?.secondaryContainer ?? const Color(0xFF5b4130)
-                : lightDynamicColor?.secondaryContainer ?? const Color(0xFFffdcc6)
+                ? darkDynamicColor?.secondaryContainer ??
+                    const Color(0xFF5b4130)
+                : lightDynamicColor?.secondaryContainer ??
+                    const Color(0xFFffdcc6)
             : isDarkTheme
                 ? const Color(0xFF5b4130)
                 : const Color(0xFFffdcc6),
@@ -256,15 +265,19 @@ class Styles {
                 : const Color(0xFF410002),
         onPrimaryContainer: isM3Enabled
             ? isDarkTheme
-                ? darkDynamicColor?.onPrimaryContainer ?? const Color(0xFFffdcc6)
-                : lightDynamicColor?.onPrimaryContainer ?? const Color(0xFF311400)
+                ? darkDynamicColor?.onPrimaryContainer ??
+                    const Color(0xFFffdcc6)
+                : lightDynamicColor?.onPrimaryContainer ??
+                    const Color(0xFF311400)
             : isDarkTheme
                 ? const Color(0xFFffdcc6)
                 : const Color(0xFF311400),
         onSecondaryContainer: isM3Enabled
             ? isDarkTheme
-                ? darkDynamicColor?.onSecondaryContainer ?? const Color(0xFFffdcc6)
-                : lightDynamicColor?.onSecondaryContainer ?? const Color(0xFF2b1708)
+                ? darkDynamicColor?.onSecondaryContainer ??
+                    const Color(0xFFffdcc6)
+                : lightDynamicColor?.onSecondaryContainer ??
+                    const Color(0xFF2b1708)
             : isDarkTheme
                 ? const Color(0xFFffdcc6)
                 : const Color(0xFF2b1708),
@@ -284,8 +297,10 @@ class Styles {
                 : const Color(0xFFffffff),
         onTertiaryContainer: isM3Enabled
             ? isDarkTheme
-                ? darkDynamicColor?.onTertiaryContainer ?? const Color(0xFFe5e6ae)
-                : lightDynamicColor?.onTertiaryContainer ?? const Color(0xFF1c1d00)
+                ? darkDynamicColor?.onTertiaryContainer ??
+                    const Color(0xFFe5e6ae)
+                : lightDynamicColor?.onTertiaryContainer ??
+                    const Color(0xFF1c1d00)
             : isDarkTheme
                 ? const Color(0xFFe5e6ae)
                 : const Color(0xFF1c1d00),
@@ -306,25 +321,28 @@ class Styles {
         tertiaryContainer: isM3Enabled
             ? isDarkTheme
                 ? darkDynamicColor?.tertiaryContainer ?? const Color(0xFF48491f)
-                : lightDynamicColor?.tertiaryContainer ?? const Color(0xFFe5e6ae)
+                : lightDynamicColor?.tertiaryContainer ??
+                    const Color(0xFFe5e6ae)
             : isDarkTheme
                 ? const Color(0xFF48491f)
                 : const Color(0xFFe5e6ae),
         surfaceVariant: isM3Enabled
             ? isDarkTheme
                 ? darkDynamicColor?.tertiaryContainer ?? const Color(0xFF52443c)
-                : lightDynamicColor?.tertiaryContainer ?? const Color(0xFFf4ded3)
+                : lightDynamicColor?.tertiaryContainer ??
+                    const Color(0xFFf4ded3)
             : isDarkTheme
                 ? const Color(0xFF52443c)
                 : const Color(0xFFf4ded3),
         brightness: isDarkTheme ? Brightness.dark : Brightness.light,
-      ).copyWith(background: isM3Enabled
-          ? isDarkTheme
-              ? darkDynamicColor?.background ?? Colors.black
-              : lightDynamicColor?.background ?? Colors.white
-          : isDarkTheme
-              ? Colors.black
-              : Colors.white),
+      ).copyWith(
+          background: isM3Enabled
+              ? isDarkTheme
+                  ? darkDynamicColor?.background ?? Colors.black
+                  : lightDynamicColor?.background ?? Colors.white
+              : isDarkTheme
+                  ? Colors.black
+                  : Colors.white),
     );
   }
 }

@@ -5,7 +5,7 @@ import '../models/app_dependency_preferences.dart';
 class AppDependencyProvider extends ChangeNotifier {
   AppDependencies appDependencies = AppDependencies();
 
-  String _consumetUrl = 'https://consumet.beamlak.dev';
+  String _consumetUrl = 'https://consumet-api-beryl.vercel.app/';
   String get consumetUrl => _consumetUrl;
 
   String _caffieneLogo = 'default';
@@ -22,6 +22,12 @@ class AppDependencyProvider extends ChangeNotifier {
 
   String _fetchRoute = "tmDB";
   String get fetchRoute => _fetchRoute;
+
+  bool _enableHolidayMovieTab = false;
+  bool get enableHolidayMovieTab => _enableHolidayMovieTab;
+
+  bool _useExternalSubtitles = false;
+  bool get useExternalSubtitles => _useExternalSubtitles;
 
   Future<void> getConsumetUrl() async {
     consumetUrl = await appDependencies.getConsumetUrl();
@@ -70,6 +76,16 @@ class AppDependencyProvider extends ChangeNotifier {
 
   set fetchRoute(String value) {
     _fetchRoute = value;
+    notifyListeners();
+  }
+
+  set enableHolidayMovieTab(bool value) {
+    _enableHolidayMovieTab = value;
+    notifyListeners();
+  }
+
+  set useExternalSubtitles(bool value) {
+    _useExternalSubtitles = value;
     notifyListeners();
   }
 }

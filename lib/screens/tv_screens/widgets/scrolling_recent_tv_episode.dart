@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:caffiene/functions/functions.dart';
 import 'package:caffiene/models/recently_watched.dart';
 import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:caffiene/provider/recently_watched_provider.dart';
@@ -96,27 +97,46 @@ class _ScrollingRecentEpisodesState extends State<ScrollingRecentEpisodes> {
                               widget.episodesList[index].episodeNum!,
                               widget.episodesList[index].seasonNum!);
                         },
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => TVVideoLoader(
-                                        download: false,
-                                        route: fetchRoute == "flixHQ"
-                                            ? StreamRoute.flixHQ
-                                            : StreamRoute.tmDB,
-                                        metadata: [
-                                          widget.episodesList[index].id,
-                                          widget.episodesList[index].seriesName,
-                                          widget
-                                              .episodesList[index].episodeName,
-                                          widget.episodesList[index].episodeNum,
-                                          widget.episodesList[index].seasonNum,
-                                          widget.episodesList[index].posterPath,
-                                          widget.episodesList[index].elapsed,
-                                          widget.episodesList[index].seriesId,
-                                        ],
-                                      )));
+                        onTap: () async {
+                          await checkConnection().then((value) {
+                            value
+                                ? Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => TVVideoLoader(
+                                              download: false,
+                                              route: fetchRoute == "flixHQ"
+                                                  ? StreamRoute.flixHQ
+                                                  : StreamRoute.tmDB,
+                                              metadata: [
+                                                widget.episodesList[index].id,
+                                                widget.episodesList[index]
+                                                    .seriesName,
+                                                widget.episodesList[index]
+                                                    .episodeName,
+                                                widget.episodesList[index]
+                                                    .episodeNum,
+                                                widget.episodesList[index]
+                                                    .seasonNum,
+                                                widget.episodesList[index]
+                                                    .posterPath,
+                                                widget.episodesList[index]
+                                                    .elapsed,
+                                                widget.episodesList[index]
+                                                    .seriesId,
+                                              ],
+                                            )))
+                                : ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        tr("check_connection"),
+                                        maxLines: 3,
+                                        style: kTextSmallBodyStyle,
+                                      ),
+                                      duration: const Duration(seconds: 3),
+                                    ),
+                                  );
+                          });
                         },
                         child: SizedBox(
                           width: 100,

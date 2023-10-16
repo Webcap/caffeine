@@ -107,10 +107,6 @@ const retryOptions = RetryOptions(
 const timeOut = Duration(seconds: 15);
 
 final List<String> appNames = [
-  'caffiene-v1.3.0-dev.apk',
-  'caffiene-v1.3.0.apk',
-  'caffiene-v1.3.1.apk',
-  'caffeine-v1.3.2.apk',
   'caffeine-v1.3.3.apk',
   'caffeine-v1.3.4.apk',
 ];

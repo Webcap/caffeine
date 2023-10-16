@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:caffiene/functions/functions.dart';
 import 'package:caffiene/models/app_languages.dart';
 import 'package:caffiene/screens/settings/language_choose.dart';
 import 'package:caffiene/screens/settings/player_settings.dart';
@@ -556,6 +557,27 @@ class _SettingsState extends State<Settings> {
                   Text(countryName!)
                 ]),
           ),
+          ListTile(
+            leading: Icon(
+              FontAwesomeIcons.eraser,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+            title: Text(tr("clear_cache")),
+            trailing: ElevatedButton(
+                onPressed: () async {
+                  await clearCache().then((value) =>
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text(value
+                              ? tr("cleared_cache")
+                              : tr("cache_doesnt_exist")))));
+                  await clearTempCache().then((value) =>
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text(value
+                              ? tr("cleared_cache")
+                              : tr("cache_doesnt_exist")))));
+                },
+                child: Text(tr("clear"))),
+          )
         ],
       ),
     );

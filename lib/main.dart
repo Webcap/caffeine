@@ -31,7 +31,6 @@ final Future<FirebaseApp> _initialization = Firebase.initializeApp();
 
 Future<void> appInitialize() async {
   WidgetsFlutterBinding.ensureInitialized();
-  requestNotificationPermissions();
   await dotenv.load(fileName: ".env");
   await EasyLocalization.ensureInitialized();
   FirebaseMessaging.onBackgroundMessage(_messageHandler);
@@ -47,17 +46,18 @@ Future<void> appInitialize() async {
   await settingsProvider.getSeekDuration();
   await settingsProvider.getMaxBufferDuration();
   await settingsProvider.getVideoResolution();
+  await settingsProvider.getSubtitleSize();
+  await settingsProvider.getForegroundSubtitleColor();
+  await settingsProvider.getBackgroundSubtitleColor();
+  await settingsProvider.getAppLanguage();
   await settingsProvider.getSubtitleLanguage();
+  await settingsProvider.getSubtitleMode();
   await settingsProvider.getViewMode();
   await recentProvider.fetchMovies();
   await recentProvider.fetchEpisodes();
   await appDependencyProvider.getConsumetUrl();
   await appDependencyProvider.getOpenSubKey();
   await appDependencyProvider.getStreamingServer();
-  await settingsProvider.getSubtitleSize();
-  await settingsProvider.getForegroundSubtitleColor();
-  await settingsProvider.getBackgroundSubtitleColor();
-  await settingsProvider.getAppLanguage();
   await _initialization;
   await Supabase.initialize(
     url: SUPABASE_URL,

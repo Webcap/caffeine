@@ -1,11 +1,9 @@
-import 'dart:io';
-
+import 'package:caffiene/functions/functions.dart';
 import 'package:caffiene/main.dart';
 import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:caffiene/provider/recently_watched_provider.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/screens/auth_screens/user_state.dart';
-import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/utils/theme_data.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -13,7 +11,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -39,16 +36,6 @@ final supabase = Supabase.instance.client;
 
 class _caffeineState extends State<caffeine>
     with ChangeNotifier, WidgetsBindingObserver {
-  void fileDelete() async {
-    for (int i = 0; i < appNames.length; i++) {
-      File file = File(
-          "${(await getApplicationSupportDirectory()).path}${appNames[i]}");
-      if (file.existsSync()) {
-        file.delete();
-      }
-    }
-  }
-
   bool? isFirstLaunch;
   bool? isAndroidTV;
 
@@ -61,7 +48,7 @@ class _caffeineState extends State<caffeine>
     _fetchConfig();
   }
 
-Future _fetchConfig() async {
+  Future _fetchConfig() async {
     await _remoteConfig.fetchAndActivate();
     if (mounted) {
       appDependencyProvider.consumetUrl =
@@ -71,8 +58,11 @@ Future _fetchConfig() async {
       appDependencyProvider.streamingServer =
           _remoteConfig.getString('streaming_server');
       appDependencyProvider.enableADS = _remoteConfig.getBool('ads_enabled');
-      // appDependencyProvider.fetchRoute = _remoteConfig.getString('route');
+      appDependencyProvider.fetchRoute = _remoteConfig.getString('route');
+      appDependencyProvider.useExternalSubtitles =
+          _remoteConfig.getBool('use_external_subtitles');
     }
+    await requestNotificationPermissions();
   }
 
   @override

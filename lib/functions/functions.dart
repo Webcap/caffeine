@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'package:caffiene/main.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:caffiene/models/external_subtitles.dart';
 import 'package:caffiene/models/live_tv.dart';
 import 'package:caffiene/models/movie_stream.dart';
@@ -11,7 +11,6 @@ import 'package:http/http.dart' as http;
 import 'package:caffiene/models/update.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:permission_handler/permission_handler.dart';
-
 
 Future<String> getVttFileAsString(String url) async {
   print(url);
@@ -72,26 +71,38 @@ String episodeSeasonFormatter(int episodeNumber, int seasonNumber) {
 }
 
 Future<void> requestNotificationPermissions() async {
-  final PermissionStatus status = await Permission.notification.request();
+  final PermissionStatus status = await Permission.notification.status;
   if (!status.isGranted && !status.isPermanentlyDenied) {
     Permission.notification.request();
   }
 }
 
+
 /// Stream TMDB route
 Future<MovieInfoTMDBRoute> getMovieStreamEpisodesTMDB(String api) async {
   MovieInfoTMDBRoute movieInfo;
+  int tries = 5;
+  dynamic decodeRes;
   try {
-    var res = await retryOptions.retry(
-      (() => http.get(Uri.parse(api)).timeout(timeOut)),
-      retryIf: (e) => e is SocketException || e is TimeoutException,
-    );
-    var decodeRes = jsonDecode(res.body);
+    dynamic res;
+    while (tries > 0) {
+      res = await retryOptions.retry(
+        (() => http.get(Uri.parse(api)).timeout(timeOut)),
+        retryIf: (e) => e is SocketException || e is TimeoutException,
+      );
+
+      decodeRes = jsonDecode(res.body);
+
+      if (decodeRes.containsKey('error')) {
+        --tries;
+      } else {
+        break;
+      }
+    }
     movieInfo = MovieInfoTMDBRoute.fromJson(decodeRes);
   } finally {
     client.close();
   }
-
   return movieInfo;
 }
 
@@ -154,7 +165,6 @@ Future<SubtitleDownload> downloadExternalSubtitle(
   return sub;
 }
 
-
 Future<bool> checkConnection() async {
   bool isInternetWorking;
   try {
@@ -169,3 +179,47 @@ Future<bool> checkConnection() async {
   return isInternetWorking;
 }
 
+String removeCharacters(String input) {
+  String charactersToRemove = ",.?\"'";
+  String pattern = '[$charactersToRemove]';
+  String result = input.replaceAll(RegExp(pattern), '');
+  return result;
+}
+
+Future<bool> clearTempCache() async {
+  try {
+    Directory tempDir = await getTemporaryDirectory();
+    if (tempDir.existsSync()) {
+      tempDir.deleteSync(recursive: true);
+      return true;
+    } else {
+      return false;
+    }
+  } catch (e) {
+    throw Exception("Failed to clear temp files");
+  }
+}
+
+Future<bool> clearCache() async {
+  try {
+    Directory cacheDir = await getApplicationCacheDirectory();
+    if (cacheDir.existsSync()) {
+      cacheDir.deleteSync(recursive: true);
+      return true;
+    } else {
+      return false;
+    }
+  } catch (e) {
+    throw Exception("Failed to clear cache");
+  }
+}
+
+void fileDelete() async {
+  for (int i = 0; i < appNames.length; i++) {
+    File file =
+        File("${(await getApplicationSupportDirectory()).path}${appNames[i]}");
+    if (file.existsSync()) {
+      file.delete();
+    }
+  }
+}

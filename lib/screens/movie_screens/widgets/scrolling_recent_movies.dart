@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:caffiene/functions/functions.dart';
 import 'package:caffiene/models/recently_watched.dart';
 import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:caffiene/provider/recently_watched_provider.dart';
@@ -93,24 +94,41 @@ class _ScrollingRecentMoviesState extends State<ScrollingRecentMovies> {
                         onLongPress: () {
                           prv.deleteMovie(widget.moviesList[index].id!);
                         },
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => MovieVideoLoader(
-                                        download: false,
-                                        route: fetchRoute == "flixHQ"
-                                            ? StreamRoute.flixHQ
-                                            : StreamRoute.tmDB,
-                                        metadata: [
-                                          widget.moviesList[index].id,
-                                          widget.moviesList[index].title,
-                                          widget.moviesList[index].posterPath,
-                                          widget.moviesList[index].releaseYear,
-                                          widget.moviesList[index].backdropPath,
-                                          widget.moviesList[index].elapsed
-                                        ],
-                                      )));
+                        onTap: () async {
+                          await checkConnection().then((value) {
+                            value
+                                ? Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => MovieVideoLoader(
+                                              download: false,
+                                              /* return to fetchRoute instead of hard text*/ route:
+                                                  fetchRoute == "flixHQ"
+                                                      ? StreamRoute.flixHQ
+                                                      : StreamRoute.tmDB,
+                                              metadata: [
+                                                widget.moviesList[index].id,
+                                                widget.moviesList[index].title,
+                                                widget.moviesList[index]
+                                                    .posterPath,
+                                                widget.moviesList[index]
+                                                    .releaseYear,
+                                                widget.moviesList[index]
+                                                    .backdropPath,
+                                                widget.moviesList[index].elapsed
+                                              ],
+                                            )))
+                                : ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        tr("check_connection"),
+                                        maxLines: 3,
+                                        style: kTextSmallBodyStyle,
+                                      ),
+                                      duration: const Duration(seconds: 3),
+                                    ),
+                                  );
+                          });
                         },
                         child: SizedBox(
                           width: 100,

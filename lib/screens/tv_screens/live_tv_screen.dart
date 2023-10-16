@@ -1,12 +1,16 @@
+import 'dart:math';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:caffiene/functions/functions.dart';
 import 'package:caffiene/models/live_tv.dart';
+import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/screens/player/live_player.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:startapp_sdk/startapp.dart';
 
 class LiveTV extends StatefulWidget {
   const LiveTV({Key? key}) : super(key: key);
@@ -215,6 +219,9 @@ class _ChannelWidgetState extends State<ChannelWidget> {
   Map<String, String> videos = {};
   Map<String, String> reversedVids = {};
 
+  late AppDependencyProvider appDep =
+      Provider.of<AppDependencyProvider>(context, listen: false);
+
   void sett() {
     for (int k = 0; k < widget.channel.channelStream!.length; k++) {
       videos.addAll({
@@ -231,7 +238,31 @@ class _ChannelWidgetState extends State<ChannelWidget> {
   @override
   void initState() {
     sett();
+    if (appDep.enableADS && shouldShowADS()) {
+      loadInterstitialAd();
+    }
     super.initState();
+  }
+
+  var startAppSdk = StartAppSdk();
+  StartAppInterstitialAd? interstitialAd;
+
+  Future<void> loadInterstitialAd() async {
+    startAppSdk.loadInterstitialAd().then((interstitialAd) {
+      setState(() {
+        this.interstitialAd = interstitialAd;
+      });
+    }).onError<StartAppException>((ex, stackTrace) {
+      debugPrint("Error loading Interstitial ad: ${ex.message}");
+    }).onError((error, stackTrace) {
+      debugPrint("Error loading Interstitial ad: $error");
+    });
+  }
+
+  bool shouldShowADS() {
+    Random random = Random();
+    int randomNumber = random.nextInt(4);
+    return randomNumber == 0;
   }
 
   @override
@@ -251,18 +282,21 @@ class _ChannelWidgetState extends State<ChannelWidget> {
                 'TV Channel name': widget.channel.channelName,
                 'Category': widget.catName,
               });
-
-              Navigator.push(context, MaterialPageRoute(builder: ((context) {
-                return LivePlayer(
-                  channelName: widget.channel.channelName!,
-                  sources: reversedVids,
-                  autoFullScreen: autoFS,
-                  colors: [
-                    Theme.of(context).primaryColor,
-                    Theme.of(context).colorScheme.background
-                  ],
-                );
-              })));
+              if (interstitialAd != null) {
+                interstitialAd!.show();
+                loadInterstitialAd().whenComplete(() => Navigator.push(context,
+                        MaterialPageRoute(builder: ((context) {
+                      return LivePlayer(
+                        channelName: widget.channel.channelName!,
+                        sources: reversedVids,
+                        autoFullScreen: autoFS,
+                        colors: [
+                          Theme.of(context).primaryColor,
+                          Theme.of(context).colorScheme.background
+                        ],
+                      );
+                    }))));
+              }
             },
             child: Container(
               height: 60,

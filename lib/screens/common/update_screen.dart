@@ -1,5 +1,7 @@
-import 'dart:io';
+// ignore_for_file: must_be_immutable
 
+
+import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +15,6 @@ import 'package:open_file_plus/open_file_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path_provider/path_provider.dart';
-
 
 class UpdateScreen extends StatefulWidget {
   const UpdateScreen({Key? key}) : super(key: key);
@@ -36,7 +37,7 @@ class _UpdateScreenState extends State<UpdateScreen> {
         });
       }
     });
-    getApplicationCacheDirectory().then((value) {
+    getTemporaryDirectory().then((value) {
       if (mounted) {
         setState(() {
           savedDir = value.path;
@@ -125,13 +126,17 @@ class _UpdateScreenState extends State<UpdateScreen> {
                                 var fileName =
                                     "$savedDir/${downloadManager.getFileNameFromUrl(url)}";
                                 var file = File(fileName);
-                                OpenFile.open(file.path);
+                                if (file.existsSync()) {
+                                  OpenFile.open(file.path);
+                                }
                               },
                               onDelete: (url) async {
                                 var fileName =
                                     "$savedDir/${downloadManager.getFileNameFromUrl(url)}";
                                 var file = File(fileName);
-                                file.delete();
+                                if (file.existsSync()) {
+                                  file.delete();
+                                }
                               },
                               url: updateChecker!.downloadLink!,
                               downloadTask: downloadManager
