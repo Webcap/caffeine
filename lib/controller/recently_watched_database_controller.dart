@@ -1,7 +1,9 @@
 import 'dart:io';
-
-import 'package:caffiene/caffiene_main.dart';
 import 'package:caffiene/models/recently_watched.dart';
+import 'package:caffiene/utils/snackbar.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -17,6 +19,8 @@ class RecentlyWatchedMoviesController {
   String dateTimeCol = 'date_watched';
   String posterPathCol = 'poster_path';
   String backdropPathCol = 'backdrop_path';
+  String? uid;
+  late DocumentSnapshot subscription;
 
   RecentlyWatchedMoviesController._createInstance();
 
@@ -53,13 +57,9 @@ class RecentlyWatchedMoviesController {
   Future<int> insertMovie(RecentMovie rMovie) async {
     Database db = await database;
     var result = await db.insert(tableName, rMovie.toMap());
+    await addWatchedMovietoFirebase(rMovie);
     return result;
   }
-
-  // Future<int> insertMovieSUPA(RecentMovie rMovie) async {
-  //   var result = await supabase.from('recently_watched').insert(tableName, rMovie.toMap());
-  //   return result;
-  // }
 
   Future<int> updateMovie(RecentMovie rMovie, int id) async {
     var db = await database;
@@ -101,6 +101,57 @@ class RecentlyWatchedMoviesController {
     int result = Sqflite.firstIntValue(x)!;
     if (result == 0) return false;
     return true;
+  }
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  FirebaseFirestore firebaseInstance = FirebaseFirestore.instance;
+
+  addWatchedMovietoFirebase(RecentMovie rMovie) async {
+    setWatchHistoryCollection();
+    try {
+      await firebaseInstance.collection('watch_history').doc(uid!).update(
+        {'movies': FieldValue.arrayUnion([rMovie.toMap()])},
+      );
+    } finally {
+      print("added");
+    }
+  }
+
+  void setWatchHistoryCollection() async {
+    User? user = _auth.currentUser;
+    uid = user!.uid;
+
+    // Checks if a bookmark document exists for a signed in user
+    if (await checkIfDocExists(uid!) == false) {
+      await firebaseInstance.collection('watch_history').doc(uid!).set({});
+    }
+
+    // Checks if a movie and tvShow collection exists for a signed in user and creates a collection if it doesn't exist
+    subscription =
+        await firebaseInstance.collection('watch_history').doc(uid!).get();
+    final docData = subscription.data() as Map<String, dynamic>;
+
+    if (docData.containsKey('movies') == false) {
+      await firebaseInstance.collection('watch_history').doc(uid!).update(
+        {'movies': []},
+      );
+    }
+
+    if (docData.containsKey('tvShows') == false) {
+      await firebaseInstance.collection('watch_history').doc(uid!).update(
+        {'tvShows': []},
+      );
+    }
+  }
+
+  Future<bool> checkIfDocExists(String docId) async {
+    try {
+      var collectionRef = firebaseInstance.collection('watch_history');
+      var doc = await collectionRef.doc(docId).get();
+      return doc.exists;
+    } catch (e) {
+      rethrow;
+    }
   }
 }
 

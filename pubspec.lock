@@ -60,7 +60,7 @@ packages:
   better_player:
     dependency: "direct main"
     description:
-      path: "C:\\Users\\solox\\Desktop\\Projects\\flixquest-betterplayer"
+      path: "C:\\Users\\solox\\Desktop\\Projects\\caffeine_betterplayer"
       relative: false
     source: path
     version: "0.0.82"

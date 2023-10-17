@@ -33,6 +33,7 @@ class _SignupScreenState extends State<SignupScreen> {
   String _userName = '';
   bool _isUserVerified = false;
   late DocumentSnapshot subscription;
+  late DocumentSnapshot Watch_history_subscription;
   final _formKey = GlobalKey<FormState>();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GlobalMethods _globalMethods = GlobalMethods();
@@ -119,6 +120,16 @@ class _SignupScreenState extends State<SignupScreen> {
 
           final docData = subscription.data() as Map<String, dynamic>;
 
+          await FirebaseFirestore.instance
+              .collection('watch_history')
+              .doc(uid)
+              .set({});
+
+          Watch_history_subscription = await FirebaseFirestore.instance
+              .collection('watch_history')
+              .doc(uid)
+              .get();
+
           if (docData.containsKey('movies') == false) {
             await FirebaseFirestore.instance
                 .collection('bookmarks')
@@ -131,6 +142,24 @@ class _SignupScreenState extends State<SignupScreen> {
           if (docData.containsKey('tvShows') == false) {
             await FirebaseFirestore.instance
                 .collection('bookmarks')
+                .doc(uid)
+                .update(
+              {'tvShows': []},
+            );
+          }
+
+          if (docData.containsKey('movies') == false) {
+            await FirebaseFirestore.instance
+                .collection('watch_history')
+                .doc(uid)
+                .update(
+              {'movies': []},
+            );
+          }
+
+          if (docData.containsKey('tvShows') == false) {
+            await FirebaseFirestore.instance
+                .collection('watch_history')
                 .doc(uid)
                 .update(
               {'tvShows': []},
@@ -201,8 +230,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         child: SizedBox(
                             width: 90,
                             height: 90,
-                            child:
-                                Image.asset(appConfig.app_icon)),
+                            child: Image.asset(appConfig.app_icon)),
                       ),
                     ),
                     const SizedBox(
