@@ -1,9 +1,7 @@
 import 'dart:io';
 import 'package:caffiene/models/recently_watched.dart';
-import 'package:caffiene/utils/snackbar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 

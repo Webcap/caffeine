@@ -1,13 +1,9 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:caffiene/screens/common/sabth.dart';
 import 'package:caffiene/screens/movie_screens/widgets/crew_about_details.dart';
 import 'package:caffiene/screens/movie_screens/widgets/crew_detail_quick_info.dart';
 import 'package:flutter/material.dart';
-import 'package:caffiene/api/endpoints.dart';
 import 'package:caffiene/models/credits.dart';
 import 'package:caffiene/provider/settings_provider.dart';
-import 'package:caffiene/screens/person/widgets/person_widget.dart';
-import 'package:caffiene/utils/config.dart';
 import 'package:provider/provider.dart';
 
 class CrewDetailPage extends StatefulWidget {

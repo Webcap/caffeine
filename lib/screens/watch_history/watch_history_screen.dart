@@ -1,3 +1,5 @@
+// ignore_for_file: unused_field
+
 import 'package:caffiene/controller/database_controller.dart';
 import 'package:caffiene/models/movie_models.dart';
 import 'package:caffiene/models/tv.dart';

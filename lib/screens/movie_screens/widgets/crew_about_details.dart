@@ -1,4 +1,5 @@
-// ignore: must_be_immutable
+// ignore_for_file: must_be_immutable
+
 import 'package:caffiene/api/endpoints.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/screens/person/widgets/person_widget.dart';

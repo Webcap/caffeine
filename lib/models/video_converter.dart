@@ -1,3 +1,5 @@
+// ignore_for_file: body_might_complete_normally_nullable, unused_local_variable
+
 import 'package:ffmpeg_kit_flutter/ffmpeg_kit.dart';
 import 'package:ffmpeg_kit_flutter/ffmpeg_kit_config.dart';
 import 'package:ffmpeg_kit_flutter/ffprobe_kit.dart';

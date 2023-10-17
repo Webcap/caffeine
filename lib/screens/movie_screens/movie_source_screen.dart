@@ -1,8 +1,6 @@
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:caffiene/screens/movie_screens/movie_stream.dart';
-import 'package:caffiene/utils/config.dart';
 import 'package:provider/provider.dart';
 
 class MovieStreamSelect extends StatefulWidget {
