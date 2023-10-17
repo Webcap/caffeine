@@ -34,6 +34,9 @@ class _MainTVDisplayState extends State<MainTVDisplay> {
         children: [
           DiscoverTV(
               includeAdult: Provider.of<SettingsProvider>(context).isAdult),
+          rEpisodes.isEmpty
+              ? Container()
+              : ScrollingRecentEpisodes(episodesList: rEpisodes),
           ScrollingTV(
             includeAdult: Provider.of<SettingsProvider>(context).isAdult,
             title: tr("popular"),
@@ -41,9 +44,6 @@ class _MainTVDisplayState extends State<MainTVDisplay> {
             discoverType: 'popular',
             isTrending: false,
           ),
-          rEpisodes.isEmpty
-              ? Container()
-              : ScrollingRecentEpisodes(episodesList: rEpisodes),
           ScrollingTV(
             includeAdult: Provider.of<SettingsProvider>(context).isAdult,
             title: tr("trending_this_week"),

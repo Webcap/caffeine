@@ -104,11 +104,14 @@ class RecentlyWatchedMoviesController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   FirebaseFirestore firebaseInstance = FirebaseFirestore.instance;
 
+  // add watched movie to firestore
   addWatchedMovietoFirebase(RecentMovie rMovie) async {
     setWatchHistoryCollection();
     try {
       await firebaseInstance.collection('watch_history').doc(uid!).update(
-        {'movies': FieldValue.arrayUnion([rMovie.toMap()])},
+        {
+          'movies': FieldValue.arrayUnion([rMovie.toMap()])
+        },
       );
     } finally {
       print("added");
@@ -169,6 +172,11 @@ class RecentlyWatchedEpisodeController {
   String colDateAdded = 'date_added';
   String colSeriesId = 'series_id';
   RecentlyWatchedEpisodeController._createInstance();
+  String? uid;
+  late DocumentSnapshot subscription;
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  FirebaseFirestore firebaseInstance = FirebaseFirestore.instance;
 
   factory RecentlyWatchedEpisodeController() {
     _recentlyWatchedEpisodeController ??=
@@ -204,6 +212,7 @@ class RecentlyWatchedEpisodeController {
   Future<int> insertTV(RecentEpisode rEpisode) async {
     Database db = await database;
     var result = await db.insert(tableName, rEpisode.toMap());
+    await addWatchedTVtoFirebase(rEpisode);
     return result;
   }
 
@@ -254,5 +263,56 @@ class RecentlyWatchedEpisodeController {
     int result = Sqflite.firstIntValue(x)!;
     if (result == 0) return false;
     return true;
+  }
+
+  // this adds the tv to firebase
+  addWatchedTVtoFirebase(RecentEpisode rEpisode) async {
+    setWatchHistoryCollection();
+    try {
+      await firebaseInstance.collection('watch_history').doc(uid!).update(
+        {
+          'tvShows': FieldValue.arrayUnion([rEpisode.toMap()])
+        },
+      );
+    } finally {
+      print("added");
+    }
+  }
+
+  Future<bool> checkIfDocExists(String docId) async {
+    try {
+      var collectionRef = firebaseInstance.collection('watch_history');
+      var doc = await collectionRef.doc(docId).get();
+      return doc.exists;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  void setWatchHistoryCollection() async {
+    User? user = _auth.currentUser;
+    uid = user!.uid;
+
+    // Checks if a bookmark document exists for a signed in user
+    if (await checkIfDocExists(uid!) == false) {
+      await firebaseInstance.collection('watch_history').doc(uid!).set({});
+    }
+
+    // Checks if a movie and tvShow collection exists for a signed in user and creates a collection if it doesn't exist
+    subscription =
+        await firebaseInstance.collection('watch_history').doc(uid!).get();
+    final docData = subscription.data() as Map<String, dynamic>;
+
+    if (docData.containsKey('movies') == false) {
+      await firebaseInstance.collection('watch_history').doc(uid!).update(
+        {'movies': []},
+      );
+    }
+
+    if (docData.containsKey('tvShows') == false) {
+      await firebaseInstance.collection('watch_history').doc(uid!).update(
+        {'tvShows': []},
+      );
+    }
   }
 }

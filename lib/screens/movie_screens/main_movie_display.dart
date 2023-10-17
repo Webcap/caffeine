@@ -45,6 +45,9 @@ class _MainMoviesDisplayState extends State<MainMoviesDisplay> {
             isTrending: true,
             includeAdult: includeAdult,
           ),
+          rMovies.isEmpty
+              ? Container()
+              : ScrollingRecentMovies(moviesList: rMovies),
           ScrollingMovies(
             title: tr("popular"),
             api: Endpoints.popularMoviesUrl(1, lang),
@@ -59,9 +62,6 @@ class _MainMoviesDisplayState extends State<MainMoviesDisplay> {
           //   onFailed: (placementId, error, message) =>
           //       print('Banner Ad $placementId failed: $error $message'),
           // ),
-          rMovies.isEmpty
-              ? Container()
-              : ScrollingRecentMovies(moviesList: rMovies),
           ScrollingMovies(
             title: tr("trending_this_week"),
             api: Endpoints.trendingMoviesUrl(1, includeAdult, lang),

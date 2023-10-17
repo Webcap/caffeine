@@ -5,8 +5,10 @@ import 'package:caffiene/models/movie_models.dart';
 import 'package:caffiene/models/tv.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/screens/watch_history/widgets/movie_watch_history_widget.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 
 class WatchHistory extends StatefulWidget {
@@ -43,47 +45,50 @@ class _WatchHistoryState extends State<WatchHistory>
         },
         icon: const Icon(Icons.arrow_back),
       ),
-      title: const Text("Watch History"),
+      title: Text(tr("watch_history")),
       ),
       body: Column(
         children: [
           Container(
             color: Colors.grey,
             child: TabBar(
-              tabs: const [
+              tabs: [
                 Tab(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(right: 8.0),
-                        child: Icon(Icons.movie_creation_rounded),
-                      ),
-                      Text('Movies')
-                    ],
-                  ),
-                ),
+                    child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.only(right: 8.0),
+                      child: Icon(FontAwesomeIcons.clapperboard),
+                    ),
+                    Text(
+                      tr("movies"),
+                    ),
+                  ],
+                )),
                 Tab(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Padding(
+                    child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Padding(
                         padding: EdgeInsets.only(right: 8.0),
-                        child: Icon(Icons.live_tv_rounded),
-                      ),
-                      Text('TV Series')
-                    ],
-                  ),
-                ),
+                        child: Icon(Icons.live_tv_rounded)),
+                    Text(
+                      tr("tv_series"),
+                    ),
+                  ],
+                ))
               ],
               indicatorColor: isDark ? Colors.white : Colors.black,
               indicatorWeight: 3,
+              //isScrollable: true,
               labelStyle: const TextStyle(
                 fontFamily: 'PoppinsSB',
                 color: Colors.black,
                 fontSize: 17,
               ),
-              unselectedLabelStyle: const TextStyle(fontFamily: 'PoppinsSB', color: Colors.black87),
+              unselectedLabelStyle:
+                  const TextStyle(fontFamily: 'Poppins', color: Colors.black87),
               labelColor: Colors.black,
               controller: tabController,
               indicatorSize: TabBarIndicatorSize.tab,
@@ -93,7 +98,10 @@ class _WatchHistoryState extends State<WatchHistory>
             child: TabBarView(
               controller: tabController,
               children: [
-                MovieWatchHistory(movieList: watchMovieList),
+                // MovieBookmark(movieList: movieList),
+                // TVBookmark(
+                //   tvList: tvList,
+                // )
               ],
             ),
           )

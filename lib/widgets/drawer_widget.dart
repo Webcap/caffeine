@@ -1,5 +1,6 @@
 import 'package:caffiene/screens/common/server_status_screen.dart';
 import 'package:caffiene/screens/tv_screens/live_tv_screen.dart';
+import 'package:caffiene/screens/watch_history/watch_history_screen.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -61,22 +62,22 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                   ),
                   ListTile(
                     leading: Icon(
-                      FontAwesomeIcons.server,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                    title: Text(tr("check_server")),
-                    onTap: () {
-                      nextScreen(context, const ServerStatusScreen());
-                    },
-                  ),
-                  ListTile(
-                    leading: Icon(
                       FontAwesomeIcons.bookmark,
                       color: Theme.of(context).colorScheme.primary,
                     ),
                     title: Text(tr("bookmarks")),
                     onTap: () {
                       nextScreen(context, const BookmarkScreen());
+                    },
+                  ),
+                  ListTile(
+                    leading: Icon(
+                      FontAwesomeIcons.clockRotateLeft,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    title: Text(tr("watch_history")),
+                    onTap: () {
+                      nextScreen(context, const WatchHistory());
                     },
                   ),
                   ListTile(
@@ -97,6 +98,16 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                     title: Text(tr("check_for_update")),
                     onTap: () {
                       nextScreen(context, const UpdateScreen());
+                    },
+                  ),
+                  ListTile(
+                    leading: Icon(
+                      FontAwesomeIcons.server,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    title: Text(tr("check_server")),
+                    onTap: () {
+                      nextScreen(context, const ServerStatusScreen());
                     },
                   ),
                   ListTile(
