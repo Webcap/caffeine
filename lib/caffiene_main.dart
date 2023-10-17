@@ -61,6 +61,8 @@ class _caffeineState extends State<caffeine>
       appDependencyProvider.fetchRoute = _remoteConfig.getString('route');
       appDependencyProvider.useExternalSubtitles =
           _remoteConfig.getBool('use_external_subtitles');
+      appDependencyProvider.enableOTTADS =
+          _remoteConfig.getBool('ott_ads_enabled');
     }
     await requestNotificationPermissions();
   }

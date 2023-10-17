@@ -93,11 +93,12 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
   }
 
   void loadVideo() async {
-    print(settings.defaultSubtitleLanguage);
     try {
       late int totalSeasons;
       if (widget.route == StreamRoute.flixHQ) {
-        await tvApi().fetchTVDetails(
+        debugPrint("USED FLIXHQ ROUTE");
+        await tvApi()
+            .fetchTVDetails(
                 Endpoints.tvDetailsUrl(widget.metadata.elementAt(7), "en"))
             .then(
           (value) async {
@@ -201,8 +202,10 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
                           setState(() {
                             tvVideoSources = value;
                           });
-                          tvVideoLinks = tvVideoSources!.videoLinks;
-                          tvVideoSubs = tvVideoSources!.videoSubtitles;
+                          if (mounted) {
+                            tvVideoLinks = tvVideoSources!.videoLinks;
+                            tvVideoSubs = tvVideoSources!.videoSubtitles;
+                          }
                         });
                         break;
                       }
@@ -227,6 +230,7 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
           },
         );
       } else {
+        debugPrint("USED TMDB ROUTE");
         await getTVStreamEpisodesTMDB(Endpoints.getMovieTVStreamInfoTMDB(
                 widget.metadata.elementAt(7).toString(),
                 "tv",
@@ -241,7 +245,8 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
                 tvInfoTMDB!.seasons![widget.metadata.elementAt(4) - 1]
                         .episodes![widget.metadata.elementAt(3) - 1].id !=
                     null) {
-              await tvApi().getTVStreamLinksAndSubs(Endpoints.getMovieTVStreamLinksTMDB(
+              await tvApi()
+                  .getTVStreamLinksAndSubs(Endpoints.getMovieTVStreamLinksTMDB(
                       appDep.consumetUrl,
                       tvInfoTMDB!.seasons![widget.metadata.elementAt(4) - 1]
                           .episodes![widget.metadata.elementAt(3) - 1].id!,
@@ -265,19 +270,23 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
                       },
                       context: context);
                 }
-                tvVideoLinks = tvVideoSources!.videoLinks;
-                tvVideoSubs = tvVideoSources!.videoSubtitles;
+                if (mounted) {
+                  tvVideoLinks = tvVideoSources!.videoLinks;
+                  tvVideoSubs = tvVideoSources!.videoSubtitles;
+                }
               });
             } else {
-              Navigator.pop(context);
-              showModalBottomSheet(
-                  builder: (context) {
-                    return ReportErrorWidget(
-                      error: tr("tv_vid_404"),
-                      hideButton: true,
-                    );
-                  },
-                  context: context);
+              if (mounted) {
+                Navigator.pop(context);
+                showModalBottomSheet(
+                    builder: (context) {
+                      return ReportErrorWidget(
+                        error: tr("tv_vid_404"),
+                        hideButton: true,
+                      );
+                    },
+                    context: context);
+              }
             }
           }
         });
@@ -300,7 +309,6 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
           for (int i = 0; i < tvVideoSubs!.length - 1; i++) {
             setState(() {
               loadProgress = (i / tvVideoSubs!.length) * 100;
-              print(loadProgress);
             });
             await getVttFileAsString(tvVideoSubs![i].url!).then((value) {
               subs.addAll({
@@ -324,7 +332,6 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
                   .startsWith(supportedLanguages[foundIndex].englishName))
               .isNotEmpty) {
             if (settings.fetchSpecificLangSubs) {
-              print('fetchSpecificLangSubs');
               for (int i = 0; i < tvVideoSubs!.length; i++) {
                 if (tvVideoSubs![i]
                     .language!
@@ -363,11 +370,12 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
             }
           } else {
             if (appDep.useExternalSubtitles) {
-              print("EXTERNAL CALLED");
-              await moviesApi().fetchSocialLinks(
+              await moviesApi()
+                  .fetchSocialLinks(
                 Endpoints.getExternalLinksForTV(
                     widget.metadata.elementAt(7), "en"),
-              ).then((value) async {
+              )
+                  .then((value) async {
                 if (value.imdbId != null) {
                   await getExternalSubtitle(
                           Endpoints.searchExternalEpisodeSubtitles(
@@ -432,6 +440,21 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
                           tvMetadata: widget.metadata);
                     },
                   )));
+        } else {
+          Navigator.pushReplacement(context, MaterialPageRoute(
+            builder: (context) {
+              return Player(
+                  mediaType: MediaType.tvShow,
+                  sources: reversedVids,
+                  subs: subs,
+                  colors: [
+                    Theme.of(context).primaryColor,
+                    Theme.of(context).colorScheme.background
+                  ],
+                  settings: settings,
+                  tvMetadata: widget.metadata);
+            },
+          ));
         }
       } else {
         if (mounted) {

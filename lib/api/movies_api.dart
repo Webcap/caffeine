@@ -34,7 +34,7 @@ class moviesApi {
     return newGenreList.genre ?? [];
   }
 
-Future<MovieVideoSources> getMovieStreamLinksAndSubs(String api) async {
+  Future<MovieVideoSources> getMovieStreamLinksAndSubs(String api) async {
     MovieVideoSources movieVideoSources;
     int tries = 5;
     dynamic decodeRes;
@@ -81,12 +81,12 @@ Future<MovieVideoSources> getMovieStreamLinksAndSubs(String api) async {
     MovieStream movieStream;
     print(api);
     try {
-      print(api);
       var res = await retryOptions.retry(
         (() => http.get(Uri.parse(api)).timeout(timeOut)),
         retryIf: (e) => e is SocketException || e is TimeoutException,
       );
       var decodeRes = jsonDecode(res.body);
+
       movieStream = MovieStream.fromJson(decodeRes);
     } finally {
       client.close();

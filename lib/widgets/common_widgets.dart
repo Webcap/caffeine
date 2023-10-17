@@ -1,5 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:caffiene/provider/settings_provider.dart';
+import 'package:clipboard/clipboard.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/api/movies_api.dart';
 import 'package:caffiene/models/movie_models.dart';
@@ -268,6 +270,11 @@ class ExternalPlay extends StatelessWidget {
               await launchUrl(Uri.parse(sources.entries.elementAt(i).value),
                   mode: LaunchMode.externalNonBrowserApplication);
             }
+          },
+          onLongPress: () async {
+            FlutterClipboard.copy(sources.entries.elementAt(i).value).then(
+                (value) => ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(tr("video_link_copied")))));
           },
           child: Text(sources.entries.elementAt(i).key)));
     }

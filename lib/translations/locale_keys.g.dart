@@ -472,4 +472,6 @@ abstract class LocaleKeys {
   static const disable_notification_version = 'disable_notification_version';
   static const report_telegram = 'report_telegram';
   static const trending_horror_movies = 'trending_horror_movies';
+  static const fetch_all_subs = 'fetch_all_subs';
+  static const video_link_copied = 'video_link_copied';
 }

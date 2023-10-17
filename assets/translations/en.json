@@ -477,5 +477,7 @@
     "error_cache": "Error clearing cache: {e}",
     "trending_horror_movies": "Trending Horror Movies",
     "clear_cache": "Clear cache",
-    "clear": "Clear"
+    "clear": "Clear",
+    "fetch_all_subs": "Fetch all subtitles that belong to a specific language",
+    "video_link_copied": "Video link copied to clipboard"
 }

@@ -35,7 +35,8 @@ class tvApi {
     }
     return tvList.tvSeries ?? [];
   }
-Future<TVVideoSources> getTVStreamLinksAndSubs(String api) async {
+
+  Future<TVVideoSources> getTVStreamLinksAndSubs(String api) async {
     TVVideoSources tvVideoSources;
     int tries = 5;
     dynamic decodeRes;
@@ -78,24 +79,15 @@ Future<TVVideoSources> getTVStreamLinksAndSubs(String api) async {
     return tvInfo;
   }
 
-Future<List<TVResults>> fetchTVForStream(String api) async {
+  Future<List<TVResults>> fetchTVForStream(String api) async {
     TVStream tvStream;
-    int tries = 5;
-    dynamic decodeRes;
+    print(api);
     try {
-      dynamic res;
-      while (tries > 0) {
-        res = await retryOptions.retry(
-          (() => http.get(Uri.parse(api)).timeout(timeOut)),
-          retryIf: (e) => e is SocketException || e is TimeoutException,
-        );
-        decodeRes = jsonDecode(res.body);
-        if (!decodeRes['id'].startsWith("http")) {
-          break;
-        } else {
-          --tries;
-        }
-      }
+      var res = await retryOptions.retry(
+        (() => http.get(Uri.parse(api)).timeout(timeOut)),
+        retryIf: (e) => e is SocketException || e is TimeoutException,
+      );
+      var decodeRes = jsonDecode(res.body);
       tvStream = TVStream.fromJson(decodeRes);
     } finally {
       client.close();

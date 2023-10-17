@@ -1,5 +1,4 @@
 import 'package:caffiene/caffiene_main.dart';
-import 'package:caffiene/functions/functions.dart';
 import 'package:caffiene/models/download_manager.dart';
 import 'package:caffiene/models/translation.dart';
 import 'package:caffiene/provider/app_dependency_provider.dart';

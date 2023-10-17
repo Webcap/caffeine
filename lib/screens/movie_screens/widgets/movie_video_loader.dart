@@ -92,6 +92,7 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
   void loadVideo() async {
     try {
       if (widget.route == StreamRoute.flixHQ) {
+        debugPrint("USED FLIXHQ ROUTE");
         await moviesApi()
             .fetchMoviesForStream(Endpoints.searchMovieTVForStream(
                 removeCharacters(widget.metadata.elementAt(1)),
@@ -153,8 +154,10 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
                             context: context);
                       }
                     }
-                    movieVideoLinks = movieVideoSources!.videoLinks;
-                    movieVideoSubs = movieVideoSources!.videoSubtitles;
+                    if (mounted) {
+                      movieVideoLinks = movieVideoSources!.videoLinks;
+                      movieVideoSubs = movieVideoSources!.videoSubtitles;
+                    }
                   });
                 }
               });
@@ -164,6 +167,7 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
           }
         });
       } else {
+        debugPrint("USED TMDB ROUTE");
         await getMovieStreamEpisodesTMDB(Endpoints.getMovieTVStreamInfoTMDB(
                 widget.metadata.elementAt(0).toString(),
                 "movie",
@@ -206,19 +210,23 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
                       context: context);
                 }
               }
-              movieVideoLinks = movieVideoSources!.videoLinks;
-              movieVideoSubs = movieVideoSources!.videoSubtitles;
+              if (mounted) {
+                movieVideoLinks = movieVideoSources!.videoLinks;
+                movieVideoSubs = movieVideoSources!.videoSubtitles;
+              }
             });
           } else {
-            Navigator.pop(context);
-            showModalBottomSheet(
-                builder: (context) {
-                  return ReportErrorWidget(
-                    error: tr("movie_vid_404"),
-                    hideButton: true,
-                  );
-                },
-                context: context);
+            if (mounted) {
+              Navigator.pop(context);
+              showModalBottomSheet(
+                  builder: (context) {
+                    return ReportErrorWidget(
+                      error: tr("movie_vid_404"),
+                      hideButton: true,
+                    );
+                  },
+                  context: context);
+            }
           }
         });
       }
@@ -373,6 +381,21 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
                           movieMetadata: widget.metadata);
                     },
                   )));
+        } else {
+          Navigator.pushReplacement(context, MaterialPageRoute(
+            builder: (context) {
+              return Player(
+                  mediaType: MediaType.movie,
+                  sources: reversedVids,
+                  subs: subs,
+                  colors: [
+                    Theme.of(context).primaryColor,
+                    Theme.of(context).colorScheme.background
+                  ],
+                  settings: settings,
+                  movieMetadata: widget.metadata);
+            },
+          ));
         }
       } else {
         if (mounted) {
@@ -380,7 +403,7 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
           showModalBottomSheet(
               builder: (context) {
                 return ReportErrorWidget(
-                  error: tr("tv_vid_404"),
+                  error: tr("movie_vid_404"),
                   hideButton: true,
                 );
               },
@@ -393,7 +416,7 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
         showModalBottomSheet(
             builder: (context) {
               return ReportErrorWidget(
-                error: "${tr("tv_vid_404")}\n$e",
+                error: "${tr("movie_vid_404")}\n$e",
                 hideButton: false,
               );
             },
