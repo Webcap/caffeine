@@ -480,5 +480,6 @@
     "clear": "Claro",
     "fetch_all_subs": "Obtener todos los subtítulos que pertenecen a un idioma específico",
     "video_link_copied": "Enlace del vídeo copiado al portapapeles",
-    "watch_history": "Ver historial"
+    "watch_history": "Ver historial",
+    "no_movies_watched": "No tienes historial de reproducciones :("
 }

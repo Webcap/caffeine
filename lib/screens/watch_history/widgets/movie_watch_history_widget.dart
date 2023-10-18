@@ -153,44 +153,47 @@ class _MovieWatchHistoryState extends State<MovieWatchHistory> {
                                                                         ),
                                                                       ),
                                                               ),
-                                                              Positioned(
-                                                                top: 0,
-                                                                left: 0,
-                                                                child:
-                                                                    Container(
-                                                                  margin:
-                                                                      const EdgeInsets
-                                                                          .all(3),
-                                                                  alignment:
-                                                                      Alignment
-                                                                          .topLeft,
-                                                                  width: 50,
-                                                                  height: 25,
-                                                                  decoration: BoxDecoration(
-                                                                      borderRadius:
-                                                                          BorderRadius.circular(
-                                                                              8),
-                                                                      color: isDark
-                                                                          ? Colors
-                                                                              .black45
-                                                                          : Colors
-                                                                              .white60),
-                                                                  // child: Row(
-                                                                  //   children: [
-                                                                  //     const Icon(
-                                                                  //       Icons
-                                                                  //           .star,
-                                                                  //     ),
-                                                                  //     Text(widget
-                                                                  //         .movieList![
-                                                                  //             index]
-                                                                  //         .voteAverage!
-                                                                  //         .toStringAsFixed(
-                                                                  //             1))
-                                                                  //   ],
-                                                                  // ),
-                                                                ),
-                                                              ),
+                                                              // RATING BADGE
+                                                              // Positioned(
+                                                              //   top: 0,
+                                                              //   left: 0,
+                                                              //   child:
+                                                              //       Container(
+                                                              //     margin:
+                                                              //         const EdgeInsets
+                                                              //             .all(3),
+                                                              //     alignment:
+                                                              //         Alignment
+                                                              //             .topLeft,
+                                                              //     width: 50,
+                                                              //     height: 25,
+                                                              //     decoration: BoxDecoration(
+                                                              //         borderRadius:
+                                                              //             BorderRadius.circular(
+                                                              //                 8),
+                                                              //         color: isDark
+                                                              //             ? Colors
+                                                              //                 .black45
+                                                              //             : Colors
+                                                              //                 .white60),
+                                                              //     child: Row(
+                                                              //       children: [
+                                                              //         const Icon(
+                                                              //           Icons
+                                                              //               .star,
+                                                              //         ),
+                                                              //         Text(widget
+                                                              //             .movieList![
+                                                              //                 index]
+                                                              //             .voteAverage!
+                                                              //             .toStringAsFixed(
+                                                              //                 1))
+                                                              //       ],
+                                                              //     ),
+                                                              //   ),
+                                                              // ),
+
+                                                              // REMOVE FROM WATCH LIST
                                                               Positioned(
                                                                 top: -15,
                                                                 right: 8,
