@@ -5,6 +5,7 @@ import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/screens/movie_screens/movie_details.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/widgets/shimmer_widget.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -39,9 +40,9 @@ class _MovieWatchHistoryState extends State<MovieWatchHistory> {
                     isLoading: false,
                     scrollController: _scrollController))
             : widget.movieList!.isEmpty
-                ? const Center(
+                ? Center(
                     child: Text(
-                      'You don\'t have any watch history :(',
+                      tr("no_movies_watched"),
                       textAlign: TextAlign.center,
                       style: kTextSmallHeaderStyle,
                       maxLines: 4,
@@ -174,20 +175,20 @@ class _MovieWatchHistoryState extends State<MovieWatchHistory> {
                                                                               .black45
                                                                           : Colors
                                                                               .white60),
-                                                                  child: Row(
-                                                                    children: [
-                                                                      const Icon(
-                                                                        Icons
-                                                                            .star,
-                                                                      ),
-                                                                      Text(widget
-                                                                          .movieList![
-                                                                              index]
-                                                                          .voteAverage!
-                                                                          .toStringAsFixed(
-                                                                              1))
-                                                                    ],
-                                                                  ),
+                                                                  // child: Row(
+                                                                  //   children: [
+                                                                  //     const Icon(
+                                                                  //       Icons
+                                                                  //           .star,
+                                                                  //     ),
+                                                                  //     Text(widget
+                                                                  //         .movieList![
+                                                                  //             index]
+                                                                  //         .voteAverage!
+                                                                  //         .toStringAsFixed(
+                                                                  //             1))
+                                                                  //   ],
+                                                                  // ),
                                                                 ),
                                                               ),
                                                               Positioned(
