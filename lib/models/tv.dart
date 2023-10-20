@@ -33,8 +33,11 @@ class TVList {
 class TV {
   int? voteCount;
   int? id;
+  int? episodeNumber;
+  int? seasonNumber;
   num? voteAverage;
   String? name;
+  String? seriesName;
   num? popularity;
   String? posterPath;
   String? originalLanguage;
@@ -49,8 +52,11 @@ class TV {
   TV({
     this.voteCount,
     this.id,
+    this.episodeNumber,
+    this.seasonNumber,
     this.voteAverage,
     this.name,
+    this.seriesName,
     this.popularity,
     this.posterPath,
     this.originalLanguage,
@@ -66,9 +72,12 @@ class TV {
   TV.fromJson(Map<String, dynamic> json) {
     voteCount = json['vote_count'];
     id = json['id'];
+    seasonNumber = json['season_num'];
+    episodeNumber = json['episode_num'];
     adult = json['adult'];
     voteAverage = json['vote_average'];
     name = json['name'];
+    seriesName = json['series_name'];
     popularity = json['popularity'];
     posterPath = json['poster_path'];
     originalLanguage = json['original_language'];
@@ -83,9 +92,12 @@ class TV {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['vote_count'] = voteCount;
     data['id'] = id;
+    data['episode_num'] = episodeNumber;
+    data['season_num'] = seasonNumber;
     data['adult'] = adult;
     data['vote_average'] = voteAverage;
     data['name'] = name;
+    data['series_name'] = seriesName;
     data['popularity'] = popularity;
     data['poster_path'] = posterPath;
     data['original_language'] = originalLanguage;
@@ -101,10 +113,13 @@ class TV {
   Map<String, dynamic> toMap() {
     var map = <String, dynamic>{};
     map['id'] = id;
+    map['season_num'] = seasonNumber;
+    map['episode_num'] = episodeNumber;
     //  map['genre_ids'] = genreIds;
     map['poster_path'] = posterPath;
     map['vote_count'] = voteCount;
     map['name'] = name;
+    map['series_name'] = seriesName;
     // map['video'] = video;
     map['vote_average'] = voteAverage;
     map['popularity'] = popularity;
@@ -121,11 +136,14 @@ class TV {
 
   TV.fromMapObject(Map<String, dynamic> map) {
     id = map['id'];
+    seasonNumber = map['seasonNumber'];
+    episodeNumber = map['episodeNumber'];
     // genreIds = map['genre_ids'];
     posterPath = map['poster_path'];
     voteCount = map['vote_count'];
     //video = map['video'];
     name = map['name'];
+    seriesName = map['series_name'];
     voteAverage = map['vote_average'];
     popularity = map['popularity'];
     originalLanguage = map['original_language'];

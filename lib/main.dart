@@ -66,9 +66,6 @@ Future<void> appInitialize() async {
 
 void main() async {
   await appInitialize();
-  // if (showAds) {
-  //   MobileAds.instance.initialize();
-  // }
   runApp(EasyLocalization(
     supportedLocales: Translation.all,
     path: 'assets/translations',

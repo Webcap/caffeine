@@ -5,8 +5,8 @@ import 'package:caffiene/models/movie_models.dart';
 import 'package:caffiene/models/tv.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/screens/watch_history/widgets/movie_watch_history_widget.dart';
+import 'package:caffiene/screens/watch_history/widgets/tv_watch_history_tab.dart';
 import 'package:caffiene/utils/snackbar.dart';
-import 'package:caffiene/widgets/placeholder_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -130,7 +130,7 @@ class _WatchHistoryState extends State<WatchHistory>
             child: TabBar(
               tabs: [
                 Tab(
-                    child: Row(
+                  child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Padding(
@@ -143,7 +143,7 @@ class _WatchHistoryState extends State<WatchHistory>
                   ],
                 )),
                 Tab(
-                    child: Row(
+                  child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Padding(
@@ -175,11 +175,7 @@ class _WatchHistoryState extends State<WatchHistory>
               controller: tabController,
               children: [
                 MovieWatchHistory(movieList: firebaseMovies),
-                PlaceHolderPage(),
-                // PlaceHolderPage(),
-                // TVBookmark(
-                //   tvList: tvList,
-                // )
+                tvWatchHistory(tvList: firebaseTvShows)
               ],
             ),
           )
