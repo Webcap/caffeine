@@ -184,45 +184,59 @@ class _tvWatchHistoryState extends State<tvWatchHistory> {
                                                     const SizedBox(
                                                       height: 5,
                                                     ),
-                                                    Positioned(
-                                                      top: 0,
-                                                      left: 0,
-                                                      child: Container(
-                                                        margin: const EdgeInsets
-                                                            .all(3),
-                                                        alignment:
-                                                            Alignment.center,
-                                                        width: 70,
-                                                        height: 22,
-                                                        decoration: BoxDecoration(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        8),
-                                                            color: Theme.of(
-                                                                    context)
-                                                                .primaryColor
-                                                                .withOpacity(
-                                                                    0.85)),
-                                                        child: Row(
-                                                          children: [
-                                                            Text(
-                                                                '${widget.tvList![index].seasonNumber! <= 9 ? 'S0${widget.tvList![index].seasonNumber!}' : 'S${widget.tvList![index].seasonNumber!}'} | '
-                                                                '${widget.tvList![index].episodeNumber! <= 9 ? 'E0${widget.tvList![index].episodeNumber!}' : 'E${widget.tvList![index].episodeNumber!}'}'
-                                                                '',
-                                                                style: TextStyle(
-                                                                    color: Theme.of(
-                                                                            context)
-                                                                        .colorScheme
-                                                                        .onPrimary
-                                                                        .withOpacity(
-                                                                            0.85)))
-                                                          ],
-                                                        ),
+                                                    // Positioned(
+                                                    //   top: 0,
+                                                    //   left: 5,
+                                                    //   child: Container(
+                                                    //     margin: const EdgeInsets
+                                                    //         .all(3),
+                                                    //     alignment:
+                                                    //         Alignment.center,
+                                                    //     width: 80,
+                                                    //     height: 22,
+                                                    //     decoration: BoxDecoration(
+                                                    //         borderRadius:
+                                                    //             BorderRadius
+                                                    //                 .circular(
+                                                    //                     8),
+                                                    //         color: Theme.of(
+                                                    //                 context)
+                                                    //             .primaryColor
+                                                    //             .withOpacity(
+                                                    //                 0.85)),
+                                                    //     child: Row(
+                                                    //       children: [
+                                                    //         Text(
+                                                    //             // '${widget.tvList![index].seasonNumber! <= 9 ? 'S0${widget.tvList![index].seasonNumber!}' : 'S${widget.tvList![index].seasonNumber!}'} | '
+                                                    //             // '${widget.tvList![index].episodeNumber! <= 9 ? 'E0${widget.tvList![index].episodeNumber!}' : 'E${widget.tvList![index].episodeNumber!}'}'
+                                                    //             // '',
+                                                    //             'EpName',
+                                                    //             style: TextStyle(
+                                                    //                 color: Theme.of(
+                                                    //                         context)
+                                                    //                     .colorScheme
+                                                    //                     .onPrimary
+                                                    //                     .withOpacity(
+                                                    //                         0.85)))
+                                                    //       ],
+                                                    //     ),
+                                                    //   ),
+                                                    // ),
+                                                    Expanded(
+                                                      flex: 1,
+                                                      child: Text(
+                                                        '${widget.tvList![index].seasonNumber! <= 9 ? 'S0${widget.tvList![index].seasonNumber!}' : 'S${widget.tvList![index].seasonNumber!}'} | '
+                                                        '${widget.tvList![index].episodeNumber! <= 9 ? 'E0${widget.tvList![index].episodeNumber!}' : 'E${widget.tvList![index].episodeNumber!}'}'
+                                                        '',
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                        maxLines: 2,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
                                                       ),
                                                     ),
                                                     Expanded(
-                                                        flex: 2,
+                                                        flex: 1,
                                                         child: Text(
                                                           widget.tvList![index]
                                                               .seriesName!,

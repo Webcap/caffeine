@@ -38,6 +38,7 @@ class TV {
   num? voteAverage;
   String? name;
   String? seriesName;
+  String? episodeName;
   num? popularity;
   String? posterPath;
   String? originalLanguage;
@@ -61,6 +62,7 @@ class TV {
     this.posterPath,
     this.originalLanguage,
     this.originalName,
+    this.episodeName,
     this.genreIds,
     this.backdropPath,
     this.overview,
@@ -77,6 +79,7 @@ class TV {
     adult = json['adult'];
     voteAverage = json['vote_average'];
     name = json['name'];
+    episodeName = json['episode_name'];
     seriesName = json['series_name'];
     popularity = json['popularity'];
     posterPath = json['poster_path'];
@@ -97,6 +100,7 @@ class TV {
     data['adult'] = adult;
     data['vote_average'] = voteAverage;
     data['name'] = name;
+    data['episode_name'] = episodeName;
     data['series_name'] = seriesName;
     data['popularity'] = popularity;
     data['poster_path'] = posterPath;
@@ -119,6 +123,7 @@ class TV {
     map['poster_path'] = posterPath;
     map['vote_count'] = voteCount;
     map['name'] = name;
+    map['episode_name'] = episodeName;
     map['series_name'] = seriesName;
     // map['video'] = video;
     map['vote_average'] = voteAverage;
@@ -144,6 +149,7 @@ class TV {
     //video = map['video'];
     name = map['name'];
     seriesName = map['series_name'];
+    episodeName = map['episode_name'];
     voteAverage = map['vote_average'];
     popularity = map['popularity'];
     originalLanguage = map['original_language'];
