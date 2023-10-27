@@ -1,5 +1,4 @@
 import 'package:caffiene/caffiene_main.dart';
-import 'package:caffiene/models/download_manager.dart';
 import 'package:caffiene/models/translation.dart';
 import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:caffiene/provider/recently_watched_provider.dart';
@@ -22,10 +21,8 @@ bool isTablet(BuildContext context) {
 }
 
 SettingsProvider settingsProvider = SettingsProvider();
-DownloadProvider downloadProvider = DownloadProvider();
 RecentProvider recentProvider = RecentProvider();
 AppDependencyProvider appDependencyProvider = AppDependencyProvider();
-
 final Future<FirebaseApp> _initialization = Firebase.initializeApp();
 
 Future<void> appInitialize() async {
@@ -35,21 +32,17 @@ Future<void> appInitialize() async {
   FirebaseMessaging.onBackgroundMessage(_messageHandler);
   await FlutterDownloader.initialize(debug: true, ignoreSsl: true);
   await _initialization;
-  await settingsProvider.getCurrentThemeMode();
+await settingsProvider.getCurrentThemeMode();
   await settingsProvider.getCurrentMaterial3Mode();
+  await settingsProvider.initMixpanel();
   await settingsProvider.getCurrentAdultMode();
   await settingsProvider.getCurrentDefaultScreen();
   await settingsProvider.getCurrentImageQuality();
   await settingsProvider.getCurrentWatchCountry();
   await settingsProvider.getCurrentViewType();
-  await settingsProvider.initMixpanel();
   await settingsProvider.getSeekDuration();
   await settingsProvider.getMaxBufferDuration();
   await settingsProvider.getVideoResolution();
-  await settingsProvider.getSubtitleSize();
-  await settingsProvider.getForegroundSubtitleColor();
-  await settingsProvider.getBackgroundSubtitleColor();
-  await settingsProvider.getAppLanguage();
   await settingsProvider.getSubtitleLanguage();
   await settingsProvider.getSubtitleMode();
   await settingsProvider.getViewMode();
@@ -58,6 +51,10 @@ Future<void> appInitialize() async {
   await appDependencyProvider.getConsumetUrl();
   await appDependencyProvider.getOpenSubKey();
   await appDependencyProvider.getStreamingServer();
+  await settingsProvider.getSubtitleSize();
+  await settingsProvider.getForegroundSubtitleColor();
+  await settingsProvider.getBackgroundSubtitleColor();
+  await settingsProvider.getAppLanguage();
   await Supabase.initialize(
     url: SUPABASE_URL,
     anonKey: dotenv.env['SUPABASE_ANNON_KEY']!,

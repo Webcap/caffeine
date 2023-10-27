@@ -75,14 +75,7 @@ class _caffeineState extends State<caffeine>
     FirebaseMessaging.onMessage.listen((RemoteMessage event) {});
     FirebaseMessaging.onMessageOpenedApp.listen((message) {});
   }
-
-  @override
-  void dispose() {
-    settingsProvider.dispose();
-    recentProvider.dispose();
-    super.dispose();
-  }
-
+  
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
