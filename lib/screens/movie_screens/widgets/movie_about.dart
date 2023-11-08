@@ -1,3 +1,4 @@
+import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/api/endpoints.dart';
@@ -29,6 +30,9 @@ class MovieAbout extends StatefulWidget {
 class _MovieAboutState extends State<MovieAbout> {
   bool? isVisible = false;
   double? buttonWidth = 150;
+  late AppDependencyProvider appDependency =
+      Provider.of<AppDependencyProvider>(context, listen: false);
+
   @override
   Widget build(BuildContext context) {
     final lang = Provider.of<SettingsProvider>(context).appLanguage;
@@ -109,7 +113,8 @@ class _MovieAboutState extends State<MovieAbout> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                widget.movie.releaseDate!.isNotEmpty
+                widget.movie.releaseDate!.isNotEmpty &&
+                        appDependency.displayWatchNowButton
                     ? WatchNowButton(
                         releaseYear:
                             DateTime.parse(widget.movie.releaseDate!).year,

@@ -8,6 +8,9 @@ class AppDependencyProvider extends ChangeNotifier {
   String _consumetUrl = 'https://consumet-api-beryl.vercel.app/';
   String get consumetUrl => _consumetUrl;
 
+  String _showboxUrl = "";
+  String get showboxUrl => _showboxUrl;
+
   String _caffieneLogo = 'default';
   String get caffieneLogo => _caffieneLogo;
 
@@ -23,14 +26,20 @@ class AppDependencyProvider extends ChangeNotifier {
   String _fetchRoute = "tmDB";
   String get fetchRoute => _fetchRoute;
 
-  bool _enableHolidayMovieTab = false;
-  bool get enableHolidayMovieTab => _enableHolidayMovieTab;
-
   bool _useExternalSubtitles = false;
   bool get useExternalSubtitles => _useExternalSubtitles;
 
   bool _enableOTTADS = true;
   bool get enableOTTADS => _enableOTTADS;
+
+  bool _enableTrendingHoliday = true;
+  bool get enableTrendingHoliday => _enableTrendingHoliday;
+
+  bool _displayWatchNowButton = false;
+  bool get displayWatchNowButton => _displayWatchNowButton;
+
+  bool _displayOTTDrawer = false;
+  bool get displayOTTDrawer => _displayOTTDrawer;
 
   Future<void> getConsumetUrl() async {
     consumetUrl = await appDependencies.getConsumetUrl();
@@ -82,11 +91,6 @@ class AppDependencyProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  set enableHolidayMovieTab(bool value) {
-    _enableHolidayMovieTab = value;
-    notifyListeners();
-  }
-
   set useExternalSubtitles(bool value) {
     _useExternalSubtitles = value;
     notifyListeners();
@@ -94,6 +98,30 @@ class AppDependencyProvider extends ChangeNotifier {
 
   set enableOTTADS(bool value) {
     _enableOTTADS = value;
+    notifyListeners();
+  }
+
+  set enableTrendingHoliday(bool value) {
+    _enableTrendingHoliday = value;
+    notifyListeners();
+  }
+
+  set displayWatchNowButton(bool value) {
+    _displayWatchNowButton = value;
+    notifyListeners();
+  }
+
+  set displayOTTDrawer(bool value) {
+    _displayOTTDrawer = value;
+    notifyListeners();
+  }
+
+  Future<void> getShowboxUrl() async {
+    showboxUrl = await appDependencies.getShowboxUrl();
+  }
+
+  set showboxUrl(String value) {
+    _showboxUrl = value;
     notifyListeners();
   }
 }

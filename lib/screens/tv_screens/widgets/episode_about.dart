@@ -1,3 +1,4 @@
+import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:caffiene/screens/tv_screens/widgets/tv_epi_image.dart';
 import 'package:caffiene/screens/tv_screens/widgets/watch_now_tv.dart';
 import 'package:caffiene/widgets/common_widgets.dart';
@@ -32,6 +33,9 @@ class EpisodeAbout extends StatefulWidget {
 }
 
 class _EpisodeAboutState extends State<EpisodeAbout> {
+  late AppDependencyProvider appDependency =
+      Provider.of<AppDependencyProvider>(context, listen: false);
+
   @override
   Widget build(BuildContext context) {
     final lang = Provider.of<SettingsProvider>(context).appLanguage;
@@ -99,12 +103,14 @@ class _EpisodeAboutState extends State<EpisodeAbout> {
               ],
             ),
             const SizedBox(height: 20),
-            WatchNowButtonTV(
-              episodeList: widget.episodeList,
-              seriesName: widget.seriesName!,
-              tvId: widget.tvId!,
-              posterPath: widget.posterPath!,
-            ),
+            appDependency.displayWatchNowButton && widget.posterPath != null
+              ? WatchNowButtonTV(
+                  episodeList: widget.episodeList,
+                  seriesName: widget.seriesName!,
+                  tvId: widget.tvId!,
+                  posterPath: widget.posterPath!,
+                )
+              : Container(),
             const SizedBox(height: 15),
             ScrollingTVEpisodeCasts(
               passedFrom: 'episode_detail',

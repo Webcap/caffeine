@@ -63,6 +63,13 @@ class _caffeineState extends State<caffeine>
           _remoteConfig.getBool('use_external_subtitles');
       appDependencyProvider.enableOTTADS =
           _remoteConfig.getBool('ott_ads_enabled');
+      appDependencyProvider.enableTrendingHoliday =
+          _remoteConfig.getBool('trending_holiday_scroller');
+      appDependencyProvider.displayWatchNowButton =
+          _remoteConfig.getBool('enable_stream');
+      appDependencyProvider.displayOTTDrawer =
+          _remoteConfig.getBool('enable_ott');
+      appDependencyProvider.showboxUrl = _remoteConfig.getString('showbox_url');
     }
     await requestNotificationPermissions();
   }
@@ -75,7 +82,7 @@ class _caffeineState extends State<caffeine>
     FirebaseMessaging.onMessage.listen((RemoteMessage event) {});
     FirebaseMessaging.onMessageOpenedApp.listen((message) {});
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(

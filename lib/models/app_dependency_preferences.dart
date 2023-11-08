@@ -8,6 +8,7 @@ class AppDependencies {
   static const CAFFIENE_LOGO_URL = "caffieneLogoUrl";
   static const STREAM_SERVER = "vidcloud";
   static const OPENSUBTITLES_KEY = "opensubtitlesKey";
+  static const SHOWBOX_URL = "showbox_url";
 
   setConsumetUrl(String value) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -16,7 +17,8 @@ class AppDependencies {
 
   Future<String> getConsumetUrl() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString(CONSUMET_URL_KEY) ?? 'https://consumet.beamlak.dev';
+    return prefs.getString(CONSUMET_URL_KEY) ??
+        'https://consumet-api-beryl.vercel.app/';
   }
 
   setCaffieneUrl(String value) async {
@@ -51,5 +53,19 @@ class AppDependencies {
 
   Future<bool> enableAD(bool enable) async {
     return enable;
+  }
+
+  Future<bool> enableTrendingHoliday(bool enable) async {
+    return enable;
+  }
+
+  Future<String> getShowboxUrl() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString(SHOWBOX_URL) ?? "";
+  }
+
+  setShowboxUrl(String value) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString(SHOWBOX_URL, value);
   }
 }

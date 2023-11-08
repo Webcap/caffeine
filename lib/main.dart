@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:caffiene/caffiene_main.dart';
 import 'package:caffiene/models/translation.dart';
 import 'package:caffiene/provider/app_dependency_provider.dart';
@@ -63,6 +65,7 @@ await settingsProvider.getCurrentThemeMode();
 
 void main() async {
   await appInitialize();
+  HttpOverrides.global = MyHttpOverrides();
   runApp(EasyLocalization(
     supportedLocales: Translation.all,
     path: 'assets/translations',

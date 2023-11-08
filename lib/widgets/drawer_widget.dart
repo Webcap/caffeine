@@ -1,6 +1,6 @@
+import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:caffiene/screens/common/server_status_screen.dart';
 import 'package:caffiene/screens/tv_screens/live_tv_screen.dart';
-import 'package:caffiene/screens/watch_history/watch_history_screen.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -33,6 +33,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
   Widget build(BuildContext context) {
     final isDark = Provider.of<SettingsProvider>(context).darktheme;
     final mixpanel = Provider.of<SettingsProvider>(context).mixpanel;
+    AppDependencyProvider appDependencyProvider = AppDependencyProvider();
     return Drawer(
       child: Container(
         color: isDark ? Colors.black : Colors.white,
@@ -50,16 +51,18 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                       child: Image.asset(appConfig.app_icon),
                     ),
                   ),
-                  ListTile(
-                    leading: Icon(
-                      FontAwesomeIcons.tv,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                    title: Text(tr("live_tv")),
-                    onTap: () {
-                      nextScreen(context, const LiveTV());
-                    },
-                  ),
+                  appDependencyProvider.displayOTTDrawer
+                      ? ListTile(
+                          leading: Icon(
+                            FontAwesomeIcons.tv,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                          title: Text(tr("live_tv")),
+                          onTap: () {
+                            nextScreen(context, const LiveTV());
+                          },
+                        )
+                      : Container(),
                   ListTile(
                     leading: Icon(
                       FontAwesomeIcons.bookmark,
@@ -70,16 +73,16 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                       nextScreen(context, const BookmarkScreen());
                     },
                   ),
-                  ListTile(
-                    leading: Icon(
-                      FontAwesomeIcons.clockRotateLeft,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                    title: Text(tr("watch_history")),
-                    onTap: () {
-                      nextScreen(context, const WatchHistory());
-                    },
-                  ),
+                  // ListTile(
+                  //   leading: Icon(
+                  //     FontAwesomeIcons.clockRotateLeft,
+                  //     color: Theme.of(context).colorScheme.primary,
+                  //   ),
+                  //   title: Text(tr("watch_history")),
+                  //   onTap: () {
+                  //     nextScreen(context, const WatchHistory());
+                  //   },
+                  // ),
                   ListTile(
                     leading: Icon(
                       Icons.info_outline,

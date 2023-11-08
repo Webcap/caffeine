@@ -105,10 +105,9 @@ const retryOptions = RetryOptions(
 const timeOut = Duration(seconds: 15);
 
 final List<String> appNames = [
-  'caffeine-v1.3.3.apk',
-  'caffeine-v1.3.4.apk',
   'caffeine-v1.3.5.apk',
   'caffeine-v1.3.6.apk',
+  'caffeine-v1.4.0.apk',
 ];
 
 CacheManager cacheProp() {
@@ -119,3 +118,12 @@ CacheManager cacheProp() {
 enum MediaType { movie, tvShow }
 
 enum StreamRoute { flixHQ, tmDB }
+
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
+  }
+}

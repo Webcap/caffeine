@@ -1,3 +1,4 @@
+import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:caffiene/provider/recently_watched_provider.dart';
 import 'package:caffiene/screens/common/update_screen.dart';
 import 'package:caffiene/screens/movie_screens/widgets/scrolling_recent_movies.dart';
@@ -21,6 +22,8 @@ class MainMoviesDisplay extends StatefulWidget {
 }
 
 class _MainMoviesDisplayState extends State<MainMoviesDisplay> {
+  late AppDependencyProvider appDep =
+      Provider.of<AppDependencyProvider>(context, listen: false);
   @override
   void initState() {
     super.initState();
@@ -38,13 +41,13 @@ class _MainMoviesDisplayState extends State<MainMoviesDisplay> {
             includeAdult: includeAdult,
           ),
           UpdateBottom(),
-          ScrollingMovies(
-            title: tr("trending_horror_movies"),
-            api: Endpoints.halloweenMoviesUrl(1, lang),
-            discoverType: 'horror',
-            isTrending: true,
-            includeAdult: includeAdult,
-          ),
+          // ScrollingMovies(
+          //   title: tr("trending_horror_movies"),
+          //   api: Endpoints.halloweenMoviesUrl(1, lang),
+          //   discoverType: 'horror',
+          //   isTrending: true,
+          //   includeAdult: includeAdult,
+          // ),
           rMovies.isEmpty
               ? Container()
               : ScrollingRecentMovies(moviesList: rMovies),

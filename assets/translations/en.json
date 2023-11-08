@@ -481,5 +481,7 @@
     "fetch_all_subs": "Fetch all subtitles that belong to a specific language",
     "video_link_copied": "Video link copied to clipboard",
     "watch_history": "Watch History",
-    "no_movies_watched": "You didn't watch any movies yet :("
+    "no_movies_watched": "You didn't watch any movies yet :(",
+    "latency": "Latency in miliseconds (ms): {l}",
+    "caffeine_appbar": "caffeine"
 }

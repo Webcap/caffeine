@@ -58,7 +58,7 @@ class _WatchHistoryState extends State<WatchHistory>
     uid = user!.uid;
     setState(() {
       isLoading = true;
-      CircularProgressIndicator();
+      const CircularProgressIndicator();
     });
 
     if (await checkIfDocExists(uid!) == false) {
