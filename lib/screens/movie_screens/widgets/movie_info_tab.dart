@@ -58,7 +58,7 @@ class MovieInfoTableState extends State<MovieInfoTable> {
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: movieDetails == null
-                    ? detailInfoTableShimmer1(themeMode)
+                    ? detailInfoTableShimmer(themeMode)
                     : DataTable(dataRowMinHeight: 40, columns: [
                         DataColumn(
                             label: Text(

@@ -68,7 +68,7 @@ class TVGenreListGridState extends State<TVGenreListGrid>
               width: double.infinity,
               height: 80,
               child: genreList == null
-                  ? genreListGridShimmer1(themeMode)
+                  ? genreListGridShimmer(themeMode)
                   : Row(
                       children: [
                         Expanded(
@@ -147,7 +147,7 @@ class TVGenreDisplayState extends State<TVGenreDisplay>
         child: genres == null
             ? SizedBox(
                 height: 80,
-                child: detailGenreShimmer1(themeMode),
+                child: detailGenreShimmer(themeMode),
               )
             : genres!.isEmpty
                 ? Container()

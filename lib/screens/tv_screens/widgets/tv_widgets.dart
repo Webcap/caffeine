@@ -449,7 +449,7 @@ class TVEpisodeCastTabState extends State<TVEpisodeCastTab>
                                                     ),
                                                     placeholder: (context,
                                                             url) =>
-                                                        castAndCrewTabImageShimmer1(
+                                                        castAndCrewTabImageShimmer(
                                                             themeMode),
                                                     errorWidget:
                                                         (context, url, error) =>
@@ -613,7 +613,7 @@ class TVImagesDisplayState extends State<TVImagesDisplay> {
               width: double.infinity,
               height: 260,
               child: tvImages == null
-                  ? detailImageShimmer1(themeMode)
+                  ? detailImageShimmer(themeMode)
                   : CarouselSlider(
                       options: CarouselOptions(
                         enableInfiniteScroll: false,
@@ -720,7 +720,7 @@ class TVImagesDisplayState extends State<TVImagesDisplay> {
                                                             ),
                                                             placeholder: (context,
                                                                     url) =>
-                                                                detailImageImageSimmer1(
+                                                                detailImageImageSimmer(
                                                                     themeMode),
                                                             errorWidget:
                                                                 (context, url,
@@ -862,7 +862,7 @@ class TVImagesDisplayState extends State<TVImagesDisplay> {
                                                             ),
                                                             placeholder: (context,
                                                                     url) =>
-                                                                detailImageImageSimmer1(
+                                                                detailImageImageSimmer(
                                                                     themeMode),
                                                             errorWidget:
                                                                 (context, url,
@@ -994,7 +994,7 @@ class TVVideosDisplayState extends State<TVVideosDisplay> {
             width: double.infinity,
             height: 230,
             child: tvVideos == null
-                ? detailVideoShimmer1(themeMode)
+                ? detailVideoShimmer(themeMode)
                 : tvVideos!.result!.isEmpty
                     ? SizedBox(
                         width: double.infinity,
@@ -1068,7 +1068,7 @@ class TVVideosDisplayState extends State<TVVideosDisplay> {
                                                     ),
                                                     placeholder: (context,
                                                             url) =>
-                                                        detailVideoImageShimmer1(
+                                                        detailVideoImageShimmer(
                                                             themeMode),
                                                     errorWidget:
                                                         (context, url, error) =>
@@ -1167,7 +1167,7 @@ class TVInfoTableState extends State<TVInfoTable> {
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: tvDetails == null
-                    ? detailInfoTableShimmer1(themeMode)
+                    ? detailInfoTableShimmer(themeMode)
                     : DataTable(dataRowMinHeight: 40, columns: [
                         DataColumn(
                             label: Text(
@@ -1608,7 +1608,7 @@ class TVCastTabState extends State<TVCastTab>
     final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     return credits == null
-        ? Container(child: tvCastAndCrewTabShimmer1(themeMode))
+        ? Container(child: tvCastAndCrewTabShimmer(themeMode))
         : credits!.cast!.isEmpty
             ? Center(
                 child: Text(
@@ -1691,7 +1691,7 @@ class TVCastTabState extends State<TVCastTab>
                                                     ),
                                                     placeholder: (context,
                                                             url) =>
-                                                        castAndCrewTabImageShimmer1(
+                                                        castAndCrewTabImageShimmer(
                                                             themeMode),
                                                     errorWidget:
                                                         (context, url, error) =>
@@ -1891,7 +1891,7 @@ class TVCrewTabState extends State<TVCrewTab>
                                                     ),
                                                     placeholder: (context,
                                                             url) =>
-                                                        castAndCrewTabImageShimmer1(
+                                                        castAndCrewTabImageShimmer(
                                                             themeMode),
                                                     errorWidget:
                                                         (context, url, error) =>

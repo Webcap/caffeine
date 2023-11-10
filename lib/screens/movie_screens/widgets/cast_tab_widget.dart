@@ -101,7 +101,7 @@ class CastTabState extends State<CastTab>
                                                   ),
                                                 ),
                                                 placeholder: (context, url) =>
-                                                    castAndCrewTabImageShimmer1(
+                                                    castAndCrewTabImageShimmer(
                                                         themeMode),
                                                 errorWidget:
                                                     (context, url, error) =>
@@ -268,7 +268,7 @@ class CrewTabState extends State<CrewTab>
                                                   ),
                                                 ),
                                                 placeholder: (context, url) =>
-                                                    castAndCrewTabImageShimmer1(
+                                                    castAndCrewTabImageShimmer(
                                                         themeMode),
                                                 errorWidget:
                                                     (context, url, error) =>

@@ -152,7 +152,7 @@ class _PersonImagesDisplayState extends State<PersonImagesDisplay>
                                                 ),
                                               ),
                                               placeholder: (context, url) =>
-                                                  scrollingImageShimmer1(
+                                                  scrollingImageShimmer(
                                                       themeMode),
                                               errorWidget:
                                                   (context, url, error) =>
@@ -804,38 +804,50 @@ class _PersonDataTableState extends State<PersonDataTable> {
   @override
   void initState() {
     moviesApi().fetchPersonDetails(widget.api).then((value) {
-      setState(() {
-        personDetails = value;
-      });
+      if (mounted) {
+        setState(() {
+          personDetails = value;
+        });
+      }
     });
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    //final themeMode = Provider.of<DarkthemeProvider>(context).darktheme;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     return Container(
       child: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: personDetails == null
-              ? personDetailInfoTableShimmer()
+              ? personDetailInfoTableShimmer(themeMode)
               : DataTable(dataRowMinHeight: 40, columns: [
-                  const DataColumn(
-                      label: Text(
-                    'Age',
-                    style: kTableLeftStyle,
-                  )),
                   DataColumn(
-                    label: Text(personDetails?.birthday != null
-                        ? '${DateTime.parse(DateTime.now().toString()).year.toInt() - DateTime.parse(personDetails!.birthday!.toString()).year - 1}'
-                        : '-'),
+                      label: personDetails!.deathday != null &&
+                              personDetails!.birthday != null
+                          ? Text(
+                              tr("died_aged"),
+                              style: kTableLeftStyle,
+                            )
+                          : Text(
+                              tr("age"),
+                              style: kTableLeftStyle,
+                            )),
+                  DataColumn(
+                    label: personDetails!.deathday != null &&
+                            personDetails!.birthday != null
+                        ? Text(
+                            '${DateTime.parse(personDetails!.deathday.toString()).year.toInt() - DateTime.parse(personDetails!.birthday!.toString()).year - 1}')
+                        : Text(personDetails?.birthday != null
+                            ? '${DateTime.parse(DateTime.now().toString()).year.toInt() - DateTime.parse(personDetails!.birthday!.toString()).year - 1}'
+                            : '-'),
                   ),
                 ], rows: [
                   DataRow(cells: [
-                    const DataCell(Text(
-                      'Born on',
+                    DataCell(Text(
+                      tr("born_on"),
                       style: kTableLeftStyle,
                     )),
                     DataCell(
@@ -845,8 +857,8 @@ class _PersonDataTableState extends State<PersonDataTable> {
                     ),
                   ]),
                   DataRow(cells: [
-                    const DataCell(Text(
-                      'From',
+                    DataCell(Text(
+                      tr("from"),
                       style: kTableLeftStyle,
                     )),
                     DataCell(

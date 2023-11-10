@@ -87,7 +87,7 @@ class TVSeasonImagesDisplayState extends State<TVSeasonImagesDisplay> {
             width: double.infinity,
             height: 200,
             child: tvImages == null
-                ? detailImageShimmer1(themeMode)
+                ? detailImageShimmer(themeMode)
                 : tvImages!.poster!.isEmpty
                     ? SizedBox(
                         width: double.infinity,
@@ -150,7 +150,7 @@ class TVSeasonImagesDisplayState extends State<TVSeasonImagesDisplay> {
                                         ),
                                       ),
                                       placeholder: (context, url) =>
-                                          scrollingImageShimmer1(themeMode),
+                                          scrollingImageShimmer(themeMode),
                                       errorWidget: (context, url, error) =>
                                           Image.asset(
                                         'assets/images/na_logo.png',

@@ -35,7 +35,7 @@ class _MovieWatchHistoryState extends State<MovieWatchHistory> {
         ? Container(child: moviesAndTVShowGridShimmer(themeMode))
         : widget.movieList == null && viewType == 'list'
             ? Container(
-                child: mainPageVerticalScrollShimmer1(
+                child: mainPageVerticalScrollShimmer(
                     themeMode: themeMode,
                     isLoading: false,
                     scrollController: _scrollController))
@@ -142,7 +142,7 @@ class _MovieWatchHistoryState extends State<MovieWatchHistory> {
                                                                         ),
                                                                         placeholder:
                                                                             (context, url) =>
-                                                                                scrollingImageShimmer1(themeMode),
+                                                                                scrollingImageShimmer(themeMode),
                                                                         errorWidget: (context,
                                                                                 url,
                                                                                 error) =>
@@ -318,7 +318,7 @@ class _MovieWatchHistoryState extends State<MovieWatchHistory> {
                                                                                           ),
                                                                                         ),
                                                                                       ),
-                                                                                      placeholder: (context, url) => mainPageVerticalScrollImageShimmer1(themeMode),
+                                                                                      placeholder: (context, url) => mainPageVerticalScrollImageShimmer(themeMode),
                                                                                       errorWidget: (context, url, error) => Image.asset(
                                                                                         'assets/images/na_logo.png',
                                                                                         fit: BoxFit.cover,

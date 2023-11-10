@@ -172,7 +172,7 @@ class CollectionDetailsWidgetState extends State<CollectionDetailsWidget>
                                                 cacheManager: cacheProp(),
                                                 fit: BoxFit.fill,
                                                 placeholder: (context, url) =>
-                                                    scrollingImageShimmer1(
+                                                    scrollingImageShimmer(
                                                         themeMode),
                                                 errorWidget:
                                                     (context, url, error) =>

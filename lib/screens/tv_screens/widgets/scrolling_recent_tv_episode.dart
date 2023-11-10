@@ -188,7 +188,7 @@ class _ScrollingRecentEpisodesState extends State<ScrollingRecentEpisodes> {
                                                   ),
                                                 ),
                                                 placeholder: (context, url) =>
-                                                    scrollingImageShimmer1(
+                                                    scrollingImageShimmer(
                                                         themeMode),
                                                 errorWidget:
                                                     (context, url, error) =>

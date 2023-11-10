@@ -110,7 +110,7 @@ class SimilarTVTabState extends State<SimilarTVTab>
             width: double.infinity,
             height: 250,
             child: tvList == null || widget.includeAdult == null
-                ? scrollingMoviesAndTVShimmer1(themeMode)
+                ? scrollingMoviesAndTVShimmer(themeMode)
                 : tvList!.isEmpty
                     ? Text(
                         tr("no_similars_tv"),
@@ -129,7 +129,7 @@ class SimilarTVTabState extends State<SimilarTVTab>
                             visible: isLoading,
                             child: SizedBox(
                               width: 110,
-                              child: horizontalLoadMoreShimmer1(themeMode),
+                              child: horizontalLoadMoreShimmer(themeMode),
                             ),
                           ),
                         ],

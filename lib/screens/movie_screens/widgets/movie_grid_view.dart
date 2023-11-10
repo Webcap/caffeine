@@ -81,7 +81,7 @@ class MovieGridView extends StatelessWidget {
                                         ),
                                       ),
                                       placeholder: (context, url) =>
-                                          scrollingImageShimmer1(themeMode),
+                                          scrollingImageShimmer(themeMode),
                                       errorWidget: (context, url, error) =>
                                           Image.asset(
                                         'assets/images/na_rect.png',

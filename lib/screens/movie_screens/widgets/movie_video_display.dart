@@ -89,7 +89,7 @@ class MovieVideosState extends State<MovieVideosDisplay> {
             width: double.infinity,
             height: 230,
             child: movieVideos == null
-                ? detailVideoShimmer1(themeMode)
+                ? detailVideoShimmer(themeMode)
                 : movieVideos!.result!.isEmpty
                     ? SizedBox(
                         width: double.infinity,
@@ -161,7 +161,7 @@ class MovieVideosState extends State<MovieVideosDisplay> {
                                                     ),
                                                     placeholder: (context,
                                                             url) =>
-                                                        detailVideoImageShimmer1(
+                                                        detailVideoImageShimmer(
                                                             themeMode),
                                                     errorWidget:
                                                         (context, url, error) =>

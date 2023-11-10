@@ -147,7 +147,7 @@ class ScrollingTVState extends State<ScrollingTV>
           width: double.infinity,
           height: 250,
           child: tvList == null
-              ? scrollingMoviesAndTVShimmer1(themeMode)
+              ? scrollingMoviesAndTVShimmer(themeMode)
               : Row(
                   children: [
                     Expanded(
@@ -231,7 +231,7 @@ class ScrollingTVState extends State<ScrollingTV>
                                                         ),
                                                         placeholder: (context,
                                                                 url) =>
-                                                            scrollingImageShimmer1(
+                                                            scrollingImageShimmer(
                                                                 themeMode),
                                                         errorWidget: (context,
                                                                 url, error) =>
@@ -301,7 +301,7 @@ class ScrollingTVState extends State<ScrollingTV>
                       visible: isLoading,
                       child: SizedBox(
                         width: 110,
-                        child: horizontalLoadMoreShimmer1(themeMode),
+                        child: horizontalLoadMoreShimmer(themeMode),
                       ),
                     ),
                   ],
@@ -422,7 +422,7 @@ class ScrollingTVArtistsState extends State<ScrollingTVArtists>
           width: double.infinity,
           height: 160,
           child: credits == null
-              ? detailCastShimmer1(themeMode)
+              ? detailCastShimmer(themeMode)
               : credits!.cast!.isEmpty
                   ? Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -499,7 +499,7 @@ class ScrollingTVArtistsState extends State<ScrollingTVArtists>
                                                     ),
                                                   ),
                                                   placeholder: (context, url) =>
-                                                      detailCastImageShimmer1(
+                                                      detailCastShimmer(
                                                           themeMode),
                                                   errorWidget:
                                                       (context, url, error) =>
@@ -599,7 +599,7 @@ class ScrollingTVCreatorsState extends State<ScrollingTVCreators>
           width: double.infinity,
           height: 160,
           child: tvDetails == null
-              ? detailCastShimmer1(themeMode)
+              ? detailCastShimmer(themeMode)
               : tvDetails!.createdBy!.isEmpty
                   ? Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -673,7 +673,7 @@ class ScrollingTVCreatorsState extends State<ScrollingTVCreators>
                                                     ),
                                                   ),
                                                   placeholder: (context, url) =>
-                                                      detailCastImageShimmer1(
+                                                      detailCastImageShimmer(
                                                           themeMode),
                                                   errorWidget:
                                                       (context, url, error) =>
@@ -817,7 +817,7 @@ class ScrollingTVEpisodeCastsState extends State<ScrollingTVEpisodeCasts>
           width: double.infinity,
           height: 160,
           child: credits == null
-              ? detailCastShimmer1(themeMode)
+              ? detailCastShimmer(themeMode)
               : ListView.builder(
                   physics: const BouncingScrollPhysics(),
                   itemCount: credits!.cast!.length,
@@ -877,7 +877,7 @@ class ScrollingTVEpisodeCastsState extends State<ScrollingTVEpisodeCasts>
                                                 ),
                                               ),
                                               placeholder: (context, url) =>
-                                                  detailCastImageShimmer1(
+                                                  detailCastImageShimmer(
                                                       themeMode),
                                               errorWidget:
                                                   (context, url, error) =>

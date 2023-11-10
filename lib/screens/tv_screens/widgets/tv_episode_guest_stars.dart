@@ -133,7 +133,7 @@ class TVEpisodeGuestStarsTabState extends State<TVEpisodeGuestStarsTab>
                                                         ),
                                                         placeholder: (context,
                                                                 url) =>
-                                                            castAndCrewTabImageShimmer1(
+                                                            castAndCrewTabImageShimmer(
                                                                 themeMode),
                                                         errorWidget: (context,
                                                                 url, error) =>

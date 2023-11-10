@@ -74,7 +74,7 @@ class ParticularGenreTVState extends State<ParticularGenreTV> {
     return tvList == null && viewType == 'grid'
         ? moviesAndTVShowGridShimmer(themeMode)
         : tvList == null && viewType == 'list'
-            ? mainPageVerticalScrollShimmer1(
+            ? mainPageVerticalScrollShimmer(
                 themeMode: themeMode,
                 isLoading: isLoading,
                 scrollController: _scrollController)

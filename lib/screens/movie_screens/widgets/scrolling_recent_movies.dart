@@ -179,7 +179,7 @@ class _ScrollingRecentMoviesState extends State<ScrollingRecentMovies> {
                                                   ),
                                                 ),
                                                 placeholder: (context, url) =>
-                                                    scrollingImageShimmer1(
+                                                    scrollingImageShimmer(
                                                         themeMode),
                                                 errorWidget:
                                                     (context, url, error) =>

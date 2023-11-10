@@ -107,7 +107,7 @@ class DiscoverMoviesState extends State<DiscoverMovies>
           height: 350,
           // height: deviceHeight * 0.417,
           child: moviesList == null
-              ? discoverMoviesAndTVShimmer1(themeMode)
+              ? discoverMoviesAndTVShimmer(themeMode)
               : moviesList!.isEmpty
                   ? Center(
                       child: Text(
@@ -163,7 +163,7 @@ class DiscoverMoviesState extends State<DiscoverMovies>
                                     ),
                                   ),
                                   placeholder: (context, url) =>
-                                      discoverImageShimmer1(themeMode),
+                                      discoverImageShimmer(themeMode),
                                   errorWidget: (context, url, error) =>
                                       Image.asset(
                                     'assets/images/na_logo.png',

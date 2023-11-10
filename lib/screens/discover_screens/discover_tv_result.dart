@@ -83,7 +83,7 @@ class _DiscoverTVResultState extends State<DiscoverTVResult> {
                 ? moviesAndTVShowGridShimmer(themeMode)
                 : tvList == null && viewType == 'list'
                     ? Container(
-                        child: mainPageVerticalScrollShimmer1(
+                        child: mainPageVerticalScrollShimmer(
                             themeMode: themeMode,
                             isLoading: isLoading,
                             scrollController: _scrollController))

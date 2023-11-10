@@ -69,7 +69,7 @@ class GenreListGridState extends State<GenreListGrid>
             width: double.infinity,
             height: 80,
             child: genreList == null
-                ? genreListGridShimmer1(themeMode)
+                ? genreListGridShimmer(themeMode)
                 : Row(
                     children: [
                       Expanded(

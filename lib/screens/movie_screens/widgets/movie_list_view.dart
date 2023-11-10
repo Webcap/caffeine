@@ -84,7 +84,7 @@ class MovieListView extends StatelessWidget {
                                           ),
                                         ),
                                         placeholder: (context, url) =>
-                                            mainPageVerticalScrollImageShimmer1(
+                                            mainPageVerticalScrollImageShimmer(
                                                 themeMode),
                                         errorWidget: (context, url, error) =>
                                             Image.asset(

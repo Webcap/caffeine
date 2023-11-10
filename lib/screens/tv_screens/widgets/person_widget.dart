@@ -62,7 +62,7 @@ class PersonSocialLinksState extends State<PersonSocialLinks> {
               height: 55,
               width: double.infinity,
               child: externalLinks == null
-                  ? socialMediaShimmer1(themeMode)
+                  ? socialMediaShimmer(themeMode)
                   : externalLinks?.facebookUsername == null &&
                           externalLinks?.instagramUsername == null &&
                           externalLinks?.twitterUsername == null &&

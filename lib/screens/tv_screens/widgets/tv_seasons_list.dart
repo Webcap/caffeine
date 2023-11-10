@@ -73,7 +73,7 @@ class SeasonsListState extends State<SeasonsList> {
           width: double.infinity,
           height: 250,
           child: tvDetails == null
-              ? horizontalScrollingSeasonsList1(themeMode)
+              ? horizontalScrollingSeasonsList(themeMode)
               : tvDetails!.seasons!.isEmpty
                   ? Center(
                       child:
@@ -157,7 +157,7 @@ class SeasonsListState extends State<SeasonsList> {
                                                       ),
                                                       placeholder: (context,
                                                               url) =>
-                                                          scrollingImageShimmer1(
+                                                          scrollingImageShimmer(
                                                               themeMode),
                                                       errorWidget: (context,
                                                               url, error) =>

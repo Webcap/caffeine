@@ -143,7 +143,7 @@ class ScrollingMoviesState extends State<ScrollingMovies>
           width: double.infinity,
           height: 250,
           child: moviesList == null || widget.includeAdult == null
-              ? scrollingMoviesAndTVShimmer1(themeMode)
+              ? scrollingMoviesAndTVShimmer(themeMode)
               : Row(
                   children: [
                     Expanded(
@@ -229,7 +229,7 @@ class ScrollingMoviesState extends State<ScrollingMovies>
                                                         ),
                                                         placeholder: (context,
                                                                 url) =>
-                                                            scrollingImageShimmer1(
+                                                            scrollingImageShimmer(
                                                                 themeMode),
                                                         errorWidget: (context,
                                                                 url, error) =>
@@ -299,7 +299,7 @@ class ScrollingMoviesState extends State<ScrollingMovies>
                       visible: isLoading,
                       child: SizedBox(
                         width: 110,
-                        child: horizontalLoadMoreShimmer1(themeMode),
+                        child: horizontalLoadMoreShimmer(themeMode),
                       ),
                     ),
                   ],

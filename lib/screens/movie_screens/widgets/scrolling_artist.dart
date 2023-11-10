@@ -136,7 +136,7 @@ class ScrollingArtistsState extends State<ScrollingArtists> {
           width: double.infinity,
           height: 160,
           child: credits == null
-              ? detailCastShimmer1(themeMode)
+              ? detailCastShimmer(themeMode)
               : ListView.builder(
                   physics: const BouncingScrollPhysics(),
                   itemCount: credits!.cast!.length,
@@ -198,7 +198,7 @@ class ScrollingArtistsState extends State<ScrollingArtists> {
                                                 ),
                                               ),
                                               placeholder: (context, url) =>
-                                                  detailCastImageShimmer1(
+                                                  detailCastImageShimmer(
                                                       themeMode),
                                               errorWidget:
                                                   (context, url, error) =>

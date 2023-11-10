@@ -106,7 +106,7 @@ class TVRecommendationsTabState extends State<TVRecommendationsTab>
             width: double.infinity,
             height: 250,
             child: tvList == null || widget.includeAdult == null
-                ? scrollingMoviesAndTVShimmer1(themeMode)
+                ? scrollingMoviesAndTVShimmer(themeMode)
                 : tvList!.isEmpty
                     ? Text(
                         tr("no_recommendations_tv"),
@@ -125,7 +125,7 @@ class TVRecommendationsTabState extends State<TVRecommendationsTab>
                             visible: isLoading,
                             child: SizedBox(
                               width: 110,
-                              child: horizontalLoadMoreShimmer1(themeMode),
+                              child: horizontalLoadMoreShimmer(themeMode),
                             ),
                           ),
                         ],

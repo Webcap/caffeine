@@ -87,7 +87,7 @@ class TVEpisodeImagesDisplayState extends State<TVEpisodeImagesDisplay> {
             width: double.infinity,
             height: 180,
             child: tvImages == null
-                ? detailImageShimmer1(themeMode)
+                ? detailImageShimmer(themeMode)
                 : tvImages!.still!.isEmpty
                     ? SizedBox(
                         width: double.infinity,
@@ -152,7 +152,7 @@ class TVEpisodeImagesDisplayState extends State<TVEpisodeImagesDisplay> {
                                         ),
                                       ),
                                       placeholder: (context, url) =>
-                                          detailImageImageSimmer1(themeMode),
+                                          detailImageShimmer(themeMode),
                                       errorWidget: (context, url, error) =>
                                           Image.asset(
                                         'assets/images/na_logo.png',

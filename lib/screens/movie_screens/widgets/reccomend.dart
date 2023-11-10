@@ -91,7 +91,7 @@ class MovieRecommendationsTabState extends State<MovieRecommendationsTab>
             width: double.infinity,
             height: 250,
             child: movieList == null || widget.includeAdult == null
-                ? scrollingMoviesAndTVShimmer1(themeMode)
+                ? scrollingMoviesAndTVShimmer(themeMode)
                 : movieList!.isEmpty
                     ? const Center(
                         child: Text(
@@ -112,7 +112,7 @@ class MovieRecommendationsTabState extends State<MovieRecommendationsTab>
                             visible: isLoading,
                             child: SizedBox(
                               width: 110,
-                              child: horizontalLoadMoreShimmer1(themeMode),
+                              child: horizontalLoadMoreShimmer(themeMode),
                             ),
                           ),
                         ],
@@ -221,7 +221,7 @@ class SimilarMoviesTabState extends State<SimilarMoviesTab>
             width: double.infinity,
             height: 250,
             child: movieList == null || widget.includeAdult == null
-                ? scrollingMoviesAndTVShimmer1(themeMode)
+                ? scrollingMoviesAndTVShimmer(themeMode)
                 : movieList!.isEmpty
                     ? const Center(
                         child: Text(
@@ -242,7 +242,7 @@ class SimilarMoviesTabState extends State<SimilarMoviesTab>
                             visible: isLoading,
                             child: SizedBox(
                               width: 110,
-                              child: horizontalLoadMoreShimmer1(themeMode),
+                              child: horizontalLoadMoreShimmer(themeMode),
                             ),
                           ),
                         ],
