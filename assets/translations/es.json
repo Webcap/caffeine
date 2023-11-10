@@ -483,5 +483,10 @@
     "watch_history": "Ver historial",
     "no_movies_watched": "No tienes historial de reproducciones :(",
     "latency": "Latencia en milisegundos (ms): {l}",
-    "caffeine_appbar": "caffeine"
+    "caffeine_appbar": "caffeine",
+    "share_episode": "¡Mira el episodio de televisión {et} de {title}!\nTiene una calificación de {rating} sobre 10\nhttps://themoviedb.org/tv/{id}/season/{season}/episode/{episode}",
+    "dark": "Oscuro",
+    "light": "Ligero",
+    "amoled": "AMOLED",
+    "video_source": "Fuente de vídeo"
 }

@@ -479,5 +479,10 @@
     "fetch_all_subs": "किसी विशिष्ट भाषा से संबंधित सभी उपशीर्षक प्राप्त करें",
     "video_link_copied": "वीडियो लिंक क्लिपबोर्ड पर कॉपी किया गया",
     "latency": "मिलीसेकंड में विलंबता (एमएस): {एल}",
-    "caffeine_appbar": "caffeine"
+    "caffeine_appbar": "caffeine",
+    "share_episode": "{title} से टीवी एपिसोड {et} चेकआउट करें!\nइसे 10 में से {rating} रेटिंग दी गई है\nhttps://themoviedb.org/tv/{id}/season/{season}/episode/{episode}",
+    "dark": "अँधेरा",
+    "light": "रोशनी",
+    "amoled": "AMOLED",
+    "video_source": "वीडियो स्रोत"
 }
