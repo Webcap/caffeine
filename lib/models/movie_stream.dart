@@ -120,7 +120,6 @@ class MovieVideoSources {
 }
 
 class MovieVideoLinks {
-  MovieVideoLinks();
 
   String? url;
   String? quality;

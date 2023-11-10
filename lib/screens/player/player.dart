@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:caffiene/controller/recently_watched_database_controller.dart';
 import 'package:caffiene/functions/functions.dart';
 import 'package:caffiene/models/recently_watched.dart';
@@ -49,6 +51,11 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
 
   int totalMinutesWatched = 0;
   bool isVideoPaused = false;
+
+  int playbackDurationInSeconds = 0;
+  Timer? _durationTimer;
+  // ignore: unused_field
+  Timer? _resetTimer;
 
   @override
   void initState() {
@@ -143,7 +150,7 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
             resolutions: widget.sources,
             subtitles: widget.subs,
             cacheConfiguration: const BetterPlayerCacheConfiguration(
-              useCache: true,
+              useCache: false,
               preCacheSize: 471859200 * 471859200,
               maxCacheSize: 1073741824 * 1073741824,
               maxCacheFileSize: 471859200 * 471859200,
@@ -162,6 +169,46 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
           .videoPlayerController!.value.duration!.inSeconds;
     });
     _betterPlayerController.setBetterPlayerGlobalKey(_betterPlayerKey);
+
+    // _betterPlayerController.addEventsListener((BetterPlayerEvent event) {
+    //   if (event.betterPlayerEventType == BetterPlayerEventType.play ||
+    //       event.betterPlayerEventType == BetterPlayerEventType.bufferingEnd) {
+    //     startDurationTimer();
+    //   } else if (event.betterPlayerEventType == BetterPlayerEventType.pause ||
+    //       event.betterPlayerEventType == BetterPlayerEventType.bufferingStart) {
+    //     pauseDurationTimer();
+    //   } else if (event.betterPlayerEventType ==
+    //       BetterPlayerEventType.finished) {
+    //     resetDurationTimer();
+    //   }
+    // });
+  }
+
+  void startDurationTimer() {
+    if (_durationTimer == null) {
+      _durationTimer =
+          Timer.periodic(const Duration(seconds: 1), (Timer timer) {
+        setState(() {
+          playbackDurationInSeconds++;
+        });
+      });
+
+      _resetTimer = Timer.periodic(const Duration(seconds: 60), (Timer timer) {
+        resetDurationTimer();
+      });
+    }
+  }
+
+  void pauseDurationTimer() {
+    updateAndLogTotalStreamingDuration(playbackDurationInSeconds);
+    _durationTimer?.cancel();
+    _durationTimer = null;
+  }
+
+  void resetDurationTimer() {
+    setState(() {
+      playbackDurationInSeconds = 0;
+    });
   }
 
   Future<void> insertRecentMovieData() async {
@@ -257,6 +304,7 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
 
   @override
   void dispose() {
+    // _resetTimer?.cancel();
     super.dispose();
   }
 

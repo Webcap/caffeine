@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:caffiene/models/external_subtitles.dart';
 import 'package:caffiene/models/live_tv.dart';
@@ -76,7 +77,6 @@ Future<void> requestNotificationPermissions() async {
     Permission.notification.request();
   }
 }
-
 
 /// Stream TMDB route
 Future<MovieInfoTMDBRoute> getMovieStreamEpisodesTMDB(String api) async {
@@ -240,3 +240,18 @@ Future<TMA> fetchTMA(String uri) async {
   return tma;
 }
 
+int totalStreamingDuration = 0; // Keep track of the total streaming duration
+
+// Function to update and log the aggregate streaming duration
+void updateAndLogTotalStreamingDuration(int durationInSeconds) {
+  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+  totalStreamingDuration += durationInSeconds;
+
+  // Log the new total duration as a custom event for tracking purposes
+  analytics.logEvent(
+    name: 'total_streaming_duration',
+    parameters: <String, dynamic>{
+      'duration_seconds': totalStreamingDuration,
+    },
+  );
+}
