@@ -110,7 +110,7 @@ class _WatchHistoryState extends State<WatchHistory>
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
 
     return Scaffold(
@@ -130,7 +130,7 @@ class _WatchHistoryState extends State<WatchHistory>
             child: TabBar(
               tabs: [
                 Tab(
-                  child: Row(
+                    child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Padding(
@@ -143,7 +143,7 @@ class _WatchHistoryState extends State<WatchHistory>
                   ],
                 )),
                 Tab(
-                  child: Row(
+                    child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Padding(
@@ -155,7 +155,9 @@ class _WatchHistoryState extends State<WatchHistory>
                   ],
                 ))
               ],
-              indicatorColor: isDark ? Colors.white : Colors.black,
+              indicatorColor: themeMode == "dark" || themeMode == "amoled"
+                  ? Colors.white
+                  : Colors.black,
               indicatorWeight: 3,
               //isScrollable: true,
               labelStyle: const TextStyle(

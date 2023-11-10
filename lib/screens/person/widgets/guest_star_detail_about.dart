@@ -26,7 +26,7 @@ class GuestStarDetailAbout extends StatefulWidget {
 class _GuestStarDetailAboutState extends State<GuestStarDetailAbout> {
   @override
   Widget build(BuildContext context) {
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     final lang = Provider.of<SettingsProvider>(context).appLanguage;
     return SingleChildScrollView(
       child: Container(
@@ -53,19 +53,28 @@ class _GuestStarDetailAboutState extends State<GuestStarDetailAbout> {
                       child: Text(tr("about"),
                           style: TextStyle(
                               fontFamily: 'Poppins',
-                              color: isDark ? Colors.white : Colors.black)),
+                              color:
+                                  themeMode == "dark" || themeMode == "amoled"
+                                      ? Colors.white
+                                      : Colors.black)),
                     ),
                     Tab(
                       child: Text(tr("movies"),
                           style: TextStyle(
                               fontFamily: 'Poppins',
-                              color: isDark ? Colors.white : Colors.black)),
+                              color:
+                                  themeMode == "dark" || themeMode == "amoled"
+                                      ? Colors.white
+                                      : Colors.black)),
                     ),
                     Tab(
                       child: Text(tr("tv_shows"),
                           style: TextStyle(
                               fontFamily: 'Poppins',
-                              color: isDark ? Colors.white : Colors.black)),
+                              color:
+                                  themeMode == "dark" || themeMode == "amoled"
+                                      ? Colors.white
+                                      : Colors.black)),
                     ),
                   ],
                   controller: widget.tabController,

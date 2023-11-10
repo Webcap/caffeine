@@ -6,11 +6,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:caffiene/models/profile_image_list.dart';
-import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/utils/globlal_methods.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 
 class ProfileEdit extends StatefulWidget {
   const ProfileEdit({Key? key}) : super(key: key);
@@ -178,10 +176,7 @@ class _ProfileEditState extends State<ProfileEdit> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
     return Scaffold(
-      backgroundColor:
-          isDark ? const Color(0xFF171717) : const Color(0xFFdedede),
       appBar: AppBar(
         title: Text(tr("edit_profile")),
       ),

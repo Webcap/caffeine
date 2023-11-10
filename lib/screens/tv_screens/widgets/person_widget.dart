@@ -39,7 +39,7 @@ class PersonSocialLinksState extends State<PersonSocialLinks> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     return Padding(
       padding: const EdgeInsets.only(top: 10.0),
       child: Container(
@@ -62,7 +62,7 @@ class PersonSocialLinksState extends State<PersonSocialLinks> {
               height: 55,
               width: double.infinity,
               child: externalLinks == null
-                  ? socialMediaShimmer1(isDark)
+                  ? socialMediaShimmer1(themeMode)
                   : externalLinks?.facebookUsername == null &&
                           externalLinks?.instagramUsername == null &&
                           externalLinks?.twitterUsername == null &&
@@ -77,7 +77,7 @@ class PersonSocialLinksState extends State<PersonSocialLinks> {
                       : Container(
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8),
-                            color: isDark
+                            color: themeMode == "dark" || themeMode == "amoled"
                                 ? Colors.transparent
                                 : const Color(0xFFDFDEDE),
                           ),

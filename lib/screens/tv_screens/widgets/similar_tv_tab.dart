@@ -33,7 +33,9 @@ class SimilarTVTabState extends State<SimilarTVTab>
   @override
   void initState() {
     super.initState();
-    tvApi().fetchTV('${widget.api}&include_adult=${widget.includeAdult}').then((value) {
+    tvApi()
+        .fetchTV('${widget.api}&include_adult=${widget.includeAdult}')
+        .then((value) {
       if (mounted) {
         setState(() {
           tvList = value;
@@ -56,7 +58,9 @@ class SimilarTVTabState extends State<SimilarTVTab>
           isLoading = true;
         });
 
-        tvApi().fetchTV('${widget.api}&page=$pageNum&include_adult=${widget.includeAdult}')
+        tvApi()
+            .fetchTV(
+                '${widget.api}&page=$pageNum&include_adult=${widget.includeAdult}')
             .then((value) {
           if (mounted) {
             setState(() {
@@ -73,7 +77,7 @@ class SimilarTVTabState extends State<SimilarTVTab>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     return Container(
       child: Column(
@@ -106,7 +110,7 @@ class SimilarTVTabState extends State<SimilarTVTab>
             width: double.infinity,
             height: 250,
             child: tvList == null || widget.includeAdult == null
-                ? scrollingMoviesAndTVShimmer1(isDark)
+                ? scrollingMoviesAndTVShimmer1(themeMode)
                 : tvList!.isEmpty
                     ? Text(
                         tr("no_similars_tv"),
@@ -119,13 +123,13 @@ class SimilarTVTabState extends State<SimilarTVTab>
                                 scrollController: _scrollController,
                                 tvList: tvList,
                                 imageQuality: imageQuality,
-                                isDark: isDark),
+                                themeMode: themeMode),
                           ),
                           Visibility(
                             visible: isLoading,
                             child: SizedBox(
                               width: 110,
-                              child: horizontalLoadMoreShimmer1(isDark),
+                              child: horizontalLoadMoreShimmer1(themeMode),
                             ),
                           ),
                         ],

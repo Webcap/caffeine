@@ -31,7 +31,7 @@ class _TVDetailCastAndCrewState extends State<TVDetailCastAndCrew>
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     final lang = Provider.of<SettingsProvider>(context).appLanguage;
     return DefaultTabController(
         length: 2,
@@ -65,7 +65,9 @@ class _TVDetailCastAndCrewState extends State<TVDetailCastAndCrew>
                       tr("crew"),
                     ))
                   ],
-                  indicatorColor: isDark ? Colors.white : Colors.black,
+                  indicatorColor: themeMode == "dark" || themeMode == "amoled"
+                      ? Colors.white
+                      : Colors.black,
                   indicatorWeight: 3,
                   //isScrollable: true,
                   labelStyle: const TextStyle(

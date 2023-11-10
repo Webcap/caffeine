@@ -61,7 +61,9 @@ class DiscoverTVState extends State<DiscoverTV>
     List<TVGenreFilterChipWidget> genres = tvGenreList;
     years.shuffle();
     genres.shuffle();
-    tvApi().fetchTV('$TMDB_API_BASE_URL/discover/tv?api_key=$TMDB_API_KEY&sort_by=popularity.desc&watch_region=US&first_air_date_year=${years.first}&with_genres=${genres.first.genreValue}')
+    tvApi()
+        .fetchTV(
+            '$TMDB_API_BASE_URL/discover/tv?api_key=$TMDB_API_KEY&sort_by=popularity.desc&watch_region=US&first_air_date_year=${years.first}&with_genres=${genres.first.genreValue}')
         .then((value) {
       if (mounted) {
         setState(() {
@@ -76,7 +78,7 @@ class DiscoverTVState extends State<DiscoverTV>
     super.build(context);
     deviceHeight = MediaQuery.of(context).size.height;
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     return Column(
       children: <Widget>[
         Row(
@@ -104,7 +106,7 @@ class DiscoverTVState extends State<DiscoverTV>
           width: double.infinity,
           height: 350,
           child: tvList == null
-              ? discoverMoviesAndTVShimmer1(isDark)
+              ? discoverMoviesAndTVShimmer1(themeMode)
               : tvList!.isEmpty
                   ? Center(
                       child: Text(
@@ -158,7 +160,7 @@ class DiscoverTVState extends State<DiscoverTV>
                                     ),
                                   ),
                                   placeholder: (context, url) =>
-                                      discoverImageShimmer1(isDark),
+                                      discoverImageShimmer1(themeMode),
                                   errorWidget: (context, url, error) =>
                                       Image.asset(
                                     'assets/images/na_logo.png',

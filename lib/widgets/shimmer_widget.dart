@@ -5,14 +5,14 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 
-Widget scrollingMoviesAndTVShimmer1(isDark) => Column(
+Widget scrollingMoviesAndTVShimmer1(themeMode) => Column(
       mainAxisSize: MainAxisSize.max,
       children: <Widget>[
         Expanded(
           child: Shimmer.fromColors(
-            baseColor: isDark ? Colors.grey.shade800 : Colors.grey.shade300,
+            baseColor: themeMode ? Colors.grey.shade800 : Colors.grey.shade300,
             highlightColor:
-                isDark ? Colors.grey.shade700 : Colors.grey.shade100,
+                themeMode ? Colors.grey.shade700 : Colors.grey.shade100,
             direction: ShimmerDirection.ltr,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
@@ -55,7 +55,7 @@ Widget scrollingMoviesAndTVShimmer1(isDark) => Column(
       ],
     );
 
-Widget watchProvidersShimmer(isDark) => Container(
+Widget watchProvidersShimmer(themeMode) => Container(
       padding: const EdgeInsets.all(8.0),
       child: GridView.builder(
           gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
@@ -67,9 +67,10 @@ Widget watchProvidersShimmer(isDark) => Container(
           itemCount: 6,
           itemBuilder: (BuildContext context, int index) {
             return Shimmer.fromColors(
-              baseColor: isDark ? Colors.grey.shade800 : Colors.grey.shade300,
+              baseColor:
+                  themeMode ? Colors.grey.shade800 : Colors.grey.shade300,
               highlightColor:
-                  isDark ? Colors.grey.shade700 : Colors.grey.shade100,
+                  themeMode ? Colors.grey.shade700 : Colors.grey.shade100,
               direction: ShimmerDirection.ltr,
               child: Padding(
                 padding: const EdgeInsets.all(4.0),
@@ -100,9 +101,9 @@ Widget watchProvidersShimmer(isDark) => Container(
           }),
     );
 
-Widget watchProvidersImageShimmer(isDark) => Shimmer.fromColors(
-      baseColor: isDark ? Colors.grey.shade800 : Colors.grey.shade300,
-      highlightColor: isDark ? Colors.grey.shade700 : Colors.grey.shade100,
+Widget watchProvidersImageShimmer(themeMode) => Shimmer.fromColors(
+      baseColor: themeMode ? Colors.grey.shade800 : Colors.grey.shade300,
+      highlightColor: themeMode ? Colors.grey.shade700 : Colors.grey.shade100,
       direction: ShimmerDirection.ltr,
       child: Container(
         color: Colors.white,
@@ -158,8 +159,9 @@ Widget scrollingMoviesAndTVShimmer() => Column(
       ],
     );
 
-Widget mainPageVerticalScrollShimmer(isLoading, scrollController) => Container(
-      color: const Color(0xFFFFFFFF),
+Widget mainPageVerticalScrollShimmer(
+        {required String themeMode, isLoading, scrollController}) =>
+    Container(
       child: Column(
         children: [
           Expanded(
@@ -174,11 +176,8 @@ Widget mainPageVerticalScrollShimmer(isLoading, scrollController) => Container(
                         itemCount: 10,
                         itemBuilder: (BuildContext context, int index) {
                           return Container(
-                            color: const Color(0xFFFFFFFF),
-                            child: Shimmer.fromColors(
-                              baseColor: Colors.grey.shade300,
-                              highlightColor: Colors.grey.shade100,
-                              direction: ShimmerDirection.ltr,
+                            child: ShimmerBase(
+                              themeMode: themeMode,
                               child: Padding(
                                 padding: const EdgeInsets.only(
                                   top: 0.0,
@@ -197,7 +196,7 @@ Widget mainPageVerticalScrollShimmer(isLoading, scrollController) => Container(
                                             height: 130,
                                             child: Container(
                                               decoration: BoxDecoration(
-                                                color: Colors.white,
+                                                color: Colors.grey.shade600,
                                                 borderRadius:
                                                     BorderRadius.circular(10.0),
                                               ),
@@ -215,7 +214,7 @@ Widget mainPageVerticalScrollShimmer(isLoading, scrollController) => Container(
                                                 child: Container(
                                                   width: 150,
                                                   height: 20,
-                                                  color: Colors.white,
+                                                  color: Colors.grey.shade600,
                                                 ),
                                               ),
                                               Row(
@@ -227,13 +226,14 @@ Widget mainPageVerticalScrollShimmer(isLoading, scrollController) => Container(
                                                     child: Container(
                                                       height: 20,
                                                       width: 20,
-                                                      color: Colors.white,
+                                                      color:
+                                                          Colors.grey.shade600,
                                                     ),
                                                   ),
                                                   Container(
                                                     width: 30,
                                                     height: 20,
-                                                    color: Colors.white,
+                                                    color: Colors.grey.shade600,
                                                   )
                                                 ],
                                               ),
@@ -242,8 +242,10 @@ Widget mainPageVerticalScrollShimmer(isLoading, scrollController) => Container(
                                         )
                                       ],
                                     ),
-                                    const Divider(
-                                      color: Colors.white54,
+                                    Divider(
+                                      color: themeMode == "light"
+                                          ? Colors.black54
+                                          : Colors.white54,
                                       thickness: 1,
                                       endIndent: 20,
                                       indent: 10,
@@ -263,13 +265,14 @@ Widget mainPageVerticalScrollShimmer(isLoading, scrollController) => Container(
               visible: isLoading,
               child: const Padding(
                 padding: EdgeInsets.all(8.0),
-                child: Center(child: CircularProgressIndicator()),
+                child: Center(child: LinearProgressIndicator()),
               )),
         ],
       ),
     );
 
-Widget mainPageVerticalScrollShimmer1({isDark, isLoading, scrollController}) =>
+Widget mainPageVerticalScrollShimmer1(
+        {themeMode, isLoading, scrollController}) =>
     Container(
       child: Column(
         children: [
@@ -286,10 +289,10 @@ Widget mainPageVerticalScrollShimmer1({isDark, isLoading, scrollController}) =>
                         itemBuilder: (BuildContext context, int index) {
                           return Container(
                             child: Shimmer.fromColors(
-                              baseColor: isDark
+                              baseColor: themeMode
                                   ? Colors.grey.shade800
                                   : Colors.grey.shade300,
-                              highlightColor: isDark
+                              highlightColor: themeMode
                                   ? Colors.grey.shade700
                                   : Colors.grey.shade100,
                               direction: ShimmerDirection.ltr,
@@ -357,7 +360,7 @@ Widget mainPageVerticalScrollShimmer1({isDark, isLoading, scrollController}) =>
                                       ],
                                     ),
                                     Divider(
-                                      color: !isDark
+                                      color: !themeMode
                                           ? Colors.black54
                                           : Colors.white54,
                                       thickness: 1,
@@ -385,9 +388,19 @@ Widget mainPageVerticalScrollShimmer1({isDark, isLoading, scrollController}) =>
       ),
     );
 
-Widget mainPageVerticalScrollImageShimmer() => Shimmer.fromColors(
-    baseColor: Colors.grey.shade800,
-    highlightColor: Colors.grey.shade100,
+Widget mainPageVerticalScrollImageShimmer(String themeMode) => ShimmerBase(
+    themeMode: themeMode,
+    child: Container(
+      width: 85.0,
+      height: 130.0,
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10.0),
+          color: Colors.grey.shade600),
+    ));
+
+Widget mainPageVerticalScrollImageShimmer1(themeMode) => Shimmer.fromColors(
+    baseColor: themeMode ? Colors.grey.shade800 : Colors.grey.shade300,
+    highlightColor: themeMode ? Colors.grey.shade700 : Colors.grey.shade100,
     direction: ShimmerDirection.ltr,
     child: Container(
       width: 85.0,
@@ -396,30 +409,18 @@ Widget mainPageVerticalScrollImageShimmer() => Shimmer.fromColors(
           borderRadius: BorderRadius.circular(10.0), color: Colors.white),
     ));
 
-Widget mainPageVerticalScrollImageShimmer1(isDark) => Shimmer.fromColors(
-    baseColor: isDark ? Colors.grey.shade800 : Colors.grey.shade300,
-    highlightColor: isDark ? Colors.grey.shade700 : Colors.grey.shade100,
-    direction: ShimmerDirection.ltr,
-    child: Container(
-      width: 85.0,
-      height: 130.0,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10.0), color: Colors.white),
-    ));
-
-Widget scrollingImageShimmer() => Shimmer.fromColors(
-    baseColor: Colors.grey.shade300,
-    highlightColor: Colors.grey.shade100,
-    direction: ShimmerDirection.ltr,
+Widget scrollingImageShimmer(String themeMode) => ShimmerBase(
+    themeMode: themeMode,
     child: Container(
       width: 120.0,
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8.0), color: Colors.white),
+          borderRadius: BorderRadius.circular(8.0),
+          color: Colors.grey.shade600),
     ));
 
-Widget scrollingImageShimmer1(isDark) => Shimmer.fromColors(
-    baseColor: isDark ? Colors.grey.shade800 : Colors.grey.shade300,
-    highlightColor: isDark ? Colors.grey.shade700 : Colors.grey.shade100,
+Widget scrollingImageShimmer1(themeMode) => Shimmer.fromColors(
+    baseColor: themeMode ? Colors.grey.shade800 : Colors.grey.shade300,
+    highlightColor: themeMode ? Colors.grey.shade700 : Colors.grey.shade100,
     direction: ShimmerDirection.ltr,
     child: Container(
       width: 120.0,
@@ -448,10 +449,10 @@ Widget genreListGridShimmer() => Shimmer.fromColors(
           }),
     );
 
-Widget genreListGridShimmer1(isDark) => Shimmer.fromColors(
+Widget genreListGridShimmer1(themeMode) => Shimmer.fromColors(
       direction: ShimmerDirection.ltr,
-      baseColor: isDark ? Colors.grey.shade800 : Colors.grey.shade300,
-      highlightColor: isDark ? Colors.grey.shade700 : Colors.grey.shade100,
+      baseColor: themeMode ? Colors.grey.shade800 : Colors.grey.shade300,
+      highlightColor: themeMode ? Colors.grey.shade700 : Colors.grey.shade100,
       child: ListView.builder(
           itemCount: 10,
           scrollDirection: Axis.horizontal,
@@ -469,9 +470,9 @@ Widget genreListGridShimmer1(isDark) => Shimmer.fromColors(
           }),
     );
 
-Widget detailGenreShimmer1(isDark) => Shimmer.fromColors(
-      baseColor: isDark ? Colors.grey.shade800 : Colors.grey.shade300,
-      highlightColor: isDark ? Colors.grey.shade700 : Colors.grey.shade100,
+Widget detailGenreShimmer1(themeMode) => Shimmer.fromColors(
+      baseColor: themeMode ? Colors.grey.shade800 : Colors.grey.shade300,
+      highlightColor: themeMode ? Colors.grey.shade700 : Colors.grey.shade100,
       direction: ShimmerDirection.ltr,
       child: ListView.builder(
         shrinkWrap: true,
@@ -490,16 +491,14 @@ Widget detailGenreShimmer1(isDark) => Shimmer.fromColors(
               'Placeholder',
             ),
             backgroundColor:
-                isDark ? const Color(0xFF2b2c30) : const Color(0xFFDFDEDE),
+                themeMode ? const Color(0xFF2b2c30) : const Color(0xFFDFDEDE),
           ),
         ),
       ),
     );
 
-Widget detailGenreShimmer() => Shimmer.fromColors(
-      baseColor: Colors.grey.shade800,
-      highlightColor: Colors.grey.shade100,
-      direction: ShimmerDirection.ltr,
+Widget detailGenreShimmer(String themeMode) => ShimmerBase(
+      themeMode: themeMode,
       child: ListView.builder(
         shrinkWrap: true,
         physics: const BouncingScrollPhysics(),
@@ -509,24 +508,28 @@ Widget detailGenreShimmer() => Shimmer.fromColors(
           padding: const EdgeInsets.symmetric(horizontal: 4.0),
           child: Chip(
             shape: RoundedRectangleBorder(
-              side: const BorderSide(
-                  width: 2, style: BorderStyle.solid, color: Colors.white),
+              side: BorderSide(
+                  width: 2,
+                  style: BorderStyle.solid,
+                  color: Colors.grey.shade600),
               borderRadius: BorderRadius.circular(20.0),
             ),
-            label: const Text(
-              'Placeholder',
+            label: Text(
+              tr("placeholder"),
             ),
-            backgroundColor: const Color(0xFFDFDEDE),
+            backgroundColor: themeMode == "dark" || themeMode == "amoled"
+                ? const Color(0xFF2b2c30)
+                : const Color(0xFFDFDEDE),
           ),
         ),
       ),
     );
 
-Widget horizontalLoadMoreShimmer1(isDark) => Padding(
+Widget horizontalLoadMoreShimmer1(themeMode) => Padding(
       padding: const EdgeInsets.only(right: 8.0),
       child: Shimmer.fromColors(
-        baseColor: isDark ? Colors.grey.shade800 : Colors.grey.shade300,
-        highlightColor: isDark ? Colors.grey.shade700 : Colors.grey.shade100,
+        baseColor: themeMode ? Colors.grey.shade800 : Colors.grey.shade300,
+        highlightColor: themeMode ? Colors.grey.shade700 : Colors.grey.shade100,
         direction: ShimmerDirection.ltr,
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
@@ -663,14 +666,14 @@ Widget detailCastShimmer() => Column(
       ],
     );
 
-Widget detailCastShimmer1(isDark) => Column(
+Widget detailCastShimmer1(themeMode) => Column(
       mainAxisSize: MainAxisSize.max,
       children: <Widget>[
         Expanded(
           child: Shimmer.fromColors(
-            baseColor: isDark ? Colors.grey.shade800 : Colors.grey.shade300,
+            baseColor: themeMode ? Colors.grey.shade800 : Colors.grey.shade300,
             highlightColor:
-                isDark ? Colors.grey.shade700 : Colors.grey.shade100,
+                themeMode ? Colors.grey.shade700 : Colors.grey.shade100,
             direction: ShimmerDirection.ltr,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
@@ -712,18 +715,18 @@ Widget detailCastShimmer1(isDark) => Column(
       ],
     );
 
-Widget detailVideoImageShimmer1(isDark) => Shimmer.fromColors(
-    baseColor: isDark ? Colors.grey.shade800 : Colors.grey.shade300,
-    highlightColor: isDark ? Colors.grey.shade700 : Colors.grey.shade100,
+Widget detailVideoImageShimmer1(themeMode) => Shimmer.fromColors(
+    baseColor: themeMode ? Colors.grey.shade800 : Colors.grey.shade300,
+    highlightColor: themeMode ? Colors.grey.shade700 : Colors.grey.shade100,
     direction: ShimmerDirection.ltr,
     child: Container(
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8.0), color: Colors.white),
     ));
 
-Widget detailCastImageShimmer1(isDark) => Shimmer.fromColors(
-    baseColor: isDark ? Colors.grey.shade800 : Colors.grey.shade300,
-    highlightColor: isDark ? Colors.grey.shade700 : Colors.grey.shade100,
+Widget detailCastImageShimmer1(themeMode) => Shimmer.fromColors(
+    baseColor: themeMode ? Colors.grey.shade800 : Colors.grey.shade300,
+    highlightColor: themeMode ? Colors.grey.shade700 : Colors.grey.shade100,
     direction: ShimmerDirection.ltr,
     child: Container(
       width: 75.0,
@@ -731,11 +734,11 @@ Widget detailCastImageShimmer1(isDark) => Shimmer.fromColors(
           borderRadius: BorderRadius.circular(100.0), color: Colors.white),
     ));
 
-Widget detailVideoShimmer1(isDark) => SizedBox(
+Widget detailVideoShimmer1(themeMode) => SizedBox(
       width: double.infinity,
       child: Shimmer.fromColors(
-        baseColor: isDark ? Colors.grey.shade800 : Colors.grey.shade300,
-        highlightColor: isDark ? Colors.grey.shade700 : Colors.grey.shade100,
+        baseColor: themeMode ? Colors.grey.shade800 : Colors.grey.shade300,
+        highlightColor: themeMode ? Colors.grey.shade700 : Colors.grey.shade100,
         direction: ShimmerDirection.ltr,
         child: CarouselSlider.builder(
           options: CarouselOptions(
@@ -779,18 +782,18 @@ Widget detailVideoShimmer1(isDark) => SizedBox(
       ),
     );
 
-Widget detailImageImageSimmer1(isDark) => Shimmer.fromColors(
-    baseColor: isDark ? Colors.grey.shade800 : Colors.grey.shade300,
-    highlightColor: isDark ? Colors.grey.shade700 : Colors.grey.shade100,
+Widget detailImageImageSimmer1(themeMode) => Shimmer.fromColors(
+    baseColor: themeMode ? Colors.grey.shade800 : Colors.grey.shade300,
+    highlightColor: themeMode ? Colors.grey.shade700 : Colors.grey.shade100,
     direction: ShimmerDirection.ltr,
     child: Container(
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8.0), color: Colors.white),
     ));
 
-Widget detailImageShimmer1(isDark) => Shimmer.fromColors(
-      baseColor: isDark ? Colors.grey.shade800 : Colors.grey.shade300,
-      highlightColor: isDark ? Colors.grey.shade700 : Colors.grey.shade100,
+Widget detailImageShimmer1(themeMode) => Shimmer.fromColors(
+      baseColor: themeMode ? Colors.grey.shade800 : Colors.grey.shade300,
+      highlightColor: themeMode ? Colors.grey.shade700 : Colors.grey.shade100,
       direction: ShimmerDirection.ltr,
       child: CarouselSlider(
         options: CarouselOptions(
@@ -862,10 +865,8 @@ Widget detailImageShimmer1(isDark) => Shimmer.fromColors(
       ),
     );
 
-Widget detailImageShimmer() => Shimmer.fromColors(
-      baseColor: Colors.grey.shade300,
-      highlightColor: Colors.grey.shade100,
-      direction: ShimmerDirection.ltr,
+Widget detailImageShimmer(String themeMode) => ShimmerBase(
+      themeMode: themeMode,
       child: CarouselSlider(
         options: CarouselOptions(
           enableInfiniteScroll: false,
@@ -887,7 +888,7 @@ Widget detailImageShimmer() => Shimmer.fromColors(
                             child: Container(
                               decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(8.0),
-                                  color: Colors.white),
+                                  color: Colors.grey.shade600),
                             ),
                           ),
                           Padding(
@@ -936,23 +937,21 @@ Widget detailImageShimmer() => Shimmer.fromColors(
       ),
     );
 
-Widget detailCastImageShimmer() => Shimmer.fromColors(
-    baseColor: Colors.grey.shade300,
-    highlightColor: Colors.grey.shade100,
-    direction: ShimmerDirection.ltr,
+Widget detailCastImageShimmer(String themeMode) => ShimmerBase(
+    themeMode: themeMode,
     child: Container(
       width: 75.0,
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(100.0), color: Colors.white),
+          borderRadius: BorderRadius.circular(100.0),
+          color: Colors.grey.shade600),
     ));
 
-Widget detailImageImageSimmer() => Shimmer.fromColors(
-    baseColor: Colors.grey.shade300,
-    highlightColor: Colors.grey.shade100,
-    direction: ShimmerDirection.ltr,
+Widget detailImageImageSimmer(String themeMode) => ShimmerBase(
+    themeMode: themeMode,
     child: Container(
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8.0), color: Colors.white),
+          borderRadius: BorderRadius.circular(8.0),
+          color: Colors.grey.shade600),
     ));
 
 Widget detailVideoShimmer() => SizedBox(
@@ -1003,11 +1002,11 @@ Widget detailVideoShimmer() => SizedBox(
       ),
     );
 
-Widget personImageShimmer(isDark) => Row(
+Widget personImageShimmer(themeMode) => Row(
       children: [
         Expanded(
           child: ShimmerBase(
-            isDark: isDark,
+            themeMode: themeMode,
             child: ListView.builder(
               physics: const BouncingScrollPhysics(),
               itemCount: 5,
@@ -1038,7 +1037,7 @@ Widget personImageShimmer(isDark) => Row(
       ],
     );
 
-    Widget personAboutSimmer(isDark) => Column(
+Widget personAboutSimmer(themeMode) => Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1057,7 +1056,7 @@ Widget personImageShimmer(isDark) => Row(
           ),
         ),
         ShimmerBase(
-          isDark: isDark,
+          themeMode: themeMode,
           child: Column(
             children: [
               Padding(
@@ -1153,15 +1152,16 @@ Widget personImageShimmer(isDark) => Row(
 //       ],
 //     );
 
-Widget moviesAndTVShowGridShimmer(isDark) => Container(
+Widget moviesAndTVShowGridShimmer(themeMode) => Container(
       padding: const EdgeInsets.only(top: 8),
       child: Row(
         children: [
           Expanded(
             child: Shimmer.fromColors(
-              baseColor: isDark ? Colors.grey.shade800 : Colors.grey.shade300,
+              baseColor:
+                  themeMode ? Colors.grey.shade800 : Colors.grey.shade300,
               highlightColor:
-                  isDark ? Colors.grey.shade700 : Colors.grey.shade100,
+                  themeMode ? Colors.grey.shade700 : Colors.grey.shade100,
               direction: ShimmerDirection.ltr,
               child: GridView.builder(
                   shrinkWrap: true,
@@ -1210,15 +1210,16 @@ Widget moviesAndTVShowGridShimmer(isDark) => Container(
       ),
     );
 
-Widget personMoviesAndTVShowShimmer1(isDark) => Column(
+Widget personMoviesAndTVShowShimmer1(themeMode) => Column(
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Shimmer.fromColors(
-              baseColor: isDark ? Colors.grey.shade800 : Colors.grey.shade300,
+              baseColor:
+                  themeMode ? Colors.grey.shade800 : Colors.grey.shade300,
               highlightColor:
-                  isDark ? Colors.grey.shade700 : Colors.grey.shade100,
+                  themeMode ? Colors.grey.shade700 : Colors.grey.shade100,
               direction: ShimmerDirection.ltr,
               child: Padding(
                   padding: const EdgeInsets.all(10.0),
@@ -1238,9 +1239,9 @@ Widget personMoviesAndTVShowShimmer1(isDark) => Column(
               Expanded(
                 child: Shimmer.fromColors(
                   baseColor:
-                      isDark ? Colors.grey.shade800 : Colors.grey.shade300,
+                      themeMode ? Colors.grey.shade800 : Colors.grey.shade300,
                   highlightColor:
-                      isDark ? Colors.grey.shade700 : Colors.grey.shade100,
+                      themeMode ? Colors.grey.shade700 : Colors.grey.shade100,
                   direction: ShimmerDirection.ltr,
                   child: GridView.builder(
                       shrinkWrap: true,
@@ -1293,83 +1294,77 @@ Widget personMoviesAndTVShowShimmer1(isDark) => Column(
       ],
     );
 
-Widget personMoviesAndTVShowShimmer() => Column(
+Widget personMoviesAndTVShowShimmer(String themeMode) => Column(
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            Shimmer.fromColors(
-              baseColor: Colors.grey.shade300,
-              highlightColor: Colors.grey.shade100,
-              direction: ShimmerDirection.ltr,
+            ShimmerBase(
+              themeMode: themeMode,
               child: Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: Container(
                     height: 20,
                     width: 100,
-                    color: Colors.white,
+                    color: Colors.grey.shade600,
                   )),
             ),
           ],
         ),
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.only(
-                left: 10.0, right: 10.0, bottom: 8.0, top: 0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Shimmer.fromColors(
-                    baseColor: Colors.grey.shade300,
-                    highlightColor: Colors.grey.shade100,
-                    direction: ShimmerDirection.ltr,
-                    child: GridView.builder(
-                        gridDelegate:
-                            const SliverGridDelegateWithMaxCrossAxisExtent(
-                          maxCrossAxisExtent: 150,
-                          childAspectRatio: 0.48,
-                          crossAxisSpacing: 5,
-                          mainAxisSpacing: 5,
-                        ),
-                        itemCount: 10,
-                        itemBuilder: (BuildContext context, int index) {
-                          return Padding(
-                            padding: const EdgeInsets.all(4.0),
-                            child: Column(
-                              children: [
-                                Expanded(
-                                  flex: 6,
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(8.0),
-                                        color: Colors.white),
-                                  ),
+        Padding(
+          padding:
+              const EdgeInsets.only(left: 5.0, right: 5.0, bottom: 8.0, top: 0),
+          child: Row(
+            children: [
+              Expanded(
+                child: ShimmerBase(
+                  themeMode: themeMode,
+                  child: GridView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      gridDelegate:
+                          const SliverGridDelegateWithMaxCrossAxisExtent(
+                        maxCrossAxisExtent: 150,
+                        childAspectRatio: 0.48,
+                        crossAxisSpacing: 5,
+                        mainAxisSpacing: 5,
+                      ),
+                      itemCount: 10,
+                      itemBuilder: (BuildContext context, int index) {
+                        return Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: Column(
+                            children: [
+                              Expanded(
+                                flex: 6,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(8.0),
+                                      color: Colors.grey.shade600),
                                 ),
-                                const SizedBox(
-                                  height: 5,
-                                ),
-                                Expanded(
-                                    flex: 2,
-                                    child: Padding(
-                                      padding:
-                                          const EdgeInsets.only(bottom: 8.0),
-                                      child: Container(
-                                        height: 20,
-                                        decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(8.0),
-                                            color: Colors.white),
-                                      ),
-                                    )),
-                              ],
-                            ),
-                          );
-                        }),
-                  ),
+                              ),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Expanded(
+                                  flex: 2,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(bottom: 8.0),
+                                    child: Container(
+                                      height: 20,
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(8.0),
+                                          color: Colors.grey.shade600),
+                                    ),
+                                  )),
+                            ],
+                          ),
+                        );
+                      }),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ],
@@ -1410,19 +1405,20 @@ Widget detailInfoTableItemShimmer() => Shimmer.fromColors(
       ),
     );
 
-Widget socialMediaShimmer1(isDark) => Container(
+Widget socialMediaShimmer1(themeMode) => Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
-        color: isDark ? Colors.transparent : const Color(0xFFDFDEDE),
+        color: themeMode ? Colors.transparent : const Color(0xFFDFDEDE),
       ),
       child: ListView.builder(
           scrollDirection: Axis.horizontal,
           itemCount: 3,
           itemBuilder: (BuildContext context, int index) {
             return Shimmer.fromColors(
-              baseColor: isDark ? Colors.grey.shade800 : Colors.grey.shade300,
+              baseColor:
+                  themeMode ? Colors.grey.shade800 : Colors.grey.shade300,
               highlightColor:
-                  isDark ? Colors.grey.shade700 : Colors.grey.shade100,
+                  themeMode ? Colors.grey.shade700 : Colors.grey.shade100,
               direction: ShimmerDirection.ltr,
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -1439,19 +1435,19 @@ Widget socialMediaShimmer1(isDark) => Container(
           }),
     );
 
-Widget socialMediaShimmer() => Container(
+Widget socialMediaShimmer(String themeMode) => Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
-        color: const Color(0xFFDFDEDE),
+        color: themeMode == "dark" || themeMode == "amoled"
+            ? Colors.transparent
+            : const Color(0xFFDFDEDE),
       ),
       child: ListView.builder(
           scrollDirection: Axis.horizontal,
           itemCount: 3,
           itemBuilder: (BuildContext context, int index) {
-            return Shimmer.fromColors(
-              baseColor: Colors.grey.shade300,
-              highlightColor: Colors.grey.shade100,
-              direction: ShimmerDirection.ltr,
+            return ShimmerBase(
+              themeMode: themeMode,
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Container(
@@ -1459,7 +1455,7 @@ Widget socialMediaShimmer() => Container(
                   height: 50,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10.0),
-                    color: Colors.white,
+                    color: Colors.grey.shade600,
                   ),
                 ),
               ),
@@ -1467,9 +1463,9 @@ Widget socialMediaShimmer() => Container(
           }),
     );
 
-Widget detailInfoTableItemShimmer1(isDark) => Shimmer.fromColors(
-      baseColor: isDark ? Colors.grey.shade800 : Colors.grey.shade300,
-      highlightColor: isDark ? Colors.grey.shade700 : Colors.grey.shade100,
+Widget detailInfoTableItemShimmer1(themeMode) => Shimmer.fromColors(
+      baseColor: themeMode ? Colors.grey.shade800 : Colors.grey.shade300,
+      highlightColor: themeMode ? Colors.grey.shade700 : Colors.grey.shade100,
       direction: ShimmerDirection.ltr,
       child: Container(
         color: Colors.white,
@@ -1478,49 +1474,49 @@ Widget detailInfoTableItemShimmer1(isDark) => Shimmer.fromColors(
       ),
     );
 
-Widget detailInfoTableShimmer1(isDark) =>
+Widget detailInfoTableShimmer1(themeMode) =>
     DataTable(dataRowMinHeight: 40, columns: [
       // const DataColumn(
       //     label: Text(
       //   'Original Title',
       //   style: TextStyle(overflow: TextOverflow.ellipsis),
       // )),
-      DataColumn(label: detailInfoTableItemShimmer1(isDark)),
-      DataColumn(label: detailInfoTableItemShimmer1(isDark)),
+      DataColumn(label: detailInfoTableItemShimmer1(themeMode)),
+      DataColumn(label: detailInfoTableItemShimmer1(themeMode)),
     ], rows: [
       DataRow(cells: [
-        DataCell(detailInfoTableItemShimmer1(isDark)),
-        DataCell(detailInfoTableItemShimmer1(isDark)),
+        DataCell(detailInfoTableItemShimmer1(themeMode)),
+        DataCell(detailInfoTableItemShimmer1(themeMode)),
       ]),
       DataRow(cells: [
-        DataCell(detailInfoTableItemShimmer1(isDark)),
-        DataCell(detailInfoTableItemShimmer1(isDark)),
+        DataCell(detailInfoTableItemShimmer1(themeMode)),
+        DataCell(detailInfoTableItemShimmer1(themeMode)),
       ]),
       DataRow(cells: [
-        DataCell(detailInfoTableItemShimmer1(isDark)),
+        DataCell(detailInfoTableItemShimmer1(themeMode)),
         DataCell(SizedBox(
             height: 20,
             width: 200,
-            child: detailInfoTableItemShimmer1(isDark))),
+            child: detailInfoTableItemShimmer1(themeMode))),
       ]),
       DataRow(cells: [
-        DataCell(detailInfoTableItemShimmer1(isDark)),
-        DataCell(detailInfoTableItemShimmer1(isDark)),
+        DataCell(detailInfoTableItemShimmer1(themeMode)),
+        DataCell(detailInfoTableItemShimmer1(themeMode)),
       ]),
       DataRow(cells: [
-        DataCell(detailInfoTableItemShimmer1(isDark)),
-        DataCell(detailInfoTableItemShimmer1(isDark)),
+        DataCell(detailInfoTableItemShimmer1(themeMode)),
+        DataCell(detailInfoTableItemShimmer1(themeMode)),
       ]),
       DataRow(cells: [
-        DataCell(detailInfoTableItemShimmer1(isDark)),
-        DataCell(detailInfoTableItemShimmer1(isDark)),
+        DataCell(detailInfoTableItemShimmer1(themeMode)),
+        DataCell(detailInfoTableItemShimmer1(themeMode)),
       ]),
       DataRow(cells: [
-        DataCell(detailInfoTableItemShimmer1(isDark)),
+        DataCell(detailInfoTableItemShimmer1(themeMode)),
         DataCell(SizedBox(
                 height: 20,
                 width: 200,
-                child: detailInfoTableItemShimmer1(isDark))
+                child: detailInfoTableItemShimmer1(themeMode))
             // movieDetails!.productionCompanies!.isEmpty
             //     ? const Text('-')
             //     : Text(
@@ -1528,11 +1524,11 @@ Widget detailInfoTableShimmer1(isDark) =>
             ),
       ]),
       DataRow(cells: [
-        DataCell(detailInfoTableItemShimmer1(isDark)),
+        DataCell(detailInfoTableItemShimmer1(themeMode)),
         DataCell(SizedBox(
                 height: 20,
                 width: 200,
-                child: detailInfoTableItemShimmer1(isDark))
+                child: detailInfoTableItemShimmer1(themeMode))
             // movieDetails!.productionCompanies!.isEmpty
             //     ? const Text('-')
             //     : Text(
@@ -1608,9 +1604,9 @@ Widget castAndCrewTabImageShimmer() => Shimmer.fromColors(
           borderRadius: BorderRadius.circular(100.0), color: Colors.white),
     ));
 
-Widget castAndCrewTabImageShimmer1(isDark) => Shimmer.fromColors(
-    baseColor: isDark ? Colors.grey.shade800 : Colors.grey.shade300,
-    highlightColor: isDark ? Colors.grey.shade700 : Colors.grey.shade100,
+Widget castAndCrewTabImageShimmer1(themeMode) => Shimmer.fromColors(
+    baseColor: themeMode ? Colors.grey.shade800 : Colors.grey.shade300,
+    highlightColor: themeMode ? Colors.grey.shade700 : Colors.grey.shade100,
     direction: ShimmerDirection.ltr,
     child: Container(
       width: 80.0,
@@ -1619,7 +1615,7 @@ Widget castAndCrewTabImageShimmer1(isDark) => Shimmer.fromColors(
           borderRadius: BorderRadius.circular(100.0), color: Colors.white),
     ));
 
-Widget movieCastAndCrewTabShimmer(isDark) => Container(
+Widget movieCastAndCrewTabShimmer(themeMode) => Container(
     child: ListView.builder(
         itemCount: 20,
         shrinkWrap: true,
@@ -1628,7 +1624,7 @@ Widget movieCastAndCrewTabShimmer(isDark) => Container(
         itemBuilder: (BuildContext context, int index) {
           return Container(
             child: ShimmerBase(
-              isDark: isDark,
+              themeMode: themeMode,
               child: Padding(
                 padding: const EdgeInsets.only(
                   top: 0.0,
@@ -1675,7 +1671,7 @@ Widget movieCastAndCrewTabShimmer(isDark) => Container(
                       ],
                     ),
                     Divider(
-                      color: !isDark ? Colors.black54 : Colors.white54,
+                      color: !themeMode ? Colors.black54 : Colors.white54,
                       thickness: 1,
                       endIndent: 20,
                       indent: 10,
@@ -1864,24 +1860,24 @@ Widget recommendationAndSimilarTabImageShimmer() => Shimmer.fromColors(
           borderRadius: BorderRadius.circular(10.0), color: Colors.white),
     ));
 
-Widget discoverImageShimmer1(isDark) => Shimmer.fromColors(
+Widget discoverImageShimmer1(themeMode) => Shimmer.fromColors(
       direction: ShimmerDirection.ltr,
-      baseColor: isDark ? Colors.grey.shade800 : Colors.grey.shade300,
-      highlightColor: isDark ? Colors.grey.shade700 : Colors.grey.shade100,
+      baseColor: themeMode ? Colors.grey.shade800 : Colors.grey.shade300,
+      highlightColor: themeMode ? Colors.grey.shade700 : Colors.grey.shade100,
       child: Container(
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8.0), color: Colors.white),
       ),
     );
 
-Widget discoverMoviesAndTVShimmer1(isDark) => Column(
+Widget discoverMoviesAndTVShimmer1(themeMode) => Column(
       mainAxisSize: MainAxisSize.max,
       children: <Widget>[
         Expanded(
           child: Shimmer.fromColors(
-            baseColor: isDark ? Colors.grey.shade800 : Colors.grey.shade300,
+            baseColor: themeMode ? Colors.grey.shade800 : Colors.grey.shade300,
             highlightColor:
-                isDark ? Colors.grey.shade700 : Colors.grey.shade100,
+                themeMode ? Colors.grey.shade700 : Colors.grey.shade100,
             direction: ShimmerDirection.ltr,
             child: CarouselSlider.builder(
               options: CarouselOptions(
@@ -1900,8 +1896,9 @@ Widget discoverMoviesAndTVShimmer1(isDark) => Column(
           ),
         ),
         Shimmer.fromColors(
-          baseColor: isDark ? Colors.grey.shade800 : Colors.grey.shade300,
-          highlightColor: isDark ? Colors.grey.shade700 : Colors.grey.shade100,
+          baseColor: themeMode ? Colors.grey.shade800 : Colors.grey.shade300,
+          highlightColor:
+              themeMode ? Colors.grey.shade700 : Colors.grey.shade100,
           child: Container(
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8.0), color: Colors.white),
@@ -1955,14 +1952,14 @@ Widget discoverImageShimmer() => Shimmer.fromColors(
       ),
     );
 
-Widget horizontalScrollingSeasonsList1(isDark) => Column(
+Widget horizontalScrollingSeasonsList1(themeMode) => Column(
       mainAxisSize: MainAxisSize.max,
       children: <Widget>[
         Expanded(
           child: Shimmer.fromColors(
-            baseColor: isDark ? Colors.grey.shade800 : Colors.grey.shade300,
+            baseColor: themeMode ? Colors.grey.shade800 : Colors.grey.shade300,
             highlightColor:
-                isDark ? Colors.grey.shade700 : Colors.grey.shade100,
+                themeMode ? Colors.grey.shade700 : Colors.grey.shade100,
             direction: ShimmerDirection.ltr,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
@@ -2192,14 +2189,14 @@ Widget tvCastAndCrewTabShimmer() => Container(
           );
         }));
 
-Widget tvCastAndCrewTabShimmer1(isDark) => Container(
+Widget tvCastAndCrewTabShimmer1(themeMode) => Container(
     child: ListView.builder(
         itemCount: 10,
         scrollDirection: Axis.vertical,
         itemBuilder: (BuildContext context, int index) {
           return Container(
             child: ShimmerBase(
-              isDark: isDark,
+              themeMode: themeMode,
               child: Padding(
                 padding: const EdgeInsets.only(
                   top: 8.0,
@@ -2254,7 +2251,7 @@ Widget tvCastAndCrewTabShimmer1(isDark) => Container(
                       ],
                     ),
                     Divider(
-                      color: !isDark ? Colors.black54 : Colors.white54,
+                      color: !themeMode ? Colors.black54 : Colors.white54,
                       thickness: 1,
                       endIndent: 20,
                       indent: 10,

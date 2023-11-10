@@ -61,7 +61,7 @@ class _DiscoverTVResultState extends State<DiscoverTVResult> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     final viewType = Provider.of<SettingsProvider>(context).defaultView;
     return Scaffold(
@@ -80,11 +80,11 @@ class _DiscoverTVResultState extends State<DiscoverTVResult> {
         ),
         body: Container(
             child: tvList == null && viewType == 'grid'
-                ? moviesAndTVShowGridShimmer(isDark)
+                ? moviesAndTVShowGridShimmer(themeMode)
                 : tvList == null && viewType == 'list'
                     ? Container(
                         child: mainPageVerticalScrollShimmer1(
-                            isDark: isDark,
+                            themeMode: themeMode,
                             isLoading: isLoading,
                             scrollController: _scrollController))
                     : tvList!.isEmpty
@@ -110,7 +110,7 @@ class _DiscoverTVResultState extends State<DiscoverTVResult> {
                                             ? TVGridView(
                                                 tvList: tvList,
                                                 imageQuality: imageQuality,
-                                                isDark: isDark,
+                                                themeMode: themeMode,
                                                 scrollController:
                                                     _scrollController,
                                               )
@@ -118,7 +118,7 @@ class _DiscoverTVResultState extends State<DiscoverTVResult> {
                                                 scrollController:
                                                     _scrollController,
                                                 tvList: tvList,
-                                                isDark: isDark,
+                                                themeMode: themeMode,
                                                 imageQuality: imageQuality),
                                       ),
                                     ],

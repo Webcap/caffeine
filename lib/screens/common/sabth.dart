@@ -52,7 +52,7 @@ class _SABTNState extends State<SABTN> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     return AnimatedOpacity(
       duration: const Duration(milliseconds: 300),
       opacity: 1,
@@ -62,7 +62,9 @@ class _SABTNState extends State<SABTN> {
         child: Container(
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(50.0),
-              color: isDark ? Colors.black12 : Colors.white38),
+              color: themeMode == "dark" || themeMode == "amoled"
+                  ? Colors.black12
+                  : Colors.white38),
           child: IconButton(
             icon: Icon(
               Icons.arrow_back,

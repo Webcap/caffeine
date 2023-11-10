@@ -55,7 +55,7 @@ class EpisodeDetailPageState extends State<EpisodeDetailPage>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     return Scaffold(
       body: CustomScrollView(
         controller: scrollController,
@@ -64,8 +64,12 @@ class EpisodeDetailPageState extends State<EpisodeDetailPage>
             pinned: true,
             elevation: 1,
             forceElevated: true,
-            backgroundColor: isDark ? Colors.black : Colors.white,
-            shadowColor: isDark ? Colors.white : Colors.black,
+            backgroundColor: themeMode == "dark" || themeMode == "amoled"
+                ? Colors.black
+                : Colors.white,
+            shadowColor: themeMode == "dark" || themeMode == "amoled"
+                ? Colors.white
+                : Colors.black,
             leading: SABTN(
               onBack: () {
                 Navigator.pop(context);

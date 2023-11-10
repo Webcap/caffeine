@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:caffiene/api/movies_api.dart';
 import 'package:caffiene/models/movie_models.dart';
@@ -72,14 +71,14 @@ class ParticularGenreMoviesState extends State<ParticularGenreMovies> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     final viewType = Provider.of<SettingsProvider>(context).defaultView;
     return moviesList == null && viewType == 'grid'
-        ? moviesAndTVShowGridShimmer(isDark)
+        ? moviesAndTVShowGridShimmer(themeMode)
         : moviesList == null && viewType == 'list'
             ? mainPageVerticalScrollShimmer1(
-                isDark: isDark,
+                themeMode: themeMode,
                 isLoading: isLoading,
                 scrollController: _scrollController)
             : moviesList!.isEmpty
@@ -103,11 +102,11 @@ class ParticularGenreMoviesState extends State<ParticularGenreMovies> {
                                         scrollController: _scrollController,
                                         moviesList: moviesList,
                                         imageQuality: imageQuality,
-                                        isDark: isDark)
+                                        themeMode: themeMode)
                                     : MovieListView(
                                         scrollController: _scrollController,
                                         moviesList: moviesList,
-                                        isDark: isDark,
+                                        themeMode: themeMode,
                                         imageQuality: imageQuality),
                               ),
                             ],

@@ -23,7 +23,7 @@ class MovieDetailQuickInfo extends StatelessWidget {
   Widget build(BuildContext context) {
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     final watchCountry = Provider.of<SettingsProvider>(context).defaultCountry;
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     final appLang = Provider.of<SettingsProvider>(context).appLanguage;
     return SizedBox(
       height: 310,
@@ -162,7 +162,7 @@ class MovieDetailQuickInfo extends StatelessWidget {
                                         cacheManager: cacheProp(),
                                         fit: BoxFit.fill,
                                         placeholder: (context, url) =>
-                                            scrollingImageShimmer1(isDark),
+                                            scrollingImageShimmer1(themeMode),
                                         errorWidget: (context, url, error) =>
                                             Image.asset(
                                           'assets/images/na_logo.png',

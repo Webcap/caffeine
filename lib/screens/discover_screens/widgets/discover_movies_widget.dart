@@ -61,7 +61,8 @@ class DiscoverMoviesState extends State<DiscoverMovies>
     List<MovieGenreFilterChipWidget> genres = movieGenreFilterdata;
     years.shuffle();
     genres.shuffle();
-    moviesApi().fetchMovies(
+    moviesApi()
+        .fetchMovies(
             '$TMDB_API_BASE_URL/discover/movie?api_key=$TMDB_API_KEY&sort_by=popularity.desc&watch_region=US&include_adult=${widget.includeAdult}&primary_release_year=${years.first}&with_genres=${genres.first.genreValue}')
         .then((value) {
       if (mounted) {
@@ -77,7 +78,7 @@ class DiscoverMoviesState extends State<DiscoverMovies>
     super.build(context);
     deviceHeight = MediaQuery.of(context).size.height;
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     return Column(
       children: <Widget>[
         Row(
@@ -106,7 +107,7 @@ class DiscoverMoviesState extends State<DiscoverMovies>
           height: 350,
           // height: deviceHeight * 0.417,
           child: moviesList == null
-              ? discoverMoviesAndTVShimmer1(isDark)
+              ? discoverMoviesAndTVShimmer1(themeMode)
               : moviesList!.isEmpty
                   ? Center(
                       child: Text(
@@ -162,7 +163,7 @@ class DiscoverMoviesState extends State<DiscoverMovies>
                                     ),
                                   ),
                                   placeholder: (context, url) =>
-                                      discoverImageShimmer1(isDark),
+                                      discoverImageShimmer1(themeMode),
                                   errorWidget: (context, url, error) =>
                                       Image.asset(
                                     'assets/images/na_logo.png',

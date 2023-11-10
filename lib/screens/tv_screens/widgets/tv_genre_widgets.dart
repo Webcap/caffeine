@@ -1,4 +1,3 @@
-
 import 'package:caffiene/widgets/common_widgets.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -39,7 +38,7 @@ class TVGenreListGridState extends State<TVGenreListGrid>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     return Column(
       children: [
         Row(
@@ -69,7 +68,7 @@ class TVGenreListGridState extends State<TVGenreListGrid>
               width: double.infinity,
               height: 80,
               child: genreList == null
-                  ? genreListGridShimmer1(isDark)
+                  ? genreListGridShimmer1(themeMode)
                   : Row(
                       children: [
                         Expanded(
@@ -143,12 +142,12 @@ class TVGenreDisplayState extends State<TVGenreDisplay>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     return Container(
         child: genres == null
             ? SizedBox(
                 height: 80,
-                child: detailGenreShimmer1(isDark),
+                child: detailGenreShimmer1(themeMode),
               )
             : genres!.isEmpty
                 ? Container()
@@ -185,9 +184,10 @@ class TVGenreDisplayState extends State<TVGenreDisplay>
                                 style: const TextStyle(fontFamily: 'Poppins'),
                                 // style: widget.themeData.textTheme.bodyText1,
                               ),
-                              backgroundColor: isDark
-                                  ? const Color(0xFF2b2c30)
-                                  : const Color(0xFFDFDEDE),
+                              backgroundColor:
+                                  themeMode == "dark" || themeMode == "amoled"
+                                      ? const Color(0xFF2b2c30)
+                                      : const Color(0xFFDFDEDE),
                             ),
                           ),
                         );

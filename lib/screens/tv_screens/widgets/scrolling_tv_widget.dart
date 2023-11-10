@@ -1,4 +1,3 @@
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:caffiene/screens/person/guest_star_details.dart';
 import 'package:caffiene/widgets/common_widgets.dart';
@@ -53,7 +52,9 @@ class ScrollingTVState extends State<ScrollingTV>
           isLoading = true;
         });
 
-        tvApi().fetchTV('${widget.api}&page=$pageNum&include_adult=${widget.includeAdult}')
+        tvApi()
+            .fetchTV(
+                '${widget.api}&page=$pageNum&include_adult=${widget.includeAdult}')
             .then((value) {
           if (mounted) {
             setState(() {
@@ -70,7 +71,9 @@ class ScrollingTVState extends State<ScrollingTV>
   @override
   void initState() {
     super.initState();
-    tvApi().fetchTV('${widget.api}&include_adult=${widget.includeAdult}').then((value) {
+    tvApi()
+        .fetchTV('${widget.api}&include_adult=${widget.includeAdult}')
+        .then((value) {
       if (mounted) {
         setState(() {
           tvList = value;
@@ -90,7 +93,7 @@ class ScrollingTVState extends State<ScrollingTV>
   Widget build(BuildContext context) {
     super.build(context);
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     return Column(
       children: <Widget>[
         Row(
@@ -144,7 +147,7 @@ class ScrollingTVState extends State<ScrollingTV>
           width: double.infinity,
           height: 250,
           child: tvList == null
-              ? scrollingMoviesAndTVShimmer1(isDark)
+              ? scrollingMoviesAndTVShimmer1(themeMode)
               : Row(
                   children: [
                     Expanded(
@@ -229,7 +232,7 @@ class ScrollingTVState extends State<ScrollingTV>
                                                         placeholder: (context,
                                                                 url) =>
                                                             scrollingImageShimmer1(
-                                                                isDark),
+                                                                themeMode),
                                                         errorWidget: (context,
                                                                 url, error) =>
                                                             Image.asset(
@@ -251,9 +254,12 @@ class ScrollingTVState extends State<ScrollingTV>
                                                       borderRadius:
                                                           BorderRadius.circular(
                                                               8),
-                                                      color: isDark
-                                                          ? Colors.black45
-                                                          : Colors.white60),
+                                                      color:
+                                                          themeMode == "dark" ||
+                                                                  themeMode ==
+                                                                      "amoled"
+                                                              ? Colors.black45
+                                                              : Colors.white60),
                                                   child: Row(
                                                     children: [
                                                       const Icon(
@@ -295,14 +301,14 @@ class ScrollingTVState extends State<ScrollingTV>
                       visible: isLoading,
                       child: SizedBox(
                         width: 110,
-                        child: horizontalLoadMoreShimmer1(isDark),
+                        child: horizontalLoadMoreShimmer1(themeMode),
                       ),
                     ),
                   ],
                 ),
         ),
         Divider(
-          color: !isDark ? Colors.black54 : Colors.white54,
+          color: themeMode == "light" ? Colors.black54 : Colors.white54,
           thickness: 1,
           endIndent: 20,
           indent: 10,
@@ -354,7 +360,7 @@ class ScrollingTVArtistsState extends State<ScrollingTVArtists>
   Widget build(BuildContext context) {
     super.build(context);
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     return Column(
       children: <Widget>[
         Row(
@@ -416,7 +422,7 @@ class ScrollingTVArtistsState extends State<ScrollingTVArtists>
           width: double.infinity,
           height: 160,
           child: credits == null
-              ? detailCastShimmer1(isDark)
+              ? detailCastShimmer1(themeMode)
               : credits!.cast!.isEmpty
                   ? Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -494,7 +500,7 @@ class ScrollingTVArtistsState extends State<ScrollingTVArtists>
                                                   ),
                                                   placeholder: (context, url) =>
                                                       detailCastImageShimmer1(
-                                                          isDark),
+                                                          themeMode),
                                                   errorWidget:
                                                       (context, url, error) =>
                                                           Image.asset(
@@ -566,7 +572,7 @@ class ScrollingTVCreatorsState extends State<ScrollingTVCreators>
   Widget build(BuildContext context) {
     super.build(context);
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     return Column(
       children: <Widget>[
         Row(
@@ -593,7 +599,7 @@ class ScrollingTVCreatorsState extends State<ScrollingTVCreators>
           width: double.infinity,
           height: 160,
           child: tvDetails == null
-              ? detailCastShimmer1(isDark)
+              ? detailCastShimmer1(themeMode)
               : tvDetails!.createdBy!.isEmpty
                   ? Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -668,7 +674,7 @@ class ScrollingTVCreatorsState extends State<ScrollingTVCreators>
                                                   ),
                                                   placeholder: (context, url) =>
                                                       detailCastImageShimmer1(
-                                                          isDark),
+                                                          themeMode),
                                                   errorWidget:
                                                       (context, url, error) =>
                                                           Image.asset(
@@ -746,7 +752,7 @@ class ScrollingTVEpisodeCastsState extends State<ScrollingTVEpisodeCasts>
   Widget build(BuildContext context) {
     super.build(context);
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     return Column(
       children: <Widget>[
         credits == null
@@ -811,7 +817,7 @@ class ScrollingTVEpisodeCastsState extends State<ScrollingTVEpisodeCasts>
           width: double.infinity,
           height: 160,
           child: credits == null
-              ? detailCastShimmer1(isDark)
+              ? detailCastShimmer1(themeMode)
               : ListView.builder(
                   physics: const BouncingScrollPhysics(),
                   itemCount: credits!.cast!.length,
@@ -872,7 +878,7 @@ class ScrollingTVEpisodeCastsState extends State<ScrollingTVEpisodeCasts>
                                               ),
                                               placeholder: (context, url) =>
                                                   detailCastImageShimmer1(
-                                                      isDark),
+                                                      themeMode),
                                               errorWidget:
                                                   (context, url, error) =>
                                                       Image.asset(

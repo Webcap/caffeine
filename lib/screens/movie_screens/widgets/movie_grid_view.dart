@@ -11,14 +11,14 @@ class MovieGridView extends StatelessWidget {
     required ScrollController scrollController,
     required this.moviesList,
     required this.imageQuality,
-    required this.isDark,
+    required this.themeMode,
   })  : _scrollController = scrollController,
         super(key: key);
 
   final ScrollController _scrollController;
   final List<Movie>? moviesList;
   final String imageQuality;
-  final bool isDark;
+  final String themeMode;
 
   @override
   Widget build(BuildContext context) {
@@ -81,7 +81,7 @@ class MovieGridView extends StatelessWidget {
                                         ),
                                       ),
                                       placeholder: (context, url) =>
-                                          scrollingImageShimmer1(isDark),
+                                          scrollingImageShimmer1(themeMode),
                                       errorWidget: (context, url, error) =>
                                           Image.asset(
                                         'assets/images/na_rect.png',
@@ -99,7 +99,8 @@ class MovieGridView extends StatelessWidget {
                                 height: 25,
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(8),
-                                    color: isDark
+                                    color: themeMode == "dark" ||
+                                            themeMode == "amoled"
                                         ? Colors.black45
                                         : Colors.white60),
                                 child: Row(

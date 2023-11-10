@@ -22,7 +22,7 @@ class TVSeasonDetailQuickInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     final appLang = Provider.of<SettingsProvider>(context).appLanguage;
     return SizedBox(
@@ -142,7 +142,7 @@ class TVSeasonDetailQuickInfo extends StatelessWidget {
                                       cacheManager: cacheProp(),
                                       fit: BoxFit.fill,
                                       placeholder: (context, url) =>
-                                          scrollingImageShimmer1(isDark),
+                                          scrollingImageShimmer1(themeMode),
                                       errorWidget: (context, url, error) =>
                                           Image.asset(
                                         'assets/images/na_logo.png',
@@ -188,7 +188,8 @@ class TVSeasonDetailQuickInfo extends StatelessWidget {
                                       tvSeries.originalTitle!,
                                       style: TextStyle(
                                           fontSize: 15,
-                                          color: isDark
+                                          color: themeMode == "dark" ||
+                                                  themeMode == "amoled"
                                               ? Colors.white54
                                               : Colors.black54),
                                     ),

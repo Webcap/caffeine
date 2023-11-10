@@ -62,7 +62,7 @@ class Search extends SearchDelegate<String> {
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     return DefaultTabController(
       length: 3,
       initialIndex: 0,
@@ -70,14 +70,16 @@ class Search extends SearchDelegate<String> {
         body: Column(
           children: [
             Container(
-              color: isDark ? Colors.black : Colors.white,
+              color: themeMode == "dark" || themeMode == "amoled"
+                  ? Colors.black
+                  : Colors.white,
               child: TabBar(
                 tabs: [
                   Tab(
                     child: Text(tr("movies"),
                         style: TextStyle(
                           fontFamily: 'Poppins',
-                          color: !isDark
+                          color: themeMode == "light"
                               ? const Color(0xFF202124)
                               : const Color(0xFFDFDEDE),
                         )),
@@ -86,7 +88,7 @@ class Search extends SearchDelegate<String> {
                     child: Text(tr("tv_shows"),
                         style: TextStyle(
                           fontFamily: 'Poppins',
-                          color: !isDark
+                          color: themeMode == "light"
                               ? const Color(0xFF202124)
                               : const Color(0xFFDFDEDE),
                         )),
@@ -95,7 +97,7 @@ class Search extends SearchDelegate<String> {
                     child: Text(tr("celebrities"),
                         style: TextStyle(
                           fontFamily: 'Poppins',
-                          color: !isDark
+                          color: themeMode == "light"
                               ? const Color(0xFF202124)
                               : const Color(0xFFDFDEDE),
                         )),
@@ -116,55 +118,56 @@ class Search extends SearchDelegate<String> {
                       Endpoints.movieSearchUrl(query, includeAdult, lang));
                 }),
                 builder: (context, snapshot) {
-                  if (query.isEmpty) return searchATermWidget(isDark);
+                  if (query.isEmpty) return searchATermWidget(themeMode);
 
                   switch (snapshot.connectionState) {
                     case ConnectionState.waiting:
-                      return searchSuggestionVerticalScrollShimmer(isDark);
+                      return searchSuggestionVerticalScrollShimmer(themeMode);
                     default:
                       if (snapshot.hasError || snapshot.data!.isEmpty) {
-                        return errorMessageWidget(isDark);
+                        return errorMessageWidget(themeMode);
                       } else {
                         return activeMovieSearch(
-                            snapshot.data!, isDark, context);
+                            snapshot.data!, themeMode, context);
                       }
                   }
                 },
               ),
               FutureBuilder<List<TV>>(
-                future: Future.delayed(const Duration(seconds: 1)).then(
-                    (value) => tvApi().fetchTV(
+                future: Future.delayed(const Duration(seconds: 3)).then(
+                    (value) async => await tvApi().fetchTV(
                         Endpoints.tvSearchUrl(query, includeAdult, lang))),
                 builder: (context, snapshot) {
-                  if (query.isEmpty) return searchATermWidget(isDark);
+                  if (query.isEmpty) return searchATermWidget(themeMode);
 
                   switch (snapshot.connectionState) {
                     case ConnectionState.waiting:
-                      return searchSuggestionVerticalScrollShimmer(isDark);
+                      return searchSuggestionVerticalScrollShimmer(themeMode);
                     default:
                       if (snapshot.hasError || snapshot.data!.isEmpty) {
-                        return errorMessageWidget(isDark);
+                        return errorMessageWidget(themeMode);
                       } else {
-                        return activeTVSearch(snapshot.data!, isDark, context);
+                        return activeTVSearch(
+                            snapshot.data!, themeMode, context);
                       }
                   }
                 },
               ),
               FutureBuilder<List<Person>>(
-                future: Future.delayed(const Duration(seconds: 1)).then(
-                    (value) => peoplesApi().fetchPerson(
+                future: Future.delayed(const Duration(seconds: 3)).then(
+                    (value) async => await peoplesApi().fetchPerson(
                         Endpoints.personSearchUrl(query, includeAdult, lang))),
                 builder: (context, snapshot) {
-                  if (query.isEmpty) return searchATermWidget(isDark);
+                  if (query.isEmpty) return searchATermWidget(themeMode);
                   switch (snapshot.connectionState) {
                     case ConnectionState.waiting:
-                      return searchedPersonShimmer(isDark);
+                      return searchedPersonShimmer(themeMode);
                     default:
                       if (snapshot.hasError || snapshot.data!.isEmpty) {
-                        return errorMessageWidget(isDark);
+                        return errorMessageWidget(themeMode);
                       } else {
                         return activePersonSearch(
-                            snapshot.data!, isDark, context);
+                            snapshot.data!, themeMode, context);
                       }
                   }
                 },
@@ -176,7 +179,7 @@ class Search extends SearchDelegate<String> {
     );
   }
 
-  Widget searchSuggestionVerticalScrollShimmer(isDark) => Column(
+  Widget searchSuggestionVerticalScrollShimmer(String themeMode) => Column(
         children: [
           Expanded(
             child: Padding(
@@ -194,7 +197,7 @@ class Search extends SearchDelegate<String> {
                       child: Column(
                         children: [
                           ShimmerBase(
-                            isDark: isDark,
+                            themeMode: themeMode,
                             child: Row(
                               children: [
                                 Padding(
@@ -247,7 +250,9 @@ class Search extends SearchDelegate<String> {
                             ),
                           ),
                           Divider(
-                            color: !isDark ? Colors.black54 : Colors.white54,
+                            color: themeMode == "light"
+                                ? Colors.black54
+                                : Colors.white54,
                             thickness: 1,
                             endIndent: 20,
                             indent: 10,
@@ -261,7 +266,7 @@ class Search extends SearchDelegate<String> {
         ],
       );
 
-  Widget searchedPersonShimmer(isDark) => ListView.builder(
+  Widget searchedPersonShimmer(String themeMode) => ListView.builder(
       physics: const BouncingScrollPhysics(),
       itemCount: 10,
       itemBuilder: (BuildContext context, int index) {
@@ -274,7 +279,7 @@ class Search extends SearchDelegate<String> {
           child: Column(
             children: [
               ShimmerBase(
-                isDark: isDark,
+                themeMode: themeMode,
                 child: Row(
                   children: [
                     Padding(
@@ -305,7 +310,7 @@ class Search extends SearchDelegate<String> {
                 ),
               ),
               Divider(
-                color: !isDark ? Colors.black54 : Colors.white54,
+                color: themeMode == "light" ? Colors.black54 : Colors.white54,
                 thickness: 1,
                 endIndent: 20,
                 indent: 10,
@@ -315,7 +320,7 @@ class Search extends SearchDelegate<String> {
         );
       });
 
-  Widget errorMessageWidget(bool isDark) {
+  Widget errorMessageWidget(String themeMode) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -325,14 +330,16 @@ class Search extends SearchDelegate<String> {
             tr("no_result"),
             style: TextStyle(
                 fontFamily: 'Poppins',
-                color: isDark ? Colors.white : Colors.black),
+                color: themeMode == "dark" || themeMode == "amoled"
+                    ? Colors.white
+                    : Colors.black),
           )
         ],
       ),
     );
   }
 
-  Widget searchATermWidget(bool isDark) {
+  Widget searchATermWidget(String themeMode) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -341,7 +348,9 @@ class Search extends SearchDelegate<String> {
           const Padding(padding: EdgeInsets.only(top: 10, bottom: 5)),
           Text(tr("enter_word"),
               style: TextStyle(
-                  color: isDark ? Colors.white : Colors.black,
+                  color: themeMode == "dark" || themeMode == "amoled"
+                      ? Colors.white
+                      : Colors.black,
                   fontFamily: 'Poppins'))
         ],
       ),
@@ -349,7 +358,7 @@ class Search extends SearchDelegate<String> {
   }
 
   Widget activeMovieSearch(
-      List<Movie> moviesList, bool isDark, BuildContext context) {
+      List<Movie> moviesList, String themeMode, BuildContext context) {
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     return Column(
       children: [
@@ -362,10 +371,6 @@ class Search extends SearchDelegate<String> {
                 itemBuilder: (BuildContext context, int index) {
                   return GestureDetector(
                     onTap: () {
-                      mixpanel.track('Most viewed movie pages', properties: {
-                        'Movie name': '${moviesList[index].title}',
-                        'Movie id': '${moviesList[index].id}'
-                      });
                       Navigator.push(context,
                           MaterialPageRoute(builder: (context) {
                         return MovieDetailPage(
@@ -425,8 +430,8 @@ class Search extends SearchDelegate<String> {
                                                   ),
                                                 ),
                                                 placeholder: (context, url) =>
-                                                    scrollingImageShimmer1(
-                                                        isDark),
+                                                    scrollingImageShimmer(
+                                                        themeMode),
                                                 errorWidget:
                                                     (context, url, error) =>
                                                         Image.asset(
@@ -449,7 +454,8 @@ class Search extends SearchDelegate<String> {
                                             fontFamily: 'PoppinsSB',
                                             fontSize: 15,
                                             overflow: TextOverflow.ellipsis,
-                                            color: isDark
+                                            color: themeMode == "dark" ||
+                                                    themeMode == "amoled"
                                                 ? Colors.white
                                                 : Colors.black),
                                       ),
@@ -464,7 +470,8 @@ class Search extends SearchDelegate<String> {
                                                 .toStringAsFixed(1),
                                             style: TextStyle(
                                                 fontFamily: 'Poppins',
-                                                color: isDark
+                                                color: themeMode == "dark" ||
+                                                        themeMode == "amoled"
                                                     ? Colors.white
                                                     : Colors.black),
                                           ),
@@ -476,7 +483,9 @@ class Search extends SearchDelegate<String> {
                               ],
                             ),
                             Divider(
-                              color: !isDark ? Colors.black54 : Colors.white54,
+                              color: themeMode == "light"
+                                  ? Colors.black54
+                                  : Colors.white54,
                               thickness: 1,
                               endIndent: 20,
                               indent: 10,
@@ -493,7 +502,8 @@ class Search extends SearchDelegate<String> {
     );
   }
 
-  Widget activeTVSearch(List<TV> tvList, bool isDark, BuildContext context) {
+  Widget activeTVSearch(
+      List<TV> tvList, String themeMode, BuildContext context) {
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     return Column(
       children: [
@@ -562,8 +572,8 @@ class Search extends SearchDelegate<String> {
                                                   ),
                                                 ),
                                                 placeholder: (context, url) =>
-                                                    scrollingImageShimmer1(
-                                                        isDark),
+                                                    scrollingImageShimmer(
+                                                        themeMode),
                                                 errorWidget:
                                                     (context, url, error) =>
                                                         Image.asset(
@@ -586,7 +596,8 @@ class Search extends SearchDelegate<String> {
                                             fontFamily: 'PoppinsSB',
                                             fontSize: 15,
                                             overflow: TextOverflow.ellipsis,
-                                            color: isDark
+                                            color: themeMode == "dark" ||
+                                                    themeMode == "amoled"
                                                 ? Colors.white
                                                 : Colors.black),
                                       ),
@@ -601,7 +612,8 @@ class Search extends SearchDelegate<String> {
                                                 .toStringAsFixed(1),
                                             style: TextStyle(
                                                 fontFamily: 'Poppins',
-                                                color: isDark
+                                                color: themeMode == "dark" ||
+                                                        themeMode == "amoled"
                                                     ? Colors.white
                                                     : Colors.black),
                                           ),
@@ -613,7 +625,9 @@ class Search extends SearchDelegate<String> {
                               ],
                             ),
                             Divider(
-                              color: !isDark ? Colors.black54 : Colors.white54,
+                              color: themeMode == "light"
+                                  ? Colors.black54
+                                  : Colors.white54,
                               thickness: 1,
                               endIndent: 20,
                               indent: 10,
@@ -631,7 +645,7 @@ class Search extends SearchDelegate<String> {
   }
 
   Widget activePersonSearch(
-      List<Person>? personList, bool isDark, BuildContext context) {
+      List<Person>? personList, String themeMode, BuildContext context) {
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     return ListView.builder(
         physics: const BouncingScrollPhysics(),
@@ -693,7 +707,7 @@ class Search extends SearchDelegate<String> {
                                           ),
                                         ),
                                         placeholder: (context, url) =>
-                                            detailCastImageShimmer1(isDark),
+                                            detailCastImageShimmer(themeMode),
                                         errorWidget: (context, url, error) =>
                                             Image.asset(
                                           'assets/images/na_rect.png',
@@ -713,8 +727,10 @@ class Search extends SearchDelegate<String> {
                                 style: TextStyle(
                                     fontFamily: 'PoppinsSB',
                                     fontSize: 17,
-                                    color:
-                                        isDark ? Colors.white : Colors.black),
+                                    color: themeMode == "dark" ||
+                                            themeMode == "amoled"
+                                        ? Colors.white
+                                        : Colors.black),
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ],
@@ -723,7 +739,9 @@ class Search extends SearchDelegate<String> {
                       ],
                     ),
                     Divider(
-                      color: !isDark ? Colors.black54 : Colors.white54,
+                      color: themeMode == "light"
+                          ? Colors.black54
+                          : Colors.white54,
                       thickness: 1,
                       endIndent: 20,
                       indent: 10,

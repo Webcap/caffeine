@@ -39,20 +39,17 @@ class BelongsToCollectionWidgetState extends State<BelongsToCollectionWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     return belongsToCollection == null
-        ? Shimmer.fromColors(
-            baseColor: isDark ? Colors.grey.shade800 : Colors.grey.shade300,
-            highlightColor:
-                isDark ? Colors.grey.shade700 : Colors.grey.shade100,
-            direction: ShimmerDirection.ltr,
+        ? ShimmerBase(
+            themeMode: themeMode,
             child: Padding(
               padding: const EdgeInsets.all(8),
               child: Container(
                 width: double.infinity,
                 height: 200,
                 decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Colors.grey.shade600,
                     borderRadius: BorderRadius.circular(8)),
               ),
             ),
@@ -190,7 +187,7 @@ class CollectionOverviewWidgetState extends State<CollectionOverviewWidget> {
 
   @override
   Widget build(BuildContext context) {
-    //final isDark = Provider.of<DarkthemeProvider>(context).darktheme;
+    //final themeMode = Provider.of<DarkthemeProvider>(context).darktheme;
     return Container(
       child: collectionDetails == null
           ? Shimmer.fromColors(
@@ -241,8 +238,7 @@ class CollectionOverviewWidgetState extends State<CollectionOverviewWidget> {
                       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(5.0),
-                              side:
-                                  const BorderSide(color: maincolor)))),
+                              side: const BorderSide(color: maincolor)))),
                   onPressed: () {
                     setState(() {
                       requestFailed = false;
@@ -283,7 +279,7 @@ class PartsListState extends State<PartsList> {
   @override
   Widget build(BuildContext context) {
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     return Column(
       children: <Widget>[
         Row(
@@ -315,7 +311,7 @@ class PartsListState extends State<PartsList> {
                   children: [
                     Expanded(
                       child: ShimmerBase(
-                        isDark: isDark,
+                        themeMode: themeMode,
                         child: ListView.builder(
                           physics: const BouncingScrollPhysics(),
                           itemCount: 3,
@@ -390,93 +386,103 @@ class PartsListState extends State<PartsList> {
                                       child: Hero(
                                         tag:
                                             '${collectionMovieList![index].id}',
-                                        child: Stack(
-                                          alignment: Alignment.center,
-                                          children: [
-                                            ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(8.0),
-                                              child: collectionMovieList![index]
-                                                          .posterPath ==
-                                                      null
-                                                  ? Image.asset(
-                                                      'assets/images/na_rect.png',
-                                                      fit: BoxFit.cover,
-                                                    )
-                                                  : CachedNetworkImage(
-                                                      cacheManager: cacheProp(),
-                                                      fadeOutDuration:
-                                                          const Duration(
-                                                              milliseconds:
-                                                                  300),
-                                                      fadeOutCurve:
-                                                          Curves.easeOut,
-                                                      fadeInDuration:
-                                                          const Duration(
-                                                              milliseconds:
-                                                                  700),
-                                                      fadeInCurve:
-                                                          Curves.easeIn,
-                                                      imageUrl:
-                                                          TMDB_BASE_IMAGE_URL +
-                                                              imageQuality +
-                                                              collectionMovieList![
-                                                                      index]
-                                                                  .posterPath!,
-                                                      imageBuilder: (context,
-                                                              imageProvider) =>
-                                                          Container(
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          image:
-                                                              DecorationImage(
-                                                            image:
-                                                                imageProvider,
+                                        child: Material(
+                                          type: MaterialType.transparency,
+                                          child: Stack(
+                                            alignment: Alignment.center,
+                                            children: [
+                                              ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                                child:
+                                                    collectionMovieList![index]
+                                                                .posterPath ==
+                                                            null
+                                                        ? Image.asset(
+                                                            'assets/images/na_rect.png',
                                                             fit: BoxFit.cover,
+                                                          )
+                                                        : CachedNetworkImage(
+                                                            cacheManager:
+                                                                cacheProp(),
+                                                            fadeOutDuration:
+                                                                const Duration(
+                                                                    milliseconds:
+                                                                        300),
+                                                            fadeOutCurve:
+                                                                Curves.easeOut,
+                                                            fadeInDuration:
+                                                                const Duration(
+                                                                    milliseconds:
+                                                                        700),
+                                                            fadeInCurve:
+                                                                Curves.easeIn,
+                                                            imageUrl: TMDB_BASE_IMAGE_URL +
+                                                                imageQuality +
+                                                                collectionMovieList![
+                                                                        index]
+                                                                    .posterPath!,
+                                                            imageBuilder: (context,
+                                                                    imageProvider) =>
+                                                                Container(
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                image:
+                                                                    DecorationImage(
+                                                                  image:
+                                                                      imageProvider,
+                                                                  fit: BoxFit
+                                                                      .cover,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            placeholder: (context,
+                                                                    url) =>
+                                                                scrollingImageShimmer(
+                                                                    themeMode),
+                                                            errorWidget:
+                                                                (context, url,
+                                                                        error) =>
+                                                                    Image.asset(
+                                                              'assets/images/na_rect.png',
+                                                              fit: BoxFit.cover,
+                                                            ),
                                                           ),
-                                                        ),
+                                              ),
+                                              Positioned(
+                                                top: 0,
+                                                left: 0,
+                                                child: Container(
+                                                  margin:
+                                                      const EdgeInsets.all(3),
+                                                  alignment: Alignment.topLeft,
+                                                  width: 50,
+                                                  height: 25,
+                                                  decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8),
+                                                      color:
+                                                          themeMode == "dark" ||
+                                                                  themeMode ==
+                                                                      "amoled"
+                                                              ? Colors.black45
+                                                              : Colors.white60),
+                                                  child: Row(
+                                                    children: [
+                                                      const Icon(
+                                                        Icons.star,
                                                       ),
-                                                      placeholder: (context,
-                                                              url) =>
-                                                          scrollingImageShimmer1(
-                                                              isDark),
-                                                      errorWidget: (context,
-                                                              url, error) =>
-                                                          Image.asset(
-                                                        'assets/images/na_rect.png',
-                                                        fit: BoxFit.cover,
-                                                      ),
-                                                    ),
-                                            ),
-                                            Positioned(
-                                              top: 0,
-                                              left: 0,
-                                              child: Container(
-                                                margin: const EdgeInsets.all(3),
-                                                alignment: Alignment.topLeft,
-                                                width: 50,
-                                                height: 25,
-                                                decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            8),
-                                                    color: isDark
-                                                        ? Colors.black45
-                                                        : Colors.white60),
-                                                child: Row(
-                                                  children: [
-                                                    const Icon(
-                                                      Icons.star,
-                                                    ),
-                                                    Text(collectionMovieList![
-                                                            index]
-                                                        .voteAverage!
-                                                        .toStringAsFixed(1))
-                                                  ],
+                                                      Text(collectionMovieList![
+                                                              index]
+                                                          .voteAverage!
+                                                          .toStringAsFixed(1))
+                                                    ],
+                                                  ),
                                                 ),
                                               ),
-                                            ),
-                                          ],
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     ),

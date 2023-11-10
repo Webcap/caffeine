@@ -133,7 +133,7 @@ class _caffeineState extends State<caffeine>
                       debugShowCheckedModeBanner: false,
                       title: tr("caffiene"),
                       theme: Styles.themeData(
-                          isDarkTheme: settingsProvider.darktheme,
+                          appThemeMode: settingsProvider.appTheme,
                           isM3Enabled: settingsProvider.isMaterial3Enabled,
                           lightDynamicColor: lightDynamic,
                           darkDynamicColor: darkDynamic,

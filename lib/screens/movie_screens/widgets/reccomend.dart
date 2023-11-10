@@ -1,9 +1,8 @@
-
 import 'package:flutter/material.dart';
 import 'package:caffiene/api/movies_api.dart';
 import 'package:caffiene/models/movie_models.dart';
 import 'package:caffiene/provider/settings_provider.dart';
-import 'package:caffiene/screens/movie_screens/widgets/movie_ui_componets.dart';
+import 'package:caffiene/screens/movie_screens/widgets/horizontal_scrolling_movie_list.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/widgets/shimmer_widget.dart';
 import 'package:provider/provider.dart';
@@ -71,7 +70,7 @@ class MovieRecommendationsTabState extends State<MovieRecommendationsTab>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     return Container(
       child: Column(
@@ -92,7 +91,7 @@ class MovieRecommendationsTabState extends State<MovieRecommendationsTab>
             width: double.infinity,
             height: 250,
             child: movieList == null || widget.includeAdult == null
-                ? scrollingMoviesAndTVShimmer1(isDark)
+                ? scrollingMoviesAndTVShimmer1(themeMode)
                 : movieList!.isEmpty
                     ? const Center(
                         child: Text(
@@ -107,20 +106,20 @@ class MovieRecommendationsTabState extends State<MovieRecommendationsTab>
                                 scrollController: _scrollController,
                                 movieList: movieList,
                                 imageQuality: imageQuality,
-                                isDark: isDark),
+                                themeMode: themeMode),
                           ),
                           Visibility(
                             visible: isLoading,
                             child: SizedBox(
                               width: 110,
-                              child: horizontalLoadMoreShimmer1(isDark),
+                              child: horizontalLoadMoreShimmer1(themeMode),
                             ),
                           ),
                         ],
                       ),
           ),
           Divider(
-            color: !isDark ? Colors.black54 : Colors.white54,
+            color: themeMode == "light" ? Colors.black54 : Colors.white54,
             thickness: 1,
             endIndent: 20,
             indent: 10,
@@ -199,7 +198,7 @@ class SimilarMoviesTabState extends State<SimilarMoviesTab>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     return Container(
       child: Column(
@@ -222,7 +221,7 @@ class SimilarMoviesTabState extends State<SimilarMoviesTab>
             width: double.infinity,
             height: 250,
             child: movieList == null || widget.includeAdult == null
-                ? scrollingMoviesAndTVShimmer1(isDark)
+                ? scrollingMoviesAndTVShimmer1(themeMode)
                 : movieList!.isEmpty
                     ? const Center(
                         child: Text(
@@ -235,7 +234,7 @@ class SimilarMoviesTabState extends State<SimilarMoviesTab>
                           Expanded(
                               child: HorizontalScrollingMoviesList(
                             imageQuality: imageQuality,
-                            isDark: isDark,
+                            themeMode: themeMode,
                             movieList: movieList,
                             scrollController: _scrollController,
                           )),
@@ -243,7 +242,7 @@ class SimilarMoviesTabState extends State<SimilarMoviesTab>
                             visible: isLoading,
                             child: SizedBox(
                               width: 110,
-                              child: horizontalLoadMoreShimmer1(isDark),
+                              child: horizontalLoadMoreShimmer1(themeMode),
                             ),
                           ),
                         ],

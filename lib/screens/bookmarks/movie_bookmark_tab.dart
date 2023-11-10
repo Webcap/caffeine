@@ -28,15 +28,15 @@ class _MovieBookmarkState extends State<MovieBookmark> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     final viewType = Provider.of<SettingsProvider>(context).defaultView;
     return widget.movieList == null && viewType == 'grid'
-        ? Container(child: moviesAndTVShowGridShimmer(isDark))
+        ? Container(child: moviesAndTVShowGridShimmer(themeMode))
         : widget.movieList == null && viewType == 'list'
             ? Container(
                 child: mainPageVerticalScrollShimmer1(
-                    isDark: isDark,
+                    themeMode: themeMode,
                     isLoading: false,
                     scrollController: _scrollController))
             : widget.movieList!.isEmpty
@@ -142,7 +142,7 @@ class _MovieBookmarkState extends State<MovieBookmark> {
                                                                         ),
                                                                         placeholder:
                                                                             (context, url) =>
-                                                                                scrollingImageShimmer1(isDark),
+                                                                                scrollingImageShimmer1(themeMode),
                                                                         errorWidget: (context,
                                                                                 url,
                                                                                 error) =>
@@ -160,7 +160,8 @@ class _MovieBookmarkState extends State<MovieBookmark> {
                                                                     Container(
                                                                   margin:
                                                                       const EdgeInsets
-                                                                          .all(3),
+                                                                          .all(
+                                                                          3),
                                                                   alignment:
                                                                       Alignment
                                                                           .topLeft,
@@ -170,7 +171,9 @@ class _MovieBookmarkState extends State<MovieBookmark> {
                                                                       borderRadius:
                                                                           BorderRadius.circular(
                                                                               8),
-                                                                      color: isDark
+                                                                      color: themeMode == "dark" ||
+                                                                              themeMode ==
+                                                                                  "amoled"
                                                                           ? Colors
                                                                               .black45
                                                                           : Colors
@@ -279,7 +282,7 @@ class _MovieBookmarkState extends State<MovieBookmark> {
                                                           Padding(
                                                             padding:
                                                                 const EdgeInsets
-                                                                        .only(
+                                                                    .only(
                                                                     right:
                                                                         10.0),
                                                             child: SizedBox(
@@ -315,7 +318,7 @@ class _MovieBookmarkState extends State<MovieBookmark> {
                                                                                     ),
                                                                                   ),
                                                                                 ),
-                                                                                placeholder: (context, url) => mainPageVerticalScrollImageShimmer1(isDark),
+                                                                                placeholder: (context, url) => mainPageVerticalScrollImageShimmer1(themeMode),
                                                                                 errorWidget: (context, url, error) => Image.asset(
                                                                                   'assets/images/na_logo.png',
                                                                                   fit: BoxFit.cover,
@@ -391,7 +394,8 @@ class _MovieBookmarkState extends State<MovieBookmark> {
                                                         ],
                                                       ),
                                                       Divider(
-                                                        color: !isDark
+                                                        color: themeMode ==
+                                                                "light"
                                                             ? Colors.black54
                                                             : Colors.white54,
                                                         thickness: 1,

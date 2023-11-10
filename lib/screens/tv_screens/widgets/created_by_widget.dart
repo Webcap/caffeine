@@ -48,7 +48,7 @@ class CreatedByPersonDetailPageState extends State<CreatedByPersonDetailPage>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     return Scaffold(
       body: CustomScrollView(
@@ -57,9 +57,13 @@ class CreatedByPersonDetailPageState extends State<CreatedByPersonDetailPage>
           SliverAppBar(
             pinned: true,
             elevation: 1,
-            shadowColor: isDark ? Colors.white : Colors.black,
+            shadowColor: themeMode == "dark" || themeMode == "amoled"
+                ? Colors.white
+                : Colors.black,
             forceElevated: true,
-            backgroundColor: isDark ? Colors.black : Colors.white,
+            backgroundColor: themeMode == "dark" || themeMode == "amoled"
+                ? Colors.black
+                : Colors.white,
             leading: SABTN(
               onBack: () {
                 Navigator.pop(context);

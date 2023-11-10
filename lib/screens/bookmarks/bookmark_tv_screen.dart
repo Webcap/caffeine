@@ -25,19 +25,16 @@ class _TVBookmarkState extends State<TVBookmark> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     final viewType = Provider.of<SettingsProvider>(context).defaultView;
     return widget.tvList == null && viewType == 'grid'
-        ? moviesAndTVShowGridShimmer(isDark)
+        ? moviesAndTVShowGridShimmer(themeMode)
         : widget.tvList == null && viewType == 'list'
-            ? Container(
-                color:
-                    isDark ? const Color(0xFF000000) : const Color(0xFFFFFFFF),
-                child: mainPageVerticalScrollShimmer1(
-                    isDark: isDark,
-                    scrollController: _scrollController,
-                    isLoading: false))
+            ? mainPageVerticalScrollShimmer(
+                themeMode: themeMode,
+                scrollController: _scrollController,
+                isLoading: false)
             : widget.tvList!.isEmpty
                 ? Center(
                     child: Text(
@@ -141,7 +138,7 @@ class _TVBookmarkState extends State<TVBookmark> {
                                                                         ),
                                                                         placeholder:
                                                                             (context, url) =>
-                                                                                scrollingImageShimmer1(isDark),
+                                                                                scrollingImageShimmer(themeMode),
                                                                         errorWidget: (context,
                                                                                 url,
                                                                                 error) =>
@@ -159,7 +156,8 @@ class _TVBookmarkState extends State<TVBookmark> {
                                                                     Container(
                                                                   margin:
                                                                       const EdgeInsets
-                                                                          .all(3),
+                                                                          .all(
+                                                                          3),
                                                                   alignment:
                                                                       Alignment
                                                                           .topLeft,
@@ -169,7 +167,9 @@ class _TVBookmarkState extends State<TVBookmark> {
                                                                       borderRadius:
                                                                           BorderRadius.circular(
                                                                               8),
-                                                                      color: isDark
+                                                                      color: themeMode == "dark" ||
+                                                                              themeMode ==
+                                                                                  "amoled"
                                                                           ? Colors
                                                                               .black45
                                                                           : Colors
@@ -277,7 +277,7 @@ class _TVBookmarkState extends State<TVBookmark> {
                                                           Padding(
                                                             padding:
                                                                 const EdgeInsets
-                                                                        .only(
+                                                                    .only(
                                                                     right:
                                                                         10.0),
                                                             child: SizedBox(
@@ -313,7 +313,7 @@ class _TVBookmarkState extends State<TVBookmark> {
                                                                                     ),
                                                                                   ),
                                                                                 ),
-                                                                                placeholder: (context, url) => mainPageVerticalScrollImageShimmer1(isDark),
+                                                                                placeholder: (context, url) => mainPageVerticalScrollImageShimmer(themeMode),
                                                                                 errorWidget: (context, url, error) => Image.asset(
                                                                                   'assets/images/na_logo.png',
                                                                                   fit: BoxFit.cover,
@@ -389,7 +389,8 @@ class _TVBookmarkState extends State<TVBookmark> {
                                                         ],
                                                       ),
                                                       Divider(
-                                                        color: !isDark
+                                                        color: themeMode ==
+                                                                "light"
                                                             ? Colors.black54
                                                             : Colors.white54,
                                                         thickness: 1,

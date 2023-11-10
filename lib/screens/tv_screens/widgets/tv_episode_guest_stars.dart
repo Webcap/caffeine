@@ -36,12 +36,12 @@ class TVEpisodeGuestStarsTabState extends State<TVEpisodeGuestStarsTab>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     return credits == null
         ? Container(
             padding: const EdgeInsets.all(8),
-            child: searchedPersonShimmer(isDark))
+            child: searchedPersonShimmer(themeMode))
         : credits!.cast!.isEmpty
             ? Center(
                 child: Text(
@@ -134,7 +134,7 @@ class TVEpisodeGuestStarsTabState extends State<TVEpisodeGuestStarsTab>
                                                         placeholder: (context,
                                                                 url) =>
                                                             castAndCrewTabImageShimmer1(
-                                                                isDark),
+                                                                themeMode),
                                                         errorWidget: (context,
                                                                 url, error) =>
                                                             Image.asset(
@@ -166,7 +166,7 @@ class TVEpisodeGuestStarsTabState extends State<TVEpisodeGuestStarsTab>
                                       ],
                                     ),
                                     Divider(
-                                      color: !isDark
+                                      color: themeMode == "light"
                                           ? Colors.black54
                                           : Colors.white54,
                                       thickness: 1,
@@ -179,7 +179,7 @@ class TVEpisodeGuestStarsTabState extends State<TVEpisodeGuestStarsTab>
                     }));
   }
 
-  Widget searchedPersonShimmer(isDark) => ListView.builder(
+  Widget searchedPersonShimmer(themeMode) => ListView.builder(
       physics: const BouncingScrollPhysics(),
       itemCount: 10,
       itemBuilder: (BuildContext context, int index) {
@@ -192,9 +192,10 @@ class TVEpisodeGuestStarsTabState extends State<TVEpisodeGuestStarsTab>
           child: Column(
             children: [
               Shimmer.fromColors(
-                baseColor: isDark ? Colors.grey.shade800 : Colors.grey.shade300,
+                baseColor:
+                    themeMode ? Colors.grey.shade800 : Colors.grey.shade300,
                 highlightColor:
-                    isDark ? Colors.grey.shade700 : Colors.grey.shade100,
+                    themeMode ? Colors.grey.shade700 : Colors.grey.shade100,
                 direction: ShimmerDirection.ltr,
                 child: Row(
                   children: [
@@ -226,7 +227,7 @@ class TVEpisodeGuestStarsTabState extends State<TVEpisodeGuestStarsTab>
                 ),
               ),
               Divider(
-                color: !isDark ? Colors.black54 : Colors.white54,
+                color: !themeMode ? Colors.black54 : Colors.white54,
                 thickness: 1,
                 endIndent: 20,
                 indent: 10,

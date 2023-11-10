@@ -1,3 +1,4 @@
+import 'package:caffiene/functions/functions.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/screens/auth_screens/forgot_password.dart';
 import 'package:caffiene/utils/config.dart';
@@ -7,7 +8,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/screens/home_screen/dash_screen.dart';
 import 'package:provider/provider.dart';
-
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -35,57 +35,76 @@ class _LoginScreenState extends State<LoginScreen> {
   void submitForm() async {
     final isValid = formKey.currentState!.validate();
     FocusScope.of(context).unfocus();
-    if (isValid && mounted) {
-      setState(() {
-        isLoading = true;
-      });
-      formKey.currentState!.save();
-      try {
-        await auth
-            .signInWithEmailAndPassword(
-                email: emailAddress.toLowerCase().trim(),
-                password: password.trim())
-            .then((value) => Navigator.canPop(context)
-                ? Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: ((context) {
-                    final mixpanel =
-                        Provider.of<SettingsProvider>(context).mixpanel;
-                    mixpanel.track(
-                      'Users Login',
-                    );
-                    return const caffieneHomePage();
-                  })))
-                : null);
-      } on FirebaseAuthException catch (error) {
-        if (mounted) {
-          if (error.code == 'wrong-password') {
-            globalMethods.authErrorHandle(tr("invalid_credential"), context);
-          } else if (error.code == 'invalid-email') {
-            globalMethods.authErrorHandle(tr("invalid_email"), context);
-          } else if (error.code == 'user-disabled') {
-            globalMethods.authErrorHandle(tr("banned_user"), context);
-          } else if (error.code == 'user-not-found') {
-            globalMethods.authErrorHandle(tr("user_not_found"), context);
+    checkConnection().then((value) async {
+      if (value) {
+        if (isValid && mounted) {
+          setState(() {
+            isLoading = true;
+          });
+          formKey.currentState!.save();
+          try {
+            await auth
+                .signInWithEmailAndPassword(
+                    email: emailAddress.toLowerCase().trim(),
+                    password: password.trim())
+                .then((value) => Navigator.canPop(context)
+                    ? Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder: ((context) {
+                        final mixpanel =
+                            Provider.of<SettingsProvider>(context).mixpanel;
+                        mixpanel.track(
+                          'Users Login',
+                        );
+                        return const caffieneHomePage();
+                      })))
+                    : null);
+          } on FirebaseAuthException catch (error) {
+            if (mounted) {
+              if (error.code == 'wrong-password') {
+                globalMethods.authErrorHandle(
+                    tr("invalid_credential"), context);
+              } else if (error.code == 'invalid-email') {
+                globalMethods.authErrorHandle(tr("invalid_email"), context);
+              } else if (error.code == 'user-disabled') {
+                globalMethods.authErrorHandle(tr("banned_user"), context);
+              } else if (error.code == 'user-not-found') {
+                globalMethods.authErrorHandle(tr("user_not_found"), context);
+              }
+            }
+            // print('error occured $error}');
+          } finally {
+            if (mounted) {
+              setState(() {
+                isLoading = false;
+              });
+            }
           }
         }
-        // print('error occured $error}');
-      } finally {
-        if (mounted) {
-          setState(() {
-            isLoading = false;
-          });
-        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              tr("check_connection"),
+              maxLines: 3,
+              style: kTextSmallBodyStyle,
+            ),
+            duration: const Duration(seconds: 3),
+          ),
+        );
       }
-    }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
 
     return Scaffold(
-      backgroundColor:
-          isDark ? const Color(0xFF171717) : const Color(0xFFdedede),
+      backgroundColor: themeMode == "black"
+          ? const Color(0xFF171717)
+          : themeMode == "amoled"
+              ? Colors.black
+              : const Color(0xFFdedede),
       appBar: AppBar(title: Text(tr("login"))),
       body: Container(
           padding: const EdgeInsets.all(8),

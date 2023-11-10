@@ -2,9 +2,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:caffiene/api/movies_api.dart';
 import 'package:caffiene/models/images.dart';
 import 'package:caffiene/provider/settings_provider.dart';
+import 'package:caffiene/screens/common/photoview.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/widgets/common_widgets.dart';
-import 'package:caffiene/widgets/hero_photoview.dart';
 import 'package:caffiene/widgets/shimmer_widget.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -37,7 +37,7 @@ class TVEpisodeImagesDisplayState extends State<TVEpisodeImagesDisplay> {
   @override
   Widget build(BuildContext context) {
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     return Column(
       children: [
         tvImages == null
@@ -87,7 +87,7 @@ class TVEpisodeImagesDisplayState extends State<TVEpisodeImagesDisplay> {
             width: double.infinity,
             height: 180,
             child: tvImages == null
-                ? detailImageShimmer1(isDark)
+                ? detailImageShimmer1(themeMode)
                 : tvImages!.still!.isEmpty
                     ? SizedBox(
                         width: double.infinity,
@@ -152,7 +152,7 @@ class TVEpisodeImagesDisplayState extends State<TVEpisodeImagesDisplay> {
                                         ),
                                       ),
                                       placeholder: (context, url) =>
-                                          detailImageImageSimmer1(isDark),
+                                          detailImageImageSimmer1(themeMode),
                                       errorWidget: (context, url, error) =>
                                           Image.asset(
                                         'assets/images/na_logo.png',

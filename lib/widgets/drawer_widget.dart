@@ -31,12 +31,14 @@ class _DrawerWidgetState extends State<DrawerWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     final mixpanel = Provider.of<SettingsProvider>(context).mixpanel;
     AppDependencyProvider appDependencyProvider = AppDependencyProvider();
     return Drawer(
       child: Container(
-        color: isDark ? Colors.black : Colors.white,
+        color: themeMode == "dark" || themeMode == "amoled"
+            ? Colors.black
+            : Colors.white,
         child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -47,7 +49,9 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                     width: double.infinity,
                     child: DrawerHeader(
                       decoration: BoxDecoration(
-                          color: isDark ? Colors.white : Colors.black),
+                          color: themeMode == "dark" || themeMode == "amoled"
+                              ? Colors.white
+                              : Colors.black),
                       child: Image.asset(appConfig.app_icon),
                     ),
                   ),

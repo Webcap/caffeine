@@ -1,8 +1,6 @@
-import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/utils/globlal_methods.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -96,10 +94,7 @@ class PasswordChangeScreenState extends State<PasswordChangeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
     return Scaffold(
-      backgroundColor:
-          isDark ? const Color(0xFF171717) : const Color(0xFFdedede),
       appBar: AppBar(title: Text(tr('change_password'))),
       body: _emailAddress == null
           ? const Center(

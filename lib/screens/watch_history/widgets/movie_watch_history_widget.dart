@@ -28,15 +28,15 @@ class _MovieWatchHistoryState extends State<MovieWatchHistory> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     final viewType = Provider.of<SettingsProvider>(context).defaultView;
     return widget.movieList == null && viewType == 'grid'
-        ? Container(child: moviesAndTVShowGridShimmer(isDark))
+        ? Container(child: moviesAndTVShowGridShimmer(themeMode))
         : widget.movieList == null && viewType == 'list'
             ? Container(
                 child: mainPageVerticalScrollShimmer1(
-                    isDark: isDark,
+                    themeMode: themeMode,
                     isLoading: false,
                     scrollController: _scrollController))
             : widget.movieList!.isEmpty
@@ -142,7 +142,7 @@ class _MovieWatchHistoryState extends State<MovieWatchHistory> {
                                                                         ),
                                                                         placeholder:
                                                                             (context, url) =>
-                                                                                scrollingImageShimmer1(isDark),
+                                                                                scrollingImageShimmer1(themeMode),
                                                                         errorWidget: (context,
                                                                                 url,
                                                                                 error) =>
@@ -171,7 +171,7 @@ class _MovieWatchHistoryState extends State<MovieWatchHistory> {
                                                               //         borderRadius:
                                                               //             BorderRadius.circular(
                                                               //                 8),
-                                                              //         color: isDark
+                                                              //         color: themeMode
                                                               //             ? Colors
                                                               //                 .black45
                                                               //             : Colors
@@ -282,7 +282,7 @@ class _MovieWatchHistoryState extends State<MovieWatchHistory> {
                                                           Padding(
                                                             padding:
                                                                 const EdgeInsets
-                                                                        .only(
+                                                                    .only(
                                                                     right:
                                                                         10.0),
                                                             child: SizedBox(
@@ -318,7 +318,7 @@ class _MovieWatchHistoryState extends State<MovieWatchHistory> {
                                                                                           ),
                                                                                         ),
                                                                                       ),
-                                                                                      placeholder: (context, url) => mainPageVerticalScrollImageShimmer1(isDark),
+                                                                                      placeholder: (context, url) => mainPageVerticalScrollImageShimmer1(themeMode),
                                                                                       errorWidget: (context, url, error) => Image.asset(
                                                                                         'assets/images/na_logo.png',
                                                                                         fit: BoxFit.cover,
@@ -367,8 +367,7 @@ class _MovieWatchHistoryState extends State<MovieWatchHistory> {
                                                                               .ellipsis),
                                                                 ),
                                                                 Row(
-                                                                  children: <
-                                                                      Widget>[
+                                                                  children: <Widget>[
                                                                     const Icon(
                                                                       Icons
                                                                           .star,
@@ -392,7 +391,8 @@ class _MovieWatchHistoryState extends State<MovieWatchHistory> {
                                                         ],
                                                       ),
                                                       Divider(
-                                                        color: !isDark
+                                                        color: themeMode ==
+                                                                "light"
                                                             ? Colors.black54
                                                             : Colors.white54,
                                                         thickness: 1,

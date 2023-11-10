@@ -7,6 +7,7 @@ import 'package:caffiene/provider/settings_provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:provider/provider.dart';
@@ -107,18 +108,18 @@ class _HeroPhotoViewState extends State<HeroPhotoView> {
     super.dispose();
   }
 
-  void _download(String url, String currentIndex, bool isDark) async {
+  void _download(String url, String currentIndex, String themeMode) async {
     final status = await Permission.storage.request();
     // final status2 = await Permission.accessMediaLocation.request();
 
     if (status.isGranted) {
       await createFolder(
-          'Caffiene', 'Backdrops', 'Posters', 'Stills', 'Person Images');
+          'FlixQuest', 'Backdrops', 'Posters', 'Stills', 'Person Images');
       await FlutterDownloader.enqueue(
         url: url,
         fileName: '${widget.name}_$currentIndex.jpg',
         headers: {}, // optional: header send with url (auth token etc)
-        savedDir: '/storage/emulated/0/Caffiene/Person Images/',
+        savedDir: '/storage/emulated/0/FlixQuest/Person Images/',
         showNotification:
             true, // show download progress in status bar (for Android)
         openFileFromNotification:
@@ -130,7 +131,9 @@ class _HeroPhotoViewState extends State<HeroPhotoView> {
             content: Text(
           tr("no_file_premission"),
           style: TextStyle(
-              color: isDark ? Colors.white : Colors.black,
+              color: themeMode == "dark" || themeMode == "amoled"
+                  ? Colors.white
+                  : Colors.black,
               fontFamily: 'PoppinsSB'),
         )),
       );
@@ -139,7 +142,7 @@ class _HeroPhotoViewState extends State<HeroPhotoView> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     return SafeArea(
       child: Scaffold(
           appBar: AppBar(
@@ -162,7 +165,7 @@ class _HeroPhotoViewState extends State<HeroPhotoView> {
                 child: ElevatedButton(
                   onPressed: () async {
                     _download(
-                        widget.heroId, '${widget.currentIndex + 1}', isDark);
+                        widget.heroId, '${widget.currentIndex + 1}', themeMode);
                   },
                   style: ButtonStyle(
                     minimumSize: MaterialStateProperty.all(
@@ -173,7 +176,7 @@ class _HeroPhotoViewState extends State<HeroPhotoView> {
                     children: [
                       const Padding(
                         padding: EdgeInsets.only(right: 8.0),
-                        child: Icon(Icons.save),
+                        child: Icon(FontAwesomeIcons.solidFloppyDisk),
                       ),
                       Text(tr("download")),
                     ],

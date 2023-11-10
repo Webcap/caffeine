@@ -23,7 +23,7 @@ class CreatedByQuickInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     return SizedBox(
       height: 200,
       width: double.infinity,
@@ -60,7 +60,7 @@ class CreatedByQuickInfo extends StatelessWidget {
                                       cacheManager: cacheProp(),
                                       fit: BoxFit.cover,
                                       placeholder: (context, url) =>
-                                          scrollingImageShimmer1(isDark),
+                                          scrollingImageShimmer1(themeMode),
                                       errorWidget: (context, url, error) =>
                                           Image.asset(
                                         'assets/images/na_logo.png',
@@ -120,7 +120,7 @@ class CreatedByAbout extends StatefulWidget {
 class _CreatedByAboutState extends State<CreatedByAbout> {
   @override
   Widget build(BuildContext context) {
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     final lang = Provider.of<SettingsProvider>(context).appLanguage;
     return SingleChildScrollView(
       child: Container(
@@ -147,19 +147,28 @@ class _CreatedByAboutState extends State<CreatedByAbout> {
                       child: Text(tr("about"),
                           style: TextStyle(
                               fontFamily: 'Poppins',
-                              color: isDark ? Colors.white : Colors.black)),
+                              color:
+                                  themeMode == "dark" || themeMode == "amoled"
+                                      ? Colors.white
+                                      : Colors.black)),
                     ),
                     Tab(
                       child: Text(tr("movies"),
                           style: TextStyle(
                               fontFamily: 'Poppins',
-                              color: isDark ? Colors.white : Colors.black)),
+                              color:
+                                  themeMode == "dark" || themeMode == "amoled"
+                                      ? Colors.white
+                                      : Colors.black)),
                     ),
                     Tab(
                       child: Text(tr("tv_shows"),
                           style: TextStyle(
                               fontFamily: 'Poppins',
-                              color: isDark ? Colors.white : Colors.black)),
+                              color:
+                                  themeMode == "dark" || themeMode == "amoled"
+                                      ? Colors.white
+                                      : Colors.black)),
                     ),
                   ],
                   controller: widget.tabController,

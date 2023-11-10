@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:caffiene/screens/common/photoview.dart';
 import 'package:caffiene/widgets/common_widgets.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -7,7 +8,6 @@ import 'package:caffiene/api/movies_api.dart';
 import 'package:caffiene/models/images.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/utils/config.dart';
-import 'package:caffiene/widgets/hero_photoview.dart';
 import 'package:caffiene/widgets/shimmer_widget.dart';
 import 'package:provider/provider.dart';
 
@@ -37,7 +37,7 @@ class MovieImagesState extends State<MovieImagesDisplay> {
   @override
   Widget build(BuildContext context) {
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     return SizedBox(
       height: 260,
       width: double.infinity,
@@ -70,7 +70,7 @@ class MovieImagesState extends State<MovieImagesDisplay> {
               width: double.infinity,
               height: 220,
               child: movieImages == null
-                  ? detailImageShimmer1(isDark)
+                  ? detailImageShimmer(themeMode)
                   : Padding(
                       padding: const EdgeInsets.only(bottom: 8.0),
                       child: CarouselSlider(
@@ -182,8 +182,8 @@ class MovieImagesState extends State<MovieImagesDisplay> {
                                                               ),
                                                               placeholder: (context,
                                                                       url) =>
-                                                                  detailImageImageSimmer1(
-                                                                      isDark),
+                                                                  detailImageImageSimmer(
+                                                                      themeMode),
                                                               errorWidget: (context,
                                                                       url,
                                                                       error) =>
@@ -328,8 +328,8 @@ class MovieImagesState extends State<MovieImagesDisplay> {
                                                               ),
                                                               placeholder: (context,
                                                                       url) =>
-                                                                  detailImageImageSimmer1(
-                                                                      isDark),
+                                                                  detailImageImageSimmer(
+                                                                      themeMode),
                                                               errorWidget: (context,
                                                                       url,
                                                                       error) =>

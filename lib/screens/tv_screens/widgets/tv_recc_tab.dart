@@ -30,7 +30,9 @@ class TVRecommendationsTabState extends State<TVRecommendationsTab>
   @override
   void initState() {
     super.initState();
-    tvApi().fetchTV('${widget.api}&include_adult=${widget.includeAdult}').then((value) {
+    tvApi()
+        .fetchTV('${widget.api}&include_adult=${widget.includeAdult}')
+        .then((value) {
       if (mounted) {
         setState(() {
           tvList = value;
@@ -53,7 +55,9 @@ class TVRecommendationsTabState extends State<TVRecommendationsTab>
           isLoading = true;
         });
 
-        tvApi().fetchTV('${widget.api}&page=$pageNum&include_adult=${widget.includeAdult}')
+        tvApi()
+            .fetchTV(
+                '${widget.api}&page=$pageNum&include_adult=${widget.includeAdult}')
             .then((value) {
           if (mounted) {
             setState(() {
@@ -70,7 +74,7 @@ class TVRecommendationsTabState extends State<TVRecommendationsTab>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     return Container(
       child: Column(
@@ -102,7 +106,7 @@ class TVRecommendationsTabState extends State<TVRecommendationsTab>
             width: double.infinity,
             height: 250,
             child: tvList == null || widget.includeAdult == null
-                ? scrollingMoviesAndTVShimmer1(isDark)
+                ? scrollingMoviesAndTVShimmer1(themeMode)
                 : tvList!.isEmpty
                     ? Text(
                         tr("no_recommendations_tv"),
@@ -115,20 +119,20 @@ class TVRecommendationsTabState extends State<TVRecommendationsTab>
                                 scrollController: _scrollController,
                                 tvList: tvList,
                                 imageQuality: imageQuality,
-                                isDark: isDark),
+                                themeMode: themeMode),
                           ),
                           Visibility(
                             visible: isLoading,
                             child: SizedBox(
                               width: 110,
-                              child: horizontalLoadMoreShimmer1(isDark),
+                              child: horizontalLoadMoreShimmer1(themeMode),
                             ),
                           ),
                         ],
                       ),
           ),
           Divider(
-            color: !isDark ? Colors.black54 : Colors.white54,
+            color: themeMode == "light" ? Colors.black54 : Colors.white54,
             thickness: 1,
             endIndent: 20,
             indent: 10,

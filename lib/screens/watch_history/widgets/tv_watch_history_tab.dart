@@ -25,14 +25,14 @@ class _tvWatchHistoryState extends State<tvWatchHistory> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     final viewType = Provider.of<SettingsProvider>(context).defaultView;
     return widget.tvList == null && viewType == 'grid'
-        ? moviesAndTVShowGridShimmer(isDark)
+        ? moviesAndTVShowGridShimmer(themeMode)
         : widget.tvList == null && viewType == 'list'
             ? mainPageVerticalScrollShimmer1(
-                isDark: isDark,
+                themeMode: themeMode,
                 scrollController: _scrollController,
                 isLoading: false)
             : widget.tvList!.isEmpty
@@ -138,7 +138,7 @@ class _tvWatchHistoryState extends State<tvWatchHistory> {
                                                                         ),
                                                                         placeholder:
                                                                             (context, url) =>
-                                                                                scrollingImageShimmer1(isDark),
+                                                                                scrollingImageShimmer1(themeMode),
                                                                         errorWidget: (context,
                                                                                 url,
                                                                                 error) =>
@@ -287,7 +287,7 @@ class _tvWatchHistoryState extends State<tvWatchHistory> {
                                                           Padding(
                                                             padding:
                                                                 const EdgeInsets
-                                                                        .only(
+                                                                    .only(
                                                                     right:
                                                                         10.0),
                                                             child: SizedBox(
@@ -323,7 +323,7 @@ class _tvWatchHistoryState extends State<tvWatchHistory> {
                                                                                     ),
                                                                                   ),
                                                                                 ),
-                                                                                placeholder: (context, url) => mainPageVerticalScrollImageShimmer1(isDark),
+                                                                                placeholder: (context, url) => mainPageVerticalScrollImageShimmer1(themeMode),
                                                                                 errorWidget: (context, url, error) => Image.asset(
                                                                                   'assets/images/na_logo.png',
                                                                                   fit: BoxFit.cover,
@@ -399,7 +399,8 @@ class _tvWatchHistoryState extends State<tvWatchHistory> {
                                                         ],
                                                       ),
                                                       Divider(
-                                                        color: !isDark
+                                                        color: themeMode ==
+                                                                "light"
                                                             ? Colors.black54
                                                             : Colors.white54,
                                                         thickness: 1,

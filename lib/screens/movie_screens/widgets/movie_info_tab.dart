@@ -35,7 +35,7 @@ class MovieInfoTableState extends State<MovieInfoTable> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
@@ -58,7 +58,7 @@ class MovieInfoTableState extends State<MovieInfoTable> {
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: movieDetails == null
-                    ? detailInfoTableShimmer1(isDark)
+                    ? detailInfoTableShimmer1(themeMode)
                     : DataTable(dataRowMinHeight: 40, columns: [
                         DataColumn(
                             label: Text(

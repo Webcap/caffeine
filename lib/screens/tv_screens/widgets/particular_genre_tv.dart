@@ -68,14 +68,14 @@ class ParticularGenreTVState extends State<ParticularGenreTV> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     final viewType = Provider.of<SettingsProvider>(context).defaultView;
     return tvList == null && viewType == 'grid'
-        ? moviesAndTVShowGridShimmer(isDark)
+        ? moviesAndTVShowGridShimmer(themeMode)
         : tvList == null && viewType == 'list'
             ? mainPageVerticalScrollShimmer1(
-                isDark: isDark,
+                themeMode: themeMode,
                 isLoading: isLoading,
                 scrollController: _scrollController)
             : tvList!.isEmpty
@@ -98,13 +98,13 @@ class ParticularGenreTVState extends State<ParticularGenreTV> {
                                     ? TVGridView(
                                         tvList: tvList,
                                         imageQuality: imageQuality,
-                                        isDark: isDark,
+                                        themeMode: themeMode,
                                         scrollController: _scrollController,
                                       )
                                     : TVListView(
                                         scrollController: _scrollController,
                                         tvList: tvList,
-                                        isDark: isDark,
+                                        themeMode: themeMode,
                                         imageQuality: imageQuality),
                               ),
                             ],

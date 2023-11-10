@@ -1,9 +1,8 @@
-import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/utils/globlal_methods.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({Key? key}) : super(key: key);
@@ -50,11 +49,8 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
     return Scaffold(
       appBar: AppBar(title: Text(tr("reset_password"))),
-      backgroundColor:
-          isDark ? const Color(0xFF171717) : const Color(0xFFdedede),
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -89,7 +85,7 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   decoration: InputDecoration(
                       border: const UnderlineInputBorder(),
                       filled: true,
-                      prefixIcon: const Icon(Icons.email),
+                      prefixIcon: const Icon(FontAwesomeIcons.envelope),
                       labelText: tr("email_address"),
                       fillColor: Theme.of(context).colorScheme.background),
                   onSaved: (value) {

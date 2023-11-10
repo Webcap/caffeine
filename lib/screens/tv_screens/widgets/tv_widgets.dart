@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:caffiene/models/watch_providers.dart';
+import 'package:caffiene/screens/common/photoview.dart';
 import 'package:caffiene/widgets/common_widgets.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -17,7 +18,6 @@ import 'package:caffiene/screens/movie_screens/crew_detail.dart';
 import 'package:caffiene/screens/tv_screens/widgets/tv_grid_view.dart';
 import 'package:caffiene/screens/tv_screens/widgets/tv_list_view.dart';
 import 'package:caffiene/utils/config.dart';
-import 'package:caffiene/widgets/hero_photoview.dart';
 import 'package:caffiene/widgets/shimmer_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -281,24 +281,20 @@ class ParticularStreamingServiceTVShowsState
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     final viewType = Provider.of<SettingsProvider>(context).defaultView;
     return tvList == null && viewType == 'grid'
-        ? moviesAndTVShowGridShimmer(isDark)
+        ? moviesAndTVShowGridShimmer(themeMode)
         : tvList == null && viewType == 'list'
-            ? Container(
-                color:
-                    isDark ? const Color(0xFF000000) : const Color(0xFFFFFFFF),
-                child: mainPageVerticalScrollShimmer1(
-                    isDark: isDark,
-                    isLoading: isLoading,
-                    scrollController: _scrollController))
+            ? mainPageVerticalScrollShimmer(
+                themeMode: themeMode,
+                isLoading: isLoading,
+                scrollController: _scrollController)
             : tvList!.isEmpty
                 ? Container(
-                    child: const Center(
-                      child: Text(
-                          'Oops! TV shows for this watch provider doesn\'t exist :('),
+                    child: Center(
+                      child: Text(tr("no_watchprovider_tv")),
                     ),
                   )
                 : Container(
@@ -314,13 +310,13 @@ class ParticularStreamingServiceTVShowsState
                                     ? TVGridView(
                                         tvList: tvList,
                                         imageQuality: imageQuality,
-                                        isDark: isDark,
+                                        themeMode: themeMode,
                                         scrollController: _scrollController,
                                       )
                                     : TVListView(
                                         scrollController: _scrollController,
                                         tvList: tvList,
-                                        isDark: isDark,
+                                        themeMode: themeMode,
                                         imageQuality: imageQuality),
                               ),
                             ],
@@ -364,12 +360,12 @@ class TVEpisodeCastTabState extends State<TVEpisodeCastTab>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     return credits == null
         ? Container(
             padding: const EdgeInsets.only(top: 8),
-            child: movieCastAndCrewTabShimmer(isDark))
+            child: movieCastAndCrewTabShimmer(themeMode))
         : credits!.cast!.isEmpty
             ? Center(
                 child: Text(
@@ -454,7 +450,7 @@ class TVEpisodeCastTabState extends State<TVEpisodeCastTab>
                                                     placeholder: (context,
                                                             url) =>
                                                         castAndCrewTabImageShimmer1(
-                                                            isDark),
+                                                            themeMode),
                                                     errorWidget:
                                                         (context, url, error) =>
                                                             Image.asset(
@@ -504,8 +500,9 @@ class TVEpisodeCastTabState extends State<TVEpisodeCastTab>
                                   ],
                                 ),
                                 Divider(
-                                  color:
-                                      !isDark ? Colors.black54 : Colors.white54,
+                                  color: themeMode == "light"
+                                      ? Colors.black54
+                                      : Colors.white54,
                                   thickness: 1,
                                   endIndent: 20,
                                   indent: 10,
@@ -584,7 +581,7 @@ class TVImagesDisplayState extends State<TVImagesDisplay> {
   @override
   Widget build(BuildContext context) {
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     return SizedBox(
       height: 260,
       width: double.infinity,
@@ -616,7 +613,7 @@ class TVImagesDisplayState extends State<TVImagesDisplay> {
               width: double.infinity,
               height: 260,
               child: tvImages == null
-                  ? detailImageShimmer1(isDark)
+                  ? detailImageShimmer1(themeMode)
                   : CarouselSlider(
                       options: CarouselOptions(
                         enableInfiniteScroll: false,
@@ -724,7 +721,7 @@ class TVImagesDisplayState extends State<TVImagesDisplay> {
                                                             placeholder: (context,
                                                                     url) =>
                                                                 detailImageImageSimmer1(
-                                                                    isDark),
+                                                                    themeMode),
                                                             errorWidget:
                                                                 (context, url,
                                                                         error) =>
@@ -866,7 +863,7 @@ class TVImagesDisplayState extends State<TVImagesDisplay> {
                                                             placeholder: (context,
                                                                     url) =>
                                                                 detailImageImageSimmer1(
-                                                                    isDark),
+                                                                    themeMode),
                                                             errorWidget:
                                                                 (context, url,
                                                                         error) =>
@@ -947,7 +944,7 @@ class TVVideosDisplayState extends State<TVVideosDisplay> {
   @override
   Widget build(BuildContext context) {
     bool playButtonVisibility = true;
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     return Column(
       children: [
         tvVideos == null
@@ -997,7 +994,7 @@ class TVVideosDisplayState extends State<TVVideosDisplay> {
             width: double.infinity,
             height: 230,
             child: tvVideos == null
-                ? detailVideoShimmer1(isDark)
+                ? detailVideoShimmer1(themeMode)
                 : tvVideos!.result!.isEmpty
                     ? SizedBox(
                         width: double.infinity,
@@ -1072,7 +1069,7 @@ class TVVideosDisplayState extends State<TVVideosDisplay> {
                                                     placeholder: (context,
                                                             url) =>
                                                         detailVideoImageShimmer1(
-                                                            isDark),
+                                                            themeMode),
                                                     errorWidget:
                                                         (context, url, error) =>
                                                             Image.asset(
@@ -1147,7 +1144,7 @@ class TVInfoTableState extends State<TVInfoTable> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
@@ -1170,7 +1167,7 @@ class TVInfoTableState extends State<TVInfoTable> {
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: tvDetails == null
-                    ? detailInfoTableShimmer1(isDark)
+                    ? detailInfoTableShimmer1(themeMode)
                     : DataTable(dataRowMinHeight: 40, columns: [
                         DataColumn(
                             label: Text(
@@ -1372,7 +1369,7 @@ class TVInfoTableState extends State<TVInfoTable> {
 
 //   @override
 //   Widget build(BuildContext context) {
-//     // final isDark = Provider.of<DarkthemeProvider>(context).darktheme;
+//     // final themeMode = Provider.of<DarkthemeProvider>(context).darktheme;
 //     super.build(context);
 //     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
 //     return tvDetails == null
@@ -1608,10 +1605,10 @@ class TVCastTabState extends State<TVCastTab>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     return credits == null
-        ? Container(child: tvCastAndCrewTabShimmer1(isDark))
+        ? Container(child: tvCastAndCrewTabShimmer1(themeMode))
         : credits!.cast!.isEmpty
             ? Center(
                 child: Text(
@@ -1695,7 +1692,7 @@ class TVCastTabState extends State<TVCastTab>
                                                     placeholder: (context,
                                                             url) =>
                                                         castAndCrewTabImageShimmer1(
-                                                            isDark),
+                                                            themeMode),
                                                     errorWidget:
                                                         (context, url, error) =>
                                                             Image.asset(
@@ -1759,8 +1756,9 @@ class TVCastTabState extends State<TVCastTab>
                                   ],
                                 ),
                                 Divider(
-                                  color:
-                                      !isDark ? Colors.black54 : Colors.white54,
+                                  color: themeMode == "light"
+                                      ? Colors.black54
+                                      : Colors.white54,
                                   thickness: 1,
                                   endIndent: 20,
                                   indent: 10,
@@ -1776,6 +1774,7 @@ class TVCastTabState extends State<TVCastTab>
   @override
   bool get wantKeepAlive => true;
 }
+
 class TVCrewTab extends StatefulWidget {
   final String? api;
   const TVCrewTab({Key? key, this.api}) : super(key: key);
@@ -1804,11 +1803,11 @@ class TVCrewTabState extends State<TVCrewTab>
   Widget build(BuildContext context) {
     super.build(context);
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     return credits == null
         ? Container(
             padding: const EdgeInsets.only(top: 8),
-            child: movieCastAndCrewTabShimmer(isDark))
+            child: movieCastAndCrewTabShimmer(themeMode))
         : credits!.crew!.isEmpty
             ? Center(
                 child: Text(
@@ -1893,7 +1892,7 @@ class TVCrewTabState extends State<TVCrewTab>
                                                     placeholder: (context,
                                                             url) =>
                                                         castAndCrewTabImageShimmer1(
-                                                            isDark),
+                                                            themeMode),
                                                     errorWidget:
                                                         (context, url, error) =>
                                                             Image.asset(
@@ -1930,8 +1929,9 @@ class TVCrewTabState extends State<TVCrewTab>
                                   ],
                                 ),
                                 Divider(
-                                  color:
-                                      !isDark ? Colors.black54 : Colors.white54,
+                                  color: themeMode == "light"
+                                      ? Colors.black54
+                                      : Colors.white54,
                                   thickness: 1,
                                   endIndent: 20,
                                   indent: 10,
@@ -1980,7 +1980,7 @@ class _TVWatchProvidersDetailsState extends State<TVWatchProvidersDetails>
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     return Container(
       child: Column(
@@ -1988,7 +1988,9 @@ class _TVWatchProvidersDetailsState extends State<TVWatchProvidersDetails>
           Container(
             width: double.infinity,
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF2b2c30) : const Color(0xFFDFDEDE),
+              color: themeMode == "dark" || themeMode == "amoled"
+                  ? const Color(0xFF2b2c30)
+                  : const Color(0xFFDFDEDE),
             ),
             child: Center(
               child: TabBar(
@@ -2003,31 +2005,41 @@ class _TVWatchProvidersDetailsState extends State<TVWatchProvidersDetails>
                     child: Text(tr("buy"),
                         style: TextStyle(
                             fontFamily: 'Poppins',
-                            color: isDark ? Colors.white : Colors.black)),
+                            color: themeMode == "dark" || themeMode == "amoled"
+                                ? Colors.white
+                                : Colors.black)),
                   ),
                   Tab(
                     child: Text(tr("stream"),
                         style: TextStyle(
                             fontFamily: 'Poppins',
-                            color: isDark ? Colors.white : Colors.black)),
+                            color: themeMode == "dark" || themeMode == "amoled"
+                                ? Colors.white
+                                : Colors.black)),
                   ),
                   Tab(
                     child: Text(tr("ads"),
                         style: TextStyle(
                             fontFamily: 'Poppins',
-                            color: isDark ? Colors.white : Colors.black)),
+                            color: themeMode == "dark" || themeMode == "amoled"
+                                ? Colors.white
+                                : Colors.black)),
                   ),
                   Tab(
                     child: Text(tr("rent"),
                         style: TextStyle(
                             fontFamily: 'Poppins',
-                            color: isDark ? Colors.white : Colors.black)),
+                            color: themeMode == "dark" || themeMode == "amoled"
+                                ? Colors.white
+                                : Colors.black)),
                   ),
                   Tab(
                     child: Text(tr("free"),
                         style: TextStyle(
                             fontFamily: 'Poppins',
-                            color: isDark ? Colors.white : Colors.black)),
+                            color: themeMode == "dark" || themeMode == "amoled"
+                                ? Colors.white
+                                : Colors.black)),
                   ),
                 ],
               ),
@@ -2038,30 +2050,30 @@ class _TVWatchProvidersDetailsState extends State<TVWatchProvidersDetails>
               controller: tabController,
               children: watchProviders == null
                   ? [
-                      watchProvidersShimmer(isDark),
-                      watchProvidersShimmer(isDark),
-                      watchProvidersShimmer(isDark),
-                      watchProvidersShimmer(isDark),
-                      watchProvidersShimmer(isDark),
+                      watchProvidersShimmer(themeMode),
+                      watchProvidersShimmer(themeMode),
+                      watchProvidersShimmer(themeMode),
+                      watchProvidersShimmer(themeMode),
+                      watchProvidersShimmer(themeMode),
                     ]
                   : [
                       watchProvidersTabData(
-                          isDark: isDark,
+                          themeMode: themeMode,
                           imageQuality: imageQuality,
                           noOptionMessage: tr("no_buy_tv"),
                           watchOptions: watchProviders!.buy),
                       watchProvidersTabData(
-                          isDark: isDark,
+                          themeMode: themeMode,
                           imageQuality: imageQuality,
                           noOptionMessage: tr("no_stream_tv"),
                           watchOptions: watchProviders!.flatRate),
                       watchProvidersTabData(
-                          isDark: isDark,
+                          themeMode: themeMode,
                           imageQuality: imageQuality,
                           noOptionMessage: tr("no_ads_tv"),
                           watchOptions: watchProviders!.ads),
                       watchProvidersTabData(
-                          isDark: isDark,
+                          themeMode: themeMode,
                           imageQuality: imageQuality,
                           noOptionMessage: tr("no_rent_tv"),
                           watchOptions: watchProviders!.rent),

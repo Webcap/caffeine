@@ -39,7 +39,8 @@ class _DiscoverMovieResultState extends State<DiscoverMovieResult> {
         });
 
         if (mounted) {
-          moviesApi().fetchMovies(
+          moviesApi()
+              .fetchMovies(
                   '${widget.api}&include_adult=${widget.includeAdult}&page=$pageNum')
               .then((value) {
             if (mounted) {
@@ -58,7 +59,8 @@ class _DiscoverMovieResultState extends State<DiscoverMovieResult> {
   @override
   void initState() {
     super.initState();
-    moviesApi().fetchMovies(
+    moviesApi()
+        .fetchMovies(
             '${widget.api}&page=${widget.page}&include_adult=${widget.includeAdult}')
         .then((value) {
       if (mounted) {
@@ -72,7 +74,7 @@ class _DiscoverMovieResultState extends State<DiscoverMovieResult> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     final viewType = Provider.of<SettingsProvider>(context).defaultView;
     return Scaffold(
@@ -91,11 +93,11 @@ class _DiscoverMovieResultState extends State<DiscoverMovieResult> {
         ),
         body: Container(
             child: moviesList == null && viewType == 'grid'
-                ? moviesAndTVShowGridShimmer(isDark)
+                ? moviesAndTVShowGridShimmer(themeMode)
                 : moviesList == null && viewType == 'list'
                     ? Container(
                         child: mainPageVerticalScrollShimmer1(
-                            isDark: isDark,
+                            themeMode: themeMode,
                             isLoading: isLoading,
                             scrollController: _scrollController))
                     : moviesList!.isEmpty
@@ -123,12 +125,12 @@ class _DiscoverMovieResultState extends State<DiscoverMovieResult> {
                                                       _scrollController,
                                                   moviesList: moviesList,
                                                   imageQuality: imageQuality,
-                                                  isDark: isDark)
+                                                  themeMode: themeMode)
                                               : MovieListView(
                                                   scrollController:
                                                       _scrollController,
                                                   moviesList: moviesList,
-                                                  isDark: isDark,
+                                                  themeMode: themeMode,
                                                   imageQuality: imageQuality)),
                                     ],
                                   ),

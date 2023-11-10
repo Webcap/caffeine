@@ -1,4 +1,3 @@
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/api/tv_api.dart';
@@ -41,7 +40,9 @@ class MainTVListState extends State<MainTVList> {
           isLoading = true;
         });
 
-        tvApi().fetchTV('${widget.api}&page=$pageNum&include_adult=${widget.includeAdult}')
+        tvApi()
+            .fetchTV(
+                '${widget.api}&page=$pageNum&include_adult=${widget.includeAdult}')
             .then((value) {
           if (mounted) {
             setState(() {
@@ -58,7 +59,9 @@ class MainTVListState extends State<MainTVList> {
   @override
   void initState() {
     super.initState();
-    tvApi().fetchTV('${widget.api}&include_adult=${widget.includeAdult}').then((value) {
+    tvApi()
+        .fetchTV('${widget.api}&include_adult=${widget.includeAdult}')
+        .then((value) {
       if (mounted) {
         setState(() {
           tvList = value;
@@ -70,7 +73,7 @@ class MainTVListState extends State<MainTVList> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     final viewType = Provider.of<SettingsProvider>(context).defaultView;
     return Scaffold(
@@ -78,16 +81,12 @@ class MainTVListState extends State<MainTVList> {
         title: Text(tr("genre_tv_title", namedArgs: {"g": widget.title})),
       ),
       body: tvList == null && viewType == 'grid'
-          ? moviesAndTVShowGridShimmer(isDark)
+          ? moviesAndTVShowGridShimmer(themeMode)
           : tvList == null && viewType == 'list'
-              ? Container(
-                  color: isDark
-                      ? const Color(0xFF000000)
-                      : const Color(0xFFFFFFFF),
-                  child: mainPageVerticalScrollShimmer1(
-                      isDark: isDark,
-                      isLoading: isLoading,
-                      scrollController: _scrollController))
+              ? mainPageVerticalScrollShimmer(
+                  themeMode: themeMode,
+                  isLoading: isLoading,
+                  scrollController: _scrollController)
               : tvList!.isEmpty
                   ? Center(
                       child: Text(tr("tv_404")),
@@ -104,13 +103,13 @@ class MainTVListState extends State<MainTVList> {
                                       ? TVGridView(
                                           tvList: tvList,
                                           imageQuality: imageQuality,
-                                          isDark: isDark,
+                                          themeMode: themeMode,
                                           scrollController: _scrollController,
                                         )
                                       : TVListView(
                                           scrollController: _scrollController,
                                           tvList: tvList,
-                                          isDark: isDark,
+                                          themeMode: themeMode,
                                           imageQuality: imageQuality),
                                 ),
                               ],

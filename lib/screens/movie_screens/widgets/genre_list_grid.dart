@@ -39,7 +39,7 @@ class GenreListGridState extends State<GenreListGrid>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     return Column(
       children: [
         Row(
@@ -69,7 +69,7 @@ class GenreListGridState extends State<GenreListGrid>
             width: double.infinity,
             height: 80,
             child: genreList == null
-                ? genreListGridShimmer1(isDark)
+                ? genreListGridShimmer1(themeMode)
                 : Row(
                     children: [
                       Expanded(
@@ -145,13 +145,13 @@ class GenreDisplayState extends State<GenreDisplay>
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     super.build(context);
     return Container(
         child: genreList == null
             ? SizedBox(
                 height: 80,
-                child: detailGenreShimmer1(isDark),
+                child: detailGenreShimmer(themeMode),
               )
             : genreList!.isEmpty
                 ? Container()
@@ -177,9 +177,10 @@ class GenreDisplayState extends State<GenreDisplay>
                             child: Chip(
                               shape: RoundedRectangleBorder(
                                 side: BorderSide(
-                                    width: 2,
-                                    style: BorderStyle.solid,
-                                    color: Theme.of(context).colorScheme.primary),
+                                  width: 2,
+                                  style: BorderStyle.solid,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
                                 borderRadius: BorderRadius.circular(20.0),
                               ),
                               label: Text(
@@ -187,9 +188,10 @@ class GenreDisplayState extends State<GenreDisplay>
                                 style: const TextStyle(fontFamily: 'Poppins'),
                                 // style: widget.themeData.textTheme.bodyText1,
                               ),
-                              backgroundColor: isDark
-                                ? const Color(0xFF2b2c30)
-                                : const Color(0xFFDFDEDE),
+                              backgroundColor:
+                                  themeMode == "dark" || themeMode == "amoled"
+                                      ? const Color(0xFF2b2c30)
+                                      : const Color(0xFFDFDEDE),
                             ),
                           ),
                         );

@@ -37,7 +37,7 @@ class MovieVideosState extends State<MovieVideosDisplay> {
   @override
   Widget build(BuildContext context) {
     bool playButtonVisibility = true;
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     return Column(
       children: [
         movieVideos == null
@@ -89,7 +89,7 @@ class MovieVideosState extends State<MovieVideosDisplay> {
             width: double.infinity,
             height: 230,
             child: movieVideos == null
-                ? detailVideoShimmer1(isDark)
+                ? detailVideoShimmer1(themeMode)
                 : movieVideos!.result!.isEmpty
                     ? SizedBox(
                         width: double.infinity,
@@ -162,7 +162,7 @@ class MovieVideosState extends State<MovieVideosDisplay> {
                                                     placeholder: (context,
                                                             url) =>
                                                         detailVideoImageShimmer1(
-                                                            isDark),
+                                                            themeMode),
                                                     errorWidget:
                                                         (context, url, error) =>
                                                             Image.asset(

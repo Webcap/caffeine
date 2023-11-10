@@ -28,7 +28,7 @@ class _ScrollingRecentEpisodesState extends State<ScrollingRecentEpisodes> {
   @override
   Widget build(BuildContext context) {
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     final fetchRoute = Provider.of<AppDependencyProvider>(context).fetchRoute;
     return Column(
       children: <Widget>[
@@ -189,7 +189,7 @@ class _ScrollingRecentEpisodesState extends State<ScrollingRecentEpisodes> {
                                                 ),
                                                 placeholder: (context, url) =>
                                                     scrollingImageShimmer1(
-                                                        isDark),
+                                                        themeMode),
                                                 errorWidget:
                                                     (context, url, error) =>
                                                         Image.asset(
@@ -286,7 +286,7 @@ class _ScrollingRecentEpisodesState extends State<ScrollingRecentEpisodes> {
           ),
         ),
         Divider(
-          color: !isDark ? Colors.black54 : Colors.white54,
+          color: themeMode == "light" ? Colors.black54 : Colors.white54,
           thickness: 1,
           endIndent: 20,
           indent: 10,

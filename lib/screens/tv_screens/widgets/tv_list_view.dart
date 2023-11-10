@@ -10,14 +10,14 @@ class TVListView extends StatelessWidget {
     Key? key,
     required ScrollController scrollController,
     required this.tvList,
-    required this.isDark,
+    required this.themeMode,
     required this.imageQuality,
   })  : _scrollController = scrollController,
         super(key: key);
 
   final ScrollController _scrollController;
   final List<TV>? tvList;
-  final bool isDark;
+  final String themeMode;
   final String imageQuality;
 
   @override
@@ -63,6 +63,7 @@ class TVListView extends StatelessWidget {
                                         fit: BoxFit.cover,
                                       )
                                     : CachedNetworkImage(
+                                        cacheManager: cacheProp(),
                                         fadeOutDuration:
                                             const Duration(milliseconds: 300),
                                         fadeOutCurve: Curves.easeOut,
@@ -83,8 +84,8 @@ class TVListView extends StatelessWidget {
                                           ),
                                         ),
                                         placeholder: (context, url) =>
-                                            mainPageVerticalScrollImageShimmer1(
-                                                isDark),
+                                            mainPageVerticalScrollImageShimmer(
+                                                themeMode),
                                         errorWidget: (context, url, error) =>
                                             Image.asset(
                                           'assets/images/na_logo.png',
@@ -126,7 +127,9 @@ class TVListView extends StatelessWidget {
                       ],
                     ),
                     Divider(
-                      color: !isDark ? Colors.black54 : Colors.white54,
+                      color: themeMode == "light"
+                          ? Colors.black54
+                          : Colors.white54,
                       thickness: 1,
                       endIndent: 20,
                       indent: 10,

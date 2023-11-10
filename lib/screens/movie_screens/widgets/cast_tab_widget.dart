@@ -19,10 +19,9 @@ class CastTab extends StatefulWidget {
 
 class CastTabState extends State<CastTab>
     with AutomaticKeepAliveClientMixin<CastTab> {
-
   @override
   Widget build(BuildContext context) {
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     super.build(context);
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     return widget.credits.cast!.isEmpty
@@ -103,7 +102,7 @@ class CastTabState extends State<CastTab>
                                                 ),
                                                 placeholder: (context, url) =>
                                                     castAndCrewTabImageShimmer1(
-                                                        isDark),
+                                                        themeMode),
                                                 errorWidget:
                                                     (context, url, error) =>
                                                         Image.asset(
@@ -156,7 +155,9 @@ class CastTabState extends State<CastTab>
                               ],
                             ),
                             Divider(
-                              color: !isDark ? Colors.black54 : Colors.white54,
+                              color: themeMode == "light"
+                                  ? Colors.black54
+                                  : Colors.white54,
                               thickness: 1,
                               endIndent: 20,
                               indent: 10,
@@ -187,7 +188,7 @@ class CrewTabState extends State<CrewTab>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     return widget.credits.crew!.isEmpty
         ? Center(
@@ -268,7 +269,7 @@ class CrewTabState extends State<CrewTab>
                                                 ),
                                                 placeholder: (context, url) =>
                                                     castAndCrewTabImageShimmer1(
-                                                        isDark),
+                                                        themeMode),
                                                 errorWidget:
                                                     (context, url, error) =>
                                                         Image.asset(
@@ -305,7 +306,9 @@ class CrewTabState extends State<CrewTab>
                               ],
                             ),
                             Divider(
-                              color: !isDark ? Colors.black54 : Colors.white54,
+                              color: themeMode == "light"
+                                  ? Colors.black54
+                                  : Colors.white54,
                               thickness: 1,
                               endIndent: 20,
                               indent: 10,

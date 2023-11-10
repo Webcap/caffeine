@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/api/movies_api.dart';
 import 'package:caffiene/models/watch_providers.dart';
@@ -37,7 +38,7 @@ class _WatchProvidersDetailsState extends State<WatchProvidersDetails>
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     return Container(
       child: Column(
@@ -54,22 +55,28 @@ class _WatchProvidersDetailsState extends State<WatchProvidersDetails>
                 indicatorSize: TabBarIndicatorSize.tab,
                 tabs: [
                   Tab(
-                    child: Text('Buy',
+                    child: Text(tr("buy"),
                         style: TextStyle(
                             fontFamily: 'Poppins',
-                            color: isDark ? Colors.white : Colors.black)),
+                            color: themeMode == "dark" || themeMode == "amoled"
+                                ? Colors.white
+                                : Colors.black)),
                   ),
                   Tab(
-                    child: Text('Stream',
+                    child: Text(tr("stream"),
                         style: TextStyle(
                             fontFamily: 'Poppins',
-                            color: isDark ? Colors.white : Colors.black)),
+                            color: themeMode == "dark" || themeMode == "amoled"
+                                ? Colors.white
+                                : Colors.black)),
                   ),
                   Tab(
-                    child: Text('Rent',
+                    child: Text(tr("rent"),
                         style: TextStyle(
                             fontFamily: 'Poppins',
-                            color: isDark ? Colors.white : Colors.black)),
+                            color: themeMode == "dark" || themeMode == "amoled"
+                                ? Colors.white
+                                : Colors.black)),
                   ),
                 ],
               ),
@@ -77,34 +84,33 @@ class _WatchProvidersDetailsState extends State<WatchProvidersDetails>
           ),
           Expanded(
             child: Container(
-              color: isDark ? Colors.black : Colors.white,
+              color: themeMode == "dark" || themeMode == "amoled"
+                  ? Colors.black
+                  : Colors.white,
               child: TabBarView(
                 controller: tabController,
                 children: watchProviders == null
                     ? [
-                        watchProvidersShimmer(isDark),
-                        watchProvidersShimmer(isDark),
-                        watchProvidersShimmer(isDark),
-                        watchProvidersShimmer(isDark),
+                        watchProvidersShimmer(themeMode),
+                        watchProvidersShimmer(themeMode),
+                        watchProvidersShimmer(themeMode),
+                        watchProvidersShimmer(themeMode),
                       ]
                     : [
                         watchProvidersTabData(
-                            isDark: isDark,
+                            themeMode: themeMode,
                             imageQuality: imageQuality,
-                            noOptionMessage:
-                                'This movie doesn\'t have an option to buy yet',
+                            noOptionMessage: tr("no_buy"),
                             watchOptions: watchProviders!.buy),
                         watchProvidersTabData(
-                            isDark: isDark,
+                            themeMode: themeMode,
                             imageQuality: imageQuality,
-                            noOptionMessage:
-                                'This movie doesn\'t have an option to stream yet',
+                            noOptionMessage: tr("no_stream"),
                             watchOptions: watchProviders!.flatRate),
                         watchProvidersTabData(
-                            isDark: isDark,
+                            themeMode: themeMode,
                             imageQuality: imageQuality,
-                            noOptionMessage:
-                                'This movie doesn\'t have an option to rent yet',
+                            noOptionMessage: tr("no_rent"),
                             watchOptions: watchProviders!.rent),
                       ],
               ),

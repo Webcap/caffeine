@@ -38,7 +38,7 @@ class TVSocialLinksState extends State<TVSocialLinks> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
@@ -61,7 +61,7 @@ class TVSocialLinksState extends State<TVSocialLinks> {
               height: 55,
               width: double.infinity,
               child: externalLinks == null
-                  ? socialMediaShimmer1(isDark)
+                  ? socialMediaShimmer1(themeMode)
                   : externalLinks?.facebookUsername == null &&
                           externalLinks?.instagramUsername == null &&
                           externalLinks?.twitterUsername == null &&
@@ -75,7 +75,7 @@ class TVSocialLinksState extends State<TVSocialLinks> {
                       : Container(
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8),
-                            color: isDark
+                            color: themeMode == "dark" || themeMode == "amoled"
                                 ? Colors.transparent
                                 : const Color(0xFFDFDEDE),
                           ),

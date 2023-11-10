@@ -17,7 +17,7 @@ class SearchedPersonQuickInfo extends StatelessWidget {
   final String imageQuality;
   @override
   Widget build(BuildContext context) {
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     return SizedBox(
       height: 200,
       width: double.infinity,
@@ -53,7 +53,7 @@ class SearchedPersonQuickInfo extends StatelessWidget {
                                   : CachedNetworkImage(
                                       fit: BoxFit.cover,
                                       placeholder: (context, url) =>
-                                          scrollingImageShimmer1(isDark),
+                                          scrollingImageShimmer1(themeMode),
                                       errorWidget: (context, url, error) =>
                                           Image.asset(
                                         'assets/images/na_logo.png',

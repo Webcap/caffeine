@@ -23,7 +23,7 @@ class TVEpisodeQuickInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     final appLang = Provider.of<SettingsProvider>(context).appLanguage;
     return SizedBox(
       height: 310,
@@ -155,7 +155,8 @@ class TVEpisodeQuickInfo extends StatelessWidget {
                                       seriesName!,
                                       style: TextStyle(
                                           fontSize: 15,
-                                          color: isDark
+                                          color: themeMode == "dark" ||
+                                                  themeMode == "amoled"
                                               ? Colors.white54
                                               : Colors.black54),
                                     ),

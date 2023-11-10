@@ -12,7 +12,7 @@ import 'package:shimmer/shimmer.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 Widget watchProvidersTabData(
-        {required bool isDark,
+        {required String themeMode,
         required String imageQuality,
         required String noOptionMessage,
         required List? watchOptions}) =>
@@ -47,6 +47,7 @@ Widget watchProvidersTabData(
                                   fit: BoxFit.cover,
                                 )
                               : CachedNetworkImage(
+                                  cacheManager: cacheProp(),
                                   fadeOutDuration:
                                       const Duration(milliseconds: 300),
                                   fadeOutCurve: Curves.easeOut,
@@ -66,7 +67,7 @@ Widget watchProvidersTabData(
                                     ),
                                   ),
                                   placeholder: (context, url) =>
-                                      watchProvidersImageShimmer(isDark),
+                                      watchProvidersImageShimmer(themeMode),
                                   errorWidget: (context, url, error) =>
                                       Image.asset(
                                     'assets/images/na_logo.png',
@@ -219,18 +220,21 @@ class _DidYouKnowState extends State<DidYouKnow> {
 }
 
 class ShimmerBase extends StatelessWidget {
-  const ShimmerBase({Key? key, required this.child, required this.isDark})
+  const ShimmerBase({Key? key, required this.child, required this.themeMode})
       : super(key: key);
 
   final Widget child;
-  final bool isDark;
+  final String themeMode;
 
   @override
   Widget build(BuildContext context) {
     return Shimmer.fromColors(
-      baseColor: isDark ? Colors.grey.shade900 : Colors.grey.shade300,
-      highlightColor:
-          isDark ? Colors.grey.shade800.withOpacity(0.1) : Colors.grey.shade200,
+      baseColor: themeMode == "dark" || themeMode == "amoled"
+          ? Colors.grey.shade900
+          : Colors.grey.shade300,
+      highlightColor: themeMode == "dark" || themeMode == "amoled"
+          ? Colors.grey.shade800.withOpacity(0.1)
+          : Colors.grey.shade200,
       child: child,
     );
   }

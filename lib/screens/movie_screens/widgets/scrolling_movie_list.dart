@@ -46,7 +46,8 @@ class ScrollingMoviesState extends State<ScrollingMovies>
           isLoading = true;
         });
         if (mounted) {
-          moviesApi().fetchMovies(
+          moviesApi()
+              .fetchMovies(
                   '${widget.api}&include_adult=${widget.includeAdult}&page=$pageNum')
               .then((value) {
             if (mounted) {
@@ -87,7 +88,7 @@ class ScrollingMoviesState extends State<ScrollingMovies>
   Widget build(BuildContext context) {
     super.build(context);
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     return Column(
       children: <Widget>[
         Row(
@@ -142,7 +143,7 @@ class ScrollingMoviesState extends State<ScrollingMovies>
           width: double.infinity,
           height: 250,
           child: moviesList == null || widget.includeAdult == null
-              ? scrollingMoviesAndTVShimmer1(isDark)
+              ? scrollingMoviesAndTVShimmer1(themeMode)
               : Row(
                   children: [
                     Expanded(
@@ -229,7 +230,7 @@ class ScrollingMoviesState extends State<ScrollingMovies>
                                                         placeholder: (context,
                                                                 url) =>
                                                             scrollingImageShimmer1(
-                                                                isDark),
+                                                                themeMode),
                                                         errorWidget: (context,
                                                                 url, error) =>
                                                             Image.asset(
@@ -251,9 +252,12 @@ class ScrollingMoviesState extends State<ScrollingMovies>
                                                       borderRadius:
                                                           BorderRadius.circular(
                                                               8),
-                                                      color: isDark
-                                                          ? Colors.black45
-                                                          : Colors.white60),
+                                                      color:
+                                                          themeMode == "dark" ||
+                                                                  themeMode ==
+                                                                      "amoled"
+                                                              ? Colors.black45
+                                                              : Colors.white60),
                                                   child: Row(
                                                     children: [
                                                       const Icon(
@@ -295,14 +299,14 @@ class ScrollingMoviesState extends State<ScrollingMovies>
                       visible: isLoading,
                       child: SizedBox(
                         width: 110,
-                        child: horizontalLoadMoreShimmer1(isDark),
+                        child: horizontalLoadMoreShimmer1(themeMode),
                       ),
                     ),
                   ],
                 ),
         ),
         Divider(
-          color: !isDark ? Colors.black54 : Colors.white54,
+          color: themeMode == "light" ? Colors.black54 : Colors.white54,
           thickness: 1,
           endIndent: 20,
           indent: 10,

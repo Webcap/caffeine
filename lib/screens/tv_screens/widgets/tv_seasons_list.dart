@@ -45,7 +45,7 @@ class SeasonsListState extends State<SeasonsList> {
   @override
   Widget build(BuildContext context) {
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     return Column(
       children: <Widget>[
         Row(
@@ -73,7 +73,7 @@ class SeasonsListState extends State<SeasonsList> {
           width: double.infinity,
           height: 250,
           child: tvDetails == null
-              ? horizontalScrollingSeasonsList1(isDark)
+              ? horizontalScrollingSeasonsList1(themeMode)
               : tvDetails!.seasons!.isEmpty
                   ? Center(
                       child:
@@ -158,7 +158,7 @@ class SeasonsListState extends State<SeasonsList> {
                                                       placeholder: (context,
                                                               url) =>
                                                           scrollingImageShimmer1(
-                                                              isDark),
+                                                              themeMode),
                                                       errorWidget: (context,
                                                               url, error) =>
                                                           Image.asset(

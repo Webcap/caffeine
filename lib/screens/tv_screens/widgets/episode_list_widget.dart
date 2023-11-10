@@ -10,7 +10,6 @@ import 'package:caffiene/utils/config.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
-
 class EpisodeListWidget extends StatefulWidget {
   final int? tvId;
   final String? api;
@@ -47,7 +46,7 @@ class EpisodeListWidgetState extends State<EpisodeListWidget>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final isDark = Provider.of<SettingsProvider>(context).darktheme;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     return Container(
         child: tvDetails == null
@@ -90,7 +89,7 @@ class EpisodeListWidgetState extends State<EpisodeListWidget>
                             child: Column(
                               children: [
                                 ShimmerBase(
-                                  isDark: isDark,
+                                  themeMode: themeMode,
                                   child: Row(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
@@ -288,7 +287,7 @@ class EpisodeListWidgetState extends State<EpisodeListWidget>
                                                         placeholder:
                                                             (context, url) =>
                                                                 ShimmerBase(
-                                                          isDark: isDark,
+                                                          themeMode: themeMode,
                                                           child: Container(
                                                               color: Colors.grey
                                                                   .shade600),
@@ -325,9 +324,12 @@ class EpisodeListWidgetState extends State<EpisodeListWidget>
                                                       ? tr("air_date_unknown")
                                                       : '${DateTime.parse(tvDetails!.episodes![index].airDate!).day} ${DateFormat("MMMM").format(DateTime.parse(tvDetails!.episodes![index].airDate!))}, ${DateTime.parse(tvDetails!.episodes![index].airDate!).year}',
                                                   style: TextStyle(
-                                                    color: isDark
-                                                        ? Colors.white54
-                                                        : Colors.black54,
+                                                    color:
+                                                        themeMode == "dark" ||
+                                                                themeMode ==
+                                                                    "amoled"
+                                                            ? Colors.white54
+                                                            : Colors.black54,
                                                   ),
                                                 ),
                                                 Row(children: [
