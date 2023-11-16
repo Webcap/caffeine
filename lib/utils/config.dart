@@ -54,7 +54,7 @@ const kTextSmallHeaderStyle = TextStyle(
   overflow: TextOverflow.ellipsis,
 );
 
-const String currentAppVersion = '1.4.0';
+const String currentAppVersion = '1.4.1';
 
 const kTextHeaderStyle = TextStyle(
   fontFamily: 'PoppinsSB',
@@ -108,6 +108,7 @@ final List<String> appNames = [
   'caffeine-v1.3.5.apk',
   'caffeine-v1.3.6.apk',
   'caffeine-v1.4.0.apk',
+  'caffeine-v1.4.1.apk',
 ];
 
 CacheManager cacheProp() {
