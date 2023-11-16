@@ -31,6 +31,7 @@ Future<void> appInitialize() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
   await EasyLocalization.ensureInitialized();
+  await _initialization;
   FirebaseMessaging.onBackgroundMessage(_messageHandler);
   await FlutterDownloader.initialize(debug: true, ignoreSsl: true);
   await settingsProvider.getCurrentThemeMode();
@@ -57,8 +58,6 @@ Future<void> appInitialize() async {
   await appDependencyProvider.getOpenSubKey();
   await appDependencyProvider.getStreamingServer();
   await appDependencyProvider.getStreamRoute();
-
-  await _initialization;
 
   await Supabase.initialize(
     url: SUPABASE_URL,
