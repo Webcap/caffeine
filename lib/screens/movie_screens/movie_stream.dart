@@ -44,7 +44,7 @@ class _MovieStreamState extends State<MovieStream> {
 
     pullToRefreshController = PullToRefreshController(
       options: PullToRefreshOptions(
-        color: const Color(0xFFF57C00),
+        color:  maincolor,
       ),
       onRefresh: () async {
         if (Platform.isAndroid) {

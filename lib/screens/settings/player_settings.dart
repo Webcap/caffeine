@@ -1,5 +1,6 @@
 import 'package:caffiene/screens/common/sublanguage_choose.dart';
 import 'package:caffiene/utils/config.dart';
+import 'package:caffiene/utils/next_screen.dart';
 import 'package:caffiene/widgets/common_widgets.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -194,7 +195,10 @@ class _PlayerSettingsState extends State<PlayerSettings> {
                 value: settingValues.defaultViewMode,
                 inactiveThumbColor: Colors.white,
                 inactiveTrackColor: const Color(0xFF9B9B9B),
-                secondary: const Icon(FontAwesomeIcons.expand),
+                secondary: Icon(
+                  FontAwesomeIcons.expand,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
                 title: Text(
                   tr("auto_full_screen"),
                 ),
@@ -205,7 +209,10 @@ class _PlayerSettingsState extends State<PlayerSettings> {
                 }),
               ),
               ListTile(
-                leading: const Icon(FontAwesomeIcons.rotateRight),
+                leading: Icon(
+                  FontAwesomeIcons.rotateRight,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
                 title: Text(
                   tr("seek_second"),
                 ),
@@ -225,7 +232,10 @@ class _PlayerSettingsState extends State<PlayerSettings> {
                     }),
               ),
               ListTile(
-                leading: const Icon(FontAwesomeIcons.spinner),
+                leading: Icon(
+                  FontAwesomeIcons.spinner,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
                 title: Text(
                   tr("buffer_amount"),
                 ),
@@ -282,7 +292,10 @@ class _PlayerSettingsState extends State<PlayerSettings> {
                     }),
               ),
               ListTile(
-                leading: const Icon(FontAwesomeIcons.fileVideo),
+                leading: Icon(
+                  FontAwesomeIcons.fileVideo,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
                 title: Text(
                   tr("video_resolution"),
                 ),
@@ -304,12 +317,12 @@ class _PlayerSettingsState extends State<PlayerSettings> {
               ),
               ListTile(
                 onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: ((context) {
-                    return const SubLangChoose();
-                  })));
+                  nextScreen(context, SubLangChoose());
                 },
-                leading: const Icon(FontAwesomeIcons.closedCaptioning),
+                leading: Icon(
+                  FontAwesomeIcons.closedCaptioning,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
                 title: Text(
                   tr("subtitle_language"),
                 ),
@@ -317,7 +330,10 @@ class _PlayerSettingsState extends State<PlayerSettings> {
               SwitchListTile(
                 inactiveThumbColor: Colors.white,
                 inactiveTrackColor: const Color(0xFF9B9B9B),
-                secondary: const Icon(FontAwesomeIcons.language),
+                secondary: Icon(
+                  FontAwesomeIcons.language,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
                 value: settingValues.fetchSpecificLangSubs,
                 title: Text(tr("fetch_all_subs")),
                 onChanged: ((value) {
@@ -325,24 +341,6 @@ class _PlayerSettingsState extends State<PlayerSettings> {
                     settingValues.fetchSpecificLangSubs = value;
                   });
                 }),
-              ),
-              ListTile(
-                leading: const Icon(FontAwesomeIcons.fileVideo),
-                title: Text(
-                  tr("video_source"),
-                ),
-                trailing: DropdownButton(
-                    value: settingValues.videoSource,
-                    items: const [
-                      DropdownMenuItem(value: 'flixHQ', child: Text('FlixHQ')),
-                      DropdownMenuItem(
-                          value: 'Showbox', child: Text('Showbox')),
-                    ],
-                    onChanged: (String? value) {
-                      setState(() {
-                        settingValues.videoSource = value!;
-                      });
-                    }),
               ),
             ],
           ),

@@ -1,5 +1,6 @@
 import 'package:caffiene/functions/functions.dart';
 import 'package:caffiene/main.dart';
+import 'package:caffiene/models/app_colors.dart';
 import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:caffiene/provider/recently_watched_provider.dart';
 import 'package:caffiene/provider/settings_provider.dart';
@@ -69,7 +70,6 @@ class _caffeineState extends State<caffeine>
           _remoteConfig.getBool('enable_stream');
       appDependencyProvider.displayOTTDrawer =
           _remoteConfig.getBool('enable_ott');
-      appDependencyProvider.showboxUrl = _remoteConfig.getString('showbox_url');
     }
     await requestNotificationPermissions();
   }
@@ -137,7 +137,19 @@ class _caffeineState extends State<caffeine>
                           isM3Enabled: settingsProvider.isMaterial3Enabled,
                           lightDynamicColor: lightDynamic,
                           darkDynamicColor: darkDynamic,
-                          context: context),
+                          context: context,
+                          appColor: AppColor(
+                              cs: AppColorsList()
+                                  .appColors(settingsProvider.appTheme ==
+                                              'dark' ||
+                                          settingsProvider.appTheme == 'amoled'
+                                      ? true
+                                      : false)
+                                  .firstWhere((element) =>
+                                      element.index ==
+                                      settingsProvider.appColorIndex)
+                                  .cs,
+                              index: settingsProvider.appColorIndex)),
                       home: const UserState(),
                     );
                   },

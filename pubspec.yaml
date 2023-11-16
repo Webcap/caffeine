@@ -3,14 +3,13 @@ description: A new Flutter project.
 
 publish_to: "none"
 
-version: 1.4.0-dev
+version: 1.4.0
 
 environment:
   sdk: ">=2.17.6 <3.0.0"
 
 dependencies:
   animated_text_kit: ^4.2.1
-  another_tv_remote: ^0.0.1
   better_player:
     path: C:\Users\solox\Desktop\Projects\caffeine_betterplayer
   cached_network_image: ^3.2.2

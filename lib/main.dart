@@ -33,8 +33,7 @@ Future<void> appInitialize() async {
   await EasyLocalization.ensureInitialized();
   FirebaseMessaging.onBackgroundMessage(_messageHandler);
   await FlutterDownloader.initialize(debug: true, ignoreSsl: true);
-  await _initialization;
-await settingsProvider.getCurrentThemeMode();
+  await settingsProvider.getCurrentThemeMode();
   await settingsProvider.getCurrentMaterial3Mode();
   await settingsProvider.initMixpanel();
   await settingsProvider.getCurrentAdultMode();
@@ -48,15 +47,19 @@ await settingsProvider.getCurrentThemeMode();
   await settingsProvider.getSubtitleLanguage();
   await settingsProvider.getSubtitleMode();
   await settingsProvider.getViewMode();
+  await settingsProvider.getSubtitleSize();
+  await settingsProvider.getForegroundSubtitleColor();
+  await settingsProvider.getBackgroundSubtitleColor();
+  await settingsProvider.getAppLanguage();
   await recentProvider.fetchMovies();
   await recentProvider.fetchEpisodes();
   await appDependencyProvider.getConsumetUrl();
   await appDependencyProvider.getOpenSubKey();
   await appDependencyProvider.getStreamingServer();
-  await settingsProvider.getSubtitleSize();
-  await settingsProvider.getForegroundSubtitleColor();
-  await settingsProvider.getBackgroundSubtitleColor();
-  await settingsProvider.getAppLanguage();
+  await appDependencyProvider.getStreamRoute();
+
+  await _initialization;
+
   await Supabase.initialize(
     url: SUPABASE_URL,
     anonKey: dotenv.env['SUPABASE_ANNON_KEY']!,

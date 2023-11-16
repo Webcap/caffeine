@@ -8,22 +8,19 @@ class AppDependencyProvider extends ChangeNotifier {
   String _consumetUrl = 'https://consumet-api-beryl.vercel.app/';
   String get consumetUrl => _consumetUrl;
 
-  String _showboxUrl = "";
-  String get showboxUrl => _showboxUrl;
-
   String _caffieneLogo = 'default';
   String get caffieneLogo => _caffieneLogo;
-
-  String _streamingServer = STREAMING_SERVER;
-  String get streamingServer => _streamingServer;
 
   String _opensubtitlesKey = openSubtitlesKey;
   String get opensubtitlesKey => _opensubtitlesKey;
 
+  String _streamingServer = STREAMING_SERVER;
+  String get streamingServer => _streamingServer;
+
   bool _enableADS = true;
   bool get enableADS => _enableADS;
 
-  String _fetchRoute = "tmDB";
+  String _fetchRoute = "flixHQ";
   String get fetchRoute => _fetchRoute;
 
   bool _useExternalSubtitles = false;
@@ -35,10 +32,10 @@ class AppDependencyProvider extends ChangeNotifier {
   bool _enableTrendingHoliday = true;
   bool get enableTrendingHoliday => _enableTrendingHoliday;
 
-  bool _displayWatchNowButton = false;
+  bool _displayWatchNowButton = true;
   bool get displayWatchNowButton => _displayWatchNowButton;
 
-  bool _displayOTTDrawer = false;
+  bool _displayOTTDrawer = true;
   bool get displayOTTDrawer => _displayOTTDrawer;
 
   Future<void> getConsumetUrl() async {
@@ -86,8 +83,13 @@ class AppDependencyProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> getStreamRoute() async {
+    fetchRoute = await appDependencies.getStreamRoute();
+  }
+
   set fetchRoute(String value) {
     _fetchRoute = value;
+    appDependencies.setStreamRoute(value);
     notifyListeners();
   }
 
@@ -113,15 +115,6 @@ class AppDependencyProvider extends ChangeNotifier {
 
   set displayOTTDrawer(bool value) {
     _displayOTTDrawer = value;
-    notifyListeners();
-  }
-
-  Future<void> getShowboxUrl() async {
-    showboxUrl = await appDependencies.getShowboxUrl();
-  }
-
-  set showboxUrl(String value) {
-    _showboxUrl = value;
     notifyListeners();
   }
 }
