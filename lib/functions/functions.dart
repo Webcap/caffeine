@@ -2,12 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
+import 'package:caffiene/video_providers/flixhq.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:caffiene/models/external_subtitles.dart';
 import 'package:caffiene/models/live_tv.dart';
-import 'package:caffiene/models/movie_stream.dart';
-import 'package:caffiene/models/tv_stream.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:caffiene/models/update.dart';
@@ -80,10 +79,11 @@ Future<void> requestNotificationPermissions() async {
 }
 
 /// Stream TMDB route
-Future<MovieInfoTMDBRoute> getMovieStreamEpisodesTMDB(String api) async {
-  MovieInfoTMDBRoute movieInfo;
+Future<FlixHQMovieInfoTMDBRoute> getMovieStreamEpisodesTMDB(String api) async {
+  FlixHQMovieInfoTMDBRoute movieInfo;
   int tries = 5;
   dynamic decodeRes;
+  print(api);
   try {
     dynamic res;
     while (tries > 0) {
@@ -100,22 +100,36 @@ Future<MovieInfoTMDBRoute> getMovieStreamEpisodesTMDB(String api) async {
         break;
       }
     }
-    movieInfo = MovieInfoTMDBRoute.fromJson(decodeRes);
+    movieInfo = FlixHQMovieInfoTMDBRoute.fromJson(decodeRes);
   } finally {
     client.close();
   }
+
   return movieInfo;
 }
 
-Future<TVTMDBRoute> getTVStreamEpisodesTMDB(String api) async {
-  TVTMDBRoute tvInfo;
+Future<FlixHQTVInfoTMDBRoute> getTVStreamEpisodesTMDB(String api) async {
+  FlixHQTVInfoTMDBRoute tvInfo;
+  int tries = 5;
+  dynamic decodeRes;
+  print(api);
   try {
-    var res = await retryOptions.retry(
-      (() => http.get(Uri.parse(api)).timeout(timeOut)),
-      retryIf: (e) => e is SocketException || e is TimeoutException,
-    );
-    var decodeRes = jsonDecode(res.body);
-    tvInfo = TVTMDBRoute.fromJson(decodeRes);
+    dynamic res;
+    while (tries > 0) {
+      res = await retryOptions.retry(
+        (() => http.get(Uri.parse(api)).timeout(timeOut)),
+        retryIf: (e) => e is SocketException || e is TimeoutException,
+      );
+
+      decodeRes = jsonDecode(res.body);
+
+      if (decodeRes.containsKey('error')) {
+        --tries;
+      } else {
+        break;
+      }
+    }
+    tvInfo = FlixHQTVInfoTMDBRoute.fromJson(decodeRes);
   } finally {
     client.close();
   }
@@ -181,7 +195,7 @@ Future<bool> checkConnection() async {
 }
 
 String removeCharacters(String input) {
-  String charactersToRemove = ",.?\"'";
+  String charactersToRemove = ",.?\"'&#^*%@!-()%\$";
   String pattern = '[$charactersToRemove]';
   String result = input.replaceAll(RegExp(pattern), '');
   return result;
@@ -223,22 +237,6 @@ void fileDelete() async {
       file.delete();
     }
   }
-}
-
-Future<TMA> fetchTMA(String uri) async {
-  TMA tma;
-  try {
-    var response = await retryOptions.retry(
-      () => http.get(Uri.parse(uri)),
-      retryIf: (e) => e is SocketException || e is TimeoutException,
-    );
-    var decodeRes = jsonDecode(response.body);
-    tma = TMA.fromJson(decodeRes);
-  } finally {
-    client.close();
-  }
-
-  return tma;
 }
 
 int totalStreamingDuration = 0; // Keep track of the total streaming duration

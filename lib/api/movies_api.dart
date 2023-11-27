@@ -1,13 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:caffiene/video_providers/flixhq.dart';
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:caffiene/models/credits.dart';
 import 'package:caffiene/models/genres.dart';
 import 'package:caffiene/models/images.dart';
 import 'package:caffiene/models/movie_models.dart';
-import 'package:caffiene/models/movie_stream.dart';
 import 'package:caffiene/models/person.dart';
 import 'package:caffiene/models/videos.dart';
 import 'package:caffiene/models/watch_providers.dart';
@@ -34,8 +34,8 @@ class moviesApi {
     return newGenreList.genre ?? [];
   }
 
-  Future<MovieVideoSources> getMovieStreamLinksAndSubs(String api) async {
-    MovieVideoSources movieVideoSources;
+  Future<FlixHQStreamSources> getMovieStreamLinksAndSubs(String api) async {
+    FlixHQStreamSources movieVideoSources;
     int tries = 5;
     dynamic decodeRes;
     try {
@@ -52,24 +52,23 @@ class moviesApi {
           break;
         }
       }
-      movieVideoSources = MovieVideoSources.fromJson(decodeRes);
+      movieVideoSources = FlixHQStreamSources.fromJson(decodeRes);
     } finally {
       client.close();
     }
     return movieVideoSources;
   }
 
-  Future<List<MovieEpisodes>> getMovieStreamEpisodes(String api) async {
-    print('mov ep');
-    MovieInfo movieInfo;
+  Future<List<FlixHQMovieInfoEntries>> getMovieStreamEpisodes(String api) async {
+    FlixHQMovieInfo movieInfo;
+    print(api);
     try {
-      print(api);
       var res = await retryOptions.retry(
         (() => http.get(Uri.parse(api)).timeout(timeOut)),
         retryIf: (e) => e is SocketException || e is TimeoutException,
       );
       var decodeRes = jsonDecode(res.body);
-      movieInfo = MovieInfo.fromJson(decodeRes);
+      movieInfo = FlixHQMovieInfo.fromJson(decodeRes);
     } finally {
       client.close();
     }
@@ -77,8 +76,8 @@ class moviesApi {
     return movieInfo.episodes ?? [];
   }
 
-  Future<List<MovieResults>> fetchMoviesForStream(String api) async {
-    MovieStream movieStream;
+  Future<List<FlixHQMovieSearchEntry>> fetchMoviesForStream(String api) async {
+    FlixHQMovieSearch movieStream;
     print(api);
     try {
       var res = await retryOptions.retry(
@@ -87,7 +86,7 @@ class moviesApi {
       );
       var decodeRes = jsonDecode(res.body);
 
-      movieStream = MovieStream.fromJson(decodeRes);
+      movieStream = FlixHQMovieSearch.fromJson(decodeRes);
     } finally {
       client.close();
     }

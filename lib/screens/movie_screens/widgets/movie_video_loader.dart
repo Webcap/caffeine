@@ -3,11 +3,11 @@ import 'package:caffiene/models/sub_languages.dart';
 import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/utils/report_error_widget.dart';
+import 'package:caffiene/video_providers/flixhq.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/api/endpoints.dart';
 import 'package:caffiene/api/movies_api.dart';
-import 'package:caffiene/models/movie_stream.dart';
 import 'package:caffiene/functions/functions.dart';
 import 'package:caffiene/screens/player/player.dart';
 import 'package:caffiene/utils/config.dart';
@@ -32,13 +32,11 @@ class MovieVideoLoader extends StatefulWidget {
 }
 
 class _MovieVideoLoaderState extends State<MovieVideoLoader> {
-  List<MovieResults>? movies;
-  List<MovieEpisodes>? epi;
-  MovieVideoSources? movieVideoSources;
-  List<MovieVideoLinks>? movieVideoLinks;
-  List<MovieVideoSubtitles>? movieVideoSubs;
-  List<TMAVideoSources>? tmaVideoSources;
-  List<TMASubtitleSources>? tmaSubtitleSources;
+  List<FlixHQMovieSearchEntry>? movies;
+  List<FlixHQMovieInfoEntries>? epi;
+  FlixHQStreamSources? movieVideoSources;
+  List<FlixHQVideoLinks>? movieVideoLinks;
+  List<FlixHQSubLinks>? movieVideoSubs;
 
   double loadProgress = 0.00;
   late SettingsProvider settings =
@@ -47,7 +45,7 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
       Provider.of<AppDependencyProvider>(context, listen: false);
 
   /// TMDB Route
-  MovieInfoTMDBRoute? episode;
+  FlixHQMovieInfoTMDBRoute? episode;
 
   var startAppSdk = StartAppSdk();
   StartAppInterstitialAd? interstitialAd;
@@ -97,7 +95,8 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
     try {
       if (widget.route == StreamRoute.flixHQ) {
         debugPrint("USED FLIXHQ ROUTE");
-        await moviesApi().fetchMoviesForStream(Endpoints.searchMovieTVForStream(
+        await moviesApi()
+            .fetchMoviesForStream(Endpoints.searchMovieTVForStream(
                 removeCharacters(widget.metadata.elementAt(1)),
                 appDep.consumetUrl))
             .then((value) async {
@@ -199,12 +198,11 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
               episode!.episodeId != null &&
               episode!.episodeId!.isNotEmpty) {
             await moviesApi()
-                .getMovieStreamLinksAndSubs(
-                    Endpoints.getMovieTVStreamLinksTMDB(
-                        appDep.consumetUrl,
-                        episode!.episodeId!,
-                        episode!.id!,
-                        appDep.streamingServer))
+                .getMovieStreamLinksAndSubs(Endpoints.getMovieTVStreamLinksTMDB(
+                    appDep.consumetUrl,
+                    episode!.episodeId!,
+                    episode!.id!,
+                    appDep.streamingServer))
                 .then((value) {
               if (mounted) {
                 if (value.messageExists == null &&
@@ -331,7 +329,8 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
                   .fetchSocialLinks(
                 Endpoints.getExternalLinksForMovie(
                     widget.metadata.elementAt(0), "en"),
-              ).then((value) async {
+              )
+                  .then((value) async {
                 if (value.imdbId != null) {
                   await getExternalSubtitle(
                           Endpoints.searchExternalMovieSubtitles(value.imdbId!,

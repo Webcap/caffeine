@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:caffiene/models/tv.dart';
+import 'package:caffiene/video_providers/flixhq.dart';
 import 'package:http/http.dart' as http;
-import 'package:caffiene/models/tv_stream.dart';
 import 'dart:convert';
 
 import 'package:caffiene/utils/config.dart';
@@ -36,8 +36,8 @@ class tvApi {
     return tvList.tvSeries ?? [];
   }
 
-  Future<TVVideoSources> getTVStreamLinksAndSubs(String api) async {
-    TVVideoSources tvVideoSources;
+  Future<FlixHQStreamSources> getTVStreamLinksAndSubsFlixHQ(String api) async {
+    FlixHQStreamSources tvVideoSources;
     int tries = 5;
     dynamic decodeRes;
     try {
@@ -55,23 +55,22 @@ class tvApi {
         }
       }
 
-      tvVideoSources = TVVideoSources.fromJson(decodeRes);
+      tvVideoSources = FlixHQStreamSources.fromJson(decodeRes);
     } finally {
       client.close();
     }
     return tvVideoSources;
   }
 
-  Future<TVInfo> getTVStreamEpisodes(String api) async {
-    print(api);
-    TVInfo tvInfo;
+  Future<FlixHQTVInfo> getTVStreamEpisodesFlixHQ(String api) async {
+    FlixHQTVInfo tvInfo;
     try {
       var res = await retryOptions.retry(
         (() => http.get(Uri.parse(api)).timeout(timeOut)),
         retryIf: (e) => e is SocketException || e is TimeoutException,
       );
       var decodeRes = jsonDecode(res.body);
-      tvInfo = TVInfo.fromJson(decodeRes);
+      tvInfo = FlixHQTVInfo.fromJson(decodeRes);
     } finally {
       client.close();
     }
@@ -79,16 +78,15 @@ class tvApi {
     return tvInfo;
   }
 
-  Future<List<TVResults>> fetchTVForStream(String api) async {
-    TVStream tvStream;
-    print(api);
+  Future<List<FlixHQTVSearchEntry>> fetchTVForStreamFlixHQ(String api) async {
+    FlixHQTVSearch tvStream;
     try {
       var res = await retryOptions.retry(
         (() => http.get(Uri.parse(api)).timeout(timeOut)),
         retryIf: (e) => e is SocketException || e is TimeoutException,
       );
       var decodeRes = jsonDecode(res.body);
-      tvStream = TVStream.fromJson(decodeRes);
+      tvStream = FlixHQTVSearch.fromJson(decodeRes);
     } finally {
       client.close();
     }
