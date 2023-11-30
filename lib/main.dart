@@ -56,8 +56,10 @@ Future<void> appInitialize() async {
   await recentProvider.fetchEpisodes();
   await appDependencyProvider.getConsumetUrl();
   await appDependencyProvider.getOpenSubKey();
-  await appDependencyProvider.getStreamingServer();
+  await appDependencyProvider.getStreamingServerFlixHQ();
+  await appDependencyProvider.getStreamingServerDCVA();
   await appDependencyProvider.getStreamRoute();
+  await appDependencyProvider.getFQUrl();
 
   await Supabase.initialize(
     url: SUPABASE_URL,

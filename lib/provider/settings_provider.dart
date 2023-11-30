@@ -77,6 +77,9 @@ class SettingsProvider with ChangeNotifier {
   int _appColorIndex = -1;
   int get appColorIndex => _appColorIndex;
 
+  String _proPrecedence = providerPreference;
+  String get proPreference => _proPrecedence;
+
   // theme change
   Future<void> getCurrentThemeMode() async {
     appTheme = await themeModePreferences.getThemeMode();

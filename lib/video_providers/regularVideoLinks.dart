@@ -5,7 +5,11 @@ class RegularVideoLinks {
 
   RegularVideoLinks.fromJson(Map<String, dynamic> json) {
     url = json['url'];
-    quality = json['quality'];
+    if (json.containsKey('quality')) {
+      quality = json['quality'];
+    } else {
+      quality = 'unknown quality';
+    }
     isM3U8 = json['isM3U8'];
   }
 }
@@ -18,14 +22,4 @@ class RegularSubtitleLinks {
     url = json['url'];
     language = json['lang'];
   }
-}
-
-class SuperstreamVideoSources extends RegularVideoLinks {
-  SuperstreamVideoSources.fromJson(Map<String, dynamic> json)
-      : super.fromJson(json);
-}
-
-class SuperstreamSubtitleSources extends RegularSubtitleLinks {
-  SuperstreamSubtitleSources.fromJson(Map<String, dynamic> json)
-      : super.fromJson(json);
 }

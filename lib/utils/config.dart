@@ -26,6 +26,9 @@ const String SUPABASE_URL = 'https://quzrpdvpbnydfjzigcoi.supabase.co';
 const String STREAMING_SERVER = "vidcloud";
 String openSubtitlesKey = dotenv.env['OPENSUBTITLES_API_KEY']!;
 
+const String STREAMING_SERVER_FLIXHQ = "vidcloud";
+const String STREAMING_SERVER_DCVA = "asianload";
+
 class appConfig {
   static const app_icon = "assets/logo.png";
   static const app_name = "caffeine";
@@ -54,7 +57,11 @@ const kTextSmallHeaderStyle = TextStyle(
   overflow: TextOverflow.ellipsis,
 );
 
-const String currentAppVersion = '1.4.2-dev';
+//********************************* */
+//********************************* */
+// ** VERSION CONTROL BUDDY //
+const String currentAppVersion = '1.4.3-dev';
+//*********************************** */
 
 const kTextHeaderStyle = TextStyle(
   fontFamily: 'PoppinsSB',
@@ -109,6 +116,7 @@ final List<String> appNames = [
   'caffeine-v1.3.6.apk',
   'caffeine-v1.4.0.apk',
   'caffeine-v1.4.1.apk',
+  'caffeine-v1.4.2.apk',
 ];
 
 CacheManager cacheProp() {
@@ -128,3 +136,6 @@ class MyHttpOverrides extends HttpOverrides {
           (X509Certificate cert, String host, int port) => true;
   }
 }
+
+const providerPreference =
+    'superstream-Superstream flixhq-FlixHQ viewasian-ViewAsian dramacool-Dramacool zoro-Zoro ';

@@ -1,5 +1,6 @@
 import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:caffiene/screens/common/server_status_screen.dart';
+import 'package:caffiene/screens/common/subscribe_to_premium_screen.dart';
 import 'package:caffiene/screens/tv_screens/live_tv_screen.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -67,6 +68,16 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                           },
                         )
                       : Container(),
+                  ListTile(
+                    leading: Icon(
+                      FontAwesomeIcons.userPlus,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    title: Text(tr("upgrade_to_premium")),
+                    onTap: () {
+                      nextScreen(context, upgrade_premium_screen());
+                    },
+                  ),
                   ListTile(
                     leading: Icon(
                       FontAwesomeIcons.bookmark,

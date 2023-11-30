@@ -6,10 +6,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AppDependencies {
   static const CONSUMET_URL_KEY = "consumetUrlKey";
   static const CAFFIENE_LOGO_URL = "caffieneLogoUrl";
-  static const STREAM_SERVER = "vidcloud";
+  static const STREAM_SERVER_FLIXHQ = "vidcloud";
+  static const STREAM_SERVER_DCVA = "asianload";
   static const OPENSUBTITLES_KEY = "opensubtitlesKey";
   static const SHOWBOX_URL = "showbox_url";
   static const STREAM_ROUTE = "streamRoute";
+  static const CAFFEINE_API_URL = "caffeineAPIURL";
 
   setConsumetUrl(String value) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -27,6 +29,17 @@ class AppDependencies {
     prefs.setString(CAFFIENE_LOGO_URL, value);
   }
 
+  Future<String> getFQURL() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString(CAFFEINE_API_URL) ??
+        'https://flixquest-api.beamlak.dev';
+  }
+
+  setCaffeineAPIUrl(String value) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString(CAFFEINE_API_URL, value);
+  }
+
   Future<String> getCaffieneLogo() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString(CAFFIENE_LOGO_URL) ?? 'default';
@@ -42,14 +55,24 @@ class AppDependencies {
     return prefs.getString(OPENSUBTITLES_KEY) ?? openSubtitlesKey;
   }
 
-  setStreamServer(String value) async {
+  setStreamServerFlixHQ(String value) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString(STREAM_SERVER, value);
+    prefs.setString(STREAM_SERVER_FLIXHQ, value);
   }
 
-  Future<String> getStreamServer() async {
+  Future<String> getStreamServerFlixHQ() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString(STREAM_SERVER) ?? STREAMING_SERVER;
+    return prefs.getString(STREAM_SERVER_FLIXHQ) ?? STREAMING_SERVER_FLIXHQ;
+  }
+
+  setStreamServerDCVA(String value) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString(STREAM_SERVER_DCVA, value);
+  }
+
+  Future<String> getStreamServerDCVA() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString(STREAM_SERVER_DCVA) ?? STREAMING_SERVER_DCVA;
   }
 
   Future<bool> enableAD(bool enable) async {

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 import 'package:caffiene/video_providers/flixhq.dart';
+import 'package:caffiene/video_providers/provider_names.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:caffiene/models/external_subtitles.dart';
@@ -285,4 +286,34 @@ String generateCacheKey() {
   }
 
   return generatedChars;
+}
+
+String processVttFileTimestamps(String vttFile) {
+  final lines = vttFile.split('\n');
+  final processedLines = <String>[];
+
+  for (var i = 0; i < lines.length; i++) {
+    final line = lines[i];
+    if (line.contains('-->') && line.trim().length == 23) {
+      String endTimeModifiedString =
+          '${line.trim().substring(0, line.trim().length - 9)}00:${line.trim().substring(line.trim().length - 9)}';
+      String finalStr = '00:$endTimeModifiedString';
+      processedLines.add(finalStr);
+    } else {
+      processedLines.add(line);
+    }
+  }
+
+  return processedLines.join('\n');
+}
+
+List<VideoProvider?> parseProviderPrecedenceString(String raw) {
+  List<VideoProvider?> videoProviders = raw.split(' ').map((providerString) {
+    List<String> parts = providerString.split('-');
+    if (parts.length == 2) {
+      return VideoProvider(fullName: parts[1], codeName: parts[0]);
+    } else {}
+  }).toList();
+
+  return videoProviders;
 }

@@ -8,14 +8,20 @@ class AppDependencyProvider extends ChangeNotifier {
   String _consumetUrl = 'https://consumet-api-beryl.vercel.app/';
   String get consumetUrl => _consumetUrl;
 
+  String _caffeineAPIUrl = 'https://flixquest-api.vercel.app/';
+  String get caffeineAPIURL => _caffeineAPIUrl;
+
   String _caffieneLogo = 'default';
   String get caffieneLogo => _caffieneLogo;
 
   String _opensubtitlesKey = openSubtitlesKey;
   String get opensubtitlesKey => _opensubtitlesKey;
 
-  String _streamingServer = STREAMING_SERVER;
-  String get streamingServer => _streamingServer;
+  String _streamingServerFlixHQ = STREAMING_SERVER_FLIXHQ;
+  String get streamingServerFlixHQ => _streamingServerFlixHQ;
+
+  String _streamingServerDCVA = STREAMING_SERVER_DCVA;
+  String get streamingServerDCVA => _streamingServerDCVA;
 
   bool _enableADS = true;
   bool get enableADS => _enableADS;
@@ -58,6 +64,16 @@ class AppDependencyProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> getFQUrl() async {
+    caffeineAPIURL = await appDependencies.getFQURL();
+  }
+
+  set caffeineAPIURL(String value) {
+    _caffeineAPIUrl = value;
+    appDependencies.setCaffeineAPIUrl(value);
+    notifyListeners();
+  }
+
   Future<void> getOpenSubKey() async {
     opensubtitlesKey = await appDependencies.getOpenSubtitlesKey();
   }
@@ -68,13 +84,27 @@ class AppDependencyProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> getStreamingServer() async {
-    streamingServer = await appDependencies.getStreamServer();
+  // Future<void> getStreamingServer() async {
+  //   streamingServer = await appDependencies.getStreamServer();
+  // }
+
+  Future<void> getStreamingServerFlixHQ() async {
+    streamingServerFlixHQ = await appDependencies.getStreamServerFlixHQ();
   }
 
-  set streamingServer(String value) {
-    _streamingServer = value;
-    appDependencies.setStreamServer(value);
+  set streamingServerFlixHQ(String value) {
+    _streamingServerFlixHQ = value;
+    appDependencies.setStreamServerFlixHQ(value);
+    notifyListeners();
+  }
+
+  Future<void> getStreamingServerDCVA() async {
+    streamingServerDCVA = await appDependencies.getStreamServerDCVA();
+  }
+
+  set streamingServerDCVA(String value) {
+    _streamingServerDCVA = value;
+    appDependencies.setStreamServerDCVA(value);
     notifyListeners();
   }
 

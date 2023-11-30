@@ -756,6 +756,30 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.6.2"
+  in_app_purchases_interface:
+    dependency: transitive
+    description:
+      name: in_app_purchases_interface
+      sha256: bce28cf91213f23d53035d8c2c02b3ed45c05f5edfcbe1e985da65ceb75c6c70
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0"
+  in_app_purchases_intl:
+    dependency: transitive
+    description:
+      name: in_app_purchases_intl
+      sha256: "162d0d10cb7634b5ada3245f85d37571d0d6804ce0488239437e6c1ffae53d30"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.1"
+  in_app_purchases_paywall_ui:
+    dependency: "direct main"
+    description:
+      name: in_app_purchases_paywall_ui
+      sha256: "6350e46db80e3b56f845ded123f36ed50e925b1081ceeb41af9a82a0a8fad5ea"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.1"
   intl:
     dependency: "direct main"
     description:
@@ -1092,6 +1116,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.3.0"
+  responsive_spacing:
+    dependency: transitive
+    description:
+      name: responsive_spacing
+      sha256: "946e9e03d6b3c389e0bf6962da8c1a6f932955db3be08aba8cff8d97e5901060"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.0"
   retry:
     dependency: "direct main"
     description:

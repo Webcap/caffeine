@@ -56,8 +56,10 @@ class _caffeineState extends State<caffeine>
           _remoteConfig.getString('consumet_url');
       appDependencyProvider.opensubtitlesKey =
           _remoteConfig.getString('opensubtitles_key');
-      appDependencyProvider.streamingServer =
-          _remoteConfig.getString('streaming_server');
+      appDependencyProvider.streamingServerFlixHQ =
+          _remoteConfig.getString('streaming_server_flixhq');
+      appDependencyProvider.streamingServerDCVA =
+          _remoteConfig.getString('streaming_server_dcva');
       appDependencyProvider.enableADS = _remoteConfig.getBool('ads_enabled');
       appDependencyProvider.fetchRoute = _remoteConfig.getString('route');
       appDependencyProvider.useExternalSubtitles =
@@ -70,6 +72,8 @@ class _caffeineState extends State<caffeine>
           _remoteConfig.getBool('enable_stream');
       appDependencyProvider.displayOTTDrawer =
           _remoteConfig.getBool('enable_ott');
+      appDependencyProvider.caffeineAPIURL =
+          _remoteConfig.getString('caffeine_api_url');
     }
     await requestNotificationPermissions();
   }

@@ -36,13 +36,6 @@ class Endpoints {
         '&page=$page&language=$l';
   }
 
-  static String halloweenMoviesUrl(int page, String l) {
-    return '$TMDB_API_BASE_URL'
-        '/discover/movie?api_key='
-        '$TMDB_API_KEY'
-        '&page=$page&language=$l&sort_by=popularity.desc&with_genres=27';
-  }
-
   static String trendingMoviesUrl(int page, bool includeAdult, String l) {
     return '$TMDB_API_BASE_URL'
         '/trending/movie/week?api_key='
@@ -311,19 +304,22 @@ class Endpoints {
     return '$TMDB_API_BASE_URL' '/tv/$id?api_key=$TMDB_API_KEY&language=$l';
   }
 
-  static String searchMovieTVForStream(String titleName, String baseUrl) {
+  static String searchMovieTVForStreamFlixHQ(String titleName, String baseUrl) {
     return '$baseUrl' 'movies/flixhq/$titleName';
   }
 
-  static String getMovieTVStreamInfo(String titleStreamId, String baseUrl) {
+  static String getMovieTVStreamInfoFlixHQ(
+      String titleStreamId, String baseUrl) {
     return '$baseUrl' 'movies/flixhq/info?id=$titleStreamId';
   }
 
-  static String getMovieTVStreamLinks(
+  static String getMovieTVStreamLinksFlixHQ(
       String episodeId, String mediaId, String baseUrl, String server) {
     return '$baseUrl'
         'movies/flixhq/watch?episodeId=$episodeId&mediaId=$mediaId&server=$server';
   }
+
+  /// Movie/TV TMDB route endpoints
 
   static String getMovieTVStreamInfoTMDB(
       String id, String media, String baseUrl) {
@@ -360,5 +356,60 @@ class Endpoints {
   static String tmaGetEpisodeSource(
       String baseUrl, int id, int episodeNum, int seasonNum) {
     return '$baseUrl' 'v3/tv/sources/' '$id/' '$seasonNum/' '$episodeNum';
+  }
+
+  static String getSuperstreamStreamMovie(String baseUrl, int tmdbId) {
+    return '$baseUrl' '/superstream/watch-movie?tmdbId=$tmdbId';
+  }
+
+  static String getSuperstreamStreamTV(
+      String baseUrl, int tmdbId, int seasonNumber, int episodeNumber) {
+    return '$baseUrl'
+        '/superstream/watch-tv?tmdbId=$tmdbId&episode=$episodeNumber&season=$seasonNumber';
+  }
+
+  static String searchMovieTVForStreamDramacool(
+      String titleName, String baseUrl) {
+    return '$baseUrl' 'movies/dramacool/$titleName';
+  }
+
+  static String getMovieTVStreamInfoDramacool(
+      String titleStreamId, String baseUrl) {
+    return '$baseUrl' 'movies/dramacool/info?id=$titleStreamId';
+  }
+
+  static String getMovieTVStreamLinksDramacool(
+      String episodeId, String mediaId, String baseUrl, String server) {
+    return '$baseUrl'
+        'movies/dramacool/watch?episodeId=$episodeId&mediaId=$mediaId&server=$server';
+  }
+
+  static String searchMovieTVForStreamViewasian(
+      String titleName, String baseUrl) {
+    return '$baseUrl' 'movies/viewasian/$titleName';
+  }
+
+  static String getMovieTVStreamInfoViewasian(
+      String titleStreamId, String baseUrl) {
+    return '$baseUrl' 'movies/viewasian/info?id=$titleStreamId';
+  }
+
+  static String getMovieTVStreamLinksViewasian(
+      String episodeId, String mediaId, String baseUrl, String server) {
+    return '$baseUrl'
+        'movies/viewasian/watch?episodeId=$episodeId&mediaId=$mediaId';
+  }
+
+  static String searchZoroMoviesTV(String baseUrl, String title) {
+    return '$baseUrl' 'anime/zoro/$title';
+  }
+
+  static String getMovieTVInfoZoro(String baseUrl, String titleStreamId) {
+    return '$baseUrl' 'anime/zoro/info?id=$titleStreamId';
+  }
+
+  static String getMovieTVStreamLinksZoro(
+      String baseUrl, String episodeId, String server) {
+    return '$baseUrl' 'anime/zoro/watch?episodeId=$episodeId&server=$server';
   }
 }

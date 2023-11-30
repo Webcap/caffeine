@@ -1,7 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:caffiene/video_providers/dcva.dart';
+import 'package:caffiene/video_providers/dramacool.dart';
 import 'package:caffiene/video_providers/flixhq.dart';
+import 'package:caffiene/video_providers/superstream.dart';
+import 'package:caffiene/video_providers/zoro.dart';
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:caffiene/models/credits.dart';
@@ -34,10 +38,12 @@ class moviesApi {
     return newGenreList.genre ?? [];
   }
 
-  Future<FlixHQStreamSources> getMovieStreamLinksAndSubs(String api) async {
+  Future<FlixHQStreamSources> getMovieStreamLinksAndSubsFlixHQ(
+      String api) async {
     FlixHQStreamSources movieVideoSources;
     int tries = 5;
     dynamic decodeRes;
+    print(api);
     try {
       dynamic res;
       while (tries > 0) {
@@ -59,7 +65,8 @@ class moviesApi {
     return movieVideoSources;
   }
 
-  Future<List<FlixHQMovieInfoEntries>> getMovieStreamEpisodes(String api) async {
+  Future<List<FlixHQMovieInfoEntries>> getMovieStreamEpisodesFlixHQ(
+      String api) async {
     FlixHQMovieInfo movieInfo;
     print(api);
     try {
@@ -76,7 +83,7 @@ class moviesApi {
     return movieInfo.episodes ?? [];
   }
 
-  Future<List<FlixHQMovieSearchEntry>> fetchMoviesForStream(String api) async {
+  Future<List<FlixHQMovieSearchEntry>> fetchMoviesForStreamFlixHQ(String api) async {
     FlixHQMovieSearch movieStream;
     print(api);
     try {
@@ -329,5 +336,150 @@ class moviesApi {
       throw Exception(
           'Exception accoured: $error with stacktrace: $stacktrace');
     }
+  }
+
+  /// Superstream function(s)
+  Future<SuperstreamStreamSources> getSuperstreamStreamingLinks(
+      String api) async {
+    SuperstreamStreamSources superstreamSources;
+    int tries = 5;
+    dynamic decodeRes;
+    try {
+      dynamic res;
+      while (tries > 0) {
+        res = await retryOptions.retry(
+          (() => http.get(Uri.parse(api)).timeout(timeOut)),
+          retryIf: (e) => e is SocketException || e is TimeoutException,
+        );
+        decodeRes = jsonDecode(res.body);
+        if (decodeRes.containsKey('message')) {
+          --tries;
+        } else {
+          break;
+        }
+      }
+
+      superstreamSources = SuperstreamStreamSources.fromJson(decodeRes);
+    } finally {
+      client.close();
+    }
+    return superstreamSources;
+  }
+
+  Future<List<DCVASearchEntry>> fetchMovieTVForStreamDCVA(String api) async {
+    DCVASearch dcvaStream;
+    try {
+      var res = await retryOptions.retry(
+        (() => http.get(Uri.parse(api)).timeout(timeOut)),
+        retryIf: (e) => e is SocketException || e is TimeoutException,
+      );
+      var decodeRes = jsonDecode(res.body);
+
+      dcvaStream = DCVASearch.fromJson(decodeRes);
+    } finally {
+      client.close();
+    }
+    return dcvaStream.results ?? [];
+  }
+
+  Future<List<DCVAInfoEntries>> getMovieTVStreamEpisodesDCVA(String api) async {
+    DCVAInfo dcvaInfo;
+    try {
+      var res = await retryOptions.retry(
+        (() => http.get(Uri.parse(api)).timeout(timeOut)),
+        retryIf: (e) => e is SocketException || e is TimeoutException,
+      );
+      var decodeRes = jsonDecode(res.body);
+      dcvaInfo = DCVAInfo.fromJson(decodeRes);
+    } finally {
+      client.close();
+    }
+
+    return dcvaInfo.episodes ?? [];
+  }
+
+  Future<DCVAStreamSources> getMovieTVStreamLinksAndSubsDCVA(String api) async {
+    DCVAStreamSources dcvaVideoSources;
+    int tries = 5;
+    dynamic decodeRes;
+    try {
+      dynamic res;
+      while (tries > 0) {
+        res = await retryOptions.retry(
+          (() => http.get(Uri.parse(api)).timeout(timeOut)),
+          retryIf: (e) => e is SocketException || e is TimeoutException,
+        );
+        decodeRes = jsonDecode(res.body);
+        if (decodeRes.containsKey('message')) {
+          --tries;
+        } else {
+          break;
+        }
+      }
+      dcvaVideoSources = DramacoolStreamSources.fromJson(decodeRes);
+    } finally {
+      client.close();
+    }
+    return dcvaVideoSources;
+  }
+
+  Future<List<ZoroSearchEntry>> fetchMovieTVForStreamZoro(String api) async {
+    print('REQUESTTTTTTTTTTTT: ${api}');
+    ZoroSearch zoroStream;
+    try {
+      var res = await retryOptions.retry(
+        (() => http.get(Uri.parse(api)).timeout(timeOut)),
+        retryIf: (e) => e is SocketException || e is TimeoutException,
+      );
+      var decodeRes = jsonDecode(res.body);
+
+      zoroStream = ZoroSearch.fromJson(decodeRes);
+    } finally {
+      client.close();
+    }
+    return zoroStream.results ?? [];
+  }
+
+  Future<List<ZoroInfoEntries>> getMovieTVStreamEpisodesZoro(String api) async {
+    print('REQUESTTTTTTTTTTTT2: ${api}');
+    ZoroInfo zoroInfo;
+    try {
+      var res = await retryOptions.retry(
+        (() => http.get(Uri.parse(api)).timeout(timeOut)),
+        retryIf: (e) => e is SocketException || e is TimeoutException,
+      );
+      var decodeRes = jsonDecode(res.body);
+      zoroInfo = ZoroInfo.fromJson(decodeRes);
+    } finally {
+      client.close();
+    }
+
+    return zoroInfo.episodes ?? [];
+  }
+
+  Future<ZoroStreamSources> getMovieTVStreamLinksAndSubsZoro(String api) async {
+    print('REQUESTTTTTTTTTTTT3: ${api}');
+    ZoroStreamSources zoroVideoSources;
+    int tries = 5;
+    dynamic decodeRes;
+    try {
+      dynamic res;
+      while (tries > 0) {
+        res = await retryOptions.retry(
+          (() => http.get(Uri.parse(api)).timeout(timeOut)),
+          retryIf: (e) => e is SocketException || e is TimeoutException,
+        );
+        decodeRes = jsonDecode(res.body);
+        if (decodeRes.containsKey('message')) {
+          --tries;
+        } else {
+          break;
+        }
+      }
+      zoroVideoSources = ZoroStreamSources.fromJson(decodeRes);
+    } finally {
+      client.close();
+    }
+    return zoroVideoSources;
   }
 }
