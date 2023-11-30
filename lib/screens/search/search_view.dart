@@ -449,7 +449,7 @@ class Search extends SearchDelegate<String> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        moviesList[index].title!,
+                                        '${moviesList[index].title!} ${moviesList[index].releaseDate == null ? '' : moviesList[index].releaseDate == "" ? '' : '(${DateTime.parse(moviesList[index].releaseDate!).year})'}',
                                         style: TextStyle(
                                             fontFamily: 'PoppinsSB',
                                             fontSize: 15,
@@ -591,7 +591,7 @@ class Search extends SearchDelegate<String> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        tvList[index].name!,
+                                        '${tvList[index].name!} ${tvList[index].firstAirDate == null ? '' : tvList[index].firstAirDate == "" ? '' : '(${DateTime.parse(tvList[index].firstAirDate!).year})'}',
                                         style: TextStyle(
                                             fontFamily: 'PoppinsSB',
                                             fontSize: 15,
