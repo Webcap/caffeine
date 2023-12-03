@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class upgrade_premium_screen extends StatelessWidget {
+  const upgrade_premium_screen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

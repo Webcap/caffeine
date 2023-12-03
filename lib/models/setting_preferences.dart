@@ -235,3 +235,16 @@ class AppColorPreferences {
     return prefs.getInt(APP_COLOR_INDEX) ?? -1;
   }
 }
+
+// class ProviderPrecedencePreference {
+//   static const PROVIDER_PRECEDENCE = "providerPrecedence-v2";
+
+//   setProviderPrecedence(String pre) async {
+//     sharedPrefsSingleton.setString(PROVIDER_PRECEDENCE, pre);
+//   }
+
+//   Future<String> getProviderPrecedence() async {
+//     return sharedPrefsSingleton.getString(PROVIDER_PRECEDENCE) ??
+//         providerPreference;
+//   }
+// }

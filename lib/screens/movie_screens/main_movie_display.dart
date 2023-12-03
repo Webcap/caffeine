@@ -40,7 +40,7 @@ class _MainMoviesDisplayState extends State<MainMoviesDisplay> {
           DiscoverMovies(
             includeAdult: includeAdult,
           ),
-          UpdateBottom(),
+          const UpdateBottom(),
           // ScrollingMovies(
           //   title: tr("trending_horror_movies"),
           //   api: Endpoints.halloweenMoviesUrl(1, lang),

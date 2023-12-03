@@ -1,3 +1,4 @@
+import 'package:caffiene/utils/constant.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';

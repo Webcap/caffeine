@@ -11,7 +11,6 @@ import 'package:caffiene/screens/tv_screens/widgets/scrolling_tv_widget.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:provider/provider.dart';
 import 'package:readmore/readmore.dart';
-import 'package:intl/intl.dart';
 
 class EpisodeAbout extends StatefulWidget {
   const EpisodeAbout({

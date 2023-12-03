@@ -8,7 +8,6 @@ import 'package:caffiene/api/tv_api.dart';
 import 'package:caffiene/models/images.dart';
 import 'package:caffiene/models/movie_models.dart';
 import 'package:caffiene/models/person.dart';
-import 'package:intl/intl.dart';
 import 'package:caffiene/models/tv.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/screens/movie_screens/movie_details.dart';
@@ -17,6 +16,8 @@ import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/widgets/shimmer_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:readmore/readmore.dart';
+import 'package:caffiene/utils/constant.dart';
+
 
 class PersonImagesDisplay extends StatefulWidget {
   const PersonImagesDisplay({

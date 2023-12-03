@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class PlaceHolderPage extends StatefulWidget {
+  const PlaceHolderPage({super.key});
+
   @override
   _PlaceHolderState createState() => _PlaceHolderState();
 }
@@ -8,6 +10,6 @@ class PlaceHolderPage extends StatefulWidget {
 class _PlaceHolderState extends State<PlaceHolderPage> {
   @override
   Widget build(BuildContext context) {
-    return Placeholder();
+    return const Placeholder();
   }
 }

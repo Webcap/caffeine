@@ -75,7 +75,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                     ),
                     title: Text(tr("upgrade_to_premium")),
                     onTap: () {
-                      nextScreen(context, upgrade_premium_screen());
+                      nextScreen(context, const upgrade_premium_screen());
                     },
                   ),
                   ListTile(

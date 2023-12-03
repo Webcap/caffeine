@@ -9,6 +9,8 @@ import 'package:caffiene/screens/tv_screens/widgets/season_details.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/widgets/shimmer_widget.dart';
 import 'package:provider/provider.dart';
+import 'package:caffiene/utils/constant.dart';
+
 
 class SeasonsList extends StatefulWidget {
   final String? api;

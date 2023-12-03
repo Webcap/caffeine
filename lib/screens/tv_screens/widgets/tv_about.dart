@@ -14,7 +14,6 @@ import 'package:caffiene/screens/tv_screens/widgets/tv_genre_widgets.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:provider/provider.dart';
 import 'package:readmore/readmore.dart';
-import 'package:intl/intl.dart';
 
 class TVAbout extends StatefulWidget {
   const TVAbout({Key? key, required this.tvSeries}) : super(key: key);

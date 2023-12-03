@@ -6,6 +6,8 @@ import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/screens/tv_screens/widgets/tv_widgets.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:provider/provider.dart';
+import 'package:caffiene/utils/constant.dart';
+
 
 class TVEpisodeQuickInfo extends StatelessWidget {
   const TVEpisodeQuickInfo({

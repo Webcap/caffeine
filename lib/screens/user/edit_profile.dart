@@ -8,7 +8,6 @@ import 'package:flutter/services.dart';
 import 'package:caffiene/models/profile_image_list.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/utils/globlal_methods.dart';
-import 'package:intl/intl.dart';
 
 class ProfileEdit extends StatefulWidget {
   const ProfileEdit({Key? key}) : super(key: key);

@@ -1,4 +1,4 @@
-import 'package:caffiene/utils/config.dart';
+import 'package:caffiene/utils/constant.dart';
 import 'package:flutter/material.dart';
 import '../models/app_dependency_preferences.dart';
 

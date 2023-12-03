@@ -13,6 +13,8 @@ import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:caffiene/utils/constant.dart';
+
 
 Future<void> _messageHandler(RemoteMessage message) async {}
 

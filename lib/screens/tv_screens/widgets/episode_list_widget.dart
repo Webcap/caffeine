@@ -8,7 +8,8 @@ import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/screens/tv_screens/episode_detail_page.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:provider/provider.dart';
-import 'package:intl/intl.dart';
+import 'package:caffiene/utils/constant.dart';
+
 
 class EpisodeListWidget extends StatefulWidget {
   final int? tvId;

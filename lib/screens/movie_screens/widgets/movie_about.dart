@@ -17,7 +17,6 @@ import 'package:caffiene/widgets/common_widgets.dart';
 import 'package:caffiene/widgets/watch_now_button.dart';
 import 'package:provider/provider.dart';
 import 'package:readmore/readmore.dart';
-import 'package:intl/intl.dart';
 
 class MovieAbout extends StatefulWidget {
   const MovieAbout({required this.movie, Key? key}) : super(key: key);

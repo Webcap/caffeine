@@ -8,7 +8,7 @@ import 'package:caffiene/models/social_icons_icons.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/widgets/shimmer_widget.dart';
 import 'package:provider/provider.dart';
-
+import 'package:caffiene/utils/constant.dart';
 import '../../../widgets/common_widgets.dart';
 
 class PersonSocialLinks extends StatefulWidget {

@@ -1,4 +1,4 @@
-import 'package:caffiene/utils/config.dart';
+import 'package:caffiene/utils/constant.dart';
 
 class Endpoints {
   static String discoverMoviesUrl(int page, String l) {

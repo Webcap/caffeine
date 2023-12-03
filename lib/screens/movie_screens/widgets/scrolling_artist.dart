@@ -10,6 +10,8 @@ import 'package:caffiene/screens/movie_screens/movie_cast_crew_details.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/widgets/shimmer_widget.dart';
 import 'package:provider/provider.dart';
+import 'package:caffiene/utils/constant.dart';
+
 
 class ScrollingArtists extends StatefulWidget {
   final String? api, title, tapButtonText;

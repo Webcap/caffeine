@@ -4,6 +4,8 @@ import 'package:caffiene/screens/tv_screens/tv_detail_page.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/widgets/shimmer_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:caffiene/utils/constant.dart';
+
 
 class HorizontalScrollingTVList extends StatelessWidget {
   const HorizontalScrollingTVList({

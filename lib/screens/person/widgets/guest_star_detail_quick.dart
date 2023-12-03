@@ -5,6 +5,8 @@ import 'package:caffiene/screens/person/guest_star_details.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/widgets/shimmer_widget.dart';
 import 'package:provider/provider.dart';
+import 'package:caffiene/utils/constant.dart';
+
 
 class GuestStarDetailQuickInfo extends StatelessWidget {
   const GuestStarDetailQuickInfo({

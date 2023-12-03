@@ -18,6 +18,8 @@ import 'package:caffiene/screens/tv_screens/widgets/tvseason_cast_crew_details.d
 import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/widgets/shimmer_widget.dart';
 import 'package:provider/provider.dart';
+import 'package:caffiene/utils/constant.dart';
+
 
 class ScrollingTV extends StatefulWidget {
   final String api, title;

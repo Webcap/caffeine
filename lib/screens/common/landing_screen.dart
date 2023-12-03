@@ -242,7 +242,7 @@ class _LandingScreenState extends State<LandingScreen> {
                                         setState(() {
                                           anonButtonVisible = true;
                                         });
-                                        nextScreen(context, caffieneHomePage());
+                                        nextScreen(context, const caffieneHomePage());
                                       });
                                     } else {
                                       ScaffoldMessenger.of(context)

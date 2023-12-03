@@ -8,6 +8,8 @@ import 'package:caffiene/screens/movie_screens/widgets/watch_provider_button.dar
 import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/widgets/shimmer_widget.dart';
 import 'package:provider/provider.dart';
+import 'package:caffiene/utils/constant.dart';
+
 
 class MovieDetailQuickInfo extends StatelessWidget {
   const MovieDetailQuickInfo({

@@ -8,7 +8,6 @@ import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/widgets/common_widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:better_player/better_player.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';

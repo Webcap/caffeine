@@ -50,7 +50,7 @@ class _VideoDownloadScreenState extends State<VideoDownloadScreen> {
     Directory? appDir = Directory("storage/emulated/0/Caffiene/Backdrops");
 
     String outputPath = "${appDir.path}/output1.mp4";
-    String _outputPath;
+    String outputPath0;
 
     setState(() {
       _progress = 0.0;
@@ -76,7 +76,7 @@ class _VideoDownloadScreenState extends State<VideoDownloadScreen> {
     downloadProvider.startDownload(dwn);
 
     setState(() {
-      _outputPath = outputPath;
+      outputPath0 = outputPath;
     });
   }
 

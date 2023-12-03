@@ -4,6 +4,8 @@ import 'package:caffiene/models/movie_models.dart';
 import 'package:caffiene/screens/movie_screens/movie_details.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/widgets/shimmer_widget.dart';
+import 'package:caffiene/utils/constant.dart';
+
 
 class MovieListView extends StatelessWidget {
   const MovieListView({

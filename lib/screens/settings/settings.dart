@@ -363,7 +363,7 @@ class _SettingsState extends State<Settings> {
               tr("player_settings"),
             ),
             onTap: () {
-              nextScreen(context, PlayerSettings());
+              nextScreen(context, const PlayerSettings());
             },
           ),
           Visibility(
@@ -503,7 +503,7 @@ class _SettingsState extends State<Settings> {
           ),
           ListTile(
             onTap: (() {
-              nextScreen(context, AppLanguageChoose());
+              nextScreen(context, const AppLanguageChoose());
             }),
             leading: Icon(
               FontAwesomeIcons.language,
@@ -526,7 +526,7 @@ class _SettingsState extends State<Settings> {
           ),
           ListTile(
             onTap: (() {
-              nextScreen(context, CountryChoose());
+              nextScreen(context, const CountryChoose());
             }),
             leading: Icon(
               FontAwesomeIcons.earthAmericas,

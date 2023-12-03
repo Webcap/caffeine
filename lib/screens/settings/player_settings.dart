@@ -317,7 +317,7 @@ class _PlayerSettingsState extends State<PlayerSettings> {
               ),
               ListTile(
                 onTap: () {
-                  nextScreen(context, SubLangChoose());
+                  nextScreen(context, const SubLangChoose());
                 },
                 leading: Icon(
                   FontAwesomeIcons.closedCaptioning,

@@ -32,7 +32,7 @@ ThemeData darkThemeData(
           fontFamily: 'PoppinsSB',
           fontSize: 21),
     ),
-    dialogTheme: DialogTheme(backgroundColor: Color(0xFF171717)),
+    dialogTheme: const DialogTheme(backgroundColor: Color(0xFF171717)),
     primaryColor: isM3Enabled
         ? darkDynamicColor?.primary ?? maincolor
         : useUserColor
@@ -45,10 +45,10 @@ ThemeData darkThemeData(
               ? color.cs.primary
               : maincolor,
     ),
-    bannerTheme: MaterialBannerThemeData(),
-    chipTheme: ChipThemeData(),
-    snackBarTheme: SnackBarThemeData(),
-    scaffoldBackgroundColor: Color(0xFF161716),
+    bannerTheme: const MaterialBannerThemeData(),
+    chipTheme: const ChipThemeData(),
+    snackBarTheme: const SnackBarThemeData(),
+    scaffoldBackgroundColor: const Color(0xFF161716),
     radioTheme: RadioThemeData(
         fillColor: MaterialStatePropertyAll(isM3Enabled
             ? darkDynamicColor?.primary ?? maincolor
@@ -116,7 +116,7 @@ ThemeData darkThemeData(
       selectionHandleColor: const Color(0xFFFFFFFF),
       selectionColor: Colors.white12,
     ),
-    inputDecorationTheme: InputDecorationTheme(
+    inputDecorationTheme: const InputDecorationTheme(
       border: InputBorder.none,
       hintStyle: TextStyle(color: Colors.white24, fontFamily: 'Poppins'),
       focusedBorder: InputBorder.none,
@@ -139,10 +139,10 @@ ThemeData darkThemeData(
       ),
       trackColor: MaterialStatePropertyAll(
         isM3Enabled
-            ? darkDynamicColor?.primaryContainer ?? Color(0xFF994d02)
+            ? darkDynamicColor?.primaryContainer ?? const Color(0xFF994d02)
             : useUserColor
                 ? color.cs.primaryContainer
-                : Color(0xFF994d02),
+                : const Color(0xFF994d02),
       ),
     ),
     colorScheme: ColorScheme(
@@ -152,115 +152,115 @@ ThemeData darkThemeData(
               ? color.cs.primary
               : maincolor,
       primaryContainer: isM3Enabled
-          ? darkDynamicColor?.primaryContainer ?? Color(0xFF723600)
+          ? darkDynamicColor?.primaryContainer ?? const Color(0xFF723600)
           : useUserColor
               ? color.cs.primaryContainer
-              : Color(0xFF723600),
+              : const Color(0xFF723600),
       secondary: isM3Enabled
-          ? darkDynamicColor?.secondary ?? Color(0xFFe4bfa8)
+          ? darkDynamicColor?.secondary ?? const Color(0xFFe4bfa8)
           : useUserColor
               ? color.cs.secondary
-              : Color(0xFFe4bfa8),
+              : const Color(0xFFe4bfa8),
       secondaryContainer: isM3Enabled
-          ? darkDynamicColor?.secondaryContainer ?? Color(0xFF5b4130)
+          ? darkDynamicColor?.secondaryContainer ?? const Color(0xFF5b4130)
           : useUserColor
               ? color.cs.secondaryContainer
-              : Color(0xFF5b4130),
+              : const Color(0xFF5b4130),
       surface: isM3Enabled
-          ? darkDynamicColor?.surface ?? Color(0xFF201a17)
+          ? darkDynamicColor?.surface ?? const Color(0xFF201a17)
           : useUserColor
               ? color.cs.surface
-              : Color(0xFF201a17),
+              : const Color(0xFF201a17),
       background: isM3Enabled
-          ? darkDynamicColor?.background ?? Color(0xFF201a17)
+          ? darkDynamicColor?.background ?? const Color(0xFF201a17)
           : useUserColor
               ? color.cs.background
-              : Color(0xFF201a17),
+              : const Color(0xFF201a17),
       error: isM3Enabled
-          ? darkDynamicColor?.error ?? Color(0xFFffb4ab)
+          ? darkDynamicColor?.error ?? const Color(0xFFffb4ab)
           : useUserColor
               ? color.cs.error
-              : Color(0xFFffb4ab),
+              : const Color(0xFFffb4ab),
       onPrimary: isM3Enabled
-          ? darkDynamicColor?.onPrimary ?? Color(0xFF502400)
+          ? darkDynamicColor?.onPrimary ?? const Color(0xFF502400)
           : useUserColor
               ? color.cs.onPrimary
-              : Color(0xFF502400),
+              : const Color(0xFF502400),
       onSecondary: isM3Enabled
-          ? darkDynamicColor?.onSecondary ?? Color(0xFF422b1b)
+          ? darkDynamicColor?.onSecondary ?? const Color(0xFF422b1b)
           : useUserColor
               ? color.cs.onSecondary
-              : Color(0xFF502400),
+              : const Color(0xFF502400),
       onSurface: isM3Enabled
-          ? darkDynamicColor?.onSurface ?? Color(0xFFece0da)
+          ? darkDynamicColor?.onSurface ?? const Color(0xFFece0da)
           : useUserColor
               ? color.cs.onSurface
-              : Color(0xFFece0da),
+              : const Color(0xFFece0da),
       onBackground: isM3Enabled
-          ? darkDynamicColor?.onBackground ?? Color(0xFFece0da)
+          ? darkDynamicColor?.onBackground ?? const Color(0xFFece0da)
           : useUserColor
               ? color.cs.onBackground
-              : Color(0xFFece0da),
+              : const Color(0xFFece0da),
       onError: isM3Enabled
-          ? darkDynamicColor?.onError ?? Color(0xFF690005)
+          ? darkDynamicColor?.onError ?? const Color(0xFF690005)
           : useUserColor
               ? color.cs.onError
-              : Color(0xFF690005),
+              : const Color(0xFF690005),
       errorContainer: isM3Enabled
-          ? darkDynamicColor?.errorContainer ?? Color(0xFF93000a)
+          ? darkDynamicColor?.errorContainer ?? const Color(0xFF93000a)
           : useUserColor
               ? color.cs.errorContainer
-              : Color(0xFF93000a),
+              : const Color(0xFF93000a),
       onErrorContainer: isM3Enabled
-          ? darkDynamicColor?.onErrorContainer ?? Color(0xFFffdad6)
+          ? darkDynamicColor?.onErrorContainer ?? const Color(0xFFffdad6)
           : useUserColor
               ? color.cs.onErrorContainer
-              : Color(0xFFffdad6),
+              : const Color(0xFFffdad6),
       onPrimaryContainer: isM3Enabled
-          ? darkDynamicColor?.onPrimaryContainer ?? Color(0xFFffdcc6)
+          ? darkDynamicColor?.onPrimaryContainer ?? const Color(0xFFffdcc6)
           : useUserColor
               ? color.cs.onPrimaryContainer
-              : Color(0xFFffdcc6),
+              : const Color(0xFFffdcc6),
       onSecondaryContainer: isM3Enabled
-          ? darkDynamicColor?.onSecondaryContainer ?? Color(0xFFffdcc6)
+          ? darkDynamicColor?.onSecondaryContainer ?? const Color(0xFFffdcc6)
           : useUserColor
               ? color.cs.onSecondaryContainer
-              : Color(0xFFffdcc6),
+              : const Color(0xFFffdcc6),
       onSurfaceVariant: isM3Enabled
-          ? darkDynamicColor?.onSurfaceVariant ?? Color(0xFFd7c3b7)
+          ? darkDynamicColor?.onSurfaceVariant ?? const Color(0xFFd7c3b7)
           : useUserColor
               ? color.cs.onSurfaceVariant
-              : Color(0xFFd7c3b7),
+              : const Color(0xFFd7c3b7),
       onTertiary: isM3Enabled
-          ? darkDynamicColor?.onTertiary ?? Color(0xFF31320a)
+          ? darkDynamicColor?.onTertiary ?? const Color(0xFF31320a)
           : useUserColor
               ? color.cs.onTertiary
-              : Color(0xFF31320a),
+              : const Color(0xFF31320a),
       onTertiaryContainer: isM3Enabled
-          ? darkDynamicColor?.onTertiaryContainer ?? Color(0xFFe5e6ae)
+          ? darkDynamicColor?.onTertiaryContainer ?? const Color(0xFFe5e6ae)
           : useUserColor
               ? color.cs.onTertiaryContainer
-              : Color(0xFFe5e6ae),
+              : const Color(0xFFe5e6ae),
       outline: isM3Enabled
-          ? darkDynamicColor?.outline ?? Color(0xFF9f8d83)
+          ? darkDynamicColor?.outline ?? const Color(0xFF9f8d83)
           : useUserColor
               ? color.cs.outline
-              : Color(0xFF9f8d83),
+              : const Color(0xFF9f8d83),
       tertiary: isM3Enabled
-          ? darkDynamicColor?.tertiary ?? Color(0xFFc9ca94)
+          ? darkDynamicColor?.tertiary ?? const Color(0xFFc9ca94)
           : useUserColor
               ? color.cs.tertiary
-              : Color(0xFFc9ca94),
+              : const Color(0xFFc9ca94),
       tertiaryContainer: isM3Enabled
-          ? darkDynamicColor?.tertiaryContainer ?? Color(0xFF48491f)
+          ? darkDynamicColor?.tertiaryContainer ?? const Color(0xFF48491f)
           : useUserColor
               ? color.cs.tertiaryContainer
-              : Color(0xFF48491f),
+              : const Color(0xFF48491f),
       surfaceVariant: isM3Enabled
-          ? darkDynamicColor?.surfaceVariant ?? Color(0xFF52443c)
+          ? darkDynamicColor?.surfaceVariant ?? const Color(0xFF52443c)
           : useUserColor
               ? color.cs.surfaceVariant
-              : Color(0xFF52443c),
+              : const Color(0xFF52443c),
       brightness: Brightness.dark,
     ).copyWith(
         background: isM3Enabled
@@ -301,7 +301,7 @@ ThemeData lightThemeData(
           fontFamily: 'PoppinsSB',
           fontSize: 21),
     ),
-    dialogTheme: DialogTheme(backgroundColor: Color(0xFFdedede)),
+    dialogTheme: const DialogTheme(backgroundColor: Color(0xFFdedede)),
     primaryColor: isM3Enabled
         ? lightDynamicColor?.primary ?? maincolor
         : useUserColor
@@ -314,10 +314,10 @@ ThemeData lightThemeData(
               ? color.cs.primary
               : maincolor,
     ),
-    bannerTheme: MaterialBannerThemeData(),
-    chipTheme: ChipThemeData(),
-    snackBarTheme: SnackBarThemeData(),
-    scaffoldBackgroundColor: Color(0xFFf5f5f5),
+    bannerTheme: const MaterialBannerThemeData(),
+    chipTheme: const ChipThemeData(),
+    snackBarTheme: const SnackBarThemeData(),
+    scaffoldBackgroundColor: const Color(0xFFf5f5f5),
     radioTheme: RadioThemeData(
         fillColor: MaterialStatePropertyAll(isM3Enabled
             ? lightDynamicColor?.primary ?? maincolor
@@ -385,7 +385,7 @@ ThemeData lightThemeData(
       selectionHandleColor: const Color(0xFF000000),
       selectionColor: Colors.black12,
     ),
-    inputDecorationTheme: InputDecorationTheme(
+    inputDecorationTheme: const InputDecorationTheme(
       border: InputBorder.none,
       hintStyle: TextStyle(color: Colors.black26, fontFamily: 'Poppins'),
       focusedBorder: InputBorder.none,
@@ -408,10 +408,10 @@ ThemeData lightThemeData(
       ),
       trackColor: MaterialStatePropertyAll(
         isM3Enabled
-            ? lightDynamicColor?.primaryContainer ?? Color(0xFF994d02)
+            ? lightDynamicColor?.primaryContainer ?? const Color(0xFF994d02)
             : useUserColor
                 ? color.cs.primaryContainer
-                : Color(0xFF994d02),
+                : const Color(0xFF994d02),
       ),
     ),
     colorScheme: ColorScheme(
@@ -421,115 +421,115 @@ ThemeData lightThemeData(
               ? color.cs.primary
               : maincolor,
       primaryContainer: isM3Enabled
-          ? lightDynamicColor?.primaryContainer ?? Color(0xFFffdcc6)
+          ? lightDynamicColor?.primaryContainer ?? const Color(0xFFffdcc6)
           : useUserColor
               ? color.cs.primaryContainer
-              : Color(0xFFffdcc6),
+              : const Color(0xFFffdcc6),
       secondary: isM3Enabled
-          ? lightDynamicColor?.secondary ?? Color(0xFF755846)
+          ? lightDynamicColor?.secondary ?? const Color(0xFF755846)
           : useUserColor
               ? color.cs.secondary
-              : Color(0xFF755846),
+              : const Color(0xFF755846),
       secondaryContainer: isM3Enabled
-          ? lightDynamicColor?.secondaryContainer ?? Color(0xFFffdcc6)
+          ? lightDynamicColor?.secondaryContainer ?? const Color(0xFFffdcc6)
           : useUserColor
               ? color.cs.secondaryContainer
-              : Color(0xFFffdcc6),
+              : const Color(0xFFffdcc6),
       surface: isM3Enabled
-          ? lightDynamicColor?.surface ?? Color(0xFFfffbff)
+          ? lightDynamicColor?.surface ?? const Color(0xFFfffbff)
           : useUserColor
               ? color.cs.surface
-              : Color(0xFFfffbff),
+              : const Color(0xFFfffbff),
       background: isM3Enabled
-          ? lightDynamicColor?.background ?? Color(0xFFfffbff)
+          ? lightDynamicColor?.background ?? const Color(0xFFfffbff)
           : useUserColor
               ? color.cs.background
-              : Color(0xFFfffbff),
+              : const Color(0xFFfffbff),
       error: isM3Enabled
-          ? lightDynamicColor?.error ?? Color(0xFFba1a1a)
+          ? lightDynamicColor?.error ?? const Color(0xFFba1a1a)
           : useUserColor
               ? color.cs.error
-              : Color(0xFFba1a1a),
+              : const Color(0xFFba1a1a),
       onPrimary: isM3Enabled
-          ? lightDynamicColor?.onPrimary ?? Color(0xFFFFC890)
+          ? lightDynamicColor?.onPrimary ?? const Color(0xFFFFC890)
           : useUserColor
               ? color.cs.onPrimary
-              : Color(0xFFFFC890),
+              : const Color(0xFFFFC890),
       onSecondary: isM3Enabled
-          ? lightDynamicColor?.onSecondary ?? Color(0xFFffffff)
+          ? lightDynamicColor?.onSecondary ?? const Color(0xFFffffff)
           : useUserColor
               ? color.cs.onSecondary
-              : Color(0xFFffffff),
+              : const Color(0xFFffffff),
       onSurface: isM3Enabled
-          ? lightDynamicColor?.onSurface ?? Color(0xFF201a17)
+          ? lightDynamicColor?.onSurface ?? const Color(0xFF201a17)
           : useUserColor
               ? color.cs.onSurface
-              : Color(0xFF201a17),
+              : const Color(0xFF201a17),
       onBackground: isM3Enabled
-          ? lightDynamicColor?.onBackground ?? Color(0xFF201a17)
+          ? lightDynamicColor?.onBackground ?? const Color(0xFF201a17)
           : useUserColor
               ? color.cs.onBackground
-              : Color(0xFF201a17),
+              : const Color(0xFF201a17),
       onError: isM3Enabled
-          ? lightDynamicColor?.onError ?? Color(0xFFffffff)
+          ? lightDynamicColor?.onError ?? const Color(0xFFffffff)
           : useUserColor
               ? color.cs.onError
-              : Color(0xFFffffff),
+              : const Color(0xFFffffff),
       errorContainer: isM3Enabled
-          ? lightDynamicColor?.errorContainer ?? Color(0xFFffdad6)
+          ? lightDynamicColor?.errorContainer ?? const Color(0xFFffdad6)
           : useUserColor
               ? color.cs.errorContainer
-              : Color(0xFFffdad6),
+              : const Color(0xFFffdad6),
       onErrorContainer: isM3Enabled
-          ? lightDynamicColor?.onErrorContainer ?? Color(0xFF410002)
+          ? lightDynamicColor?.onErrorContainer ?? const Color(0xFF410002)
           : useUserColor
               ? color.cs.onErrorContainer
-              : Color(0xFF410002),
+              : const Color(0xFF410002),
       onPrimaryContainer: isM3Enabled
-          ? lightDynamicColor?.onPrimaryContainer ?? Color(0xFF311400)
+          ? lightDynamicColor?.onPrimaryContainer ?? const Color(0xFF311400)
           : useUserColor
               ? color.cs.onPrimaryContainer
-              : Color(0xFF311400),
+              : const Color(0xFF311400),
       onSecondaryContainer: isM3Enabled
-          ? lightDynamicColor?.onSecondaryContainer ?? Color(0xFF2b1708)
+          ? lightDynamicColor?.onSecondaryContainer ?? const Color(0xFF2b1708)
           : useUserColor
               ? color.cs.onSecondaryContainer
-              : Color(0xFF2b1708),
+              : const Color(0xFF2b1708),
       onSurfaceVariant: isM3Enabled
-          ? lightDynamicColor?.onSurfaceVariant ?? Color(0xFF52443c)
+          ? lightDynamicColor?.onSurfaceVariant ?? const Color(0xFF52443c)
           : useUserColor
               ? color.cs.onSurfaceVariant
-              : Color(0xFF52443c),
+              : const Color(0xFF52443c),
       onTertiary: isM3Enabled
-          ? lightDynamicColor?.onTertiary ?? Color(0xFFffffff)
+          ? lightDynamicColor?.onTertiary ?? const Color(0xFFffffff)
           : useUserColor
               ? color.cs.onTertiary
-              : Color(0xFFffffff),
+              : const Color(0xFFffffff),
       onTertiaryContainer: isM3Enabled
-          ? lightDynamicColor?.onTertiaryContainer ?? Color(0xFF1c1d00)
+          ? lightDynamicColor?.onTertiaryContainer ?? const Color(0xFF1c1d00)
           : useUserColor
               ? color.cs.onTertiaryContainer
-              : Color(0xFF1c1d00),
+              : const Color(0xFF1c1d00),
       outline: isM3Enabled
-          ? lightDynamicColor?.outline ?? Color(0xFF84746a)
+          ? lightDynamicColor?.outline ?? const Color(0xFF84746a)
           : useUserColor
               ? color.cs.outline
-              : Color(0xFF84746a),
+              : const Color(0xFF84746a),
       tertiary: isM3Enabled
-          ? lightDynamicColor?.tertiary ?? Color(0xFF5f6134)
+          ? lightDynamicColor?.tertiary ?? const Color(0xFF5f6134)
           : useUserColor
               ? color.cs.tertiary
-              : Color(0xFF5f6134),
+              : const Color(0xFF5f6134),
       tertiaryContainer: isM3Enabled
-          ? lightDynamicColor?.tertiaryContainer ?? Color(0xFFe5e6ae)
+          ? lightDynamicColor?.tertiaryContainer ?? const Color(0xFFe5e6ae)
           : useUserColor
               ? color.cs.tertiaryContainer
-              : Color(0xFFe5e6ae),
+              : const Color(0xFFe5e6ae),
       surfaceVariant: isM3Enabled
-          ? lightDynamicColor?.surfaceVariant ?? Color(0xFFf4ded3)
+          ? lightDynamicColor?.surfaceVariant ?? const Color(0xFFf4ded3)
           : useUserColor
               ? color.cs.surfaceVariant
-              : Color(0xFFf4ded3),
+              : const Color(0xFFf4ded3),
       brightness: Brightness.light,
     ).copyWith(
         background: isM3Enabled
@@ -570,7 +570,7 @@ ThemeData amoledThemeData(
           fontFamily: 'PoppinsSB',
           fontSize: 21),
     ),
-    dialogTheme: DialogTheme(backgroundColor: Color(0xFF171717)),
+    dialogTheme: const DialogTheme(backgroundColor: Color(0xFF171717)),
     primaryColor: isM3Enabled
         ? darkDynamicColor?.primary ?? maincolor
         : useUserColor
@@ -583,9 +583,9 @@ ThemeData amoledThemeData(
               ? color.cs.primary
               : maincolor,
     ),
-    bannerTheme: MaterialBannerThemeData(),
-    chipTheme: ChipThemeData(),
-    snackBarTheme: SnackBarThemeData(),
+    bannerTheme: const MaterialBannerThemeData(),
+    chipTheme: const ChipThemeData(),
+    snackBarTheme: const SnackBarThemeData(),
     scaffoldBackgroundColor: Colors.black,
     radioTheme: RadioThemeData(
         fillColor: MaterialStatePropertyAll(isM3Enabled
@@ -652,7 +652,7 @@ ThemeData amoledThemeData(
       selectionHandleColor: const Color(0xFFFFFFFF),
       selectionColor: Colors.white12,
     ),
-    inputDecorationTheme: InputDecorationTheme(
+    inputDecorationTheme: const InputDecorationTheme(
       border: InputBorder.none,
       hintStyle: TextStyle(color: Colors.white24, fontFamily: 'Poppins'),
       focusedBorder: InputBorder.none,
@@ -675,10 +675,10 @@ ThemeData amoledThemeData(
       ),
       trackColor: MaterialStatePropertyAll(
         isM3Enabled
-            ? darkDynamicColor?.primaryContainer ?? Color(0xFF994d02)
+            ? darkDynamicColor?.primaryContainer ?? const Color(0xFF994d02)
             : useUserColor
                 ? color.cs.primaryContainer
-                : Color(0xFF994d02),
+                : const Color(0xFF994d02),
       ),
     ),
     colorScheme: ColorScheme(
@@ -688,115 +688,115 @@ ThemeData amoledThemeData(
               ? color.cs.primary
               : maincolor,
       primaryContainer: isM3Enabled
-          ? darkDynamicColor?.primaryContainer ?? Color(0xFF723600)
+          ? darkDynamicColor?.primaryContainer ?? const Color(0xFF723600)
           : useUserColor
               ? color.cs.primaryContainer
-              : Color(0xFF723600),
+              : const Color(0xFF723600),
       secondary: isM3Enabled
-          ? darkDynamicColor?.secondary ?? Color(0xFFe4bfa8)
+          ? darkDynamicColor?.secondary ?? const Color(0xFFe4bfa8)
           : useUserColor
               ? color.cs.secondary
-              : Color(0xFFe4bfa8),
+              : const Color(0xFFe4bfa8),
       secondaryContainer: isM3Enabled
-          ? darkDynamicColor?.secondaryContainer ?? Color(0xFF5b4130)
+          ? darkDynamicColor?.secondaryContainer ?? const Color(0xFF5b4130)
           : useUserColor
               ? color.cs.secondaryContainer
-              : Color(0xFF5b4130),
+              : const Color(0xFF5b4130),
       surface: isM3Enabled
-          ? darkDynamicColor?.surface ?? Color(0xFF201a17)
+          ? darkDynamicColor?.surface ?? const Color(0xFF201a17)
           : useUserColor
               ? color.cs.surface
               : Colors.black,
       background: isM3Enabled
-          ? darkDynamicColor?.background ?? Color(0xFF201a17)
+          ? darkDynamicColor?.background ?? const Color(0xFF201a17)
           : useUserColor
               ? color.cs.background
               : Colors.black,
       error: isM3Enabled
-          ? darkDynamicColor?.error ?? Color(0xFFffb4ab)
+          ? darkDynamicColor?.error ?? const Color(0xFFffb4ab)
           : useUserColor
               ? color.cs.error
-              : Color(0xFFffb4ab),
+              : const Color(0xFFffb4ab),
       onPrimary: isM3Enabled
-          ? darkDynamicColor?.onPrimary ?? Color(0xFF502400)
+          ? darkDynamicColor?.onPrimary ?? const Color(0xFF502400)
           : useUserColor
               ? color.cs.onPrimary
-              : Color(0xFF502400),
+              : const Color(0xFF502400),
       onSecondary: isM3Enabled
-          ? darkDynamicColor?.onSecondary ?? Color(0xFF422b1b)
+          ? darkDynamicColor?.onSecondary ?? const Color(0xFF422b1b)
           : useUserColor
               ? color.cs.onSecondary
-              : Color(0xFF502400),
+              : const Color(0xFF502400),
       onSurface: isM3Enabled
-          ? darkDynamicColor?.onSurface ?? Color(0xFFece0da)
+          ? darkDynamicColor?.onSurface ?? const Color(0xFFece0da)
           : useUserColor
               ? color.cs.onSurface
-              : Color(0xFFece0da),
+              : const Color(0xFFece0da),
       onBackground: isM3Enabled
-          ? darkDynamicColor?.onBackground ?? Color(0xFFece0da)
+          ? darkDynamicColor?.onBackground ?? const Color(0xFFece0da)
           : useUserColor
               ? color.cs.onBackground
-              : Color(0xFFece0da),
+              : const Color(0xFFece0da),
       onError: isM3Enabled
-          ? darkDynamicColor?.onError ?? Color(0xFF690005)
+          ? darkDynamicColor?.onError ?? const Color(0xFF690005)
           : useUserColor
               ? color.cs.onError
-              : Color(0xFF690005),
+              : const Color(0xFF690005),
       errorContainer: isM3Enabled
-          ? darkDynamicColor?.errorContainer ?? Color(0xFF93000a)
+          ? darkDynamicColor?.errorContainer ?? const Color(0xFF93000a)
           : useUserColor
               ? color.cs.errorContainer
-              : Color(0xFF93000a),
+              : const Color(0xFF93000a),
       onErrorContainer: isM3Enabled
-          ? darkDynamicColor?.onErrorContainer ?? Color(0xFFffdad6)
+          ? darkDynamicColor?.onErrorContainer ?? const Color(0xFFffdad6)
           : useUserColor
               ? color.cs.onErrorContainer
-              : Color(0xFFffdad6),
+              : const Color(0xFFffdad6),
       onPrimaryContainer: isM3Enabled
-          ? darkDynamicColor?.onPrimaryContainer ?? Color(0xFFffdcc6)
+          ? darkDynamicColor?.onPrimaryContainer ?? const Color(0xFFffdcc6)
           : useUserColor
               ? color.cs.onPrimaryContainer
-              : Color(0xFFffdcc6),
+              : const Color(0xFFffdcc6),
       onSecondaryContainer: isM3Enabled
-          ? darkDynamicColor?.onSecondaryContainer ?? Color(0xFFffdcc6)
+          ? darkDynamicColor?.onSecondaryContainer ?? const Color(0xFFffdcc6)
           : useUserColor
               ? color.cs.onSecondaryContainer
-              : Color(0xFFffdcc6),
+              : const Color(0xFFffdcc6),
       onSurfaceVariant: isM3Enabled
-          ? darkDynamicColor?.onSurfaceVariant ?? Color(0xFFd7c3b7)
+          ? darkDynamicColor?.onSurfaceVariant ?? const Color(0xFFd7c3b7)
           : useUserColor
               ? color.cs.onSurfaceVariant
-              : Color(0xFFd7c3b7),
+              : const Color(0xFFd7c3b7),
       onTertiary: isM3Enabled
-          ? darkDynamicColor?.onTertiary ?? Color(0xFF31320a)
+          ? darkDynamicColor?.onTertiary ?? const Color(0xFF31320a)
           : useUserColor
               ? color.cs.onTertiary
-              : Color(0xFF31320a),
+              : const Color(0xFF31320a),
       onTertiaryContainer: isM3Enabled
-          ? darkDynamicColor?.onTertiaryContainer ?? Color(0xFFe5e6ae)
+          ? darkDynamicColor?.onTertiaryContainer ?? const Color(0xFFe5e6ae)
           : useUserColor
               ? color.cs.onTertiaryContainer
-              : Color(0xFFe5e6ae),
+              : const Color(0xFFe5e6ae),
       outline: isM3Enabled
-          ? darkDynamicColor?.outline ?? Color(0xFF9f8d83)
+          ? darkDynamicColor?.outline ?? const Color(0xFF9f8d83)
           : useUserColor
               ? color.cs.outline
-              : Color(0xFF9f8d83),
+              : const Color(0xFF9f8d83),
       tertiary: isM3Enabled
-          ? darkDynamicColor?.tertiary ?? Color(0xFFc9ca94)
+          ? darkDynamicColor?.tertiary ?? const Color(0xFFc9ca94)
           : useUserColor
               ? color.cs.tertiary
-              : Color(0xFFc9ca94),
+              : const Color(0xFFc9ca94),
       tertiaryContainer: isM3Enabled
-          ? darkDynamicColor?.tertiaryContainer ?? Color(0xFF48491f)
+          ? darkDynamicColor?.tertiaryContainer ?? const Color(0xFF48491f)
           : useUserColor
               ? color.cs.tertiaryContainer
-              : Color(0xFF48491f),
+              : const Color(0xFF48491f),
       surfaceVariant: isM3Enabled
-          ? darkDynamicColor?.surfaceVariant ?? Color(0xFF52443c)
+          ? darkDynamicColor?.surfaceVariant ?? const Color(0xFF52443c)
           : useUserColor
               ? color.cs.surfaceVariant
-              : Color(0xFF52443c),
+              : const Color(0xFF52443c),
       brightness: Brightness.dark,
     ).copyWith(
         background: isM3Enabled

@@ -24,7 +24,7 @@ class VideoConverter {
       if (information != null) {
         duration = information.getDuration();
       }
-      print('DURATIONNNN: ${duration}');
+      print('DURATIONNNN: $duration');
     });
 
     FFmpegKit.executeAsync(
@@ -50,8 +50,8 @@ class VideoConverter {
               Duration(seconds: num.parse(duration!).toInt()).inMilliseconds) *
           100);
       // final progress = _statistics!.getTime();
-      print('PRRR: ${progress}');
-      print('Tota; dur: ${duration}');
+      print('PRRR: $progress');
+      print('Tota; dur: $duration');
 
       _onProgress(progress.toDouble() / 100);
     }

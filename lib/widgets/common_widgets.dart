@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:caffiene/provider/settings_provider.dart';
+import 'package:caffiene/utils/constant.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -151,7 +152,7 @@ class _DidYouKnowState extends State<DidYouKnow> {
                           'This movie doesn\'t have IMDB id therefore additional data can\'t be fetched.',
                           textAlign: TextAlign.center,
                         ))
-                      : Wrap(
+                      : const Wrap(
                           spacing: 5,
                           // children: [
                           //   ElevatedButton(

@@ -21,6 +21,8 @@ import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/widgets/shimmer_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:caffiene/utils/constant.dart';
+
 
 class TVShowsFromWatchProviders extends StatefulWidget {
   const TVShowsFromWatchProviders({Key? key}) : super(key: key);
