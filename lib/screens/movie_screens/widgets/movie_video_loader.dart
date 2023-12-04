@@ -8,7 +8,6 @@ import 'package:caffiene/video_providers/flixhq.dart';
 import 'package:caffiene/video_providers/provider_names.dart';
 import 'package:caffiene/video_providers/regularVideoLinks.dart';
 import 'package:caffiene/video_providers/superstream.dart';
-import 'package:caffiene/video_providers/zoro.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/api/endpoints.dart';
@@ -253,7 +252,7 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Image.asset(
-                  'assets/images/logo.png',
+                  appConfig.app_icon,
                   height: 65,
                   width: 65,
                 ),

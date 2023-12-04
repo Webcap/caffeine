@@ -243,7 +243,7 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Image.asset(
-                  'assets/images/logo.png',
+                  appConfig.app_icon,
                   height: 65,
                   width: 65,
                 ),
