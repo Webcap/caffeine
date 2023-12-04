@@ -1,4 +1,5 @@
 import 'package:caffiene/screens/common/sublanguage_choose.dart';
+import 'package:caffiene/screens/settings/provider_choose_screen.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/utils/next_screen.dart';
 import 'package:caffiene/widgets/common_widgets.dart';
@@ -342,6 +343,18 @@ class _PlayerSettingsState extends State<PlayerSettings> {
                   });
                 }),
               ),
+              ListTile(
+                onTap: () {
+                  nextScreen(context, ProviderChooseScreen());
+                },
+                leading: Icon(
+                  FontAwesomeIcons.server,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                title: Text(
+                  tr("provider_precedence")
+                ),
+              )
             ],
           ),
         ),

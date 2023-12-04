@@ -36,7 +36,7 @@ const kTextSmallHeaderStyle = TextStyle(
 //********************************* */
 //********************************* */
 // ** VERSION CONTROL BUDDY //
-const String currentAppVersion = '1.4.4-dev';
+const String currentAppVersion = '1.5.0-dev';
 //*********************************** */
 
 const kTextHeaderStyle = TextStyle(
@@ -93,6 +93,7 @@ final List<String> appNames = [
   'caffeine-v1.4.0.apk',
   'caffeine-v1.4.1.apk',
   'caffeine-v1.4.2.apk',
+  'caffeine-v1.5.0.apk',
 ];
 
 CacheManager cacheProp() {
@@ -112,6 +113,3 @@ class MyHttpOverrides extends HttpOverrides {
           (X509Certificate cert, String host, int port) => true;
   }
 }
-
-const providerPreference =
-    'superstream-Superstream flixhq-FlixHQ viewasian-ViewAsian dramacool-Dramacool zoro-Zoro ';

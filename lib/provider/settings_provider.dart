@@ -1,4 +1,5 @@
 import 'package:caffiene/models/setting_preferences.dart';
+import 'package:caffiene/utils/constant.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
@@ -14,6 +15,8 @@ class SettingsProvider with ChangeNotifier {
   VideoPlayerPreferences videoPlayerPreferences = VideoPlayerPreferences();
   AppLanguagePreferences appLanguagePreferences = AppLanguagePreferences();
   AppColorPreferences appColorPreferences = AppColorPreferences();
+  ProviderPrecedencePreference providerPrecedencePreference =
+      ProviderPrecedencePreference();
 
   bool _isAdult = false;
   bool get isAdult => _isAdult;
@@ -77,7 +80,7 @@ class SettingsProvider with ChangeNotifier {
   int _appColorIndex = -1;
   int get appColorIndex => _appColorIndex;
 
-  final String _proPrecedence = providerPreference;
+  String _proPrecedence = providerPreference;
   String get proPreference => _proPrecedence;
 
   // theme change
@@ -194,6 +197,7 @@ class SettingsProvider with ChangeNotifier {
   //   notifyListeners();
   // }
 
+  // BUFFER_DURATION
   Future<void> getMaxBufferDuration() async {
     defaultMaxBufferDuration = await videoPlayerPreferences.getMaxBuffer();
   }
@@ -204,6 +208,8 @@ class SettingsProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  // Video player preferences
+  // video Resolution
   Future<void> getVideoResolution() async {
     defaultVideoResolution =
         await videoPlayerPreferences.getDefaultVideoQuality();
@@ -215,16 +221,19 @@ class SettingsProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  // subtitle
   Future<void> getSubtitleLanguage() async {
     defaultSubtitleLanguage = await videoPlayerPreferences.getSubLanguage();
   }
 
+  // get default subtitle language
   set defaultSubtitleLanguage(String value) {
     _defaultSubtitleLanguage = value;
     videoPlayerPreferences.setDefaultSubtitle(value);
     notifyListeners();
   }
 
+  // subtitle foreground color
   Future<void> getForegroundSubtitleColor() async {
     subtitleForegroundColor = await videoPlayerPreferences.subtitleForeground();
   }
@@ -282,6 +291,17 @@ class SettingsProvider with ChangeNotifier {
   set appColorIndex(int value) {
     _appColorIndex = value;
     appColorPreferences.setAppColorIndex(value);
+    notifyListeners();
+  }
+
+  // provider precedence
+  Future<void> getProviderPrecedence() async {
+    proPreference = await providerPrecedencePreference.getProviderPrecedence();
+  }
+
+  set proPreference(String value) {
+    _proPrecedence = value;
+    providerPrecedencePreference.setProviderPrecedence(value);
     notifyListeners();
   }
 }
