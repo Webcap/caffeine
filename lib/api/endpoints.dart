@@ -400,6 +400,7 @@ class Endpoints {
         'movies/viewasian/watch?episodeId=$episodeId&mediaId=$mediaId';
   }
 
+  // ZORO MOVIES FUNC 
   static String searchZoroMoviesTV(String baseUrl, String title) {
     return '$baseUrl' 'anime/zoro/$title';
   }

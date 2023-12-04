@@ -269,7 +269,8 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
   }
 
   Future<void> loadDramacool() async {
-    await moviesApi().fetchMovieTVForStreamDCVA(Endpoints.searchMovieTVForStreamDramacool(
+    await moviesApi()
+        .fetchMovieTVForStreamDCVA(Endpoints.searchMovieTVForStreamDramacool(
                 removeCharacters(widget.metadata.elementAt(1)),
                 appDep.consumetUrl)
             .toLowerCase())
@@ -285,10 +286,9 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
       }
 
       for (int i = 0; i < dcShows!.length; i++) {
-        if (dcShows![i]
-            .title!
-            .toLowerCase()
-            .contains(widget.metadata.elementAt(1).toString().toLowerCase())) {
+        if (removeCharacters(dcShows![i].title!).toLowerCase().contains(
+            removeCharacters(widget.metadata.elementAt(1).toString())
+                .toLowerCase())) {
           await moviesApi()
               .getMovieTVStreamEpisodesDCVA(
                   Endpoints.getMovieTVStreamInfoDramacool(
@@ -344,7 +344,7 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
   Future<void> loadSuperstream() async {
     await moviesApi()
         .getSuperstreamStreamingLinks(Endpoints.getSuperstreamStreamTV(
-            'https://caffeine-api.vercel.app',
+            appDep.caffeineAPIURL,
             widget.metadata.elementAt(7),
             widget.metadata.elementAt(4),
             widget.metadata.elementAt(3)))
@@ -374,7 +374,8 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
 
   Future<void> loadFlixHQNormalRoute() async {
     late int totalSeasons;
-    await tvApi().fetchTVDetails(
+    await tvApi()
+        .fetchTVDetails(
             Endpoints.tvDetailsUrl(widget.metadata.elementAt(7), "en"))
         .then(
       (value) async {
@@ -395,8 +396,10 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
           for (int i = 0; i < fqShows!.length; i++) {
             if (fqShows![i].seasons == totalSeasons &&
                 fqShows![i].type == 'TV Series' &&
-                fqShows![i].title!.toLowerCase().contains(
-                    widget.metadata.elementAt(1).toString().toLowerCase())) {
+                removeCharacters(fqShows![i].title!).toLowerCase().contains(
+                    removeCharacters(widget.metadata.elementAt(1))
+                        .toString()
+                        .toLowerCase())) {
               await tvApi()
                   .getTVStreamEpisodesFlixHQ(
                       Endpoints.getMovieTVStreamInfoFlixHQ(
@@ -631,10 +634,12 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
           }
         } else {
           if (appDep.useExternalSubtitles) {
-            await moviesApi().fetchSocialLinks(
+            await moviesApi()
+                .fetchSocialLinks(
               Endpoints.getExternalLinksForTV(
                   widget.metadata.elementAt(7), "en"),
-            ).then((value) async {
+            )
+                .then((value) async {
               if (value.imdbId != null) {
                 await getExternalSubtitle(
                         Endpoints.searchExternalEpisodeSubtitles(
@@ -701,10 +706,9 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
       }
 
       for (int i = 0; i < vaShows!.length; i++) {
-        if (vaShows![i]
-            .title!
-            .toLowerCase()
-            .contains(widget.metadata.elementAt(1).toString().toLowerCase())) {
+        if (removeCharacters(vaShows![i].title!).toLowerCase().contains(
+            removeCharacters(widget.metadata.elementAt(1).toString())
+                .toLowerCase())) {
           await moviesApi().getMovieTVStreamEpisodesDCVA(
                   Endpoints.getMovieTVStreamInfoViewasian(
                       vaShows![i].id!, appDep.consumetUrl))

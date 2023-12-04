@@ -423,6 +423,8 @@ class moviesApi {
     return dcvaVideoSources;
   }
 
+  // ZORO MOVIE FUNCTIONS
+  
   Future<List<ZoroSearchEntry>> fetchMovieTVForStreamZoro(String api) async {
     print('REQUESTTTTTTTTTTTT: $api');
     ZoroSearch zoroStream;
@@ -482,4 +484,5 @@ class moviesApi {
     }
     return zoroVideoSources;
   }
+  
 }
