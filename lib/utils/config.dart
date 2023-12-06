@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:retry/retry.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 
 class appConfig {
   static const app_icon = "assets/logo.png";
@@ -113,3 +113,5 @@ class MyHttpOverrides extends HttpOverrides {
           (X509Certificate cert, String host, int port) => true;
   }
 }
+
+late SharedPreferences sharedPrefsSingleton;

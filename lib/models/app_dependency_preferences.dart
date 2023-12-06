@@ -1,78 +1,66 @@
 // ignore_for_file: constant_identifier_names
-
+import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/utils/constant.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class AppDependencies {
   static const CONSUMET_URL_KEY = "consumetUrlKey";
   static const CAFFIENE_LOGO_URL = "caffieneLogoUrl";
   static const STREAM_SERVER_FLIXHQ = "vidcloud";
   static const STREAM_SERVER_DCVA = "asianload";
+  static const STREAM_SERVER_ZORO = "vidcloud";
   static const OPENSUBTITLES_KEY = "opensubtitlesKey";
   static const SHOWBOX_URL = "showbox_url";
   static const STREAM_ROUTE = "streamRoute";
   static const CAFFEINE_API_URL = "caffeineAPIURL";
 
   setConsumetUrl(String value) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString(CONSUMET_URL_KEY, value);
+    sharedPrefsSingleton.setString(CONSUMET_URL_KEY, value);
   }
 
   Future<String> getConsumetUrl() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString(CONSUMET_URL_KEY) ??
+    return sharedPrefsSingleton.getString(CONSUMET_URL_KEY) ??
         'https://consumet-api-beryl.vercel.app/';
   }
 
   setCaffieneUrl(String value) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString(CAFFIENE_LOGO_URL, value);
+    sharedPrefsSingleton.setString(CAFFIENE_LOGO_URL, value);
   }
 
   Future<String> getFQURL() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString(CAFFEINE_API_URL) ??
+    return sharedPrefsSingleton.getString(CAFFEINE_API_URL) ??
         'https://flixquest-api.beamlak.dev';
   }
 
   setCaffeineAPIUrl(String value) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString(CAFFEINE_API_URL, value);
+    sharedPrefsSingleton.setString(CAFFEINE_API_URL, value);
   }
 
   Future<String> getCaffieneLogo() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString(CAFFIENE_LOGO_URL) ?? 'default';
+    return sharedPrefsSingleton.getString(CAFFIENE_LOGO_URL) ?? 'default';
   }
 
   setOpenSubKey(String value) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString(OPENSUBTITLES_KEY, value);
+    sharedPrefsSingleton.setString(OPENSUBTITLES_KEY, value);
   }
 
   Future<String> getOpenSubtitlesKey() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString(OPENSUBTITLES_KEY) ?? openSubtitlesKey;
+    return sharedPrefsSingleton.getString(OPENSUBTITLES_KEY) ?? openSubtitlesKey;
   }
 
   setStreamServerFlixHQ(String value) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString(STREAM_SERVER_FLIXHQ, value);
+    sharedPrefsSingleton.setString(STREAM_SERVER_FLIXHQ, value);
   }
 
   Future<String> getStreamServerFlixHQ() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString(STREAM_SERVER_FLIXHQ) ?? STREAMING_SERVER_FLIXHQ;
+    return sharedPrefsSingleton.getString(STREAM_SERVER_FLIXHQ) ?? STREAMING_SERVER_FLIXHQ;
   }
 
   setStreamServerDCVA(String value) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString(STREAM_SERVER_DCVA, value);
+    sharedPrefsSingleton.setString(STREAM_SERVER_DCVA, value);
   }
 
   Future<String> getStreamServerDCVA() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString(STREAM_SERVER_DCVA) ?? STREAMING_SERVER_DCVA;
+    return sharedPrefsSingleton.getString(STREAM_SERVER_DCVA) ?? STREAMING_SERVER_DCVA;
   }
 
   Future<bool> enableAD(bool enable) async {
@@ -84,22 +72,27 @@ class AppDependencies {
   }
 
   Future<String> getShowboxUrl() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString(SHOWBOX_URL) ?? "";
+    return sharedPrefsSingleton.getString(SHOWBOX_URL) ?? "";
   }
 
   setShowboxUrl(String value) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString(SHOWBOX_URL, value);
+    sharedPrefsSingleton.setString(SHOWBOX_URL, value);
   }
 
   Future<String> getStreamRoute() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString(STREAM_ROUTE) ?? 'flixHQ';
+    return sharedPrefsSingleton.getString(STREAM_ROUTE) ?? 'flixHQ';
   }
 
   setStreamRoute(String value) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString(STREAM_ROUTE, value);
+    sharedPrefsSingleton.setString(STREAM_ROUTE, value);
+  }
+
+  setStreamServerZoro(String value) async {
+    sharedPrefsSingleton.setString(STREAM_SERVER_ZORO, value);
+  }
+
+  Future<String> getStreamServerZoro() async {
+    return sharedPrefsSingleton.getString(STREAM_SERVER_ZORO) ??
+        STREAMING_SERVER_ZORO;
   }
 }

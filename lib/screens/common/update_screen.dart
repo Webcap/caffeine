@@ -1,6 +1,4 @@
 // ignore_for_file: must_be_immutable
-
-
 import 'dart:io';
 import 'package:caffiene/utils/constant.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -336,9 +334,8 @@ class _UpdateBottomState extends State<UpdateBottom> {
   String? ignoreVersion;
 
   Future getData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      ignoreVersion = prefs.getString("ignore_version") ?? "";
+      ignoreVersion = sharedPrefsSingleton.getString("ignore_version") ?? "";
       visible = ignoreVersion != appVersion! &&
           appVersion != null &&
           appVersion != currentAppVersion;
@@ -346,11 +343,10 @@ class _UpdateBottomState extends State<UpdateBottom> {
   }
 
   Future checkAction(bool value) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
     if (value && appVersion != null) {
-      prefs.setString("ignore_version", appVersion!);
+      sharedPrefsSingleton.setString("ignore_version", appVersion!);
     } else {
-      prefs.setString("ignore_version", "");
+      sharedPrefsSingleton.setString("ignore_version", "");
     }
   }
 

@@ -24,6 +24,7 @@ String openSubtitlesKey = dotenv.env['OPENSUBTITLES_API_KEY']!;
 
 const String STREAMING_SERVER_FLIXHQ = "vidcloud";
 const String STREAMING_SERVER_DCVA = "asianload";
+const String STREAMING_SERVER_ZORO = "vidcloud";
 
 const providerPreference =
     'superstream-Superstream flixhq-FlixHQ viewasian-ViewAsian dramacool-Dramacool zoro-Zoro ';

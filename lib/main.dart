@@ -4,6 +4,7 @@ import 'package:caffiene/caffiene_main.dart';
 import 'package:caffiene/models/translation.dart';
 import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:caffiene/provider/recently_watched_provider.dart';
+import 'package:caffiene/singleton/sharedpreferences_singleton.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -14,7 +15,6 @@ import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:caffiene/utils/constant.dart';
-
 
 Future<void> _messageHandler(RemoteMessage message) async {}
 
@@ -33,6 +33,7 @@ Future<void> appInitialize() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
   await EasyLocalization.ensureInitialized();
+  sharedPrefsSingleton = await SharedPreferencesSingleton.getInstance();
   await _initialization;
   FirebaseMessaging.onBackgroundMessage(_messageHandler);
   await FlutterDownloader.initialize(debug: true, ignoreSsl: true);
@@ -60,6 +61,7 @@ Future<void> appInitialize() async {
   await appDependencyProvider.getOpenSubKey();
   await appDependencyProvider.getStreamingServerFlixHQ();
   await appDependencyProvider.getStreamingServerDCVA();
+  await appDependencyProvider.getStreamingServerZoro();
   await appDependencyProvider.getStreamRoute();
   await appDependencyProvider.getFQUrl();
 

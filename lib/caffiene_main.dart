@@ -74,6 +74,8 @@ class _caffeineState extends State<caffeine>
           _remoteConfig.getBool('enable_ott');
       appDependencyProvider.caffeineAPIURL =
           _remoteConfig.getString('caffeine_api_url');
+      appDependencyProvider.streamingServerZoro =
+          _remoteConfig.getString('streaming_server_zoro');
     }
     await requestNotificationPermissions();
   }
