@@ -20,7 +20,6 @@ import 'package:caffiene/widgets/shimmer_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:caffiene/utils/constant.dart';
 
-
 class ScrollingTV extends StatefulWidget {
   final String api, title;
   final dynamic discoverType;
@@ -54,9 +53,7 @@ class ScrollingTVState extends State<ScrollingTV>
           isLoading = true;
         });
 
-        tvApi()
-            .fetchTV(
-                '${widget.api}&page=$pageNum&include_adult=${widget.includeAdult}')
+        tvApi().fetchTV('${widget.api}&page=$pageNum&include_adult=${widget.includeAdult}')
             .then((value) {
           if (mounted) {
             setState(() {
@@ -73,9 +70,7 @@ class ScrollingTVState extends State<ScrollingTV>
   @override
   void initState() {
     super.initState();
-    tvApi()
-        .fetchTV('${widget.api}&include_adult=${widget.includeAdult}')
-        .then((value) {
+    tvApi().fetchTV('${widget.api}&include_adult=${widget.includeAdult}').then((value) {
       if (mounted) {
         setState(() {
           tvList = value;

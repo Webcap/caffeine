@@ -2,7 +2,9 @@ import 'dart:async';
 
 import 'package:caffiene/controller/recently_watched_database_controller.dart';
 import 'package:caffiene/functions/functions.dart';
+import 'package:caffiene/models/movie_stream_metadata.dart';
 import 'package:caffiene/models/recently_watched.dart';
+import 'package:caffiene/models/tv_stream_metadata.dart';
 import 'package:caffiene/provider/recently_watched_provider.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/utils/config.dart';
@@ -28,8 +30,8 @@ class Player extends StatefulWidget {
   final List<BetterPlayerSubtitlesSource> subs;
   final List<Color> colors;
   final SettingsProvider settings;
-  final List? movieMetadata;
-  final List? tvMetadata;
+  final MovieStreamMetadata? movieMetadata;
+  final TVStreamMetadata? tvMetadata;
   final MediaType? mediaType;
 
   @override
@@ -82,8 +84,8 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
       },
       enableFullscreen: true,
       name: widget.mediaType == MediaType.movie
-          ? "${widget.movieMetadata!.elementAt(1)} (${widget.movieMetadata!.elementAt(3)})"
-          : "${widget.tvMetadata!.elementAt(1)} | ${widget.tvMetadata!.elementAt(2)} | ${episodeSeasonFormatter(widget.tvMetadata!.elementAt(3), widget.tvMetadata!.elementAt(4))}",
+          ? "${widget.movieMetadata!.movieName!} (${widget.movieMetadata!.releaseYear!})"
+          : "${widget.tvMetadata!.seriesName!} | ${widget.tvMetadata!.episodeName!} | ${episodeSeasonFormatter(widget.tvMetadata!.episodeNumber!, widget.tvMetadata!.seasonNumber!)}",
       backgroundColor: Colors.black,
       progressBarBackgroundColor: Colors.white,
       controlBarColor: Colors.black.withOpacity(0.3),
@@ -163,8 +165,8 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
     _betterPlayerController.setupDataSource(dataSource).then((value) {
       _betterPlayerController.videoPlayerController!.seekTo(Duration(
           seconds: widget.mediaType == MediaType.movie
-              ? widget.movieMetadata!.elementAt(5)
-              : widget.tvMetadata!.elementAt(6)));
+              ? widget.movieMetadata!.elapsed!
+              : widget.tvMetadata!.elapsed!));
       duration = _betterPlayerController
           .videoPlayerController!.value.duration!.inSeconds;
     });
@@ -219,7 +221,7 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
     String dt = DateTime.now().toString();
 
     var isBookmarked = await recentlyWatchedMoviesController
-        .contain(widget.movieMetadata!.elementAt(0));
+        .contain(widget.movieMetadata!.movieId!);
     dynamic prv;
     if (mounted) {
       prv = Provider.of<RecentProvider>(context, listen: false);
@@ -228,12 +230,12 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
     RecentMovie rMov = RecentMovie(
         dateTime: dt,
         elapsed: elapsed,
-        id: widget.movieMetadata!.elementAt(0),
-        posterPath: widget.movieMetadata!.elementAt(2),
-        releaseYear: widget.movieMetadata!.elementAt(3),
+        id: widget.movieMetadata!.movieId!,
+        posterPath: widget.movieMetadata!.posterPath!,
+        releaseYear: widget.movieMetadata!.releaseYear!,
         remaining: remaining,
-        title: widget.movieMetadata!.elementAt(1),
-        backdropPath: widget.movieMetadata!.elementAt(4));
+        title: widget.movieMetadata!.movieName,
+        backdropPath: widget.movieMetadata!.backdropPath!);
 
     double percentage = (elapsed / duration) * 100;
 
@@ -241,9 +243,9 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
       prv.addMovie(rMov);
     } else {
       if (percentage <= 85) {
-        prv.updateMovie(rMov, widget.movieMetadata!.elementAt(0));
+        prv.updateMovie(rMov, widget.movieMetadata!.movieId!);
       } else {
-        prv.deleteMovie(widget.movieMetadata!.elementAt(0));
+        prv.deleteMovie(widget.movieMetadata!.movieId!);
       }
     }
   }
@@ -256,7 +258,7 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
     String dt = DateTime.now().toString();
 
     var isBookmarked = await recentlyWatchedEpisodeController
-        .contain(widget.tvMetadata!.elementAt(0));
+        .contain(widget.tvMetadata!.episodeId!);
 
     dynamic prv;
     if (mounted) {
@@ -266,25 +268,30 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
     RecentEpisode rEpisode = RecentEpisode(
         dateTime: dt,
         elapsed: elapsed,
-        id: widget.tvMetadata!.elementAt(0),
-        posterPath: widget.tvMetadata!.elementAt(5),
+        id: widget.tvMetadata!.episodeId!,
+        posterPath: widget.tvMetadata!.posterPath!,
         remaining: remaining,
-        seriesName: widget.tvMetadata!.elementAt(1),
-        episodeName: widget.tvMetadata!.elementAt(2),
-        episodeNum: widget.tvMetadata!.elementAt(3),
-        seasonNum: widget.tvMetadata!.elementAt(4),
-        seriesId: widget.tvMetadata!.elementAt(7));
+        seriesName: widget.tvMetadata!.seriesName!,
+        episodeName: widget.tvMetadata!.episodeName!,
+        episodeNum: widget.tvMetadata!.episodeNumber!,
+        seasonNum: widget.tvMetadata!.seasonNumber!,
+        seriesId: widget.tvMetadata!.tvId!);
 
     double percentage = (elapsed / duration) * 100;
     if (!isBookmarked) {
       prv.addEpisode(rEpisode);
     } else {
       if (percentage <= 85) {
-        prv.updateEpisode(rEpisode, widget.tvMetadata!.elementAt(0),
-            widget.tvMetadata!.elementAt(3), widget.tvMetadata!.elementAt(4));
+        prv.updateEpisode(
+            rEpisode,
+            widget.tvMetadata!.episodeId!,
+            widget.tvMetadata!.episodeNumber!,
+            widget.tvMetadata!.seasonNumber!);
       } else {
-        prv.deleteEpisode(widget.tvMetadata!.elementAt(0),
-            widget.tvMetadata!.elementAt(3), widget.tvMetadata!.elementAt(4));
+        prv.deleteEpisode(
+            widget.tvMetadata!.episodeId!,
+            widget.tvMetadata!.episodeNumber!,
+            widget.tvMetadata!.seasonNumber!);
       }
     }
   }

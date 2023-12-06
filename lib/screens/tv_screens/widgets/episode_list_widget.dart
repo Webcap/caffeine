@@ -10,7 +10,6 @@ import 'package:caffiene/utils/config.dart';
 import 'package:provider/provider.dart';
 import 'package:caffiene/utils/constant.dart';
 
-
 class EpisodeListWidget extends StatefulWidget {
   final int? tvId;
   final String? api;

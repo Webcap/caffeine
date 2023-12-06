@@ -1990,7 +1990,7 @@ class _TVWatchProvidersDetailsState extends State<TVWatchProvidersDetails>
           Container(
             width: double.infinity,
             decoration: BoxDecoration(
-              color: themeMode == "dark" || themeMode == "amoled"
+               color: themeMode == "dark" || themeMode == "amoled"
                   ? const Color(0xFF2b2c30)
                   : const Color(0xFFDFDEDE),
             ),

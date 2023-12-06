@@ -40,35 +40,35 @@ class DownloadMovie extends StatelessWidget {
           Theme.of(context).colorScheme.primary,
         )),
         onPressed: () async {
-          await checkConnection().then((value) {
-            value
-                ? Navigator.push(context,
-                    MaterialPageRoute(builder: ((context) {
-                    return MovieVideoLoader(
-                      download: true,
-                      route: fetchRoute == "flixHQ"
-                          ? StreamRoute.flixHQ
-                          : StreamRoute.tmDB,
-                      metadata: [
-                        movieId,
-                        movieName,
-                        thumbnail,
-                        releaseYear,
-                        0.0
-                      ],
-                    );
-                  })))
-                : ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        tr("check_connection"),
-                        maxLines: 3,
-                        style: kTextSmallBodyStyle,
-                      ),
-                      duration: const Duration(seconds: 3),
-                    ),
-                  );
-          });
+          // await checkConnection().then((value) {
+          //   value
+          //       ? Navigator.push(context,
+          //           MaterialPageRoute(builder: ((context) {
+          //           return MovieVideoLoader(
+          //             download: true,
+          //             route: fetchRoute == "flixHQ"
+          //                 ? StreamRoute.flixHQ
+          //                 : StreamRoute.tmDB,
+          //             metadata: [
+          //               movieId,
+          //               movieName,
+          //               thumbnail,
+          //               releaseYear,
+          //               0.0
+          //             ],
+          //           );
+          //         })))
+          //       : ScaffoldMessenger.of(context).showSnackBar(
+          //           SnackBar(
+          //             content: Text(
+          //               tr("check_connection"),
+          //               maxLines: 3,
+          //               style: kTextSmallBodyStyle,
+          //             ),
+          //             duration: const Duration(seconds: 3),
+          //           ),
+          //         );
+          //});
         },
         child: Row(
           children: [

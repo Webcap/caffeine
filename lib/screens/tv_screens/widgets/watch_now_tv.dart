@@ -1,11 +1,9 @@
 import 'dart:async';
 import 'dart:math';
-import 'package:caffiene/controller/recently_watched_database_controller.dart';
 import 'package:caffiene/functions/functions.dart';
 import 'package:caffiene/models/tv.dart';
+import 'package:caffiene/models/tv_stream_metadata.dart';
 import 'package:caffiene/provider/app_dependency_provider.dart';
-import 'package:caffiene/provider/recently_watched_provider.dart';
-import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/screens/tv_screens/tv_video_loader.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -38,9 +36,6 @@ class _WatchNowButtonTVState extends State<WatchNowButtonTV> {
   Timer? _timer;
   Random random = Random();
 
-  RecentlyWatchedEpisodeController recentlyWatchedEpisodeController =
-      RecentlyWatchedEpisodeController();
-
   @override
   void initState() {
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
@@ -64,7 +59,6 @@ class _WatchNowButtonTVState extends State<WatchNowButtonTV> {
 
   @override
   Widget build(BuildContext context) {
-    final mixpanel = Provider.of<SettingsProvider>(context).mixpanel;
     final fetchRoute = Provider.of<AppDependencyProvider>(context).fetchRoute;
     return AnimatedContainer(
       duration: const Duration(seconds: 1),
@@ -88,59 +82,27 @@ class _WatchNowButtonTVState extends State<WatchNowButtonTV> {
               Theme.of(context).colorScheme.primary,
             )),
         onPressed: () async {
-          mixpanel.track('Most viewed TV series', properties: {
-            'TV series name': widget.seriesName,
-            'TV series id': '${widget.tvId}',
-            'TV series episode name': '${widget.episodeList.name}',
-            'TV series season number': '${widget.episodeList.seasonNumber}',
-            'TV series episode number': '${widget.episodeList.episodeNumber}'
-          });
-          setState(() {
-            isVisible = true;
-            buttonWidth = 200;
-          });
           if (mounted) {
-            var isBookmarked = await recentlyWatchedEpisodeController
-                .contain(widget.episodeList.episodeId!);
-            int elapsed = 0;
-            if (isBookmarked) {
-              if (mounted) {
-                var rEpisodes =
-                    Provider.of<RecentProvider>(context, listen: false)
-                        .episodes;
-
-                int index = rEpisodes.indexWhere(
-                    (element) => element.id == widget.episodeList.episodeId);
-                setState(() {
-                  elapsed = rEpisodes[index].elapsed!;
-                });
-              }
-            }
-            setState(() {
-              isVisible = false;
-              buttonWidth = 160;
-            });
             if (mounted) {
               await checkConnection().then((value) {
                 value
                     ? Navigator.push(context,
                         MaterialPageRoute(builder: ((context) {
                         return TVVideoLoader(
-                          download: false,
-                          route: fetchRoute == "flixHQ"
-                              ? StreamRoute.flixHQ
-                              : StreamRoute.tmDB,
-                          metadata: [
-                            widget.episodeList.episodeId,
-                            widget.seriesName,
-                            widget.episodeList.name,
-                            widget.episodeList.episodeNumber!,
-                            widget.episodeList.seasonNumber!,
-                            widget.posterPath,
-                            elapsed,
-                            widget.tvId,
-                          ],
-                        );
+                            download: false,
+                            route: fetchRoute == "flixHQ"
+                                ? StreamRoute.flixHQ
+                                : StreamRoute.tmDB,
+                            metadata: TVStreamMetadata(
+                              elapsed: null,
+                              episodeId: widget.episodeList.episodeId,
+                              episodeName: widget.episodeList.name,
+                              episodeNumber: widget.episodeList.episodeNumber!,
+                              posterPath: widget.posterPath,
+                              seasonNumber: widget.episodeList.seasonNumber!,
+                              seriesName: widget.seriesName,
+                              tvId: widget.tvId,
+                            ));
                       })))
                     : ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(

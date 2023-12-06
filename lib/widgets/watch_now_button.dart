@@ -1,13 +1,9 @@
 // ignore_for_file: use_build_context_synchronously
-
 import 'dart:async';
 import 'dart:math';
-
-import 'package:caffiene/controller/recently_watched_database_controller.dart';
 import 'package:caffiene/functions/functions.dart';
+import 'package:caffiene/models/movie_stream_metadata.dart';
 import 'package:caffiene/provider/app_dependency_provider.dart';
-import 'package:caffiene/provider/recently_watched_provider.dart';
-import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -70,8 +66,6 @@ class WatchNowButtonState extends State<WatchNowButton> {
 
   @override
   Widget build(BuildContext context) {
-    RecentlyWatchedMoviesController recentlyWatchedMoviesController =
-        RecentlyWatchedMoviesController();
     final fetchRoute = Provider.of<AppDependencyProvider>(context).fetchRoute;
     return AnimatedContainer(
       duration: const Duration(seconds: 1),
@@ -96,33 +90,6 @@ class WatchNowButtonState extends State<WatchNowButton> {
           Theme.of(context).colorScheme.primary,
         )),
         onPressed: () async {
-          setState(() {
-            isVisible = true;
-            buttonWidth = 200;
-          });
-          final mixpanel =
-              Provider.of<SettingsProvider>(context, listen: false).mixpanel;
-          mixpanel.track('Most viewed movies', properties: {
-            'Movie name': widget.movieName,
-            'Movie id': widget.movieId,
-            'Is Movie adult?': widget.adult ?? 'unknown',
-          });
-          var isBookmarked =
-              await recentlyWatchedMoviesController.contain(widget.movieId);
-          int elapsed = 0;
-          if (isBookmarked) {
-            var rMovies =
-                Provider.of<RecentProvider>(context, listen: false).movies;
-            int index =
-                rMovies.indexWhere((element) => element.id == widget.movieId);
-            setState(() {
-              elapsed = rMovies[index].elapsed!;
-            });
-          }
-          setState(() {
-            isVisible = false;
-            buttonWidth = 160;
-          });
           await checkConnection().then((value) {
             value
                 ? Navigator.push(context,
@@ -132,14 +99,25 @@ class WatchNowButtonState extends State<WatchNowButton> {
                           ? StreamRoute.flixHQ
                           : StreamRoute.tmDB,
                       download: false,
-                      metadata: [
+                      metadata: MovieStreamMetadata(
+                          backdropPath: widget.backdropPath,
+                          elapsed: null,
+                          isAdult: widget.adult,
+                          movieId: widget.movieId,
+                          movieName: widget.movieName,
+                          posterPath: widget.posterPath,
+                          releaseYear: widget.releaseYear),
+                      /*
+                      
+                      [
                         widget.movieId,
                         widget.movieName,
                         widget.posterPath,
                         widget.releaseYear,
-                        widget.backdropPath,
+                        
                         elapsed
                       ],
+                      */
                     );
                   })))
                 : ScaffoldMessenger.of(context).showSnackBar(

@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:caffiene/functions/functions.dart';
+import 'package:caffiene/models/movie_stream_metadata.dart';
 import 'package:caffiene/models/recently_watched.dart';
 import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:caffiene/provider/recently_watched_provider.dart';
@@ -12,7 +13,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:caffiene/utils/constant.dart';
-
 
 class ScrollingRecentMovies extends StatefulWidget {
   const ScrollingRecentMovies({required this.moviesList, Key? key})
@@ -103,23 +103,28 @@ class _ScrollingRecentMoviesState extends State<ScrollingRecentMovies> {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) => MovieVideoLoader(
-                                              download: false,
-                                              /* return to fetchRoute instead of hard text*/ route:
-                                                  fetchRoute == "flixHQ"
-                                                      ? StreamRoute.flixHQ
-                                                      : StreamRoute.tmDB,
-                                              metadata: [
-                                                widget.moviesList[index].id,
-                                                widget.moviesList[index].title,
-                                                widget.moviesList[index]
-                                                    .posterPath,
-                                                widget.moviesList[index]
-                                                    .releaseYear,
-                                                widget.moviesList[index]
-                                                    .backdropPath,
-                                                widget.moviesList[index].elapsed
-                                              ],
-                                            )))
+                                            download: false,
+                                            /* return to fetchRoute instead of hard text*/ route:
+                                                fetchRoute == "flixHQ"
+                                                    ? StreamRoute.flixHQ
+                                                    : StreamRoute.tmDB,
+                                            metadata: MovieStreamMetadata(
+                                              backdropPath: widget
+                                                  .moviesList[index]
+                                                  .backdropPath,
+                                              elapsed: widget
+                                                  .moviesList[index].elapsed,
+                                              isAdult: null,
+                                              movieId:
+                                                  widget.moviesList[index].id,
+                                              movieName: widget
+                                                  .moviesList[index].title,
+                                              posterPath: widget
+                                                  .moviesList[index].posterPath,
+                                              releaseYear: widget
+                                                  .moviesList[index]
+                                                  .releaseYear,
+                                            ))))
                                 : ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                       content: Text(

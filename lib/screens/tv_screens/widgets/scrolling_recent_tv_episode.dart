@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:caffiene/functions/functions.dart';
 import 'package:caffiene/models/recently_watched.dart';
+import 'package:caffiene/models/tv_stream_metadata.dart';
 import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:caffiene/provider/recently_watched_provider.dart';
 import 'package:caffiene/provider/settings_provider.dart';
@@ -106,28 +107,33 @@ class _ScrollingRecentEpisodesState extends State<ScrollingRecentEpisodes> {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) => TVVideoLoader(
-                                              download: false,
-                                              route: fetchRoute == "flixHQ"
-                                                  ? StreamRoute.flixHQ
-                                                  : StreamRoute.tmDB,
-                                              metadata: [
-                                                widget.episodesList[index].id,
-                                                widget.episodesList[index]
-                                                    .seriesName,
-                                                widget.episodesList[index]
-                                                    .episodeName,
-                                                widget.episodesList[index]
-                                                    .episodeNum,
-                                                widget.episodesList[index]
-                                                    .seasonNum,
-                                                widget.episodesList[index]
-                                                    .posterPath,
-                                                widget.episodesList[index]
-                                                    .elapsed,
-                                                widget.episodesList[index]
-                                                    .seriesId,
-                                              ],
-                                            )))
+                                            download: false,
+                                            route: fetchRoute == "flixHQ"
+                                                ? StreamRoute.flixHQ
+                                                : StreamRoute.tmDB,
+                                            metadata: TVStreamMetadata(
+                                              elapsed: widget
+                                                  .episodesList[index].elapsed,
+                                              episodeId:
+                                                  widget.episodesList[index].id,
+                                              episodeName: widget
+                                                  .episodesList[index]
+                                                  .episodeName,
+                                              episodeNumber: widget
+                                                  .episodesList[index]
+                                                  .episodeNum,
+                                              posterPath: widget
+                                                  .episodesList[index]
+                                                  .posterPath,
+                                              seasonNumber: widget
+                                                  .episodesList[index]
+                                                  .seasonNum,
+                                              seriesName: widget
+                                                  .episodesList[index]
+                                                  .seriesName,
+                                              tvId: widget
+                                                  .episodesList[index].seriesId,
+                                            ))))
                                 : ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                       content: Text(
