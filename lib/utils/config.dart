@@ -36,7 +36,7 @@ const kTextSmallHeaderStyle = TextStyle(
 //********************************* */
 //********************************* */
 // ** VERSION CONTROL BUDDY //
-const String currentAppVersion = '1.5.0-dev';
+const String currentAppVersion = '1.5.0';
 //*********************************** */
 
 const kTextHeaderStyle = TextStyle(
@@ -88,8 +88,6 @@ const retryOptions = RetryOptions(
 const timeOut = Duration(seconds: 15);
 
 final List<String> appNames = [
-  'caffeine-v1.3.5.apk',
-  'caffeine-v1.3.6.apk',
   'caffeine-v1.4.0.apk',
   'caffeine-v1.4.1.apk',
   'caffeine-v1.4.2.apk',
