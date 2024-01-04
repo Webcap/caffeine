@@ -1,3 +1,5 @@
+// ignore_for_file: unused_local_variable, unused_import
+
 import 'package:caffiene/functions/functions.dart';
 import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:caffiene/screens/movie_screens/widgets/movie_video_loader.dart';

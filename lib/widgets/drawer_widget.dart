@@ -68,16 +68,16 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                           },
                         )
                       : Container(),
-                  ListTile(
-                    leading: Icon(
-                      FontAwesomeIcons.userPlus,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                    title: Text(tr("upgrade_to_premium")),
-                    onTap: () {
-                      nextScreen(context, const upgrade_premium_screen());
-                    },
-                  ),
+                  // ListTile(
+                  //   leading: Icon(
+                  //     FontAwesomeIcons.userPlus,
+                  //     color: Theme.of(context).colorScheme.primary,
+                  //   ),
+                  //   title: Text(tr("upgrade_to_premium")),
+                  //   onTap: () {
+                  //     nextScreen(context, const upgrade_premium_screen());
+                  //   },
+                  // ),
                   ListTile(
                     leading: Icon(
                       FontAwesomeIcons.bookmark,
