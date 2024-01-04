@@ -12,7 +12,6 @@ import 'package:caffiene/utils/config.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:open_file_plus/open_file_plus.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path_provider/path_provider.dart';
 
 class UpdateScreen extends StatefulWidget {

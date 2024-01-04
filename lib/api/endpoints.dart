@@ -359,13 +359,13 @@ class Endpoints {
   }
 
   static String getSuperstreamStreamMovie(String baseUrl, int tmdbId) {
-    return '$baseUrl' '/superstream/watch-movie?tmdbId=$tmdbId';
+    return '$baseUrl' 'superstream/watch-movie?tmdbId=$tmdbId';
   }
 
   static String getSuperstreamStreamTV(
       String baseUrl, int tmdbId, int seasonNumber, int episodeNumber) {
     return '$baseUrl'
-        '/superstream/watch-tv?tmdbId=$tmdbId&episode=$episodeNumber&season=$seasonNumber';
+        'superstream/watch-tv?tmdbId=$tmdbId&episode=$episodeNumber&season=$seasonNumber';
   }
 
   static String searchMovieTVForStreamDramacool(
@@ -400,7 +400,7 @@ class Endpoints {
         'movies/viewasian/watch?episodeId=$episodeId&mediaId=$mediaId';
   }
 
-  // ZORO MOVIES FUNC 
+  // ZORO MOVIES FUNC
   static String searchZoroMoviesTV(String baseUrl, String title) {
     return '$baseUrl' 'anime/zoro/$title';
   }
@@ -412,5 +412,15 @@ class Endpoints {
   static String getMovieTVStreamLinksZoro(
       String baseUrl, String episodeId, String server) {
     return '$baseUrl' 'anime/zoro/watch?episodeId=$episodeId&server=$server';
+  }
+
+  static String getMovieLinksFlixHQFQ(String baseUrl, int tmdbId) {
+    return '$baseUrl' 'flixhq/watch-movie?tmdbId=$tmdbId';
+  }
+
+  static String getTVLinksFlixHQFQ(
+      String baseUrl, int episode, int season, int tmdbId) {
+    return '$baseUrl'
+        'flixhq/watch-tv?tmdbId=$tmdbId&season=$season&episode=$episode';
   }
 }

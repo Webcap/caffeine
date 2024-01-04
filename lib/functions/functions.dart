@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
+import 'package:caffiene/models/custom_exceptions.dart';
+import 'package:caffiene/utils/constant.dart';
 import 'package:caffiene/video_providers/flixhq.dart';
 import 'package:caffiene/video_providers/provider_names.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -15,7 +17,6 @@ import 'package:caffiene/utils/config.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 Future<String> getVttFileAsString(String url) async {
-  print(url);
   try {
     var response = await retryOptions.retry(
       () => http.get(Uri.parse(url)),
@@ -24,12 +25,16 @@ Future<String> getVttFileAsString(String url) async {
     if (response.statusCode == 200) {
       final bytes = response.bodyBytes;
       final decoded = utf8.decode(bytes);
-      return decoded;
+      if (decoded.startsWith('<')) {
+        return '';
+      } else {
+        return decoded;
+      }
     } else {
-      throw Exception('Failed to load VTT file');
+      return "";
     }
-  } finally {
-    client.close();
+  } catch (e) {
+    rethrow;
   }
 }
 
@@ -82,14 +87,13 @@ Future<void> requestNotificationPermissions() async {
 /// Stream TMDB route
 Future<FlixHQMovieInfoTMDBRoute> getMovieStreamEpisodesTMDB(String api) async {
   FlixHQMovieInfoTMDBRoute movieInfo;
-  int tries = 5;
+  int tries = 3;
   dynamic decodeRes;
-  print(api);
   try {
     dynamic res;
     while (tries > 0) {
-      res = await retryOptions.retry(
-        (() => http.get(Uri.parse(api)).timeout(timeOut)),
+      res = await retryOptionsStream.retry(
+        (() => http.get(Uri.parse(api)).timeout(timeOutStream)),
         retryIf: (e) => e is SocketException || e is TimeoutException,
       );
 
@@ -101,24 +105,27 @@ Future<FlixHQMovieInfoTMDBRoute> getMovieStreamEpisodesTMDB(String api) async {
         break;
       }
     }
+    if (decodeRes.containsKey('message') || res.statusCode != 200) {
+      throw ServerDownException();
+    }
     movieInfo = FlixHQMovieInfoTMDBRoute.fromJson(decodeRes);
-  } finally {
-    client.close();
+  } catch (e) {
+    rethrow;
   }
 
   return movieInfo;
 }
 
+
 Future<FlixHQTVInfoTMDBRoute> getTVStreamEpisodesTMDB(String api) async {
   FlixHQTVInfoTMDBRoute tvInfo;
-  int tries = 5;
+  int tries = 3;
   dynamic decodeRes;
-  print(api);
   try {
     dynamic res;
     while (tries > 0) {
-      res = await retryOptions.retry(
-        (() => http.get(Uri.parse(api)).timeout(timeOut)),
+      res = await retryOptionsStream.retry(
+        (() => http.get(Uri.parse(api)).timeout(timeOutStream)),
         retryIf: (e) => e is SocketException || e is TimeoutException,
       );
 
@@ -130,13 +137,21 @@ Future<FlixHQTVInfoTMDBRoute> getTVStreamEpisodesTMDB(String api) async {
         break;
       }
     }
+    if (decodeRes.containsKey('message') || res.statusCode != 200) {
+      throw ServerDownException();
+    }
     tvInfo = FlixHQTVInfoTMDBRoute.fromJson(decodeRes);
-  } finally {
-    client.close();
+
+    if (tvInfo.seasons == null || tvInfo.seasons!.isEmpty) {
+      throw NotFoundException();
+    }
+  } catch (e) {
+    rethrow;
   }
 
   return tvInfo;
 }
+
 
 Future<List<SubtitleData>> getExternalSubtitle(String api, String key) async {
   ExternalSubtitle subData;

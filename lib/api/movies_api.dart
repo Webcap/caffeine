@@ -1,9 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:caffiene/models/custom_exceptions.dart';
+import 'package:caffiene/utils/constant.dart';
 import 'package:caffiene/video_providers/dcva.dart';
 import 'package:caffiene/video_providers/dramacool.dart';
 import 'package:caffiene/video_providers/flixhq.dart';
+import 'package:caffiene/video_providers/flixhq_flixquest.dart';
 import 'package:caffiene/video_providers/superstream.dart';
 import 'package:caffiene/video_providers/zoro.dart';
 import 'package:dio/dio.dart';
@@ -41,14 +44,13 @@ class moviesApi {
   Future<FlixHQStreamSources> getMovieStreamLinksAndSubsFlixHQ(
       String api) async {
     FlixHQStreamSources movieVideoSources;
-    int tries = 5;
+    int tries = 3;
     dynamic decodeRes;
-    print(api);
     try {
       dynamic res;
       while (tries > 0) {
-        res = await retryOptions.retry(
-          (() => http.get(Uri.parse(api)).timeout(timeOut)),
+        res = await retryOptionsStream.retry(
+          (() => http.get(Uri.parse(api)).timeout(timeOutStream)),
           retryIf: (e) => e is SocketException || e is TimeoutException,
         );
         decodeRes = jsonDecode(res.body);
@@ -58,44 +60,65 @@ class moviesApi {
           break;
         }
       }
+      if (decodeRes.containsKey('message') || res.statusCode != 200) {
+        throw ServerDownException();
+      }
       movieVideoSources = FlixHQStreamSources.fromJson(decodeRes);
-    } finally {
-      client.close();
+
+      if (movieVideoSources.videoLinks == null ||
+          movieVideoSources.videoLinks!.isEmpty) {
+        throw NotFoundException();
+      }
+    } catch (e) {
+      rethrow;
     }
+
     return movieVideoSources;
   }
 
   Future<List<FlixHQMovieInfoEntries>> getMovieStreamEpisodesFlixHQ(
       String api) async {
     FlixHQMovieInfo movieInfo;
-    print(api);
     try {
-      var res = await retryOptions.retry(
-        (() => http.get(Uri.parse(api)).timeout(timeOut)),
+      var res = await retryOptionsStream.retry(
+        (() => http.get(Uri.parse(api)).timeout(timeOutStream)),
         retryIf: (e) => e is SocketException || e is TimeoutException,
       );
       var decodeRes = jsonDecode(res.body);
+      if (decodeRes.containsKey('message') || res.statusCode != 200) {
+        throw ServerDownException();
+      }
       movieInfo = FlixHQMovieInfo.fromJson(decodeRes);
-    } finally {
-      client.close();
+
+      if (movieInfo.episodes == null || movieInfo.episodes!.isEmpty) {
+        throw NotFoundException();
+      }
+    } catch (e) {
+      rethrow;
     }
 
     return movieInfo.episodes ?? [];
   }
 
-  Future<List<FlixHQMovieSearchEntry>> fetchMoviesForStreamFlixHQ(String api) async {
+  Future<List<FlixHQMovieSearchEntry>> fetchMoviesForStreamFlixHQ(
+      String api) async {
     FlixHQMovieSearch movieStream;
-    print(api);
     try {
-      var res = await retryOptions.retry(
-        (() => http.get(Uri.parse(api)).timeout(timeOut)),
+      var res = await retryOptionsStream.retry(
+        (() => http.get(Uri.parse(api)).timeout(timeOutStream)),
         retryIf: (e) => e is SocketException || e is TimeoutException,
       );
       var decodeRes = jsonDecode(res.body);
-
+      if (decodeRes.containsKey('message') || res.statusCode != 200) {
+        throw ServerDownException();
+      }
       movieStream = FlixHQMovieSearch.fromJson(decodeRes);
-    } finally {
-      client.close();
+
+      if (movieStream.results == null || movieStream.results!.isEmpty) {
+        throw NotFoundException();
+      }
+    } catch (e) {
+      rethrow;
     }
     return movieStream.results ?? [];
   }
@@ -342,13 +365,13 @@ class moviesApi {
   Future<SuperstreamStreamSources> getSuperstreamStreamingLinks(
       String api) async {
     SuperstreamStreamSources superstreamSources;
-    int tries = 5;
+    int tries = 3;
     dynamic decodeRes;
     try {
       dynamic res;
       while (tries > 0) {
-        res = await retryOptions.retry(
-          (() => http.get(Uri.parse(api)).timeout(timeOut)),
+        res = await retryOptionsStream.retry(
+          (() => http.get(Uri.parse(api)).timeout(timeOutStream)),
           retryIf: (e) => e is SocketException || e is TimeoutException,
         );
         decodeRes = jsonDecode(res.body);
@@ -359,9 +382,18 @@ class moviesApi {
         }
       }
 
+      if (decodeRes.containsKey('message') || res.statusCode != 200) {
+        throw ServerDownException();
+      }
+
       superstreamSources = SuperstreamStreamSources.fromJson(decodeRes);
-    } finally {
-      client.close();
+
+      if (superstreamSources.videoLinks == null ||
+          superstreamSources.videoLinks!.isEmpty) {
+        throw NotFoundException();
+      }
+    } catch (e) {
+      rethrow;
     }
     return superstreamSources;
   }
@@ -369,15 +401,21 @@ class moviesApi {
   Future<List<DCVASearchEntry>> fetchMovieTVForStreamDCVA(String api) async {
     DCVASearch dcvaStream;
     try {
-      var res = await retryOptions.retry(
-        (() => http.get(Uri.parse(api)).timeout(timeOut)),
+      var res = await retryOptionsStream.retry(
+        (() => http.get(Uri.parse(api)).timeout(timeOutStream)),
         retryIf: (e) => e is SocketException || e is TimeoutException,
       );
       var decodeRes = jsonDecode(res.body);
-
+      if (decodeRes.containsKey('message') || res.statusCode != 200) {
+        throw ServerDownException();
+      }
       dcvaStream = DCVASearch.fromJson(decodeRes);
-    } finally {
-      client.close();
+
+      if (dcvaStream.results == null || dcvaStream.results!.isEmpty) {
+        throw NotFoundException();
+      }
+    } catch (e) {
+      rethrow;
     }
     return dcvaStream.results ?? [];
   }
@@ -385,14 +423,21 @@ class moviesApi {
   Future<List<DCVAInfoEntries>> getMovieTVStreamEpisodesDCVA(String api) async {
     DCVAInfo dcvaInfo;
     try {
-      var res = await retryOptions.retry(
-        (() => http.get(Uri.parse(api)).timeout(timeOut)),
+      var res = await retryOptionsStream.retry(
+        (() => http.get(Uri.parse(api)).timeout(timeOutStream)),
         retryIf: (e) => e is SocketException || e is TimeoutException,
       );
       var decodeRes = jsonDecode(res.body);
+      if (decodeRes.containsKey('message') || res.statusCode != 200) {
+        throw ServerDownException();
+      }
       dcvaInfo = DCVAInfo.fromJson(decodeRes);
-    } finally {
-      client.close();
+
+      if (dcvaInfo.episodes == null || dcvaInfo.episodes!.isEmpty) {
+        throw NotFoundException();
+      }
+    } catch (e) {
+      rethrow;
     }
 
     return dcvaInfo.episodes ?? [];
@@ -400,13 +445,13 @@ class moviesApi {
 
   Future<DCVAStreamSources> getMovieTVStreamLinksAndSubsDCVA(String api) async {
     DCVAStreamSources dcvaVideoSources;
-    int tries = 5;
+    int tries = 3;
     dynamic decodeRes;
     try {
       dynamic res;
       while (tries > 0) {
-        res = await retryOptions.retry(
-          (() => http.get(Uri.parse(api)).timeout(timeOut)),
+        res = await retryOptionsStream.retry(
+          (() => http.get(Uri.parse(api)).timeout(timeOutStream)),
           retryIf: (e) => e is SocketException || e is TimeoutException,
         );
         decodeRes = jsonDecode(res.body);
@@ -416,59 +461,79 @@ class moviesApi {
           break;
         }
       }
+      if (decodeRes.containsKey('message') || res.statusCode != 200) {
+        throw ServerDownException();
+      }
       dcvaVideoSources = DramacoolStreamSources.fromJson(decodeRes);
-    } finally {
-      client.close();
+
+      if (dcvaVideoSources.videoLinks == null ||
+          dcvaVideoSources.videoLinks!.isEmpty) {
+        throw NotFoundException();
+      }
+    } catch (e) {
+      rethrow;
     }
     return dcvaVideoSources;
   }
 
   // ZORO MOVIE FUNCTIONS
-  
+
   Future<List<ZoroSearchEntry>> fetchMovieTVForStreamZoro(String api) async {
-    print('REQUESTTTTTTTTTTTT: $api');
     ZoroSearch zoroStream;
     try {
-      var res = await retryOptions.retry(
-        (() => http.get(Uri.parse(api)).timeout(timeOut)),
+      var res = await retryOptionsStream.retry(
+        (() => http.get(Uri.parse(api)).timeout(timeOutStream)),
         retryIf: (e) => e is SocketException || e is TimeoutException,
       );
       var decodeRes = jsonDecode(res.body);
 
+      if (decodeRes.containsKey('message') || res.statusCode != 200) {
+        throw ServerDownException();
+      }
+
       zoroStream = ZoroSearch.fromJson(decodeRes);
-    } finally {
-      client.close();
+      if (zoroStream.results == null || zoroStream.results!.isEmpty) {
+        throw NotFoundException();
+      }
+    } catch (e) {
+      rethrow;
     }
     return zoroStream.results ?? [];
   }
 
   Future<List<ZoroInfoEntries>> getMovieTVStreamEpisodesZoro(String api) async {
-    print('REQUESTTTTTTTTTTTT2: $api');
     ZoroInfo zoroInfo;
     try {
-      var res = await retryOptions.retry(
-        (() => http.get(Uri.parse(api)).timeout(timeOut)),
+      var res = await retryOptionsStream.retry(
+        (() => http.get(Uri.parse(api)).timeout(timeOutStream)),
         retryIf: (e) => e is SocketException || e is TimeoutException,
       );
       var decodeRes = jsonDecode(res.body);
+
+      if (decodeRes.containsKey('message') || res.statusCode != 200) {
+        throw ServerDownException();
+      }
       zoroInfo = ZoroInfo.fromJson(decodeRes);
-    } finally {
-      client.close();
+
+      if (zoroInfo.episodes == null || zoroInfo.episodes!.isEmpty) {
+        throw NotFoundException();
+      }
+    } catch (e) {
+      rethrow;
     }
 
     return zoroInfo.episodes ?? [];
   }
 
-  Future<ZoroStreamSources> getMovieTVStreamLinksAndSubsZoro(String api) async {
-    print('REQUESTTTTTTTTTTTT3: $api');
+Future<ZoroStreamSources> getMovieTVStreamLinksAndSubsZoro(String api) async {
     ZoroStreamSources zoroVideoSources;
-    int tries = 5;
+    int tries = 3;
     dynamic decodeRes;
     try {
       dynamic res;
       while (tries > 0) {
-        res = await retryOptions.retry(
-          (() => http.get(Uri.parse(api)).timeout(timeOut)),
+        res = await retryOptionsStream.retry(
+          (() => http.get(Uri.parse(api)).timeout(timeOutStream)),
           retryIf: (e) => e is SocketException || e is TimeoutException,
         );
         decodeRes = jsonDecode(res.body);
@@ -478,11 +543,51 @@ class moviesApi {
           break;
         }
       }
+      if (decodeRes.containsKey('message') || res.statusCode != 200) {
+        throw ServerDownException();
+      }
       zoroVideoSources = ZoroStreamSources.fromJson(decodeRes);
-    } finally {
-      client.close();
+
+      if (zoroVideoSources.videoLinks == null ||
+          zoroVideoSources.videoLinks!.isEmpty) {
+        throw NotFoundException();
+      }
+    } catch (e) {
+      rethrow;
     }
     return zoroVideoSources;
   }
-  
+
+  Future<FlixHQFlixQuestSources> getFlixHQCaffeineLinks(String api) async {
+    FlixHQFlixQuestSources fqstreamSources;
+    int tries = 3;
+    dynamic decodeRes;
+    try {
+      dynamic res;
+      while (tries > 0) {
+        res = await retryOptionsStream.retry(
+          (() => http.get(Uri.parse(api)).timeout(timeOutStream)),
+          retryIf: (e) => e is SocketException || e is TimeoutException,
+        );
+        decodeRes = jsonDecode(res.body);
+        if (decodeRes.containsKey('message')) {
+          --tries;
+        } else {
+          break;
+        }
+      }
+      if (decodeRes.containsKey('message') || res.statusCode != 200) {
+        throw ServerDownException();
+      }
+      fqstreamSources = FlixHQFlixQuestSources.fromJson(decodeRes);
+
+      if (fqstreamSources.videoLinks == null ||
+          fqstreamSources.videoLinks!.isEmpty) {
+        throw NotFoundException();
+      }
+    } catch (e) {
+      rethrow;
+    }
+    return fqstreamSources;
+  }
 }

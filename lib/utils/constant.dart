@@ -1,4 +1,5 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:retry/retry.dart';
 
 const String TMDB_API_BASE_URL = "https://api.themoviedb.org/3";
 String TMDB_API_KEY = dotenv.env['TMDB_API_KEY']!;
@@ -27,4 +28,10 @@ const String STREAMING_SERVER_DCVA = "asianload";
 const String STREAMING_SERVER_ZORO = "vidcloud";
 
 const providerPreference =
-    'superstream-Superstream flixhq-FlixHQ viewasian-ViewAsian dramacool-Dramacool zoro-Zoro ';
+    'flixhqS2-FlixHQ_S2 superstream-Superstream flixhq-FlixHQ viewasian-ViewAsian dramacool-Dramacool zoro-Zoro ';
+
+const retryOptionsStream = RetryOptions(
+    maxDelay: Duration(milliseconds: 300),
+    delayFactor: Duration(seconds: 0),
+    maxAttempts: 1);
+const timeOutStream = Duration(seconds: 15);

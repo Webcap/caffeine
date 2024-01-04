@@ -1,7 +1,6 @@
 // ignore_for_file: constant_identifier_names
 import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/utils/constant.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class AdultModePreferences {
   static const ADULT_MODE_STATUS = "adultStatus";
@@ -203,7 +202,7 @@ class AppColorPreferences {
 }
 
 class ProviderPrecedencePreference {
-  static const PROVIDER_PRECEDENCE = "providerPrecedence-v2";
+  static const PROVIDER_PRECEDENCE = "providerPrecedence-v3";
 
   setProviderPrecedence(String pre) async {
     sharedPrefsSingleton.setString(PROVIDER_PRECEDENCE, pre);
