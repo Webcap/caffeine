@@ -164,9 +164,12 @@ Future<List<SubtitleData>> getExternalSubtitle(String api, String key) async {
     );
 
     var decodeRes = jsonDecode(res.body);
+    if (decodeRes.containsKey('message') || res.statusCode != 200) {
+      throw ServerDownException();
+    }
     subData = ExternalSubtitle.fromJson(decodeRes);
-  } finally {
-    client.close();
+  } catch (e) {
+    rethrow;
   }
 
   return subData.data ?? [];

@@ -525,7 +525,7 @@ class moviesApi {
     return zoroInfo.episodes ?? [];
   }
 
-Future<ZoroStreamSources> getMovieTVStreamLinksAndSubsZoro(String api) async {
+  Future<ZoroStreamSources> getMovieTVStreamLinksAndSubsZoro(String api) async {
     ZoroStreamSources zoroVideoSources;
     int tries = 3;
     dynamic decodeRes;

@@ -38,7 +38,7 @@ class tvApi {
     return tvList.tvSeries ?? [];
   }
 
-Future<FlixHQStreamSources> getTVStreamLinksAndSubsFlixHQ(String api) async {
+  Future<FlixHQStreamSources> getTVStreamLinksAndSubsFlixHQ(String api) async {
     FlixHQStreamSources tvVideoSources;
     int tries = 3;
     dynamic decodeRes;
