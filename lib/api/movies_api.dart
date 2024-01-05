@@ -398,28 +398,6 @@ class moviesApi {
     return superstreamSources;
   }
 
-  Future<List<DCVASearchEntry>> fetchMovieTVForStreamDCVA(String api) async {
-    DCVASearch dcvaStream;
-    try {
-      var res = await retryOptionsStream.retry(
-        (() => http.get(Uri.parse(api)).timeout(timeOutStream)),
-        retryIf: (e) => e is SocketException || e is TimeoutException,
-      );
-      var decodeRes = jsonDecode(res.body);
-      if (decodeRes.containsKey('message') || res.statusCode != 200) {
-        throw ServerDownException();
-      }
-      dcvaStream = DCVASearch.fromJson(decodeRes);
-
-      if (dcvaStream.results == null || dcvaStream.results!.isEmpty) {
-        throw NotFoundException();
-      }
-    } catch (e) {
-      rethrow;
-    }
-    return dcvaStream.results ?? [];
-  }
-
   Future<List<DCVAInfoEntries>> getMovieTVStreamEpisodesDCVA(String api) async {
     DCVAInfo dcvaInfo;
     try {

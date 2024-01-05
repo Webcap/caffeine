@@ -17,6 +17,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.2.2"
+  animator:
+    dependency: transitive
+    description:
+      name: animator
+      sha256: b443e888b72b77a96d1e57a2190e42a0d46948e942fcfd7aed9c47dde2f446c6
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.3.0"
   app_links:
     dependency: transitive
     description:
@@ -56,6 +64,22 @@ packages:
       relative: false
     source: path
     version: "0.0.82"
+  bonsoir:
+    dependency: transitive
+    description:
+      name: bonsoir
+      sha256: "7c7beb1f47729526235b55ea82ceac7f7897eee419c39b28a0780c0d276875fa"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.1+2"
+  bonsoir_platform_interface:
+    dependency: transitive
+    description:
+      name: bonsoir_platform_interface
+      sha256: "12b4d64ddedeb9dd48d5569a73d30518345babffbcf4c13b6b31043449da5e83"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.0+1"
   boolean_selector:
     dependency: transitive
     description:
@@ -96,6 +120,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.2.1"
+  cast:
+    dependency: "direct main"
+    description:
+      name: cast
+      sha256: "8f1cfb6649227a07e7dbadc24cad759b59de68e287794eac046211852bf32aeb"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.1"
   change_app_package_name:
     dependency: "direct main"
     description:
@@ -232,6 +264,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.5"
+  custom_refresh_indicator:
+    dependency: transitive
+    description:
+      name: custom_refresh_indicator
+      sha256: "65a463f09623f6baf75e45e0c9034e9304810be3f5dfb00a54edde7252f4a524"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.1"
   dbus:
     dependency: transitive
     description:
@@ -456,6 +496,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.4.12"
+  fixnum:
+    dependency: transitive
+    description:
+      name: fixnum
+      sha256: "25517a4deb0c03aa0f32fd12db525856438902d9c16536311e76cdc57b31d7d1"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.0"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -554,6 +602,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.0.1"
+  flutter_spinkit:
+    dependency: transitive
+    description:
+      name: flutter_spinkit
+      sha256: b39c753e909d4796906c5696a14daf33639a76e017136c8d82bf3e620ce5bb8e
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.2.0"
   flutter_svg:
     dependency: "direct main"
     description:
@@ -812,6 +868,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.3.1"
+  lazyui:
+    dependency: "direct main"
+    description:
+      name: lazyui
+      sha256: c139fc77593761fa5ff125938400270890e37873e067994563b7595bfe613c21
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.4.8"
   lints:
     dependency: transitive
     description:
@@ -884,6 +948,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.4"
+  navigation_builder:
+    dependency: transitive
+    description:
+      name: navigation_builder
+      sha256: "95e25150191d9cd4e4b86504f33cd9e786d1e6732edb2e3e635bbedc5ef0dea7"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.3"
   need_resume:
     dependency: "direct main"
     description:
@@ -1084,6 +1156,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.5.1"
+  protobuf:
+    dependency: transitive
+    description:
+      name: protobuf
+      sha256: "01dd9bd0fa02548bf2ceee13545d4a0ec6046459d847b6b061d8a27237108a08"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.0"
   provider:
     dependency: "direct main"
     description:
@@ -1321,6 +1401,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.4.2"
+  states_rebuilder:
+    dependency: transitive
+    description:
+      name: states_rebuilder
+      sha256: bf1a5ab5c543acdefce35e60f482eb7ab592339484fe3266d147ee597f18dc92
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.3.0"
   storage_client:
     dependency: transitive
     description:
@@ -1369,6 +1457,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.1.0"
+  teledart:
+    dependency: transitive
+    description:
+      name: teledart
+      sha256: "3ff1768b175048aab9b657aac014075a7b5cd62df448080140bf9ea0ba9a0691"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.5.6"
   term_glyph:
     dependency: transitive
     description:
@@ -1393,6 +1489,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.1"
+  tutorial_coach_mark:
+    dependency: transitive
+    description:
+      name: tutorial_coach_mark
+      sha256: "1f1fd234790afb929dec7391a4d90aa54ffe8c8e4d278d9283df8e3f5ac5d63e"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.11"
   typed_data:
     dependency: transitive
     description:

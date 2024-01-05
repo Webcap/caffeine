@@ -3,6 +3,7 @@
 import 'package:better_player/better_player.dart';
 import 'package:caffiene/api/movies_api.dart';
 import 'package:caffiene/controller/recently_watched_database_controller.dart';
+import 'package:caffiene/functions/network.dart';
 import 'package:caffiene/models/sub_languages.dart';
 import 'package:caffiene/models/tv_stream_metadata.dart';
 import 'package:caffiene/provider/app_dependency_provider.dart';
@@ -371,7 +372,7 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
   Future<void> loadDramacool() async {
     try {
       if (mounted) {
-        await moviesApi().fetchMovieTVForStreamDCVA(
+        await fetchMovieTVForStreamDCVA(
                 Endpoints.searchMovieTVForStreamDramacool(
                         removeCharacters(widget.metadata.seriesName!),
                         appDep.consumetUrl)
@@ -394,7 +395,7 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
                 dcShows![i]
                     .title!
                     .contains(widget.metadata.seriesName!.toString())) {
-              await moviesApi().getMovieTVStreamEpisodesDCVA(
+              await getMovieTVStreamEpisodesDCVA(
                       Endpoints.getMovieTVStreamInfoDramacool(
                           dcShows![i].id!, appDep.consumetUrl))
                   .then((value) async {
@@ -410,7 +411,7 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
                   if (doesntExist) {
                     return;
                   }
-                  await moviesApi().getMovieTVStreamLinksAndSubsDCVA(
+                  await getMovieTVStreamLinksAndSubsDCVA(
                           Endpoints.getMovieTVStreamLinksDramacool(
                               dcEpi!
                                   .where((element) =>
@@ -460,7 +461,7 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
   Future<void> loadSuperstream() async {
     try {
       if (mounted) {
-        await moviesApi().getSuperstreamStreamingLinks(Endpoints.getSuperstreamStreamTV(
+        await getSuperstreamStreamingLinks(Endpoints.getSuperstreamStreamTV(
                 appDep.caffeineAPIURL,
                 widget.metadata.tvId!,
                 widget.metadata.seasonNumber!,
@@ -498,12 +499,12 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
     late int totalSeasons;
     try {
       if (mounted) {
-        await tvApi().fetchTVDetails(
+        await fetchTVDetails(
                 Endpoints.tvDetailsUrl(widget.metadata.tvId!, "en"))
             .then(
           (value) async {
             totalSeasons = value.numberOfSeasons!;
-            await tvApi().fetchTVForStreamFlixHQ(Endpoints.searchMovieTVForStreamFlixHQ(
+            await fetchTVForStreamFlixHQ(Endpoints.searchMovieTVForStreamFlixHQ(
                     removeCharacters(widget.metadata.seriesName!).toLowerCase(),
                     appDep.consumetUrl))
                 .then((value) async {
@@ -526,7 +527,7 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
                                     .toLowerCase()) ||
                         fqShows![i].title!.contains(
                             widget.metadata.seriesName!.toString()))) {
-                  await tvApi().getTVStreamEpisodesFlixHQ(
+                  await getTVStreamEpisodesFlixHQ(
                           Endpoints.getMovieTVStreamInfoFlixHQ(
                               fqShows![i].id!, appDep.consumetUrl))
                       .then((value) async {
@@ -539,7 +540,7 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
                         if (fqEpi![k].episode ==
                                 widget.metadata.episodeNumber! &&
                             fqEpi![k].season == widget.metadata.seasonNumber!) {
-                          await tvApi().getTVStreamLinksAndSubsFlixHQ(
+                          await getTVStreamLinksAndSubsFlixHQ(
                                   Endpoints.getMovieTVStreamLinksFlixHQ(
                                       fqEpi![k].id!,
                                       fqShows![i].id!,
@@ -579,7 +580,7 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
 
                 if (fqShows![i].seasons == (totalSeasons - 1) &&
                     fqShows![i].type == 'TV Series') {
-                  await tvApi().getTVStreamEpisodesFlixHQ(
+                  await getTVStreamEpisodesFlixHQ(
                           Endpoints.getMovieTVStreamInfoFlixHQ(
                               fqShows![i].id!, appDep.consumetUrl))
                       .then((value) async {
@@ -592,7 +593,7 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
                         if (fqEpi![k].episode ==
                                 widget.metadata.episodeNumber! &&
                             fqEpi![k].season == widget.metadata.seasonNumber!) {
-                          await tvApi().getTVStreamLinksAndSubsFlixHQ(
+                          await getTVStreamLinksAndSubsFlixHQ(
                                   Endpoints.getMovieTVStreamLinksFlixHQ(
                                       fqEpi![k].id!,
                                       fqShows![i].id!,
@@ -644,7 +645,7 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
                 tvInfoTMDB!.seasons![widget.metadata.seasonNumber! - 1]
                         .episodes![widget.metadata.episodeNumber! - 1].id !=
                     null) {
-              await tvApi().getTVStreamLinksAndSubsFlixHQ(
+              await getTVStreamLinksAndSubsFlixHQ(
                       Endpoints.getMovieTVStreamLinksTMDB(
                           appDep.consumetUrl,
                           tvInfoTMDB!
@@ -687,7 +688,7 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
   Future<void> loadFlixHQFlixQuestApi() async {
     try {
       if (mounted) {
-        await moviesApi().getFlixHQCaffeineLinks(Endpoints.getTVLinksFlixHQFQ(
+        await getFlixHQFlixQuestLinks(Endpoints.getTVLinksFlixHQFQ(
                 appDep.caffeineAPIURL,
                 widget.metadata.episodeNumber!,
                 widget.metadata.seasonNumber!,
@@ -807,7 +808,7 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
             }
           } else {
             if (appDep.useExternalSubtitles) {
-              await moviesApi().fetchSocialLinks(
+              await fetchSocialLinks(
                 Endpoints.getExternalLinksForTV(widget.metadata.tvId!, "en"),
               ).then((value) async {
                 if (value.imdbId != null) {
@@ -867,7 +868,7 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
   Future<void> loadViewasian() async {
     try {
       if (mounted) {
-        await moviesApi().fetchMovieTVForStreamDCVA(
+        await fetchMovieTVForStreamDCVA(
                 Endpoints.searchMovieTVForStreamViewasian(
                     removeCharacters(widget.metadata.seriesName!).toLowerCase(),
                     appDep.consumetUrl))
@@ -889,7 +890,7 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
                 vaShows![i]
                     .title!
                     .contains(widget.metadata.seriesName!.toString())) {
-              await moviesApi().getMovieTVStreamEpisodesDCVA(
+              await getMovieTVStreamEpisodesDCVA(
                       Endpoints.getMovieTVStreamInfoViewasian(
                           vaShows![i].id!, appDep.consumetUrl))
                   .then((value) async {
@@ -905,7 +906,7 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
                   if (doesntExist) {
                     return;
                   }
-                  await moviesApi().getMovieTVStreamLinksAndSubsDCVA(
+                  await getMovieTVStreamLinksAndSubsDCVA(
                           Endpoints.getMovieTVStreamLinksViewasian(
                               vaEpi!
                                   .where((element) =>
@@ -955,7 +956,7 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
   Future<void> loadZoro() async {
     try {
       if (mounted) {
-        await moviesApi().fetchMovieTVForStreamZoro(Endpoints.searchZoroMoviesTV(
+        await fetchMovieTVForStreamZoro(Endpoints.searchZoroMoviesTV(
           appDep.consumetUrl,
           removeCharacters(widget.metadata.seriesName!).toLowerCase(),
         )).then((value) async {
@@ -976,7 +977,7 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
                         .title!
                         .contains(widget.metadata.seriesName!.toString())) &&
                 zoroShows![i].type == 'TV') {
-              await moviesApi().getMovieTVStreamEpisodesZoro(Endpoints.getMovieTVInfoZoro(
+              await getMovieTVStreamEpisodesZoro(Endpoints.getMovieTVInfoZoro(
                       appDep.consumetUrl, zoroShows![i].id!))
                   .then((value) async {
                 setState(() {
@@ -991,7 +992,7 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
                   if (doesntExist) {
                     return;
                   }
-                  await moviesApi().getMovieTVStreamLinksAndSubsZoro(
+                  await getMovieTVStreamLinksAndSubsZoro(
                           Endpoints.getMovieTVStreamLinksZoro(
                               appDep.consumetUrl,
                               zoroEpi!

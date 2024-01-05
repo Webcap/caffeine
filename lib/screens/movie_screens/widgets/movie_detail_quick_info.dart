@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:caffiene/utils/helpers/cast_button.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/api/endpoints.dart';
 import 'package:caffiene/models/movie_models.dart';
@@ -7,6 +8,7 @@ import 'package:caffiene/screens/common/watch_providers_dets.dart';
 import 'package:caffiene/screens/movie_screens/widgets/watch_provider_button.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/widgets/shimmer_widget.dart';
+import 'package:lazyui/externals/line_awesome.dart';
 import 'package:provider/provider.dart';
 import 'package:caffiene/utils/constant.dart';
 
@@ -101,24 +103,25 @@ class MovieDetailQuickInfo extends StatelessWidget {
                                     ? Alignment.topLeft
                                     : Alignment.topRight,
                                 child: GestureDetector(
-                                  child: WatchProvidersButton(
-                                    api: Endpoints.getMovieWatchProviders(
-                                        movie.id!, appLang),
-                                    country: watchCountry,
-                                    onTap: () {
-                                      showModalBottomSheet(
-                                        context: context,
-                                        builder: (builder) {
-                                          return WatchProvidersDetails(
-                                            api: Endpoints
-                                                .getMovieWatchProviders(
-                                                    movie.id!, appLang),
-                                            country: watchCountry,
-                                          );
-                                        },
-                                      );
-                                    },
-                                  ),
+                                  child: CastButton()
+                                  // child: WatchProvidersButton(
+                                  //   api: Endpoints.getMovieWatchProviders(
+                                  //       movie.id!, appLang),
+                                  //   country: watchCountry,
+                                  //   onTap: () {
+                                  //     showModalBottomSheet(
+                                  //       context: context,
+                                  //       builder: (builder) {
+                                  //         return WatchProvidersDetails(
+                                  //           api: Endpoints
+                                  //               .getMovieWatchProviders(
+                                  //                   movie.id!, appLang),
+                                  //           country: watchCountry,
+                                  //         );
+                                  //       },
+                                  //     );
+                                  //   },
+                                  // ),
                                 ),
                               ),
                             ),
