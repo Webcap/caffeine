@@ -103,25 +103,25 @@ class MovieDetailQuickInfo extends StatelessWidget {
                                     ? Alignment.topLeft
                                     : Alignment.topRight,
                                 child: GestureDetector(
-                                  child: CastButton()
-                                  // child: WatchProvidersButton(
-                                  //   api: Endpoints.getMovieWatchProviders(
-                                  //       movie.id!, appLang),
-                                  //   country: watchCountry,
-                                  //   onTap: () {
-                                  //     showModalBottomSheet(
-                                  //       context: context,
-                                  //       builder: (builder) {
-                                  //         return WatchProvidersDetails(
-                                  //           api: Endpoints
-                                  //               .getMovieWatchProviders(
-                                  //                   movie.id!, appLang),
-                                  //           country: watchCountry,
-                                  //         );
-                                  //       },
-                                  //     );
-                                  //   },
-                                  // ),
+                                  // child: CastButton()
+                                  child: WatchProvidersButton(
+                                    api: Endpoints.getMovieWatchProviders(
+                                        movie.id!, appLang),
+                                    country: watchCountry,
+                                    onTap: () {
+                                      showModalBottomSheet(
+                                        context: context,
+                                        builder: (builder) {
+                                          return WatchProvidersDetails(
+                                            api: Endpoints
+                                                .getMovieWatchProviders(
+                                                    movie.id!, appLang),
+                                            country: watchCountry,
+                                          );
+                                        },
+                                      );
+                                    },
+                                  ),
                                 ),
                               ),
                             ),

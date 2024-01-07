@@ -1,5 +1,5 @@
-import 'package:caffiene/api/movies_api.dart';
 import 'package:caffiene/functions/functions.dart';
+import 'package:caffiene/functions/network.dart';
 import 'package:caffiene/main.dart';
 import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:caffiene/provider/settings_provider.dart';
@@ -75,7 +75,7 @@ class _ServerStatusScreenState extends State<ServerStatusScreen> {
       if (videoProviders[i].codeName == 'flixhq') {
         start = DateTime.now();
         try {
-          await moviesApi().getMovieStreamLinksAndSubsFlixHQ(
+          await getMovieStreamLinksAndSubsFlixHQ(
                   "${appDependency.consumetUrl}movies/flixhq/watch?episodeId=97708&mediaId=movie/watch-no-hard-feelings-97708&server=${appDependency.streamingServerFlixHQ}")
               .then((value) {
             if (mounted) {
@@ -91,7 +91,7 @@ class _ServerStatusScreenState extends State<ServerStatusScreen> {
         start = DateTime.now();
 
         try {
-          await moviesApi().getSuperstreamStreamingLinks(
+          await getSuperstreamStreamingLinks(
                   "${appDependency.caffeineAPIURL}superstream/watch-movie?tmdbId=455980")
               .then((value) {
             if (mounted) {
@@ -106,7 +106,7 @@ class _ServerStatusScreenState extends State<ServerStatusScreen> {
       } else if (videoProviders[i].codeName == 'dramacool') {
         start = DateTime.now();
         try {
-          await moviesApi().getMovieTVStreamLinksAndSubsDCVA(
+          await getMovieTVStreamLinksAndSubsDCVA(
                   "${appDependency.consumetUrl}movies/dramacool/watch?id=drama-detail/a-different-girl&episodeId=a-different-girl-2021-episode-1&server=${appDependency.streamingServerDCVA}")
               .then((value) {
             if (mounted) {
@@ -121,7 +121,7 @@ class _ServerStatusScreenState extends State<ServerStatusScreen> {
       } else if (videoProviders[i].codeName == 'viewasian') {
         start = DateTime.now();
         try {
-          await moviesApi().getMovieTVStreamLinksAndSubsDCVA(
+          await getMovieTVStreamLinksAndSubsDCVA(
                   "${appDependencyProvider.consumetUrl}movies/viewasian/watch?id=drama/tell-me-you-love-me&episodeId=/watch/tell-me-you-love-me/watching.html\$episode\$1&server=${appDependencyProvider.streamingServerDCVA}")
               .then((value) {
             if (mounted) {
@@ -136,7 +136,7 @@ class _ServerStatusScreenState extends State<ServerStatusScreen> {
       } else if (videoProviders[i].codeName == 'zoro') {
         start = DateTime.now();
         try {
-          await moviesApi().getMovieTVStreamLinksAndSubsZoro(
+          await getMovieTVStreamLinksAndSubsZoro(
                   "${appDependencyProvider.consumetUrl}anime/zoro/watch?episodeId=one-piece-movie-1-3096\$episode\$58122\$sub&server=${appDependencyProvider.streamingServerZoro}")
               .then((value) {
             if (mounted) {
@@ -150,7 +150,7 @@ class _ServerStatusScreenState extends State<ServerStatusScreen> {
       } else if (videoProviders[i].codeName == 'flixhqS2') {
         start = DateTime.now();
         try {
-          await moviesApi().getSuperstreamStreamingLinks(
+          await getSuperstreamStreamingLinks(
                   "${appDependency.caffeineAPIURL}flixhq/watch-movie?tmdbId=455980")
               .then((value) {
             if (mounted) {

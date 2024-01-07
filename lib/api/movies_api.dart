@@ -421,39 +421,6 @@ class moviesApi {
     return dcvaInfo.episodes ?? [];
   }
 
-  Future<DCVAStreamSources> getMovieTVStreamLinksAndSubsDCVA(String api) async {
-    DCVAStreamSources dcvaVideoSources;
-    int tries = 3;
-    dynamic decodeRes;
-    try {
-      dynamic res;
-      while (tries > 0) {
-        res = await retryOptionsStream.retry(
-          (() => http.get(Uri.parse(api)).timeout(timeOutStream)),
-          retryIf: (e) => e is SocketException || e is TimeoutException,
-        );
-        decodeRes = jsonDecode(res.body);
-        if (decodeRes.containsKey('message')) {
-          --tries;
-        } else {
-          break;
-        }
-      }
-      if (decodeRes.containsKey('message') || res.statusCode != 200) {
-        throw ServerDownException();
-      }
-      dcvaVideoSources = DramacoolStreamSources.fromJson(decodeRes);
-
-      if (dcvaVideoSources.videoLinks == null ||
-          dcvaVideoSources.videoLinks!.isEmpty) {
-        throw NotFoundException();
-      }
-    } catch (e) {
-      rethrow;
-    }
-    return dcvaVideoSources;
-  }
-
   // ZORO MOVIE FUNCTIONS
 
   Future<List<ZoroSearchEntry>> fetchMovieTVForStreamZoro(String api) async {
@@ -501,39 +468,6 @@ class moviesApi {
     }
 
     return zoroInfo.episodes ?? [];
-  }
-
-  Future<ZoroStreamSources> getMovieTVStreamLinksAndSubsZoro(String api) async {
-    ZoroStreamSources zoroVideoSources;
-    int tries = 3;
-    dynamic decodeRes;
-    try {
-      dynamic res;
-      while (tries > 0) {
-        res = await retryOptionsStream.retry(
-          (() => http.get(Uri.parse(api)).timeout(timeOutStream)),
-          retryIf: (e) => e is SocketException || e is TimeoutException,
-        );
-        decodeRes = jsonDecode(res.body);
-        if (decodeRes.containsKey('message')) {
-          --tries;
-        } else {
-          break;
-        }
-      }
-      if (decodeRes.containsKey('message') || res.statusCode != 200) {
-        throw ServerDownException();
-      }
-      zoroVideoSources = ZoroStreamSources.fromJson(decodeRes);
-
-      if (zoroVideoSources.videoLinks == null ||
-          zoroVideoSources.videoLinks!.isEmpty) {
-        throw NotFoundException();
-      }
-    } catch (e) {
-      rethrow;
-    }
-    return zoroVideoSources;
   }
 
   Future<FlixHQFlixQuestSources> getFlixHQCaffeineLinks(String api) async {
