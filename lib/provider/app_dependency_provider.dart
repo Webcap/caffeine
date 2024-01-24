@@ -5,10 +5,10 @@ import '../models/app_dependency_preferences.dart';
 class AppDependencyProvider extends ChangeNotifier {
   AppDependencies appDependencies = AppDependencies();
 
-  String _consumetUrl = 'https://consumet-api-beryl.vercel.app/';
+  String _consumetUrl = CONSUMET_API;
   String get consumetUrl => _consumetUrl;
 
-  String _caffeineAPIUrl = 'https://flixquest-api.vercel.app/';
+  String _caffeineAPIUrl = caffeineApiUrl;
   String get caffeineAPIURL => _caffeineAPIUrl;
 
   String _caffieneLogo = 'default';
@@ -86,10 +86,6 @@ class AppDependencyProvider extends ChangeNotifier {
     appDependencies.setOpenSubKey(value);
     notifyListeners();
   }
-
-  // Future<void> getStreamingServer() async {
-  //   streamingServer = await appDependencies.getStreamServer();
-  // }
 
   Future<void> getStreamingServerFlixHQ() async {
     streamingServerFlixHQ = await appDependencies.getStreamServerFlixHQ();

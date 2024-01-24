@@ -18,7 +18,9 @@ const String opensubtitlesBaseUrl = "https://api.opensubtitles.com/api/v1";
 const String CAFFEINE_UPDATE_URL =
     "https://webcap.github.io/caffiene/res/update.json";
 const String ERROROCCURRED = "an error has occurred";
-const String CONSUMET_API = 'https://consumet-api-opal.vercel.app/';
+String CONSUMET_API = dotenv.env['CONSUMET_URL']!;
+String CONSUMET_INFO_API = dotenv.env['CONSUMET_URL']!;
+String caffeineApiUrl = dotenv.env['CAFFEINE_API_URL']!;
 const String SUPABASE_URL = 'https://quzrpdvpbnydfjzigcoi.supabase.co';
 const String STREAMING_SERVER = "vidcloud";
 String openSubtitlesKey = dotenv.env['OPENSUBTITLES_API_KEY']!;

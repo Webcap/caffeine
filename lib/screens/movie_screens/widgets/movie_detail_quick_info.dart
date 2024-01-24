@@ -8,7 +8,6 @@ import 'package:caffiene/screens/common/watch_providers_dets.dart';
 import 'package:caffiene/screens/movie_screens/widgets/watch_provider_button.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/widgets/shimmer_widget.dart';
-import 'package:lazyui/externals/line_awesome.dart';
 import 'package:provider/provider.dart';
 import 'package:caffiene/utils/constant.dart';
 
