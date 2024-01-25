@@ -1,6 +1,7 @@
 import 'package:caffiene/models/profile_modal.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/screens/common/landing_screen.dart';
+import 'package:caffiene/screens/common/subscribe_to_premium.dart';
 import 'package:caffiene/utils/app_colors.dart';
 import 'package:caffiene/utils/app_images.dart';
 import 'package:caffiene/utils/config.dart';
@@ -175,7 +176,10 @@ class _ProfilePage1State extends State<ProfilePage1> {
                                   (snapshot.data!['isSubscribed'] == false)
                                       ? GestureDetector(
                                           onTap: () {
-                                            print("tap premin");
+                                            Get.to(
+                                              () => const SubscribeToPremium(),
+                                              transition: Transition.downToUp,
+                                            );
                                           },
                                           child: Container(
                                             width:

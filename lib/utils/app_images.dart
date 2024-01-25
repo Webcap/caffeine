@@ -251,4 +251,5 @@ abstract class MovixIcon {
   static const speed = 'assets/movixIcon/speed.svg';
   static const collapse = "assets/movixIcon/Collapse.svg";
   static const setting = "assets/movixIcon/Setting.svg";
+  static const server = "assets/movixIcon/server-rack.svg";
 }

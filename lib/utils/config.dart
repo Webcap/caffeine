@@ -45,6 +45,10 @@ const kTextHeaderStyle = TextStyle(
   fontSize: 22,
 );
 
+TextStyle get titalstyle {
+  return GoogleFonts.urbanist(fontSize: 17, fontWeight: FontWeight.bold);
+}
+
 TextStyle get titalstyle1 {
   return GoogleFonts.urbanist(fontSize: 16, fontWeight: FontWeight.w700);
 }

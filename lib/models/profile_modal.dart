@@ -1,3 +1,4 @@
+import 'package:caffiene/screens/common/server_status_screen.dart';
 import 'package:caffiene/screens/settings/settings.dart';
 import 'package:caffiene/screens/user/edit_profile.dart';
 import 'package:caffiene/screens/user/password_change.dart';
@@ -59,6 +60,20 @@ List<ProfileModal> settingdata = [
     ),
     iconImage: MovixIcon.security,
     tital: "Change Password",
+  ),
+
+  ProfileModal(
+    onTap: () {
+      Get.to(
+        () => const ServerStatusScreen(),
+      );
+    },
+    widget: const Icon(
+      Icons.arrow_forward_ios_rounded,
+      size: 15,
+    ),
+    iconImage: MovixIcon.server,
+    tital: "Check Server Status",
   ),
 
   // ProfileModal(
