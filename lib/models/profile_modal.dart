@@ -1,3 +1,4 @@
+import 'package:caffiene/screens/common/about.dart';
 import 'package:caffiene/screens/common/server_status_screen.dart';
 import 'package:caffiene/screens/settings/settings.dart';
 import 'package:caffiene/screens/user/edit_profile.dart';
@@ -74,6 +75,20 @@ List<ProfileModal> settingdata = [
     ),
     iconImage: MovixIcon.server,
     tital: "Check Server Status",
+  ),
+
+  ProfileModal(
+    onTap: () {
+      Get.to(
+        () => const AboutPage(),
+      );
+    },
+    widget: const Icon(
+      Icons.arrow_forward_ios_rounded,
+      size: 15,
+    ),
+    iconImage: MovixIcon.info,
+    tital: "About",
   ),
 
   // ProfileModal(

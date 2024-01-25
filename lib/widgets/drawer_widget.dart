@@ -74,7 +74,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                       FontAwesomeIcons.userPlus,
                       color: Theme.of(context).colorScheme.primary,
                     ),
-                    title: Text(tr("upgrade_to_premium")),
+                    title: Text("Testing Zone"),
                     onTap: () {
                       nextScreen(context, const ChromecastHome());
                     },

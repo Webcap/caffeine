@@ -40,6 +40,17 @@ class _SubscribeToPremiumState extends State<SubscribeToPremium> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
+              SizedBox(
+                height: SizeConfig.blockSizeVertical * 2,
+              ),
+              Text(
+                "Enjoy watching Premium Movie",
+                style: GoogleFonts.urbanist(
+                    fontSize: 14, fontWeight: FontWeight.w500),
+              ),
+              SizedBox(
+                height: SizeConfig.blockSizeVertical * 4,
+              ),
             ],
           ),
         ),
