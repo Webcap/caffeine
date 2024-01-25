@@ -4,6 +4,7 @@ import 'package:caffiene/screens/common/landing_screen.dart';
 import 'package:caffiene/utils/app_colors.dart';
 import 'package:caffiene/utils/app_images.dart';
 import 'package:caffiene/utils/config.dart';
+import 'package:caffiene/utils/routes/app_pages.dart';
 import 'package:caffiene/widgets/size_configuration.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -595,7 +596,13 @@ class _ProfilePage1State extends State<ProfilePage1> {
                                                           ),
                                                         ),
                                                       ),
-                                                      onTap: () {},
+                                                      onTap: () async {
+                                                        await _auth.signOut();
+                                                        print("logging out");
+                                                        Get.back();
+                                                        Get.offNamed(
+                                                            Routes.splash);
+                                                      },
                                                     )
                                                   ],
                                                 ),
