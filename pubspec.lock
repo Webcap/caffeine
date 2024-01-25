@@ -561,10 +561,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_inappwebview
-      sha256: f73505c792cf083d5566e1a94002311be497d984b5607f25be36d685cf6361cf
+      sha256: d198297060d116b94048301ee6749cd2e7d03c1f2689783f52d210a6b7aba350
       url: "https://pub.dev"
     source: hosted
-    version: "5.7.2+3"
+    version: "5.8.0"
   flutter_launcher_icons:
     dependency: "direct main"
     description:
@@ -684,6 +684,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.22.8+3"
+  get:
+    dependency: "direct main"
+    description:
+      name: get
+      sha256: e4e7335ede17452b391ed3b2ede016545706c01a02292a6c97619705e7d2a85e
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.6.6"
   google_fonts:
     dependency: "direct main"
     description:
@@ -812,30 +820,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.6.2"
-  in_app_purchases_interface:
-    dependency: transitive
-    description:
-      name: in_app_purchases_interface
-      sha256: bce28cf91213f23d53035d8c2c02b3ed45c05f5edfcbe1e985da65ceb75c6c70
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.0"
-  in_app_purchases_intl:
-    dependency: transitive
-    description:
-      name: in_app_purchases_intl
-      sha256: "162d0d10cb7634b5ada3245f85d37571d0d6804ce0488239437e6c1ffae53d30"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.1"
-  in_app_purchases_paywall_ui:
-    dependency: "direct main"
-    description:
-      name: in_app_purchases_paywall_ui
-      sha256: "6350e46db80e3b56f845ded123f36ed50e925b1081ceeb41af9a82a0a8fad5ea"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.1"
   intl:
     dependency: "direct main"
     description:
@@ -1196,14 +1180,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.3.0"
-  responsive_spacing:
-    dependency: transitive
-    description:
-      name: responsive_spacing
-      sha256: "946e9e03d6b3c389e0bf6962da8c1a6f932955db3be08aba8cff8d97e5901060"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.1.0"
   retry:
     dependency: "direct main"
     description:
@@ -1693,10 +1669,10 @@ packages:
     dependency: transitive
     description:
       name: webview_flutter
-      sha256: c1ab9b81090705c6069197d9fdc1625e587b52b8d70cdde2339d177ad0dbb98e
+      sha256: "71e1bfaef41016c8d5954291df5e9f8c6172f1f6ff3af01b5656456ddb11f94c"
       url: "https://pub.dev"
     source: hosted
-    version: "4.4.1"
+    version: "4.4.4"
   webview_flutter_android:
     dependency: transitive
     description:
@@ -1763,4 +1739,4 @@ packages:
     version: "1.1.1"
 sdks:
   dart: ">=3.1.0-185.0.dev <4.0.0"
-  flutter: ">=3.10.0"
+  flutter: ">=3.13.0"

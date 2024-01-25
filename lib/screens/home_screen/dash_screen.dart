@@ -1,3 +1,4 @@
+import 'package:caffiene/screens/user/profile_page1.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -145,7 +146,7 @@ class _caffieneHomePageState extends State<caffieneHomePage>
             MainMoviesDisplay(),
             MainTVDisplay(),
             DiscoverPage(),
-            ProfilePage()
+            ProfilePage1()
           ],
         ));
   }

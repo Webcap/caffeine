@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:retry/retry.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -43,6 +44,14 @@ const kTextHeaderStyle = TextStyle(
   fontFamily: 'PoppinsSB',
   fontSize: 22,
 );
+
+TextStyle get titalstyle1 {
+  return GoogleFonts.urbanist(fontSize: 16, fontWeight: FontWeight.w700);
+}
+
+TextStyle get titalstyle2 {
+  return GoogleFonts.urbanist(fontSize: 15, fontWeight: FontWeight.w500);
+}
 
 const kBoldItemTitleStyle = TextStyle(
   fontFamily: 'PoppinsSB',

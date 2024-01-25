@@ -5,6 +5,7 @@ import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:caffiene/provider/recently_watched_provider.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/screens/auth_screens/user_state.dart';
+import 'package:caffiene/utils/routes/app_pages.dart';
 import 'package:caffiene/utils/theme_data.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -14,6 +15,7 @@ import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:get/get.dart';
 
 class caffeine extends StatefulWidget {
   const caffeine(
@@ -132,11 +134,12 @@ class _caffeineState extends State<caffeine>
                       recentProvider, snapshot) {
                 return DynamicColorBuilder(
                   builder: (lightDynamic, darkDynamic) {
-                    return MaterialApp(
+                    return GetMaterialApp(
                       localizationsDelegates: context.localizationDelegates,
                       supportedLocales: context.supportedLocales,
                       locale: context.locale,
                       debugShowCheckedModeBanner: false,
+                      getPages: AppPages.pages,
                       title: tr("caffiene"),
                       theme: Styles.themeData(
                           appThemeMode: settingsProvider.appTheme,
