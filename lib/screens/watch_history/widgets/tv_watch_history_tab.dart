@@ -224,19 +224,19 @@ class _tvWatchHistoryState extends State<tvWatchHistory> {
                                                     //     ),
                                                     //   ),
                                                     // ),
-                                                    Expanded(
-                                                      flex: 1,
-                                                      child: Text(
-                                                        '${widget.tvList![index].seasonNumber! <= 9 ? 'S0${widget.tvList![index].seasonNumber!}' : 'S${widget.tvList![index].seasonNumber!}'} | '
-                                                        '${widget.tvList![index].episodeNumber! <= 9 ? 'E0${widget.tvList![index].episodeNumber!}' : 'E${widget.tvList![index].episodeNumber!}'}'
-                                                        '',
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                        maxLines: 2,
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                      ),
-                                                    ),
+                                                    // Expanded(
+                                                    //   flex: 1,
+                                                    //   child: Text(
+                                                    //     '${widget.tvList![index].seasonNumber! <= 9 ? 'S0${widget.tvList![index].seasonNumber!}' : 'S${widget.tvList![index].seasonNumber!}'} | '
+                                                    //     '${widget.tvList![index].episodeNumber! <= 9 ? 'E0${widget.tvList![index].episodeNumber!}' : 'E${widget.tvList![index].episodeNumber!}'}'
+                                                    //     '',
+                                                    //     textAlign:
+                                                    //         TextAlign.center,
+                                                    //     maxLines: 2,
+                                                    //     overflow: TextOverflow
+                                                    //         .ellipsis,
+                                                    //   ),
+                                                    // ),
                                                     Expanded(
                                                         flex: 1,
                                                         child: Text(

@@ -2,7 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:caffiene/utils/constant.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:caffiene/controller/database_controller.dart';
+import 'package:caffiene/controller/bookmark_database_controller.dart';
 import 'package:caffiene/models/movie_models.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/screens/movie_screens/movie_details.dart';

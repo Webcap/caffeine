@@ -1,6 +1,7 @@
 // ignore_for_file: unused_field, unused_local_variable
 
-import 'package:caffiene/controller/database_controller.dart';
+import 'package:caffiene/controller/bookmark_database_controller.dart';
+
 import 'package:caffiene/models/movie_models.dart';
 import 'package:caffiene/models/tv.dart';
 import 'package:caffiene/provider/settings_provider.dart';
