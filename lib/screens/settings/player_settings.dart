@@ -2,6 +2,7 @@ import 'package:caffiene/screens/common/sublanguage_choose.dart';
 import 'package:caffiene/screens/settings/provider_choose_screen.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/utils/next_screen.dart';
+import 'package:caffiene/utils/textStyle.dart';
 import 'package:caffiene/widgets/common_widgets.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';

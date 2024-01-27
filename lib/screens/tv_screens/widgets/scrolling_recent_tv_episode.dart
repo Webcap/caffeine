@@ -7,6 +7,7 @@ import 'package:caffiene/provider/recently_watched_provider.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/screens/tv_screens/tv_video_loader.dart';
 import 'package:caffiene/utils/config.dart';
+import 'package:caffiene/utils/textStyle.dart';
 import 'package:caffiene/widgets/common_widgets.dart';
 import 'package:caffiene/widgets/shimmer_widget.dart';
 import 'package:easy_localization/easy_localization.dart';

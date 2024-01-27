@@ -1,4 +1,5 @@
 import 'package:caffiene/utils/constant.dart';
+import 'package:caffiene/utils/textStyle.dart';
 import 'package:caffiene/widgets/common_widgets.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';

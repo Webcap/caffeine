@@ -37,59 +37,13 @@ const kTextSmallHeaderStyle = TextStyle(
 //********************************* */
 //********************************* */
 // ** VERSION CONTROL BUDDY //
-const String currentAppVersion = '1.5.2-dev';
+const String currentAppVersion = '1.6.0-dev';
 //*********************************** */
 
 const kTextHeaderStyle = TextStyle(
   fontFamily: 'PoppinsSB',
   fontSize: 22,
 );
-
-TextStyle get titalstyle {
-  return GoogleFonts.urbanist(fontSize: 17, fontWeight: FontWeight.bold);
-}
-
-TextStyle get titalstyle1 {
-  return GoogleFonts.urbanist(fontSize: 16, fontWeight: FontWeight.w700);
-}
-
-TextStyle get titalstyle2 {
-  return GoogleFonts.urbanist(fontSize: 15, fontWeight: FontWeight.w500);
-}
-
-const kBoldItemTitleStyle = TextStyle(
-  fontFamily: 'PoppinsSB',
-  fontSize: 19,
-);
-
-const kTextHeaderStyleTV = TextStyle(
-  fontFamily: 'PoppinsSB',
-  fontSize: 30,
-  color: Colors.white,
-);
-
-const kTextVerySmallBodyStyle = TextStyle(
-  fontFamily: 'Poppins',
-  fontSize: 13,
-  overflow: TextOverflow.ellipsis,
-);
-
-const kTextSmallBodyStyle = TextStyle(
-  fontFamily: 'Poppins',
-  fontSize: 17,
-  overflow: TextOverflow.ellipsis,
-);
-
-const kTextSmallAboutBodyStyle = TextStyle(
-  fontFamily: 'Poppins',
-  fontSize: 14,
-  overflow: TextOverflow.ellipsis,
-);
-
-const kTextStyleColorBlack = TextStyle(color: Colors.black);
-
-const kTableLeftStyle =
-    TextStyle(overflow: TextOverflow.ellipsis, fontWeight: FontWeight.bold);
 
 const String grid_landing_photo = "assets/images/grid_final.jpg";
 
@@ -105,6 +59,7 @@ final List<String> appNames = [
   'caffeine-v1.4.1.apk',
   'caffeine-v1.4.2.apk',
   'caffeine-v1.5.0.apk',
+  'caffeine-v1.6.0.apk',
 ];
 
 CacheManager cacheProp() {

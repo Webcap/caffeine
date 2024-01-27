@@ -1,6 +1,7 @@
 // ignore_for_file: must_be_immutable
 import 'dart:io';
 import 'package:caffiene/utils/constant.dart';
+import 'package:caffiene/utils/textStyle.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';

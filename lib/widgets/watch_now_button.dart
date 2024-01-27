@@ -5,6 +5,7 @@ import 'package:caffiene/functions/functions.dart';
 import 'package:caffiene/models/movie_stream_metadata.dart';
 import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:caffiene/utils/config.dart';
+import 'package:caffiene/utils/textStyle.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/screens/movie_screens/widgets/movie_video_loader.dart';

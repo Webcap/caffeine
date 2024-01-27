@@ -4,6 +4,7 @@ import 'package:caffiene/models/app_colors.dart';
 import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:caffiene/provider/recently_watched_provider.dart';
 import 'package:caffiene/provider/settings_provider.dart';
+import 'package:caffiene/provider/sign_in_provider.dart';
 import 'package:caffiene/screens/auth_screens/user_state.dart';
 import 'package:caffiene/utils/routes/app_pages.dart';
 import 'package:caffiene/utils/theme_data.dart';
@@ -127,6 +128,7 @@ class _caffeineState extends State<caffeine>
                 ChangeNotifierProvider(create: (_) {
                   return widget.appDependencyProvider;
                 }),
+                ChangeNotifierProvider(create: ((context) => SignInProvider())),
               ],
               child: Consumer3<SettingsProvider, AppDependencyProvider,
                       RecentProvider>(
@@ -159,7 +161,7 @@ class _caffeineState extends State<caffeine>
                                       settingsProvider.appColorIndex)
                                   .cs,
                               index: settingsProvider.appColorIndex)),
-                      home: const UserState(),
+                      //home: const UserState(),
                     );
                   },
                 );

@@ -1,4 +1,5 @@
 import 'package:caffiene/controller/bookmark_database_controller.dart';
+import 'package:caffiene/utils/textStyle.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';

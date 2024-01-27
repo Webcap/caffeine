@@ -1,15 +1,16 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
-import 'package:caffiene/functions/functions.dart';
+import 'package:caffiene/utils/app_images.dart';
 import 'package:caffiene/utils/next_screen.dart';
+import 'package:caffiene/utils/routes/app_pages.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/screens/auth_screens/login_screen.dart';
-import 'package:caffiene/screens/auth_screens/register_screen.dart';
-import 'package:caffiene/screens/home_screen/dash_screen.dart';
 import 'package:caffiene/utils/config.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import 'package:provider/provider.dart';
 
@@ -25,6 +26,12 @@ class _LandingScreenState extends State<LandingScreen> {
       GlobalKey<ScaffoldMessengerState>();
 
   bool anonButtonVisible = true;
+
+  @override
+  void initState() {
+    [Permission.storage].request();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,8 +51,8 @@ class _LandingScreenState extends State<LandingScreen> {
       body: Stack(
         children: [
           Container(
-            height: deviceHeight,
-            width: deviceWidth,
+            height: Get.height,
+            width: Get.width,
             decoration: const BoxDecoration(
               image: DecorationImage(
                   image: AssetImage(
@@ -93,15 +100,18 @@ class _LandingScreenState extends State<LandingScreen> {
                                 child: Container(
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10),
-                                    color: Colors.white,
+                                    color: Colors.transparent,
                                   ),
-                                  height: 100,
-                                  width: 100,
+                                  height: 150,
+                                  width: 150,
                                   child: Hero(
                                     tag: 'logo_shadow',
                                     child: Padding(
                                       padding: const EdgeInsets.all(8.0),
-                                      child: Image.asset(appConfig.app_icon),
+                                      child: SvgPicture.asset(
+                                        MovixIcon.appLogo,
+                                        height: Get.height / 2,
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -167,10 +177,33 @@ class _LandingScreenState extends State<LandingScreen> {
                       //  crossAxisAlignment: WrapCrossAlignment.start,
                       // spacing: 10,
                       children: [
+                        // ElevatedButton(
+                        //     style: ButtonStyle(
+                        //         minimumSize: MaterialStateProperty.all(
+                        //             const Size(150, 50)),
+                        //         shape: MaterialStateProperty.all<
+                        //             RoundedRectangleBorder>(
+                        //           RoundedRectangleBorder(
+                        //             borderRadius: BorderRadius.circular(20.0),
+                        //           ),
+                        //         ),
+                        //         backgroundColor:
+                        //             MaterialStateProperty.all(maincolor)),
+                        //     onPressed: () async {
+                        //       // updateFirstRunData();
+                        //       nextScreen(context, const LoginScreen());
+                        //     },
+                        //     child: Text(
+                        //       tr("log_in"),
+                        //       style: const TextStyle(color: Colors.white),
+                        //     )),
+                        const SizedBox(
+                          height: 30,
+                        ),
                         ElevatedButton(
                             style: ButtonStyle(
                                 minimumSize: MaterialStateProperty.all(
-                                    const Size(150, 50)),
+                                    const Size(175, 50)),
                                 shape: MaterialStateProperty.all<
                                     RoundedRectangleBorder>(
                                   RoundedRectangleBorder(
@@ -181,89 +214,88 @@ class _LandingScreenState extends State<LandingScreen> {
                                     MaterialStateProperty.all(maincolor)),
                             onPressed: () async {
                               // updateFirstRunData();
-                              nextScreen(context, const LoginScreen());
+                              Get.offAllNamed(Routes.login);
                             },
                             child: Text(
-                              tr("log_in"),
+                              tr("get_started"),
                               style: const TextStyle(color: Colors.white),
                             )),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        ElevatedButton(
-                            style: ButtonStyle(
-                                minimumSize: MaterialStateProperty.all(
-                                    const Size(150, 50)),
-                                shape: MaterialStateProperty.all<
-                                    RoundedRectangleBorder>(
-                                  RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20.0),
-                                  ),
-                                ),
-                                backgroundColor:
-                                    MaterialStateProperty.all(Colors.white)),
-                            onPressed: () async {
-                              // updateFirstRunData();
-                              nextScreen(context, const SignupScreen());
-                            },
-                            child: Text(
-                              tr("sign_up"),
-                              style: const TextStyle(color: Colors.black),
-                            )),
-                        const SizedBox(
-                          height: 40,
-                        ),
-                        anonButtonVisible
-                            ? ElevatedButton(
-                                style: ButtonStyle(
-                                    minimumSize: MaterialStateProperty.all(
-                                        const Size(150, 50)),
-                                    shape: MaterialStateProperty.all<
-                                        RoundedRectangleBorder>(
-                                      RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(20.0),
-                                      ),
-                                    ),
-                                    backgroundColor: MaterialStateProperty.all(
-                                        const Color(0xFFfad2aa))),
-                                onPressed: () async {
-                                  setState(() {
-                                    anonButtonVisible = false;
-                                  });
-                                  await checkConnection().then((value) async {
-                                    if (value && mounted) {
-                                      await auth
-                                          .signInAnonymously()
-                                          .then((value) {
-                                        mixpanel.track(
-                                          'Anonymous Login',
-                                        );
-                                        setState(() {
-                                          anonButtonVisible = true;
-                                        });
-                                        nextScreen(context, const caffieneHomePage());
-                                      });
-                                    } else {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        SnackBar(
-                                          content: Text(
-                                            tr("check_connection"),
-                                            maxLines: 3,
-                                            style: kTextSmallBodyStyle,
-                                          ),
-                                          duration: const Duration(seconds: 3),
-                                        ),
-                                      );
-                                    }
-                                  });
-                                },
-                                child: Text(
-                                  tr("continue_anonymously"),
-                                  style: const TextStyle(color: Colors.black),
-                                ))
-                            : const CircularProgressIndicator()
+                        // ElevatedButton(
+                        //     style: ButtonStyle(
+                        //         minimumSize: MaterialStateProperty.all(
+                        //             const Size(150, 50)),
+                        //         shape: MaterialStateProperty.all<
+                        //             RoundedRectangleBorder>(
+                        //           RoundedRectangleBorder(
+                        //             borderRadius: BorderRadius.circular(20.0),
+                        //           ),
+                        //         ),
+                        //         backgroundColor:
+                        //             MaterialStateProperty.all(Colors.white)),
+                        //     onPressed: () async {
+                        //       // updateFirstRunData();
+                        //       nextScreen(context, const SignupScreen());
+                        //     },
+                        //     child: Text(
+                        //       tr("sign_up"),
+                        //       style: const TextStyle(color: Colors.black),
+                        //     )),
+                        // const SizedBox(
+                        //   height: 40,
+                        // ),
+
+                        // anonButtonVisible
+                        //     ? ElevatedButton(
+                        //         style: ButtonStyle(
+                        //             minimumSize: MaterialStateProperty.all(
+                        //                 const Size(150, 50)),
+                        //             shape: MaterialStateProperty.all<
+                        //                 RoundedRectangleBorder>(
+                        //               RoundedRectangleBorder(
+                        //                 borderRadius:
+                        //                     BorderRadius.circular(20.0),
+                        //               ),
+                        //             ),
+                        //             backgroundColor: MaterialStateProperty.all(
+                        //                 const Color(0xFFfad2aa))),
+                        //         onPressed: () async {
+                        //           setState(() {
+                        //             anonButtonVisible = false;
+                        //           });
+                        //           await checkConnection().then((value) async {
+                        //             if (value && mounted) {
+                        //               await auth
+                        //                   .signInAnonymously()
+                        //                   .then((value) {
+                        //                 mixpanel.track(
+                        //                   'Anonymous Login',
+                        //                 );
+                        //                 setState(() {
+                        //                   anonButtonVisible = true;
+                        //                 });
+                        //                 nextScreen(
+                        //                     context, const caffieneHomePage());
+                        //               });
+                        //             } else {
+                        //               ScaffoldMessenger.of(context)
+                        //                   .showSnackBar(
+                        //                 SnackBar(
+                        //                   content: Text(
+                        //                     tr("check_connection"),
+                        //                     maxLines: 3,
+                        //                     style: kTextSmallBodyStyle,
+                        //                   ),
+                        //                   duration: const Duration(seconds: 3),
+                        //                 ),
+                        //               );
+                        //             }
+                        //           });
+                        //         },
+                        //         child: Text(
+                        //           tr("continue_anonymously"),
+                        //           style: const TextStyle(color: Colors.black),
+                        //         ))
+                        //     : const CircularProgressIndicator()
                       ],
                     ),
                   ),

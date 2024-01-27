@@ -5,6 +5,7 @@ import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/utils/globlal_methods.dart';
+import 'package:caffiene/utils/textStyle.dart';
 import 'package:caffiene/video_providers/dcva.dart';
 import 'package:caffiene/video_providers/flixhq.dart';
 import 'package:caffiene/video_providers/provider_names.dart';

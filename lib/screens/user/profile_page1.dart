@@ -1,11 +1,13 @@
 import 'package:caffiene/models/profile_modal.dart';
 import 'package:caffiene/provider/settings_provider.dart';
+import 'package:caffiene/provider/sign_in_provider.dart';
 import 'package:caffiene/screens/common/landing_screen.dart';
 import 'package:caffiene/screens/common/subscribe_to_premium.dart';
 import 'package:caffiene/utils/app_colors.dart';
 import 'package:caffiene/utils/app_images.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/utils/routes/app_pages.dart';
+import 'package:caffiene/utils/textStyle.dart';
 import 'package:caffiene/widgets/size_configuration.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -40,6 +42,7 @@ class _ProfilePage1State extends State<ProfilePage1> {
   void getData() async {
     User? user = _auth.currentUser;
     uid = user!.uid;
+    final sp = context.read<SignInProvider>();
 
     if (user.isAnonymous) {
       if (mounted) {
@@ -141,9 +144,9 @@ class _ProfilePage1State extends State<ProfilePage1> {
                                 children: [
                                   ClipRRect(
                                       borderRadius: BorderRadius.circular(80),
-                                      child: snapshot.data!['profileId'] == null
-                                          ? Image.asset(
-                                              'assets/images/profiles/0.png',
+                                      child: snapshot.data!['provider'] == "google"
+                                          ? Image.network(
+                                              snapshot.data!['image_url'],
                                               width: 80,
                                               height: 80,
                                             )
