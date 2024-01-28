@@ -6,11 +6,11 @@ import 'package:caffiene/utils/routes/app_pages.dart';
 import 'package:caffiene/utils/snackbar.dart';
 import 'package:caffiene/utils/textStyle.dart';
 import 'package:caffiene/widgets/size_configuration.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:mixpanel_flutter/web/mixpanel_js_bindings.dart';
 import 'package:provider/provider.dart';
 
 class LoginScreen1 extends StatefulWidget {
@@ -22,6 +22,8 @@ class LoginScreen1 extends StatefulWidget {
 
 class _LoginScreen1State extends State<LoginScreen1> {
   bool anonButtonVisible = true;
+  late DocumentSnapshot subscription;
+  late DocumentSnapshot Watch_history_subscription;
 
   @override
   Widget build(BuildContext context) {
@@ -236,11 +238,66 @@ class _LoginScreen1State extends State<LoginScreen1> {
     final sp = context.read<SignInProvider>();
     sp.getDataFromSharedPreferences();
 
-    Future.delayed(const Duration(milliseconds: 1000)).then((value) {
-      // if (sp.firstRun == false && sp.provider == "google") {
-      //   print("do first login Stuff");
-      // }
-      print(sp.firstRun);
+    Future.delayed(const Duration(milliseconds: 1000)).then((value) async {
+      if (sp.firstRun == false && sp.provider == "google") {
+        FirebaseFirestore.instance.collection('bookmarks').doc(sp.uid).set({});
+        subscription = await FirebaseFirestore.instance
+            .collection('bookmarks')
+            .doc(sp.uid)
+            .get();
+        final docData = subscription.data() as Map<String, dynamic>;
+
+        if (docData.containsKey('movies') == false) {
+          await FirebaseFirestore.instance
+              .collection('bookmarks')
+              .doc(sp.uid)
+              .update({'movies': []});
+        }
+        if (docData.containsKey('tvShows') == false) {
+          await FirebaseFirestore.instance
+              .collection('bookmarks')
+              .doc(sp.uid)
+              .update(
+            {'tvShows': []},
+          );
+        }
+        await FirebaseFirestore.instance
+            .collection('watch_history')
+            .doc(sp.uid)
+            .set({});
+
+        Watch_history_subscription = await FirebaseFirestore.instance
+            .collection('watch_history')
+            .doc(sp.uid)
+            .get();
+
+        if (docData.containsKey('movies') == false) {
+          await FirebaseFirestore.instance
+              .collection('watch_history')
+              .doc(sp.uid)
+              .update(
+            {'movies': []},
+          );
+        }
+
+        if (docData.containsKey('tvShows') == false) {
+          await FirebaseFirestore.instance
+              .collection('watch_history')
+              .doc(sp.uid)
+              .update(
+            {'tvShows': []},
+          );
+        }
+
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(sp.uid)
+            .update({'firstRun': true});
+
+        Get.offAllNamed(Routes.dash);
+      } else {
+        Get.offAllNamed(Routes.dash);
+      }
     });
   }
 }

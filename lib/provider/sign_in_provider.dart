@@ -32,8 +32,8 @@ class SignInProvider extends ChangeNotifier {
   String? get name => _name;
 
   String? _imageUrl;
-  String? get imageUrl => _imageUrl;  
-  
+  String? get imageUrl => _imageUrl;
+
   bool? _firstRun;
   bool? get firstRun => _firstRun;
 
@@ -111,7 +111,7 @@ class SignInProvider extends ChangeNotifier {
         .doc(uid)
         .get()
         .then((DocumentSnapshot snapshot) => {
-              _uid = snapshot['uid'],
+              _uid = snapshot['id'],
               _name = snapshot['name'],
               _email = snapshot['email'],
               _imageUrl = snapshot['image_url'],
