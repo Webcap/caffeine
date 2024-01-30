@@ -146,7 +146,7 @@ class _ProfilePage1State extends State<ProfilePage1> {
                                 children: [
                                   ClipRRect(
                                       borderRadius: BorderRadius.circular(80),
-                                      child: snapshot.data!['image_url'] != null
+                                      child: snapshot.data!['image_url'] != ""
                                           ? Image.network(
                                               snapshot.data!['image_url'],
                                               width: 80,
