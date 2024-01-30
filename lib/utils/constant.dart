@@ -18,13 +18,18 @@ const String opensubtitlesBaseUrl = "https://api.opensubtitles.com/api/v1";
 const String CAFFEINE_UPDATE_URL =
     "https://webcap.github.io/caffiene/res/update.json";
 const String ERROROCCURRED = "an error has occurred";
+
+
+//API KEYS//
 String CONSUMET_API = dotenv.env['CONSUMET_URL']!;
 String CONSUMET_INFO_API = dotenv.env['CONSUMET_URL']!;
 String caffeineApiUrl = dotenv.env['CAFFEINE_API_URL']!;
 const String SUPABASE_URL = 'https://quzrpdvpbnydfjzigcoi.supabase.co';
 const String STREAMING_SERVER = "vidcloud";
 String openSubtitlesKey = dotenv.env['OPENSUBTITLES_API_KEY']!;
+String mixpanelKey = dotenv.env['MIXPANEL_API_KEY']!;
 
+//VIDEO PROVIDERS//
 const String STREAMING_SERVER_FLIXHQ = "vidcloud";
 const String STREAMING_SERVER_DCVA = "asianload";
 const String STREAMING_SERVER_ZORO = "vidcloud";

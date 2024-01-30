@@ -1,8 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:retry/retry.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -11,16 +9,8 @@ class appConfig {
   static const app_name = "caffeine";
 }
 
-String mixpanelKey = dotenv.env['MIXPANEL_API_KEY']!;
-
 const Color darkmode = Colors.white;
-const List<String> backimage = [
-  'https://www.asianpaints.com/content/dam/asian_paints/colours/swatches/K085.png.transform/cc-width-720-height-540/image.png',
-  'https://images.pexels.com/videos/3045163/free-video-3045163.jpg?auto=compress&cs=tinysrgb&dpr=1&w=500',
-];
-
 Color uppermodecolor = darkmode;
-String selectedbackimg = backimage[1];
 Color oppositecolor = Colors.black;
 
 const maincolor = Color(0xfffea575e);

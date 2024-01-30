@@ -9,7 +9,6 @@ import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/screens/bookmarks/bookmark_tv_screen.dart';
 import 'package:caffiene/screens/bookmarks/movie_bookmark_tab.dart';
 import 'package:caffiene/screens/bookmarks/sync_screen.dart';
-import 'package:caffiene/utils/config.dart';
 import 'package:provider/provider.dart';
 
 class BookmarkScreen extends StatefulWidget {

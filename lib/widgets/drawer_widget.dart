@@ -1,6 +1,5 @@
 import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:caffiene/screens/common/server_status_screen.dart';
-import 'package:caffiene/screens/common/subscribe_to_premium.dart';
 import 'package:caffiene/screens/wip/chromecast_test.dart';
 import 'package:caffiene/screens/tv_screens/live_tv_screen.dart';
 import 'package:easy_localization/easy_localization.dart';

@@ -1,13 +1,19 @@
+// ignore_for_file: unused_field
+
+import 'package:caffiene/functions/functions.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/provider/sign_in_provider.dart';
+import 'package:caffiene/screens/auth_screens/login_screen.dart';
 import 'package:caffiene/utils/app_colors.dart';
 import 'package:caffiene/utils/app_images.dart';
+import 'package:caffiene/utils/next_screen.dart';
 import 'package:caffiene/utils/routes/app_pages.dart';
 import 'package:caffiene/utils/snackbar.dart';
 import 'package:caffiene/utils/textStyle.dart';
 import 'package:caffiene/widgets/size_configuration.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -22,11 +28,14 @@ class LoginScreen1 extends StatefulWidget {
 
 class _LoginScreen1State extends State<LoginScreen1> {
   bool anonButtonVisible = true;
+  bool googleButtonVisable = true;
   late DocumentSnapshot subscription;
   late DocumentSnapshot Watch_history_subscription;
 
   @override
   Widget build(BuildContext context) {
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    final mixpanel = Provider.of<SettingsProvider>(context).mixpanel;
     SizeConfig().init(context);
     final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     return Scaffold(
@@ -55,54 +64,60 @@ class _LoginScreen1State extends State<LoginScreen1> {
             ),
 
             /// Google LogIn ///
-            InkWell(
-              onTap: () async {
-                handleGoogleSignin();
-              },
-              child: Container(
-                height: Get.height / 14.5,
-                width: Get.width / 1.1,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: themeMode == "dark" || themeMode == "amoled"
-                        ? Colors.transparent
-                        : const Color(0xffeeeeee),
-                    width: 1,
-                  ),
-                  color: themeMode == "dark" || themeMode == "amoled"
-                      ? ColorValues.darkmodesecond
-                      : ColorValues.whiteColor,
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        CircleAvatar(
-                          radius: 10,
-                          backgroundColor:
-                              themeMode == "dark" || themeMode == "amoled"
-                                  ? ColorValues.darkmodesecond
-                                  : ColorValues.whiteColor,
-                          child: SvgPicture.asset(MovixIcon.google),
+            googleButtonVisable
+                ? InkWell(
+                    onTap: () async {
+                      setState(() {
+                        googleButtonVisable = false;
+                      });
+                      handleGoogleSignin();
+                    },
+                    child: Container(
+                      height: Get.height / 14.5,
+                      width: Get.width / 1.1,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: themeMode == "dark" || themeMode == "amoled"
+                              ? Colors.transparent
+                              : const Color(0xffeeeeee),
+                          width: 1,
                         ),
-                        const SizedBox(width: 12),
-                        Text(
-                          "Continue with Google",
-                          style: loginMathodStyle,
-                        ),
-                      ],
+                        color: themeMode == "dark" || themeMode == "amoled"
+                            ? ColorValues.darkmodesecond
+                            : ColorValues.whiteColor,
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              CircleAvatar(
+                                radius: 10,
+                                backgroundColor:
+                                    themeMode == "dark" || themeMode == "amoled"
+                                        ? ColorValues.darkmodesecond
+                                        : ColorValues.whiteColor,
+                                child: SvgPicture.asset(MovixIcon.google),
+                              ),
+                              const SizedBox(width: 12),
+                              Text(
+                                "Continue with Google",
+                                style: loginMathodStyle,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ],
-                ),
-              ),
-            ),
+                  )
+                : const CircularProgressIndicator(),
+
             SizedBox(
               height: Get.height / 40,
             ),
@@ -142,7 +157,7 @@ class _LoginScreen1State extends State<LoginScreen1> {
             /// Email LogIn ///
             InkWell(
               onTap: () async {
-                print("Email");
+                nextScreen(context, LoginScreen());
               },
               child: Container(
                 height: 47,
@@ -174,7 +189,33 @@ class _LoginScreen1State extends State<LoginScreen1> {
             anonButtonVisible
                 ? InkWell(
                     onTap: () async {
-                      print("Email");
+                      setState(() {
+                        anonButtonVisible = false;
+                      });
+                      await checkConnection().then((value) async {
+                        if (value && mounted) {
+                          await auth.signInAnonymously().then((value) {
+                            mixpanel.track(
+                              'Anonymous Login',
+                            );
+                            setState(() {
+                              anonButtonVisible = true;
+                            });
+                            Get.offAllNamed(Routes.dash);
+                          });
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                tr("check_connection"),
+                                maxLines: 3,
+                                style: kTextSmallBodyStyle,
+                              ),
+                              duration: const Duration(seconds: 3),
+                            ),
+                          );
+                        }
+                      });
                     },
                     child: Container(
                       height: 47,
@@ -198,7 +239,7 @@ class _LoginScreen1State extends State<LoginScreen1> {
                       ),
                     ),
                   )
-                : Container()
+                : const CircularProgressIndicator()
           ],
         ),
       ),
@@ -218,6 +259,8 @@ class _LoginScreen1State extends State<LoginScreen1> {
             await sp.getUserDataFromFirestore(sp.uid).then((value) => sp
                 .saveDatatoSharedPreferences()
                 .then((value) => sp.setSignIn().then((value) {
+                      openSnackbar(
+                          context, "Alright, You're Good Buddy.", Colors.green);
                       handleAfterSignIn();
                     })));
           } else {
@@ -225,6 +268,8 @@ class _LoginScreen1State extends State<LoginScreen1> {
             sp.saveDatatoFirestore().then((value) => sp
                 .saveDatatoSharedPreferences()
                 .then((value) => sp.setSignIn().then((value) {
+                      openSnackbar(
+                          context, "Alright, You're Good Buddy.", Colors.green);
                       handleAfterSignIn();
                     })));
           }

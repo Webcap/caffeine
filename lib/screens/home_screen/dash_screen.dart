@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:caffiene/provider/settings_provider.dart';
-import 'package:caffiene/screens/user/profile_page.dart';
 import 'package:caffiene/screens/discover_screens/discovery_screen.dart';
 import 'package:caffiene/screens/movie_screens/main_movie_display.dart';
 import 'package:caffiene/screens/search/search_view.dart';

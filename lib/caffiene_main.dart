@@ -5,7 +5,6 @@ import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:caffiene/provider/recently_watched_provider.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/provider/sign_in_provider.dart';
-import 'package:caffiene/screens/auth_screens/user_state.dart';
 import 'package:caffiene/utils/routes/app_pages.dart';
 import 'package:caffiene/utils/theme_data.dart';
 import 'package:dynamic_color/dynamic_color.dart';
@@ -80,7 +79,7 @@ class _caffeineState extends State<caffeine>
       appDependencyProvider.streamingServerZoro =
           _remoteConfig.getString('streaming_server_zoro');
     }
-    await requestNotificationPermissions();
+    // await requestNotificationPermissions();
   }
 
   @override

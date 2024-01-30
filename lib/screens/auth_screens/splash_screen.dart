@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:caffiene/utils/app_images.dart';
-import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/utils/helpers/injection.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -36,6 +35,7 @@ class _SplashScreenState extends State<SplashScreen> {
         print("user Sgned in");
         // Get.offAll(() => const DownloadOffline());
       } else {
+        print("else");
         DependencyInjection.init();
       }
     });

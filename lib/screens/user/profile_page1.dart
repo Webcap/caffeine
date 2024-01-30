@@ -1,3 +1,5 @@
+// ignore_for_file: unused_local_variable
+
 import 'package:caffiene/models/profile_modal.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/provider/sign_in_provider.dart';
@@ -5,7 +7,6 @@ import 'package:caffiene/screens/common/landing_screen.dart';
 import 'package:caffiene/screens/common/subscribe_to_premium.dart';
 import 'package:caffiene/utils/app_colors.dart';
 import 'package:caffiene/utils/app_images.dart';
-import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/utils/routes/app_pages.dart';
 import 'package:caffiene/utils/textStyle.dart';
 import 'package:caffiene/widgets/size_configuration.dart';
@@ -80,6 +81,7 @@ class _ProfilePage1State extends State<ProfilePage1> {
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
+    final sp = context.watch<SignInProvider>();
     final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     return userAnonymous == null
         ? const Center(
@@ -144,7 +146,7 @@ class _ProfilePage1State extends State<ProfilePage1> {
                                 children: [
                                   ClipRRect(
                                       borderRadius: BorderRadius.circular(80),
-                                      child: snapshot.data!['provider'] == "google"
+                                      child: snapshot.data!['image_url'] != null
                                           ? Image.network(
                                               snapshot.data!['image_url'],
                                               width: 80,
@@ -166,10 +168,39 @@ class _ProfilePage1State extends State<ProfilePage1> {
                                   const SizedBox(
                                     height: 10,
                                   ),
-                                  Text(
-                                    snapshot.data!['email'] ??
-                                        'caffeineUser123',
-                                    style: titalstyle2,
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Wrap(
+                                        spacing: 5,
+                                        crossAxisAlignment:
+                                            WrapCrossAlignment.center,
+                                        children: [
+                                          Text(
+                                            snapshot.data!['email'] ??
+                                                'caffeineUser123',
+                                            style: titalstyle2,
+                                          ),
+                                          Visibility(
+                                              visible:
+                                                  snapshot.data!['verified'] ??
+                                                      false,
+                                              child: ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                                child: SvgPicture.asset(
+                                                  'assets/images/checkmark.svg',
+                                                  width: 20,
+                                                  height: 20,
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .primary,
+                                                ),
+                                              )),
+                                        ],
+                                      )
+                                    ],
                                   ),
                                   SizedBox(
                                     height: SizeConfig.blockSizeVertical * 2,
@@ -603,12 +634,12 @@ class _ProfilePage1State extends State<ProfilePage1> {
                                                           ),
                                                         ),
                                                       ),
-                                                      onTap: () async {
-                                                        await _auth.signOut();
+                                                      onTap: () {
+                                                        sp.userSignOut();
                                                         print("logging out");
                                                         Get.back();
                                                         Get.offNamed(
-                                                            Routes.splash);
+                                                            Routes.landingScreen);
                                                       },
                                                     )
                                                   ],

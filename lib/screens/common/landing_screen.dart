@@ -1,18 +1,13 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:caffiene/utils/app_images.dart';
-import 'package:caffiene/utils/next_screen.dart';
 import 'package:caffiene/utils/routes/app_pages.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:caffiene/provider/settings_provider.dart';
-import 'package:caffiene/screens/auth_screens/login_screen.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-import 'package:provider/provider.dart';
 
 class LandingScreen extends StatefulWidget {
   const LandingScreen({Key? key}) : super(key: key);
@@ -35,17 +30,12 @@ class _LandingScreenState extends State<LandingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final FirebaseAuth auth = FirebaseAuth.instance;
 
     // void updateFirstRunData() async {
     //   final sharedPrefsSingleton = await SharedPreferences.getInstance();
     //   await sharedPrefsSingleton.setBool('isFirstRun', false);
     // }
 
-    final mixpanel = Provider.of<SettingsProvider>(context).mixpanel;
-
-    double deviceHeight = MediaQuery.of(context).size.height;
-    double deviceWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
       body: Stack(

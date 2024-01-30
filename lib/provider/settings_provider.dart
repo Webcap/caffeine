@@ -1,7 +1,6 @@
 import 'package:caffiene/models/setting_preferences.dart';
 import 'package:caffiene/utils/constant.dart';
 import 'package:flutter/material.dart';
-import 'package:caffiene/utils/config.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 
 class SettingsProvider with ChangeNotifier {

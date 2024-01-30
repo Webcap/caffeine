@@ -7,7 +7,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:caffiene/models/profile_image_list.dart';
-import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/utils/globlal_methods.dart';
 
 class ProfileEdit extends StatefulWidget {
@@ -25,6 +24,7 @@ class _ProfileEditState extends State<ProfileEdit> {
   String? userEmail;
   bool? isVerified;
   String? name;
+  String? provider;
   String? email;
   String? joinedAt;
   Timestamp? createdAt;
