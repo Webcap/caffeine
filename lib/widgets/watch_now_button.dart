@@ -136,7 +136,7 @@ class WatchNowButtonState extends State<WatchNowButton> {
         child: Row(
           children: [
             const Padding(
-              padding: EdgeInsets.only(right: 10, left: 10),
+              padding: EdgeInsets.only(right: 5, left: 5),
               child: Icon(
                 Icons.play_circle,
                 color: Colors.white,

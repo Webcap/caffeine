@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:caffiene/api/movies_api.dart';
 import 'package:caffiene/models/movie_models.dart';
 import 'package:caffiene/provider/settings_provider.dart';
-import 'package:caffiene/screens/movie_screens/main_movie_list.dart';
+import 'package:caffiene/screens/movie_screens/widgets/main_movie_list.dart';
 import 'package:caffiene/screens/movie_screens/movie_details.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/widgets/shimmer_widget.dart';

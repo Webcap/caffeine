@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:caffiene/screens/movie_screens/widgets/castButton.dart';
 import 'package:caffiene/utils/app_colors.dart';
 import 'package:caffiene/utils/helpers/castDeviceList.dart';
@@ -28,6 +29,9 @@ class MovieDetailQuickInfo extends StatelessWidget {
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     final appLang = Provider.of<SettingsProvider>(context).appLanguage;
+    late AppDependencyProvider appDependency =
+        Provider.of<AppDependencyProvider>(context, listen: false);
+        
     return SizedBox(
       height: 310,
       width: double.infinity,
@@ -98,108 +102,103 @@ class MovieDetailQuickInfo extends StatelessWidget {
                             bottom: 0,
                             child: SafeArea(
                               child: Container(
-                                alignment: appLang == 'ar'
-                                    ? Alignment.topLeft
-                                    : Alignment.topRight,
-                                child: GestureDetector(child: CastButton(
-                                  onTap: () {
-                                    Get.bottomSheet(
-                                        backgroundColor: themeMode == "dark" ||
-                                                themeMode == "amoled"
-                                            ? Colors.white
-                                            : Colors.black,
-                                        shape: const RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.only(
-                                            topRight: Radius.circular(40),
-                                            topLeft: Radius.circular(40),
-                                          ),
-                                        ),
-                                        Container(
-                                          padding: EdgeInsets.only(
-                                            left:
-                                                SizeConfig.blockSizeHorizontal *
-                                                    3,
-                                            right:
-                                                SizeConfig.blockSizeHorizontal *
-                                                    3,
-                                          ),
-                                          height: SizeConfig.screenHeight / 3,
-                                          decoration: BoxDecoration(
-                                            color: themeMode == "dark" ||
-                                                    themeMode == "amoled"
-                                                ? ColorValues.darkmodesecond
-                                                : ColorValues.whiteColor,
-                                            borderRadius:
-                                                const BorderRadius.only(
-                                              topRight: Radius.circular(45),
-                                              topLeft: Radius.circular(45),
-                                            ),
-                                          ),
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceEvenly,
-                                            children: [
+                                  alignment: appLang == 'ar'
+                                      ? Alignment.topLeft
+                                      : Alignment.topRight,
+                                  child: appDependency.displayCastButton
+                                      ? GestureDetector(child: CastButton(
+                                          onTap: () {
+                                            Get.bottomSheet(
+                                              isScrollControlled: true,
+                                              backgroundColor:
+                                                  themeMode == "dark" ||
+                                                          themeMode == "amoled"
+                                                      ? Colors.white
+                                                      : Colors.black,
+                                              shape:
+                                                  const RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.only(
+                                                  topRight: Radius.circular(40),
+                                                  topLeft: Radius.circular(40),
+                                                ),
+                                              ),
                                               Container(
-                                                width: SizeConfig
-                                                        .blockSizeHorizontal *
-                                                    13,
-                                                height: 5,
+                                                padding: EdgeInsets.only(
+                                                  left: SizeConfig
+                                                          .blockSizeHorizontal *
+                                                      3,
+                                                  right: SizeConfig
+                                                          .blockSizeHorizontal *
+                                                      3,
+                                                ),
+                                                height:
+                                                    SizeConfig.screenHeight / 2,
                                                 decoration: BoxDecoration(
+                                                  color: themeMode == "dark" ||
+                                                          themeMode == "amoled"
+                                                      ? ColorValues
+                                                          .darkmodesecond
+                                                      : ColorValues.whiteColor,
                                                   borderRadius:
-                                                      BorderRadius.circular(60),
-                                                  color: ColorValues.boxColor,
+                                                      const BorderRadius.only(
+                                                    topRight:
+                                                        Radius.circular(45),
+                                                    topLeft:
+                                                        Radius.circular(45),
+                                                  ),
+                                                ),
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceEvenly,
+                                                  children: [
+                                                    Container(
+                                                      width: SizeConfig
+                                                              .blockSizeHorizontal *
+                                                          13,
+                                                      height: 5,
+                                                      decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(60),
+                                                        color: ColorValues
+                                                            .boxColor,
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      "Connect a Device",
+                                                      style:
+                                                          GoogleFonts.urbanist(
+                                                        fontSize: 22,
+                                                        color: ColorValues
+                                                            .redColor,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                    const Divider(
+                                                      color: Colors.grey,
+                                                      indent: 15,
+                                                      endIndent: 15,
+                                                    ),
+                                                    SizedBox(
+                                                      height: SizeConfig
+                                                              .blockSizeVertical *
+                                                          0.06,
+                                                    ),
+                                                    Expanded(
+                                                      child:
+                                                          SingleChildScrollView(
+                                                        child: CastDeviceList(),
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
                                               ),
-                                              Text(
-                                                "Connect a Device",
-                                                style: GoogleFonts.urbanist(
-                                                  fontSize: 22,
-                                                  color: ColorValues.redColor,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                              const Divider(
-                                                color: Colors.grey,
-                                                // thickness: 1.0,
-                                                indent: 15,
-                                                endIndent: 15,
-                                              ),
-                                              SizedBox(
-                                                height: SizeConfig.blockSizeVertical * 0.06,
-                                              ),
-                                              Row(
-                                                crossAxisAlignment: CrossAxisAlignment.center,
-                                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  CastDeviceList()
-                                                ],
-                                              )
-                                            ],
-                                          ),
-                                        ));
-                                  },
-                                )
-                                    // child: WatchProvidersButton(
-                                    //   api: Endpoints.getMovieWatchProviders(
-                                    //       movie.id!, appLang),
-                                    //   country: watchCountry,
-                                    //   onTap: () {
-                                    // showModalBottomSheet(
-                                    //       context: context,
-                                    //       builder: (builder) {
-                                    //         return WatchProvidersDetails(
-                                    //           api: Endpoints
-                                    //               .getMovieWatchProviders(
-                                    //                   movie.id!, appLang),
-                                    //           country: watchCountry,
-                                    //         );
-                                    //       },
-                                    //     );
-                                    //   },
-                                    // ),
-                                    ),
-                              ),
+                                            );
+                                          },
+                                        ))
+                                      : Container()),
                             ),
                           ),
                         ],

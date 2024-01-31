@@ -72,6 +72,8 @@ class _caffeineState extends State<caffeine>
           _remoteConfig.getBool('trending_holiday_scroller');
       appDependencyProvider.displayWatchNowButton =
           _remoteConfig.getBool('enable_stream');
+      appDependencyProvider.displayCastButton =
+          _remoteConfig.getBool('enable_chromecast_feature');
       appDependencyProvider.displayOTTDrawer =
           _remoteConfig.getBool('enable_ott');
       appDependencyProvider.caffeineAPIURL =

@@ -44,6 +44,9 @@ class AppDependencyProvider extends ChangeNotifier {
   bool _displayWatchNowButton = true;
   bool get displayWatchNowButton => _displayWatchNowButton;
 
+  bool _displayCastButton = true;
+  bool get displayCastButton => _displayCastButton;
+
   bool _displayOTTDrawer = true;
   bool get displayOTTDrawer => _displayOTTDrawer;
 
@@ -149,6 +152,11 @@ class AppDependencyProvider extends ChangeNotifier {
 
   set displayWatchNowButton(bool value) {
     _displayWatchNowButton = value;
+    notifyListeners();
+  }
+
+  set displayCastButton(bool value) {
+    _displayCastButton = value;
     notifyListeners();
   }
 
