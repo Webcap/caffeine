@@ -19,14 +19,14 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
-class LoginScreen1 extends StatefulWidget {
-  const LoginScreen1({Key? key}) : super(key: key);
+class welcomeScreen extends StatefulWidget {
+  const welcomeScreen({Key? key}) : super(key: key);
 
   @override
-  _LoginScreen1State createState() => _LoginScreen1State();
+  _welcomeScreenState createState() => _welcomeScreenState();
 }
 
-class _LoginScreen1State extends State<LoginScreen1> {
+class _welcomeScreenState extends State<welcomeScreen> {
   bool anonButtonVisible = true;
   bool googleButtonVisable = true;
   late DocumentSnapshot subscription;
@@ -251,6 +251,9 @@ class _LoginScreen1State extends State<LoginScreen1> {
     await sp.signInWithGoogle().then((value) {
       if (sp.hasError == true) {
         openSnackbar(context, sp.errorCode.toString(), Colors.red);
+        setState(() {
+          googleButtonVisable = true;
+        });
       } else {
         // checking DB to see if User exists
         sp.checkuserExists().then((value) async {
@@ -333,6 +336,15 @@ class _LoginScreen1State extends State<LoginScreen1> {
             {'tvShows': []},
           );
         }
+
+        await sp.createRandomUsername().then((value) {
+          print("creating Username");
+          print(value);
+          sp.insertUsername(value, sp.uid.toString());
+          FirebaseFirestore.instance.collection('users').doc(sp.uid).update({
+            'username': value,
+          });
+        });
 
         await FirebaseFirestore.instance
             .collection('users')

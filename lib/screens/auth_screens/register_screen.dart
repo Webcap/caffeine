@@ -111,7 +111,8 @@ class _SignupScreenState extends State<SignupScreen> {
                 'joinedAt': date,
                 'createdAt': Timestamp.now(),
                 'isSubscribed': false,
-                'firstRun': false,
+                'firstRun': true,
+                'image_url': "",
                 'provider': "email"
               });
               await FirebaseFirestore.instance
