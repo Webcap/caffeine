@@ -6,6 +6,7 @@ import 'package:caffiene/provider/sign_in_provider.dart';
 import 'package:caffiene/screens/auth_screens/login_screen.dart';
 import 'package:caffiene/utils/app_colors.dart';
 import 'package:caffiene/utils/app_images.dart';
+import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/utils/helpers/next_screen.dart';
 import 'package:caffiene/utils/routes/app_pages.dart';
 import 'package:caffiene/utils/helpers/snackbar.dart';
@@ -284,6 +285,7 @@ class _welcomeScreenState extends State<welcomeScreen> {
   // handle after signin
   handleAfterSignIn() {
     final sp = context.read<SignInProvider>();
+
     sp.getDataFromSharedPreferences();
 
     Future.delayed(const Duration(milliseconds: 1000)).then((value) async {
@@ -344,6 +346,7 @@ class _welcomeScreenState extends State<welcomeScreen> {
           FirebaseFirestore.instance.collection('users').doc(sp.uid).update({
             'username': value,
           });
+          sharedPrefsSingleton.setString('username', value);
         });
 
         await FirebaseFirestore.instance

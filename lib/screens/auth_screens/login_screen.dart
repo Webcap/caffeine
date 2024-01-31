@@ -238,7 +238,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                               MaterialStatePropertyAll(
                                                   Colors.transparent)),
                                       onPressed: () {
-                                        Get.to(Routes.signup);
+                                        Get.toNamed(Routes.signup);
                                       },
                                       child: Text(
                                         tr("sign_up"),

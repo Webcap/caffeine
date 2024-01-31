@@ -115,6 +115,13 @@ class _SignupScreenState extends State<SignupScreen> {
                 'image_url': "",
                 'provider': "email"
               });
+
+              sharedPrefsSingleton.setString('name', _fullName);
+              sharedPrefsSingleton.setString('email', _emailAddress);
+              sharedPrefsSingleton.setString('username', "");
+              sharedPrefsSingleton.setString('uid', uid);
+              sharedPrefsSingleton.setString('provider', "email");
+
               await FirebaseFirestore.instance
                   .collection('usernames')
                   .doc(_userName)

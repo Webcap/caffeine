@@ -123,8 +123,8 @@ class SignInProvider extends ChangeNotifier {
         _uid = userDetails.uid;
         _imageUrl = userDetails.photoURL;
         _provider = "google";
+        _firstRun = false;
         notifyListeners();
-
       } on FirebaseAuthException catch (e) {
         switch (e.code) {
           case "account-exists-with-different-credential":
@@ -189,11 +189,10 @@ class SignInProvider extends ChangeNotifier {
     final SharedPreferences s = await SharedPreferences.getInstance();
     await s.setString('name', _name!);
     await s.setString('email', _email!);
-    await s.setString('username', "");
     await s.setString('uid', _uid!);
     await s.setString('imageUrl', _imageUrl!);
     await s.setString('provider', _provider!);
-    await s.setBool('firstRun', false);
+    await s.setBool('firstRun', _firstRun!);
     notifyListeners();
   }
 
