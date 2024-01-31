@@ -11,6 +11,7 @@ import 'package:caffiene/utils/routes/app_pages.dart';
 import 'package:caffiene/utils/textStyle.dart';
 import 'package:caffiene/widgets/size_configuration.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -167,6 +168,18 @@ class _ProfilePageState extends State<ProfilePage> {
                                   ),
                                   const SizedBox(
                                     height: 10,
+                                  ),
+                                  Text(
+                                    "Provider: ${sp.provider}".toUpperCase(),
+                                    style: titalstyle2,
+                                  ),
+                                  const SizedBox(
+                                    height: 3,
+                                  ),
+                                  Text(
+                                    'Joined: ${DateFormat('MMMM').format(DateTime(0, DateTime.parse(snapshot.data!['joinedAt']).month))} ${DateTime.parse(snapshot.data!['joinedAt']).year}'),
+                                  const SizedBox(
+                                    height: 3,
                                   ),
                                   Column(
                                     crossAxisAlignment:

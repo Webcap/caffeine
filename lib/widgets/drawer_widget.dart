@@ -11,7 +11,7 @@ import 'package:caffiene/screens/bookmarks/bookmark_screen.dart';
 import 'package:caffiene/screens/common/update_screen.dart';
 import 'package:caffiene/screens/settings/settings.dart';
 import 'package:caffiene/utils/config.dart';
-import 'package:caffiene/utils/next_screen.dart';
+import 'package:caffiene/utils/helpers/next_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 

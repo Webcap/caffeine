@@ -5,7 +5,7 @@ import 'package:caffiene/models/app_colors.dart';
 import 'package:caffiene/models/app_languages.dart';
 import 'package:caffiene/screens/settings/language_choose.dart';
 import 'package:caffiene/screens/settings/player_settings.dart';
-import 'package:caffiene/utils/next_screen.dart';
+import 'package:caffiene/utils/helpers/next_screen.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
