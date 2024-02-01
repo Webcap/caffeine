@@ -170,7 +170,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                     height: 10,
                                   ),
                                   Text(
-                                    "Provider: ${sp.provider}".toUpperCase(),
+                                    "Provider: ${snapshot.data!['provider']}".toUpperCase(),
                                     style: titalstyle2,
                                   ),
                                   const SizedBox(

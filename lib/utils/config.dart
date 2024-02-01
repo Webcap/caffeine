@@ -24,10 +24,10 @@ const kTextSmallHeaderStyle = TextStyle(
   overflow: TextOverflow.ellipsis,
 );
 
-//********************************* */
+
 //********************************* */
 // ** VERSION CONTROL BUDDY //
-const String currentAppVersion = '1.6.0-dev';
+const String currentAppVersion = '1.6.0-devbuild-2';
 //*********************************** */
 
 const kTextHeaderStyle = TextStyle(
