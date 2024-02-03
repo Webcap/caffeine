@@ -11,7 +11,8 @@ environment:
 dependencies:
   animated_text_kit: ^4.2.1
   better_player:
-    path: C:\Users\solox\Desktop\Projects\caffeine_betterplayer
+    git:
+        url: https://github.com/Webcap/caffeine_betterplayer.git
   cached_network_image: ^3.2.2
   carousel_slider: ^4.1.1
   cast: ^1.1.1

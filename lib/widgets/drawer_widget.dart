@@ -1,6 +1,5 @@
 import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:caffiene/screens/common/server_status_screen.dart';
-import 'package:caffiene/screens/wip/chromecast_test.dart';
 import 'package:caffiene/screens/tv_screens/live_tv_screen.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -56,7 +55,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                       child: Image.asset(appConfig.app_icon),
                     ),
                   ),
-                  appDependencyProvider.displayOTTDrawer
+                  appDependencyProvider.displayOTTDrawer == true
                       ? ListTile(
                           leading: Icon(
                             FontAwesomeIcons.tv,
@@ -68,16 +67,6 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                           },
                         )
                       : Container(),
-                  ListTile(
-                    leading: Icon(
-                      FontAwesomeIcons.userPlus,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                    title: Text("Testing Zone"),
-                    onTap: () {
-                      nextScreen(context, const ChromecastHome());
-                    },
-                  ),
                   ListTile(
                     leading: Icon(
                       FontAwesomeIcons.bookmark,

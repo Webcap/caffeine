@@ -91,6 +91,7 @@ class _caffeineState extends State<caffeine>
     fileDelete();
     FirebaseMessaging.onMessage.listen((RemoteMessage event) {});
     FirebaseMessaging.onMessageOpenedApp.listen((message) {});
+    print(appDependencyProvider.displayOTTDrawer);
   }
 
   @override
