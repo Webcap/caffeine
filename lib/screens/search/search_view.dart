@@ -464,12 +464,15 @@ class Search extends SearchDelegate<String> {
                                       Row(
                                         children: <Widget>[
                                           const Icon(
-                                            Icons.star,
+                                            Icons.star_rounded,
                                           ),
                                           Text(
-                                            moviesList[index]
-                                                .voteAverage!
-                                                .toStringAsFixed(1),
+                                            moviesList[index].voteAverage ==
+                                                    null
+                                                ? 'NR'
+                                                : moviesList[index]
+                                                    .voteAverage!
+                                                    .toStringAsFixed(1),
                                             style: TextStyle(
                                                 fontFamily: 'Poppins',
                                                 color: themeMode == "dark" ||

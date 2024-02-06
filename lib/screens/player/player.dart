@@ -118,7 +118,7 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
         qualitiesIcon: Icons.hd_rounded,
         enableAudioTracks: false,
         controlBarHeight: 50,
-        // watchingText: tr("watching_text")
+        watchingText: tr("watching_text")
       );
 
     BetterPlayerConfiguration betterPlayerConfiguration =

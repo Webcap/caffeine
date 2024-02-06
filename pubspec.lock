@@ -44,11 +44,9 @@ packages:
   better_player:
     dependency: "direct main"
     description:
-      path: "."
-      ref: HEAD
-      resolved-ref: "49880b2341c54f24f13940f143757f7e2692e113"
-      url: "https://github.com/Webcap/caffeine_betterplayer.git"
-    source: git
+      path: "C:\\Users\\solox\\Desktop\\Projects\\caffeine_betterplayer"
+      relative: false
+    source: path
     version: "0.0.82"
   bonsoir:
     dependency: transitive
