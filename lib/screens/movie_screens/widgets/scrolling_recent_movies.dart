@@ -125,6 +125,7 @@ class _ScrollingRecentMoviesState extends State<ScrollingRecentMovies> {
                                               releaseYear: widget
                                                   .moviesList[index]
                                                   .releaseYear,
+                                              releaseDate: null
                                             ))))
                                 : ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(

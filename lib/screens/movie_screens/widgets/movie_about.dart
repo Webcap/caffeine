@@ -123,6 +123,7 @@ class _MovieAboutState extends State<MovieAbout> {
                         posterPath: widget.movie.posterPath,
                         backdropPath: widget.movie.backdropPath,
                         api: Endpoints.movieDetailsUrl(widget.movie.id!, lang),
+                        releaseDate: widget.movie.releaseDate,
                       )
                     : Container()
                 // const SizedBox(

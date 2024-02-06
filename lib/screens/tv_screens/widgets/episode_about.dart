@@ -104,7 +104,7 @@ class _EpisodeAboutState extends State<EpisodeAbout> {
             const SizedBox(height: 20),
             appDependency.displayWatchNowButton && widget.posterPath != null
               ? WatchNowButtonTV(
-                  episodeList: widget.episodeList,
+                  episode: widget.episodeList,
                   seriesName: widget.seriesName!,
                   tvId: widget.tvId!,
                   posterPath: widget.posterPath!,

@@ -4,6 +4,7 @@ import 'dart:io';
 import 'dart:math';
 import 'package:caffiene/video_providers/provider_names.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:caffiene/models/live_tv.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +12,6 @@ import 'package:http/http.dart' as http;
 import 'package:caffiene/models/update.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:permission_handler/permission_handler.dart';
-
 
 Future checkForUpdate(String api) async {
   UpdateChecker updateChecker;
@@ -194,4 +194,19 @@ List<VideoProvider?> parseProviderPrecedenceString(String raw) {
   }).toList();
 
   return videoProviders;
+}
+
+bool isReleased(String target) {
+  DateTime currentDate = DateTime.now();
+  DateTime mediaDate = DateFormat('yyyy-MM-dd').parse(target);
+  return mediaDate.isBefore(currentDate) ||
+      mediaDate.isAtSameMomentAs(currentDate);
+}
+
+String normalizeTitle(String title) {
+  return title
+      .trim()
+      .toLowerCase()
+      .replaceAll(RegExp('[":\']'), '')
+      .replaceAll(RegExp('[^a-zA-Z0-9]+'), '_');
 }

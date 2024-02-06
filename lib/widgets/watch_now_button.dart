@@ -20,6 +20,7 @@ class WatchNowButton extends StatefulWidget {
     this.movieImdbId,
     this.api,
     required this.releaseYear,
+    required this.releaseDate,
     required this.backdropPath,
     this.adult,
   }) : super(key: key);
@@ -31,6 +32,7 @@ class WatchNowButton extends StatefulWidget {
   final int releaseYear;
   final String? posterPath;
   final String? backdropPath;
+  final String? releaseDate;
 
   @override
   WatchNowButtonState createState() => WatchNowButtonState();
@@ -107,18 +109,9 @@ class WatchNowButtonState extends State<WatchNowButton> {
                           movieId: widget.movieId,
                           movieName: widget.movieName,
                           posterPath: widget.posterPath,
-                          releaseYear: widget.releaseYear),
-                      /*
-                      
-                      [
-                        widget.movieId,
-                        widget.movieName,
-                        widget.posterPath,
-                        widget.releaseYear,
-                        
-                        elapsed
-                      ],
-                      */
+                          releaseYear: widget.releaseYear,
+                          releaseDate: widget.releaseDate,
+                      ),
                     );
                   })))
                 : ScaffoldMessenger.of(context).showSnackBar(

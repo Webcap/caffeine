@@ -134,6 +134,7 @@ class _ScrollingRecentEpisodesState extends State<ScrollingRecentEpisodes> {
                                                   .seriesName,
                                               tvId: widget
                                                   .episodesList[index].seriesId,
+                                              airDate: null
                                             ))))
                                 : ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(

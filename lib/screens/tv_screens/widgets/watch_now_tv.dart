@@ -14,7 +14,7 @@ import 'package:provider/provider.dart';
 class WatchNowButtonTV extends StatefulWidget {
   const WatchNowButtonTV(
       {Key? key,
-      required this.episodeList,
+      required this.episode,
       required this.seriesName,
       required this.tvId,
       required this.posterPath})
@@ -22,7 +22,7 @@ class WatchNowButtonTV extends StatefulWidget {
 
   final String seriesName, posterPath;
   final int tvId;
-  final EpisodeList episodeList;
+  final EpisodeList episode;
 
   @override
   State<WatchNowButtonTV> createState() => _WatchNowButtonTVState();
@@ -96,13 +96,14 @@ class _WatchNowButtonTVState extends State<WatchNowButtonTV> {
                                 : StreamRoute.tmDB,
                             metadata: TVStreamMetadata(
                               elapsed: null,
-                              episodeId: widget.episodeList.episodeId,
-                              episodeName: widget.episodeList.name,
-                              episodeNumber: widget.episodeList.episodeNumber!,
+                              episodeId: widget.episode.episodeId,
+                              episodeName: widget.episode.name,
+                              episodeNumber: widget.episode.episodeNumber!,
                               posterPath: widget.posterPath,
-                              seasonNumber: widget.episodeList.seasonNumber!,
+                              seasonNumber: widget.episode.seasonNumber!,
                               seriesName: widget.seriesName,
                               tvId: widget.tvId,
+                              airDate: widget.episode.airDate
                             ));
                       })))
                     : ScaffoldMessenger.of(context).showSnackBar(
