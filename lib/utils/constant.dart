@@ -35,7 +35,7 @@ const String STREAMING_SERVER_DCVA = "asianload";
 const String STREAMING_SERVER_ZORO = "vidcloud";
 
 const providerPreference =
-    'flixhqS2-FlixHQ_S2 superstream-Superstream flixhq-FlixHQ viewasian-ViewAsian dramacool-Dramacool zoro-Zoro ';
+    'flixhqS2-FlixHQ_S2 flixhq-FlixHQ showbox-ShowBox zoe-Zoechip gomovies-GoMovies zoro-Zoro vidsrc-VidSrc dramacool-Dramacool viewasian-ViewAsian';
 
 const retryOptionsStream = RetryOptions(
     maxDelay: Duration(milliseconds: 300),

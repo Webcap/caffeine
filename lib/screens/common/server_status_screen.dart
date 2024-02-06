@@ -26,11 +26,6 @@ class ServerStatusScreen extends StatefulWidget {
 
 class _ServerStatusScreenState extends State<ServerStatusScreen> {
   List<RegularVideoLinks>? videoLinks;
-  FlixHQStreamSources? fqVideoSources;
-  SuperstreamStreamSources? superstreamVideoSources;
-  DCVAStreamSources? dramacoolStreamSources;
-  DCVAStreamSources? viewasianStreamSources;
-  ZoroStreamSources? zoroStreamSources;
   List<VideoStatusCheck> videoProvidersCheck = [];
   String ping = "";
   DateTime? start;
@@ -81,29 +76,27 @@ class _ServerStatusScreenState extends State<ServerStatusScreen> {
                   "${appDependency.consumetUrl}movies/flixhq/watch?episodeId=97708&mediaId=movie/watch-no-hard-feelings-97708&server=${appDependency.streamingServerFlixHQ}")
               .then((value) {
             if (mounted) {
-              fqVideoSources = value;
-              videoLinks = fqVideoSources!.videoLinks;
+              videoLinks = value.videoLinks;
             }
           });
         } on Exception catch (e) {
           GlobalMethods.showErrorScaffoldMessengerMediaLoad(
               e, context, 'FlixHQ');
         }
-      } else if (videoProviders[i].codeName == 'superstream') {
+      } else if (videoProviders[i].codeName == 'showbox') {
         start = DateTime.now();
 
         try {
-          await getSuperstreamStreamingLinks(
-                  "${appDependency.caffeineAPIURL}superstream/watch-movie?tmdbId=455980")
+          await getCaffeineAPILinks(
+                  "${appDependency.caffeineAPIURL}showbox/watch-movie?tmdbId=455980")
               .then((value) {
             if (mounted) {
-              superstreamVideoSources = value;
-              videoLinks = superstreamVideoSources!.videoLinks;
+              videoLinks = value.videoLinks;
             }
           });
         } on Exception catch (e) {
           GlobalMethods.showErrorScaffoldMessengerMediaLoad(
-              e, context, 'Superstream');
+              e, context, 'ShowBox');
         }
       } else if (videoProviders[i].codeName == 'dramacool') {
         start = DateTime.now();
@@ -112,8 +105,7 @@ class _ServerStatusScreenState extends State<ServerStatusScreen> {
                   "${appDependency.consumetUrl}movies/dramacool/watch?id=drama-detail/a-different-girl&episodeId=a-different-girl-2021-episode-1&server=${appDependency.streamingServerDCVA}")
               .then((value) {
             if (mounted) {
-              dramacoolStreamSources = value;
-              videoLinks = dramacoolStreamSources!.videoLinks;
+              videoLinks = value.videoLinks;
             }
           });
         } on Exception catch (e) {
@@ -127,8 +119,7 @@ class _ServerStatusScreenState extends State<ServerStatusScreen> {
                   "${appDependencyProvider.consumetUrl}movies/viewasian/watch?id=drama/tell-me-you-love-me&episodeId=/watch/tell-me-you-love-me/watching.html\$episode\$1&server=${appDependencyProvider.streamingServerDCVA}")
               .then((value) {
             if (mounted) {
-              viewasianStreamSources = value;
-              videoLinks = viewasianStreamSources!.videoLinks;
+              videoLinks = value.videoLinks;
             }
           });
         } on Exception catch (e) {
@@ -142,8 +133,7 @@ class _ServerStatusScreenState extends State<ServerStatusScreen> {
                   "${appDependencyProvider.consumetUrl}anime/zoro/watch?episodeId=one-piece-movie-1-3096\$episode\$58122\$sub&server=${appDependencyProvider.streamingServerZoro}")
               .then((value) {
             if (mounted) {
-              zoroStreamSources = value;
-              videoLinks = zoroStreamSources!.videoLinks;
+              videoLinks = value.videoLinks;
             }
           });
         } on Exception catch (e) {
@@ -152,17 +142,58 @@ class _ServerStatusScreenState extends State<ServerStatusScreen> {
       } else if (videoProviders[i].codeName == 'flixhqS2') {
         start = DateTime.now();
         try {
-          await getSuperstreamStreamingLinks(
+          await getCaffeineAPILinks(
                   "${appDependency.caffeineAPIURL}flixhq/watch-movie?tmdbId=455980")
               .then((value) {
             if (mounted) {
-              superstreamVideoSources = value;
-              videoLinks = superstreamVideoSources!.videoLinks;
+              videoLinks = value.videoLinks;
             }
           });
         } on Exception catch (e) {
           GlobalMethods.showErrorScaffoldMessengerMediaLoad(
               e, context, 'FlixHQ_S2');
+        }
+      } else if (videoProviders[i].codeName == 'zoe') {
+        start = DateTime.now();
+        try {
+          await getCaffeineAPILinks(
+                  "${appDependency.caffeineAPIURL}zoe/watch-movie?tmdbId=455980")
+              .then((value) {
+            if (mounted) {
+              videoLinks = value.videoLinks;
+            }
+          });
+        } on Exception catch (e) {
+          GlobalMethods.showErrorScaffoldMessengerMediaLoad(
+              e, context, 'Zoechip');
+        }
+      } else if (videoProviders[i].codeName == 'gomovies') {
+        start = DateTime.now();
+        try {
+          await getCaffeineAPILinks(
+                  "${appDependency.caffeineAPIURL}gomovies/watch-movie?tmdbId=455980")
+              .then((value) {
+            if (mounted) {
+              videoLinks = value.videoLinks;
+            }
+          });
+        } on Exception catch (e) {
+          GlobalMethods.showErrorScaffoldMessengerMediaLoad(
+              e, context, 'GoMovies');
+        }
+      } else if (videoProviders[i].codeName == 'vidsrc') {
+        start = DateTime.now();
+        try {
+          await getCaffeineAPILinks(
+                  "${appDependency.caffeineAPIURL}vidsrc/watch-movie?tmdbId=455980")
+              .then((value) {
+            if (mounted) {
+              videoLinks = value.videoLinks;
+            }
+          });
+        } on Exception catch (e) {
+          GlobalMethods.showErrorScaffoldMessengerMediaLoad(
+              e, context, 'Vidsrc');
         }
       }
 
@@ -178,14 +209,14 @@ class _ServerStatusScreenState extends State<ServerStatusScreen> {
           setState(() {
             videoProvidersCheck[i].isWaiting = false;
             videoProvidersCheck[i].resultMessage =
-                "${videoProviders[i].fullName} ${tr("server_down")}";
+                "❌ ${videoProviders[i].fullName} ${tr("server_down")}";
           });
         } else {
           setState(() {
             videoProvidersCheck[i].isWaiting = false;
             videoProvidersCheck[i].isWorking = true;
             videoProvidersCheck[i].resultMessage =
-                '${videoProviders[i].fullName} ${tr("server_working")}';
+                '✔️ ${videoProviders[i].fullName} ${tr("server_working")}';
           });
         }
       }
@@ -229,7 +260,7 @@ class _ServerStatusScreenState extends State<ServerStatusScreen> {
                               videoProvidersCheck[index].waitingMessage!,
                               style: const TextStyle(
                                 fontFamily: 'PoppinsSB',
-                                fontSize: 20,
+                                fontSize: 15,
                               ),
                               textAlign: TextAlign.center,
                               maxLines: 3,
@@ -246,7 +277,7 @@ class _ServerStatusScreenState extends State<ServerStatusScreen> {
                                         : videoProvidersCheck[index].isWorking!
                                             ? Colors.green
                                             : Colors.red,
-                                    fontSize: 22),
+                                    fontSize: 17),
                                 textAlign: TextAlign.center,
                                 maxLines: 3,
                               ),
@@ -259,14 +290,14 @@ class _ServerStatusScreenState extends State<ServerStatusScreen> {
                                 }),
                                 style: const TextStyle(
                                   color: Colors.yellow,
-                                  fontSize: 18,
+                                  fontSize: 13,
                                 ),
                                 textAlign: TextAlign.center,
                                 maxLines: 3,
                               ),
                             ),
                             const SizedBox(
-                              height: 25,
+                              height: 5,
                             ),
                             const Divider(
                               thickness: 3,

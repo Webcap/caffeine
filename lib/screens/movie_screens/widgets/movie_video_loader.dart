@@ -885,7 +885,7 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
   Future<void> loadFlixHQFlixQuestApi() async {
     try {
       if (mounted) {
-        await getFlixHQFlixQuestLinks(Endpoints.getMovieLinksFlixHQFQ(
+        await getFlixHQFlixQuestLinks(Endpoints.getMovieEndpointCaffeineAPI(
                 appDep.caffeineAPIURL, widget.metadata.movieId!))
             .then((value) {
           if (mounted) {

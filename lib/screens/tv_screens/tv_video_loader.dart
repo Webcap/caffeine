@@ -686,7 +686,7 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
   Future<void> loadFlixHQFlixQuestApi() async {
     try {
       if (mounted) {
-        await getFlixHQFlixQuestLinks(Endpoints.getTVLinksFlixHQFQ(
+        await getFlixHQFlixQuestLinks(Endpoints.getTVEndpointCaffeineAPI(
                 appDep.caffeineAPIURL,
                 widget.metadata.episodeNumber!,
                 widget.metadata.seasonNumber!,

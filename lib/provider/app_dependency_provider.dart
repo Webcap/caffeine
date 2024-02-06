@@ -1,6 +1,6 @@
 import 'package:caffiene/utils/constant.dart';
 import 'package:flutter/material.dart';
-import '../models/app_dependency_preferences.dart';
+import '../preferences/app_dependency_preferences.dart';
 
 class AppDependencyProvider extends ChangeNotifier {
   AppDependencies appDependencies = AppDependencies();
