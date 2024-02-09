@@ -80,7 +80,7 @@ class _ScrollingRecentEpisodesState extends State<ScrollingRecentEpisodes> {
         ),
         SizedBox(
           width: double.infinity,
-          height: 280,
+          height: 300,
           child: Row(
             children: [
               Expanded(
@@ -113,29 +113,29 @@ class _ScrollingRecentEpisodesState extends State<ScrollingRecentEpisodes> {
                                                 ? StreamRoute.flixHQ
                                                 : StreamRoute.tmDB,
                                             metadata: TVStreamMetadata(
-                                                elapsed: widget
-                                                    .episodesList[index]
-                                                    .elapsed,
-                                                episodeId: widget
-                                                    .episodesList[index].id,
-                                                episodeName: widget
-                                                    .episodesList[index]
-                                                    .episodeName,
-                                                episodeNumber: widget
-                                                    .episodesList[index]
-                                                    .episodeNum,
-                                                posterPath: widget
-                                                    .episodesList[index]
-                                                    .posterPath,
-                                                seasonNumber: widget
-                                                    .episodesList[index]
-                                                    .seasonNum,
-                                                seriesName: widget
-                                                    .episodesList[index]
-                                                    .seriesName,
-                                                tvId: widget.episodesList[index]
-                                                    .seriesId,
-                                                airDate: null))))
+                                              elapsed: widget
+                                                  .episodesList[index].elapsed,
+                                              episodeId:
+                                                  widget.episodesList[index].id,
+                                              episodeName: widget
+                                                  .episodesList[index]
+                                                  .episodeName,
+                                              episodeNumber: widget
+                                                  .episodesList[index]
+                                                  .episodeNum,
+                                              posterPath: widget
+                                                  .episodesList[index]
+                                                  .posterPath,
+                                              seasonNumber: widget
+                                                  .episodesList[index]
+                                                  .seasonNum,
+                                              seriesName: widget
+                                                  .episodesList[index]
+                                                  .seriesName,
+                                              tvId: widget
+                                                  .episodesList[index].seriesId,
+                                              airDate: null,
+                                            ))))
                                 : GlobalMethods.showCustomScaffoldMessage(
                                     SnackBar(
                                       content: Text(
@@ -152,10 +152,10 @@ class _ScrollingRecentEpisodesState extends State<ScrollingRecentEpisodes> {
                           width: 100,
                           child: Column(
                             children: <Widget>[
-                              Expanded(
-                                flex: 8,
-                                child: Material(
-                                  type: MaterialType.transparency,
+                              Material(
+                                type: MaterialType.transparency,
+                                child: SizedBox(
+                                  height: 155,
                                   child: Stack(
                                     alignment: Alignment.bottomCenter,
                                     children: [
@@ -217,7 +217,6 @@ class _ScrollingRecentEpisodesState extends State<ScrollingRecentEpisodes> {
                                         child: Container(
                                           margin: const EdgeInsets.all(3),
                                           alignment: Alignment.center,
-                                          width: 70,
                                           height: 22,
                                           decoration: BoxDecoration(
                                               borderRadius:
@@ -225,18 +224,22 @@ class _ScrollingRecentEpisodesState extends State<ScrollingRecentEpisodes> {
                                               color: Theme.of(context)
                                                   .primaryColor
                                                   .withOpacity(0.85)),
-                                          child: Row(
-                                            children: [
-                                              Text(
-                                                  '${widget.episodesList[index].seasonNum! <= 9 ? 'S0${widget.episodesList[index].seasonNum!}' : 'S${widget.episodesList[index].seasonNum!}'} | '
-                                                  '${widget.episodesList[index].episodeNum! <= 9 ? 'E0${widget.episodesList[index].episodeNum!}' : 'E${widget.episodesList[index].episodeNum!}'}'
-                                                  '',
-                                                  style: TextStyle(
-                                                      color: Theme.of(context)
-                                                          .colorScheme
-                                                          .onPrimary
-                                                          .withOpacity(0.85)))
-                                            ],
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 4.0),
+                                            child: Row(
+                                              children: [
+                                                Text(
+                                                    '${widget.episodesList[index].seasonNum! <= 9 ? 'S0${widget.episodesList[index].seasonNum!}' : 'S${widget.episodesList[index].seasonNum!}'} | '
+                                                    '${widget.episodesList[index].episodeNum! <= 9 ? 'E0${widget.episodesList[index].episodeNum!}' : 'E${widget.episodesList[index].episodeNum!}'}'
+                                                    '',
+                                                    style: TextStyle(
+                                                        color: Theme.of(context)
+                                                            .colorScheme
+                                                            .onPrimary
+                                                            .withOpacity(0.85)))
+                                              ],
+                                            ),
                                           ),
                                         ),
                                       ),
@@ -260,31 +263,25 @@ class _ScrollingRecentEpisodesState extends State<ScrollingRecentEpisodes> {
                                   ),
                                 ),
                               ),
-                              Expanded(
-                                flex: 3,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    widget.episodesList[index].seriesName!,
-                                    maxLines: 2,
-                                    textAlign: TextAlign.center,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  widget.episodesList[index].seriesName!,
+                                  maxLines: 2,
+                                  textAlign: TextAlign.center,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
-                              Expanded(
-                                flex: 3,
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 8.0, right: 8.0),
-                                  child: Text(
-                                    widget.episodesList[index].episodeName!,
-                                    maxLines: 2,
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.w900),
-                                    textAlign: TextAlign.center,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 8.0, right: 8.0),
+                                child: Text(
+                                  widget.episodesList[index].episodeName!,
+                                  maxLines: 3,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.w900),
+                                  textAlign: TextAlign.center,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
                             ],

@@ -168,7 +168,7 @@ class ScrollingTVState extends State<ScrollingTV>
                                         builder: (context) => TVDetailPage(
                                             tvSeries: tvList![index],
                                             heroId:
-                                                '${tvList![index].id}${widget.title}')));
+                                                '${tvList![index].id}${widget.title}-${widget.discoverType}')));
                               },
                               child: SizedBox(
                                 width: 100,
@@ -178,7 +178,7 @@ class ScrollingTVState extends State<ScrollingTV>
                                       flex: 6,
                                       child: Hero(
                                         tag:
-                                            '${tvList![index].id}${widget.title}',
+                                            '${tvList![index].id}${widget.title}-${widget.discoverType}',
                                         child: Material(
                                           type: MaterialType.transparency,
                                           child: Stack(

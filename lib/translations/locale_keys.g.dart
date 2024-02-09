@@ -483,7 +483,7 @@ abstract class  LocaleKeys {
   static const fetch_all_subs = 'fetch_all_subs';
   static const video_link_copied = 'video_link_copied';
   static const latency = 'latency';
-  static const flixquest_appbar = 'flixquest_appbar';
+  static const caffeine_appbar = 'caffeine_appbar';
   static const share_episode = 'share_episode';
   static const dark = 'dark';
   static const light = 'light';
@@ -502,5 +502,13 @@ abstract class  LocaleKeys {
   static const general_error = 'general_error';
   static const enter_full_screen = 'enter_full_screen';
   static const fetching = 'fetching';
+  static const give_file_permission = 'give_file_permission';
+  static const give_file_permission_short = 'give_file_permission_short';
+  static const must_update = 'must_update';
+  static const update = 'update';
+  static const exit = 'exit';
+  static const retry = 'retry';
+  static const movie_may_not_be_available = 'movie_may_not_be_available';
+  static const episode_may_not_be_available = 'episode_may_not_be_available';
 
 }
