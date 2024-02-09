@@ -54,7 +54,7 @@ final List<String> appNames = [
 
 CacheManager cacheProp() {
   return CacheManager(
-      Config('cacheKey', stalePeriod: const Duration(days: 10)));
+      Config('cacheKey', stalePeriod: const Duration(days: 15)));
 }
 
 enum MediaType { movie, tvShow }

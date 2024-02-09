@@ -19,7 +19,6 @@ const String CAFFEINE_UPDATE_URL =
     "https://webcap.github.io/caffiene/res/update.json";
 const String ERROROCCURRED = "an error has occurred";
 
-
 //API KEYS//
 String CONSUMET_API = dotenv.env['CONSUMET_URL']!;
 String CONSUMET_INFO_API = dotenv.env['CONSUMET_URL']!;
@@ -35,7 +34,7 @@ const String STREAMING_SERVER_DCVA = "asianload";
 const String STREAMING_SERVER_ZORO = "vidcloud";
 
 const providerPreference =
-    'flixhqS2-FlixHQ_S2 flixhq-FlixHQ vidsrcto-VidSrcTo zoe-Zoechip gomovies-GoMovies zoro-Zoro vidsrc-VidSrc showbox-ShowBox dramacool-Dramacool viewasian-ViewAsian';
+    'flixhqS2-FlixHQ_S2 flixhq-FlixHQ showbox-ShowBox vidsrcto-VidSrcTo zoe-Zoechip gomovies-GoMovies zoro-Zoro vidsrc-VidSrc dramacool-Dramacool viewasian-ViewAsian';
 
 const retryOptionsStream = RetryOptions(
     maxDelay: Duration(milliseconds: 300),

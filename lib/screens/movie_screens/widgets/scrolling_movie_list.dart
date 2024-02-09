@@ -164,7 +164,7 @@ class ScrollingMoviesState extends State<ScrollingMovies>
                                         builder: (context) => MovieDetailPage(
                                             movie: moviesList![index],
                                             heroId:
-                                                '${moviesList![index].id}${widget.title}')));
+                                                '${moviesList![index].id}${widget.title}-${widget.discoverType}')));
                               },
                               child: SizedBox(
                                 width: 100,
@@ -174,7 +174,7 @@ class ScrollingMoviesState extends State<ScrollingMovies>
                                       flex: 6,
                                       child: Hero(
                                         tag:
-                                            '${moviesList![index].id}${widget.title}',
+                                            '${moviesList![index].id}${widget.title}-${widget.discoverType}',
                                         child: Material(
                                           type: MaterialType.transparency,
                                           child: Stack(

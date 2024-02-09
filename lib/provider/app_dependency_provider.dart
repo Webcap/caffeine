@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../preferences/app_dependency_preferences.dart';
 
 class AppDependencyProvider extends ChangeNotifier {
-  AppDependencies appDependencies = AppDependencies();
+  final AppDependencies __appDependencies = AppDependencies();
 
   String _consumetUrl = CONSUMET_API;
   String get consumetUrl => _consumetUrl;
@@ -53,73 +53,85 @@ class AppDependencyProvider extends ChangeNotifier {
   bool _isForcedUpdate = false;
   bool get isForcedUpdate => _isForcedUpdate;
 
+  String _flixhqZoeServer = "vidcloud";
+  String get flixhqZoeServer => _flixhqZoeServer;
+
+  String _goMoviesServer = "upcloud";
+  String get goMoviesServer => _goMoviesServer;
+
+  String _vidSrcToServer = "vidplay";
+  String get vidSrcToServer => _vidSrcToServer;
+
+  String _vidSrcServer = "vidsrcembed";
+  String get vidSrcServer => _vidSrcServer;
+
   Future<void> getConsumetUrl() async {
-    consumetUrl = await appDependencies.getConsumetUrl();
+    consumetUrl = await __appDependencies.getConsumetUrl();
   }
 
   set consumetUrl(String value) {
     _consumetUrl = value;
-    appDependencies.setConsumetUrl(value);
+    __appDependencies.setConsumetUrl(value);
     notifyListeners();
   }
 
   Future<void> getCinemaxLogo() async {
-    caffieneLogo = await appDependencies.getCaffieneLogo();
+    caffieneLogo = await __appDependencies.getCaffieneLogo();
   }
 
   set caffieneLogo(String value) {
     _caffieneLogo = value;
-    appDependencies.setCaffieneUrl(value);
+    __appDependencies.setCaffieneUrl(value);
     notifyListeners();
   }
 
   Future<void> getFQUrl() async {
-    caffeineAPIURL = await appDependencies.getFQURL();
+    caffeineAPIURL = await __appDependencies.getFQURL();
   }
 
   set caffeineAPIURL(String value) {
     _caffeineAPIUrl = value;
-    appDependencies.setCaffeineAPIUrl(value);
+    __appDependencies.setCaffeineAPIUrl(value);
     notifyListeners();
   }
 
   Future<void> getOpenSubKey() async {
-    opensubtitlesKey = await appDependencies.getOpenSubtitlesKey();
+    opensubtitlesKey = await __appDependencies.getOpenSubtitlesKey();
   }
 
   set opensubtitlesKey(String value) {
     _opensubtitlesKey = value;
-    appDependencies.setOpenSubKey(value);
+    __appDependencies.setOpenSubKey(value);
     notifyListeners();
   }
 
   Future<void> getStreamingServerFlixHQ() async {
-    streamingServerFlixHQ = await appDependencies.getStreamServerFlixHQ();
+    streamingServerFlixHQ = await __appDependencies.getStreamServerFlixHQ();
   }
 
   set streamingServerFlixHQ(String value) {
     _streamingServerFlixHQ = value;
-    appDependencies.setStreamServerFlixHQ(value);
+    __appDependencies.setStreamServerFlixHQ(value);
     notifyListeners();
   }
 
   Future<void> getStreamingServerDCVA() async {
-    streamingServerDCVA = await appDependencies.getStreamServerDCVA();
+    streamingServerDCVA = await __appDependencies.getStreamServerDCVA();
   }
 
   set streamingServerDCVA(String value) {
     _streamingServerDCVA = value;
-    appDependencies.setStreamServerDCVA(value);
+    __appDependencies.setStreamServerDCVA(value);
     notifyListeners();
   }
 
   Future<void> getStreamingServerZoro() async {
-    streamingServerZoro = await appDependencies.getStreamServerZoro();
+    streamingServerZoro = await __appDependencies.getStreamServerZoro();
   }
 
   set streamingServerZoro(String value) {
     _streamingServerZoro = value;
-    appDependencies.setStreamServerZoro(value);
+    __appDependencies.setStreamServerZoro(value);
     notifyListeners();
   }
 
@@ -129,12 +141,12 @@ class AppDependencyProvider extends ChangeNotifier {
   }
 
   Future<void> getStreamRoute() async {
-    fetchRoute = await appDependencies.getStreamRoute();
+    fetchRoute = await __appDependencies.getStreamRoute();
   }
 
   set fetchRoute(String value) {
     _fetchRoute = value;
-    appDependencies.setStreamRoute(value);
+    __appDependencies.setStreamRoute(value);
     notifyListeners();
   }
 
@@ -170,6 +182,26 @@ class AppDependencyProvider extends ChangeNotifier {
 
   set isForcedUpdate(bool value) {
     _isForcedUpdate = value;
+    notifyListeners();
+  }
+
+  set goMoviesServer(String value) {
+    _goMoviesServer = value;
+    notifyListeners();
+  }
+
+  set flixhqZoeServer(String value) {
+    _flixhqZoeServer = value;
+    notifyListeners();
+  }
+
+  set vidSrcServer(String value) {
+    _vidSrcServer = value;
+    notifyListeners();
+  }
+
+  set vidSrcToServer(String value) {
+    _vidSrcToServer = value;
     notifyListeners();
   }
 }

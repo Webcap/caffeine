@@ -54,9 +54,6 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
   List<ZoroSearchEntry>? zoroMovies;
   List<ZoroInfoEntries>? zoroEpi;
 
-  var startAppSdk = StartAppSdk();
-  StartAppInterstitialAd? interstitialAd;
-
   FlixHQStreamSources? fqMovieVideoSources;
   CaffeineAPIStreamSources? flixHQFlixQuestStreamSources,
       zoechipVideoSources,
@@ -69,6 +66,9 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
   ZoroStreamSources? zoroVideoSources;
   List<RegularVideoLinks>? movieVideoLinks;
   List<RegularSubtitleLinks>? movieVideoSubs;
+
+  var startAppSdk = StartAppSdk();
+  StartAppInterstitialAd? interstitialAd;
 
   double loadProgress = 0.00;
   late SettingsProvider settings =
@@ -95,6 +95,7 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
         parseProviderPrecedenceString(prefString.proPreference)
             .where((provider) => provider != null)
             .cast<VideoProvider>());
+
     if (appDep.enableADS) {
       loadInterstitialAd();
     }
@@ -815,7 +816,7 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
     try {
       if (mounted) {
         await getCaffeineAPILinks(Endpoints.getMovieEndpointCaffeineAPI(
-                appDep.caffeineAPIURL, widget.metadata.movieId!, 'showbox'))
+                appDep.caffeineAPIURL, widget.metadata.movieId!, 'showbox', ""))
             .then((value) {
           if (mounted) {
             if (value.messageExists == null &&
@@ -920,7 +921,10 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
     try {
       if (mounted) {
         await getCaffeineAPILinks(Endpoints.getMovieEndpointCaffeineAPI(
-                appDep.caffeineAPIURL, widget.metadata.movieId!, 'flixhq'))
+                appDep.caffeineAPIURL,
+                widget.metadata.movieId!,
+                'flixhq',
+                appDep.flixhqZoeServer))
             .then((value) {
           if (mounted) {
             if (value.messageExists == null &&
@@ -954,7 +958,10 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
     try {
       if (mounted) {
         await getCaffeineAPILinks(Endpoints.getMovieEndpointCaffeineAPI(
-                appDep.caffeineAPIURL, widget.metadata.movieId!, 'zoe'))
+                appDep.caffeineAPIURL,
+                widget.metadata.movieId!,
+                'zoe',
+                appDep.flixhqZoeServer))
             .then((value) {
           if (mounted) {
             if (value.messageExists == null &&
@@ -987,7 +994,10 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
     try {
       if (mounted) {
         await getCaffeineAPILinks(Endpoints.getMovieEndpointCaffeineAPI(
-                appDep.caffeineAPIURL, widget.metadata.movieId!, 'gomovies'))
+                appDep.caffeineAPIURL,
+                widget.metadata.movieId!,
+                'gomovies',
+                appDep.goMoviesServer))
             .then((value) {
           if (mounted) {
             if (value.messageExists == null &&
@@ -1020,7 +1030,10 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
     try {
       if (mounted) {
         await getCaffeineAPILinks(Endpoints.getMovieEndpointCaffeineAPI(
-                appDep.caffeineAPIURL, widget.metadata.movieId!, 'vidsrc'))
+                appDep.caffeineAPIURL,
+                widget.metadata.movieId!,
+                'vidsrc',
+                appDep.vidSrcServer))
             .then((value) {
           if (mounted) {
             if (value.messageExists == null &&

@@ -55,9 +55,6 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
   List<ZoroSearchEntry>? zoroShows;
   List<ZoroInfoEntries>? zoroEpi;
 
-  var startAppSdk = StartAppSdk();
-  StartAppInterstitialAd? interstitialAd;
-
   FlixHQStreamSources? fqTVVideoSources;
   CaffeineAPIStreamSources? showboxVideoSources,
       flixHQFlixQuestStreamSources,
@@ -68,6 +65,9 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
   DCVAStreamSources? dramacoolVideoSources;
   DCVAStreamSources? viewasianVideoSources;
   ZoroStreamSources? zoroVideoSources;
+
+  var startAppSdk = StartAppSdk();
+  StartAppInterstitialAd? interstitialAd;
 
   List<RegularVideoLinks>? tvVideoLinks;
   List<RegularSubtitleLinks>? tvVideoSubs;
@@ -485,7 +485,8 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
                 widget.metadata.episodeNumber!,
                 widget.metadata.seasonNumber!,
                 widget.metadata.tvId!,
-                'showbox'))
+                'showbox',
+                ""))
             .then((value) {
           if (mounted) {
             if (value.messageExists == null &&
@@ -716,7 +717,8 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
                 widget.metadata.episodeNumber!,
                 widget.metadata.seasonNumber!,
                 widget.metadata.tvId!,
-                'flixhq'))
+                'flixhq',
+                appDep.flixhqZoeServer))
             .then((value) {
           if (mounted) {
             if (value.messageExists == null &&
@@ -1069,7 +1071,8 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
                 widget.metadata.episodeNumber!,
                 widget.metadata.seasonNumber!,
                 widget.metadata.tvId!,
-                'zoe'))
+                'zoe',
+                appDep.flixhqZoeServer))
             .then((value) {
           if (mounted) {
             if (value.messageExists == null &&
@@ -1106,7 +1109,8 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
                 widget.metadata.episodeNumber!,
                 widget.metadata.seasonNumber!,
                 widget.metadata.tvId!,
-                'gomovies'))
+                'gomovies',
+                appDep.goMoviesServer))
             .then((value) {
           if (mounted) {
             if (value.messageExists == null &&
@@ -1143,7 +1147,8 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
                 widget.metadata.episodeNumber!,
                 widget.metadata.seasonNumber!,
                 widget.metadata.tvId!,
-                'vidsrc'))
+                'vidsrc',
+                appDep.vidSrcServer))
             .then((value) {
           if (mounted) {
             if (value.messageExists == null &&

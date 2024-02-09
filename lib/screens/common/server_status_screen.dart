@@ -139,7 +139,7 @@ class _ServerStatusScreenState extends State<ServerStatusScreen> {
         start = DateTime.now();
         try {
           await getCaffeineAPILinks(
-                  "${appDependency.caffeineAPIURL}flixhq/watch-movie?tmdbId=455980")
+                  "${appDependency.caffeineAPIURL}flixhq/watch-movie?tmdbId=455980&server=${appDependency.flixhqZoeServer}")
               .then((value) {
             if (mounted) {
               videoLinks = value.videoLinks;
@@ -153,7 +153,7 @@ class _ServerStatusScreenState extends State<ServerStatusScreen> {
         start = DateTime.now();
         try {
           await getCaffeineAPILinks(
-                  "${appDependency.caffeineAPIURL}zoe/watch-movie?tmdbId=455980")
+                  "${appDependency.caffeineAPIURL}zoe/watch-movie?tmdbId=455980&server=${appDependency.flixhqZoeServer}")
               .then((value) {
             if (mounted) {
               videoLinks = value.videoLinks;
@@ -167,7 +167,7 @@ class _ServerStatusScreenState extends State<ServerStatusScreen> {
         start = DateTime.now();
         try {
           await getCaffeineAPILinks(
-                  "${appDependency.caffeineAPIURL}gomovies/watch-movie?tmdbId=455980")
+                  "${appDependency.caffeineAPIURL}gomovies/watch-movie?tmdbId=455980&server=${appDependency.goMoviesServer}")
               .then((value) {
             if (mounted) {
               videoLinks = value.videoLinks;
@@ -181,7 +181,7 @@ class _ServerStatusScreenState extends State<ServerStatusScreen> {
         start = DateTime.now();
         try {
           await getCaffeineAPILinks(
-                  "${appDependency.caffeineAPIURL}vidsrc/watch-movie?tmdbId=455980")
+                  "${appDependency.caffeineAPIURL}vidsrc/watch-movie?tmdbId=455980&server=${appDependency.vidSrcServer}")
               .then((value) {
             if (mounted) {
               videoLinks = value.videoLinks;
@@ -195,7 +195,7 @@ class _ServerStatusScreenState extends State<ServerStatusScreen> {
         start = DateTime.now();
         try {
           await getCaffeineAPILinks(
-                  "${appDependency.caffeineAPIURL}vidsrcto/watch-movie?tmdbId=455980")
+                  "${appDependency.caffeineAPIURL}vidsrcto/watch-movie?tmdbId=455980&server=${appDependency.vidSrcToServer}")
               .then((value) {
             if (mounted) {
               videoLinks = value.videoLinks;

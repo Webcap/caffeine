@@ -44,6 +44,9 @@ class SettingsProvider with ChangeNotifier {
   int _defaultSeekDuration = 10;
   int get defaultSeekDuration => _defaultSeekDuration;
 
+  int _playerTimeDisplay = 1;
+  int get playerTimeDisplay => _playerTimeDisplay;
+
   // int _defaultMinBufferDuration = 120000;
   // int get defaultMinBufferDuration => _defaultMinBufferDuration;
 
