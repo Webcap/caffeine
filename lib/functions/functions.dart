@@ -9,24 +9,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:caffiene/models/live_tv.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:caffiene/models/update.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:permission_handler/permission_handler.dart';
-
-Future checkForUpdate(String api) async {
-  UpdateChecker updateChecker;
-  try {
-    var res = await retryOptions.retry(
-      (() => http.get(Uri.parse(api)).timeout(timeOut)),
-      retryIf: (e) => e is SocketException || e is TimeoutException,
-    );
-    var decodeRes = jsonDecode(res.body);
-    updateChecker = UpdateChecker.fromJson(decodeRes);
-  } finally {
-    client.close();
-  }
-  return updateChecker;
-}
 
 Future<List<Channel>> fetchChannels(String api) async {
   ChannelsList channelsList;

@@ -62,7 +62,8 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
       zoechipVideoSources,
       gomoviesVideoSources,
       vidsrcVideoSources,
-      showboxVideoSources;
+      showboxVideoSources,
+      vidSrcToVideoSources;
   DCVAStreamSources? dramacoolVideoSources;
   DCVAStreamSources? viewasianVideoSources;
   ZoroStreamSources? zoroVideoSources;
@@ -227,6 +228,15 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
           }
         } else if (videoProviders[i].codeName == 'vidsrc') {
           await loadVidsrc();
+          if (movieVideoSubs != null && movieVideoSubs!.isNotEmpty) {
+            await subtitleParserFetcher(movieVideoSubs!);
+            break;
+          }
+          if (movieVideoLinks != null && movieVideoLinks!.isNotEmpty) {
+            break;
+          }
+        } else if (videoProviders[i].codeName == 'vidsrcto') {
+          await loadVidSrcTo();
           if (movieVideoSubs != null && movieVideoSubs!.isNotEmpty) {
             await subtitleParserFetcher(movieVideoSubs!);
             break;
@@ -1038,6 +1048,42 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
       }
     } on Exception catch (e) {
       GlobalMethods.showErrorScaffoldMessengerMediaLoad(e, context, 'Vidsrc');
+    }
+  }
+
+  Future<void> loadVidSrcTo() async {
+    try {
+      if (mounted) {
+        await getCaffeineAPILinks(Endpoints.getMovieEndpointCaffeineAPI(
+                appDep.caffeineAPIURL,
+                widget.metadata.movieId!,
+                'vidsrcto',
+                appDep.vidSrcToServer))
+            .then((value) {
+          if (mounted) {
+            if (value.messageExists == null &&
+                value.videoLinks != null &&
+                value.videoLinks!.isNotEmpty) {
+              setState(() {
+                vidSrcToVideoSources = value;
+              });
+            } else if (value.messageExists != null ||
+                value.videoLinks == null ||
+                value.videoLinks!.isEmpty) {
+              return;
+            }
+          }
+          if (mounted) {
+            movieVideoLinks = vidSrcToVideoSources!.videoLinks;
+            movieVideoSubs = vidSrcToVideoSources!.videoSubtitles;
+            if (movieVideoLinks != null && movieVideoLinks!.isNotEmpty) {
+              convertVideoLinks(movieVideoLinks!);
+            }
+          }
+        });
+      }
+    } on Exception catch (e) {
+      GlobalMethods.showErrorScaffoldMessengerMediaLoad(e, context, 'VidSrcTo');
     }
   }
 }

@@ -1,3 +1,4 @@
+import 'package:better_player/better_player.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/utils/constant.dart';
@@ -260,30 +261,15 @@ class LeadingDot extends StatelessWidget {
 }
 
 class ExternalPlay extends StatelessWidget {
-  const ExternalPlay({Key? key, required this.sources}) : super(key: key);
+  const ExternalPlay(
+      {Key? key, required this.videoSources, required this.subtitleSources})
+      : super(key: key);
 
-  final Map<String, String> sources;
+  final Map<String, String> videoSources;
+  final List<BetterPlayerSubtitlesSource> subtitleSources;
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> items = [];
-
-    for (int i = 0; i < sources.length; i++) {
-      final url = Uri.encodeFull(sources.entries.elementAt(i).value);
-      items.add(TextButton(
-          onPressed: () async {
-            if (await canLaunchUrl(Uri.parse(url))) {
-              await launchUrl(Uri.parse(sources.entries.elementAt(i).value),
-                  mode: LaunchMode.externalNonBrowserApplication);
-            }
-          },
-          onLongPress: () async {
-            FlutterClipboard.copy(sources.entries.elementAt(i).value).then(
-                (value) => GlobalMethods.showScaffoldMessage(
-                    tr("video_link_copied"), context));
-          },
-          child: Text(sources.entries.elementAt(i).key)));
-    }
     return Padding(
       padding: const EdgeInsets.all(20),
       child: SizedBox(
@@ -298,11 +284,44 @@ class ExternalPlay extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             const SizedBox(
-              height: 20,
+              height: 10,
             ),
-            Wrap(
-              spacing: 10,
-              children: items,
+            //  Text('Copy video:'),
+            SizedBox(
+              width: double.infinity,
+              height: 50,
+              child: ListView.builder(
+                  itemCount: videoSources.entries.length,
+                  scrollDirection: Axis.horizontal,
+                  itemBuilder: ((context, index) {
+                    final url = Uri.encodeFull(
+                        videoSources.entries.elementAt(index).value);
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: TextButton(
+                          onPressed: () async {
+                            if (await canLaunchUrl(Uri.parse(url))) {
+                              await launchUrl(
+                                  Uri.parse(videoSources.entries
+                                      .elementAt(index)
+                                      .value),
+                                  mode:
+                                      LaunchMode.externalNonBrowserApplication);
+                            }
+                          },
+                          onLongPress: () async {
+                            FlutterClipboard.copy(
+                                    videoSources.entries.elementAt(index).value)
+                                .then((value) {
+                              GlobalMethods.showScaffoldMessage(
+                                  tr("video_link_copied"), context);
+                              Navigator.pop(context);
+                            });
+                          },
+                          child:
+                              Text(videoSources.entries.elementAt(index).key)),
+                    );
+                  })),
             ),
           ],
         ),

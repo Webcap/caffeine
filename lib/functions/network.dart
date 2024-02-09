@@ -7,6 +7,7 @@ import 'package:caffiene/utils/constant.dart';
 import 'package:caffiene/video_providers/caffeine_api_source.dart';
 import 'package:caffiene/video_providers/dcva.dart';
 import 'package:caffiene/video_providers/flixhq.dart';
+import 'package:retry/retry.dart';
 
 import '../models/external_subtitles.dart';
 import '../models/movie_models.dart';
@@ -307,18 +308,23 @@ Future<List<TV>> fetchPersonTV(String api) async {
 Future checkForUpdate(String api) async {
   UpdateChecker updateChecker;
   try {
-    var res = await retryOptions.retry(
+    var res = await const RetryOptions(
+            maxDelay: Duration(milliseconds: 300),
+            delayFactor: Duration(seconds: 0),
+            maxAttempts: 3)
+        .retry(
       (() => http.get(Uri.parse(api)).timeout(timeOut)),
       retryIf: (e) => e is SocketException || e is TimeoutException,
     );
     var decodeRes = jsonDecode(res.body);
     updateChecker = UpdateChecker.fromJson(decodeRes);
-  } finally {
     client.close();
+  } catch (e) {
+    print("Exception thrown");
+    rethrow;
   }
   return updateChecker;
 }
-
 Future<Movie> getMovie(String api) async {
   Movie movie;
   try {

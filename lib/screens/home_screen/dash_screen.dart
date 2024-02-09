@@ -1,5 +1,8 @@
+import 'package:caffiene/provider/app_dependency_provider.dart';
+import 'package:caffiene/screens/common/update_screen.dart';
 import 'package:caffiene/screens/user/profile_page.dart';
 import 'package:caffiene/utils/config.dart';
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
@@ -25,11 +28,49 @@ class caffieneHomePage extends StatefulWidget {
 class _caffieneHomePageState extends State<caffieneHomePage>
     with SingleTickerProviderStateMixin {
   late int selectedIndex;
+  final FirebaseRemoteConfig remoteConfig = FirebaseRemoteConfig.instance;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
-    super.initState();
     defHome();
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) {
+        checkForcedUpdate();
+        remoteConfig.onConfigUpdated.listen(onFirebaseRemoteConfigUpdate);
+      },
+    );
+    super.initState();
+  }
+
+  Future<void> onFirebaseRemoteConfigUpdate(RemoteConfigUpdate rcu) async {
+    await remoteConfig.activate();
+    if (mounted) {
+      final appDep = Provider.of<AppDependencyProvider>(context, listen: false);
+      appDep.consumetUrl = remoteConfig.getString('consumet_url');
+      // appDep.flixQuestLogo = remoteConfig.getString('cinemax_logo');
+      appDep.opensubtitlesKey = remoteConfig.getString('opensubtitles_key');
+      appDep.streamingServerFlixHQ =
+          remoteConfig.getString('streaming_server_flixhq');
+      appDep.streamingServerDCVA =
+          remoteConfig.getString('streaming_server_dcva');
+      appDep.enableADS = remoteConfig.getBool('ads_enabled');
+      appDep.fetchRoute = remoteConfig.getString('route');
+      appDep.useExternalSubtitles =
+          remoteConfig.getBool('use_external_subtitles');
+      appDep.enableOTTADS = remoteConfig.getBool('ott_ads_enabled');
+      appDep.displayWatchNowButton = remoteConfig.getBool('enable_stream');
+      appDep.displayCastButton = remoteConfig.getBool('enable_chromecast_feature');
+      appDep.displayOTTDrawer = remoteConfig.getBool('enable_ott');
+      appDep.caffeineAPIURL = remoteConfig.getString('caffeine_api_url');
+      appDep.streamingServerZoro =
+          remoteConfig.getString('streaming_server_zoro');
+      appDep.isForcedUpdate = remoteConfig.getBool('forced_update');
+      appDep.flixhqZoeServer = remoteConfig.getString("flixhq_zoe_server");
+      appDep.goMoviesServer = remoteConfig.getString("gomovies_server");
+      appDep.vidSrcServer = remoteConfig.getString("vidsrc_server");
+      appDep.vidSrcToServer = remoteConfig.getString("vidsrcto_server");
+    }
   }
 
   void defHome() {
@@ -40,7 +81,22 @@ class _caffieneHomePageState extends State<caffieneHomePage>
     });
   }
 
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  void checkForcedUpdate() async {
+    await FirebaseRemoteConfig.instance.ensureInitialized();
+    String appVersion =
+        FirebaseRemoteConfig.instance.getString("latest_version");
+    bool isForcedUpdate =
+        FirebaseRemoteConfig.instance.getBool("forced_update");
+    if (isForcedUpdate && (currentAppVersion != appVersion)) {
+      if (mounted) {
+        Navigator.push(context, MaterialPageRoute(builder: (context) {
+          return const UpdateScreen(
+            isForced: true,
+          );
+        }));
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

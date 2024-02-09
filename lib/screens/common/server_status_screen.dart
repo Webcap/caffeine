@@ -191,6 +191,20 @@ class _ServerStatusScreenState extends State<ServerStatusScreen> {
           GlobalMethods.showErrorScaffoldMessengerMediaLoad(
               e, context, 'Vidsrc');
         }
+      } else if (videoProviders[i].codeName == 'vidsrcto') {
+        start = DateTime.now();
+        try {
+          await getCaffeineAPILinks(
+                  "${appDependency.caffeineAPIURL}vidsrcto/watch-movie?tmdbId=455980")
+              .then((value) {
+            if (mounted) {
+              videoLinks = value.videoLinks;
+            }
+          });
+        } on Exception catch (e) {
+          GlobalMethods.showErrorScaffoldMessengerMediaLoad(
+              e, context, 'VidSrcTo');
+        }
       }
 
       end = DateTime.now();

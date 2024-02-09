@@ -80,6 +80,8 @@ class _caffeineState extends State<caffeine>
           _remoteConfig.getString('caffeine_api_url');
       appDependencyProvider.streamingServerZoro =
           _remoteConfig.getString('streaming_server_zoro');
+      appDependencyProvider.isForcedUpdate =
+          _remoteConfig.getBool('forced_update');
     }
     // await requestNotificationPermissions();
   }

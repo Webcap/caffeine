@@ -104,7 +104,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                     ),
                     title: Text(tr("check_for_update")),
                     onTap: () {
-                      nextScreen(context, const UpdateScreen());
+                      nextScreen(context, const UpdateScreen(isForced: false));
                     },
                   ),
                   ListTile(
