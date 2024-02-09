@@ -105,7 +105,7 @@
 //                               // mainAxisAlignment: MainAxisAlignment.center,
 //                               crossAxisAlignment: CrossAxisAlignment.center,
 //                               children: [
-//                                 const Icon(Icons.star),
+//                                 const Icon(Icons.star_rounded),
 //                                 const SizedBox(
 //                                   width: 5,
 //                                 ),

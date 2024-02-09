@@ -29,7 +29,7 @@ class TVEpisodeOptions extends StatelessWidget {
                   animationDuration: 2500,
                   progressColor: Theme.of(context).colorScheme.primary,
                   center: Text(
-                    '${episodeList.voteAverage!.toStringAsFixed(1)}/10',
+                    '${episodeList.voteAverage!.toStringAsFixed(1).endsWith('0') ? episodeList.voteAverage!.toStringAsFixed(0) : episodeList.voteAverage!.toStringAsFixed(1)}/10',
                     style: const TextStyle(
                       fontWeight: FontWeight.w700,
                     ),
@@ -70,9 +70,9 @@ class TVEpisodeOptions extends StatelessWidget {
               ),
               child: Text(
                 episodeList.voteCount!.toString(),
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 18,
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.onPrimary,
                   fontWeight: FontWeight.w600,
                 ),
               ),

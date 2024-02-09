@@ -12,8 +12,6 @@ import '../models/external_subtitles.dart';
 import '../models/movie_models.dart';
 import '../utils/config.dart';
 import '../video_providers/dramacool.dart';
-import '../video_providers/flixhq_flixquest.dart';
-import '../video_providers/superstream.dart';
 import '../video_providers/zoro.dart';
 import '/models/update.dart';
 import '/models/images.dart';
@@ -361,7 +359,7 @@ Future<List<FlixHQMovieSearchEntry>> fetchMoviesForStreamFlixHQ(
     );
     var decodeRes = jsonDecode(res.body);
     if (decodeRes.containsKey('message') || res.statusCode != 200) {
-      throw ServerDownException();
+      throw NotFoundException();
     }
     movieStream = FlixHQMovieSearch.fromJson(decodeRes);
 
@@ -384,7 +382,7 @@ Future<List<FlixHQMovieInfoEntries>> getMovieStreamEpisodesFlixHQ(
     );
     var decodeRes = jsonDecode(res.body);
     if (decodeRes.containsKey('message') || res.statusCode != 200) {
-      throw ServerDownException();
+      throw NotFoundException();
     }
     movieInfo = FlixHQMovieInfo.fromJson(decodeRes);
 
@@ -441,7 +439,7 @@ Future<List<FlixHQTVSearchEntry>> fetchTVForStreamFlixHQ(String api) async {
     );
     var decodeRes = jsonDecode(res.body);
     if (decodeRes.containsKey('message') || res.statusCode != 200) {
-      throw ServerDownException();
+      throw NotFoundException();
     }
     tvStream = FlixHQTVSearch.fromJson(decodeRes);
 
@@ -463,7 +461,7 @@ Future<FlixHQTVInfo> getTVStreamEpisodesFlixHQ(String api) async {
     );
     var decodeRes = jsonDecode(res.body);
     if (decodeRes.containsKey('message') || res.statusCode != 200) {
-      throw ServerDownException();
+      throw NotFoundException();
     }
     tvInfo = FlixHQTVInfo.fromJson(decodeRes);
 
@@ -670,7 +668,7 @@ Future<List<DCVASearchEntry>> fetchMovieTVForStreamDCVA(String api) async {
     );
     var decodeRes = jsonDecode(res.body);
     if (decodeRes.containsKey('message') || res.statusCode != 200) {
-      throw ServerDownException();
+      throw NotFoundException();
     }
     dcvaStream = DCVASearch.fromJson(decodeRes);
 
@@ -692,7 +690,7 @@ Future<List<DCVAInfoEntries>> getMovieTVStreamEpisodesDCVA(String api) async {
     );
     var decodeRes = jsonDecode(res.body);
     if (decodeRes.containsKey('message') || res.statusCode != 200) {
-      throw ServerDownException();
+      throw NotFoundException();
     }
     dcvaInfo = DCVAInfo.fromJson(decodeRes);
 

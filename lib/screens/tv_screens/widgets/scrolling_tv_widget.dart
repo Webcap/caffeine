@@ -53,7 +53,9 @@ class ScrollingTVState extends State<ScrollingTV>
           isLoading = true;
         });
 
-        tvApi().fetchTV('${widget.api}&page=$pageNum&include_adult=${widget.includeAdult}')
+        tvApi()
+            .fetchTV(
+                '${widget.api}&page=$pageNum&include_adult=${widget.includeAdult}')
             .then((value) {
           if (mounted) {
             setState(() {
@@ -70,7 +72,9 @@ class ScrollingTVState extends State<ScrollingTV>
   @override
   void initState() {
     super.initState();
-    tvApi().fetchTV('${widget.api}&include_adult=${widget.includeAdult}').then((value) {
+    tvApi()
+        .fetchTV('${widget.api}&include_adult=${widget.includeAdult}')
+        .then((value) {
       if (mounted) {
         setState(() {
           tvList = value;
@@ -260,7 +264,7 @@ class ScrollingTVState extends State<ScrollingTV>
                                                   child: Row(
                                                     children: [
                                                       const Icon(
-                                                        Icons.star,
+                                                        Icons.star_rounded,
                                                       ),
                                                       Text(tvList![index]
                                                           .voteAverage!

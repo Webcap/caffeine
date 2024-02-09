@@ -62,7 +62,7 @@ class _MovieDetailOptionsState extends State<MovieDetailOptions> {
                     animationDuration: 2500,
                     progressColor: Theme.of(context).colorScheme.primary,
                     center: Text(
-                      '${widget.movie.voteAverage!.toStringAsFixed(1)}/10',
+                      '${widget.movie.voteAverage!.toStringAsFixed(1).endsWith('0') ? widget.movie.voteAverage!.toStringAsFixed(0) : widget.movie.voteAverage!.toStringAsFixed(1)}/10',
                       style: const TextStyle(
                         fontWeight: FontWeight.w700,
                       ),
@@ -106,9 +106,9 @@ class _MovieDetailOptionsState extends State<MovieDetailOptions> {
                 ),
                 child: Text(
                   widget.movie.voteCount!.toString(),
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 18,
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.onPrimary,
                     fontWeight: FontWeight.w600,
                   ),
                 ),

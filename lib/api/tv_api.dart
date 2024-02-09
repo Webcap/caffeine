@@ -71,51 +71,6 @@ class tvApi {
     return tvVideoSources;
   }
 
-  Future<FlixHQTVInfo> getTVStreamEpisodesFlixHQ(String api) async {
-    FlixHQTVInfo tvInfo;
-    try {
-      var res = await retryOptionsStream.retry(
-        (() => http.get(Uri.parse(api)).timeout(timeOutStream)),
-        retryIf: (e) => e is SocketException || e is TimeoutException,
-      );
-      var decodeRes = jsonDecode(res.body);
-      if (decodeRes.containsKey('message') || res.statusCode != 200) {
-        throw ServerDownException();
-      }
-      tvInfo = FlixHQTVInfo.fromJson(decodeRes);
-
-      if (tvInfo.episodes == null || tvInfo.episodes!.isEmpty) {
-        throw NotFoundException();
-      }
-    } catch (e) {
-      rethrow;
-    }
-
-    return tvInfo;
-  }
-
-  Future<List<FlixHQTVSearchEntry>> fetchTVForStreamFlixHQ(String api) async {
-    FlixHQTVSearch tvStream;
-    try {
-      var res = await retryOptionsStream.retry(
-        (() => http.get(Uri.parse(api)).timeout(timeOutStream)),
-        retryIf: (e) => e is SocketException || e is TimeoutException,
-      );
-      var decodeRes = jsonDecode(res.body);
-      if (decodeRes.containsKey('message') || res.statusCode != 200) {
-        throw ServerDownException();
-      }
-      tvStream = FlixHQTVSearch.fromJson(decodeRes);
-
-      if (tvStream.results == null || tvStream.results!.isEmpty) {
-        throw NotFoundException();
-      }
-    } catch (e) {
-      rethrow;
-    }
-    return tvStream.results ?? [];
-  }
-
   Future<TVDetails> fetchTVDetails(String api) async {
     TVDetails tvDetails;
     var res = await http

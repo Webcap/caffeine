@@ -15,7 +15,6 @@ import 'package:better_player/better_player.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 
-
 class Player extends StatefulWidget {
   const Player(
       {required this.sources,
@@ -59,8 +58,11 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
   // ignore: unused_field
   Timer? _resetTimer;
 
+  late SettingsProvider settings;
+
   @override
   void initState() {
+    settings = Provider.of<SettingsProvider>(context, listen: false);
     super.initState();
     String backgroundColorString = widget.settings.subtitleBackgroundColor;
     String foregroundColorString = widget.settings.subtitleForegroundColor;
@@ -118,8 +120,8 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
         qualitiesIcon: Icons.hd_rounded,
         enableAudioTracks: false,
         controlBarHeight: 50,
-        watchingText: tr("watching_text")
-      );
+        watchingText: tr("watching_text"),
+        playerTimeMode: settings.playerTimeDisplay);
 
     BetterPlayerConfiguration betterPlayerConfiguration =
         BetterPlayerConfiguration(
@@ -356,7 +358,8 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
                 showModalBottomSheet(
                     builder: (context) {
                       return ExternalPlay(
-                        sources: widget.sources,
+                        videoSources: widget.sources,
+                        subtitleSources: widget.subs,
                       );
                     },
                     context: context);

@@ -6,7 +6,6 @@ import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/widgets/shimmer_widget.dart';
 import 'package:caffiene/utils/constant.dart';
 
-
 class TVGridView extends StatelessWidget {
   const TVGridView({
     Key? key,
@@ -106,7 +105,7 @@ class TVGridView extends StatelessWidget {
                                 child: Row(
                                   children: [
                                     const Icon(
-                                      Icons.star,
+                                      Icons.star_rounded,
                                     ),
                                     Text(tvList![index]
                                         .voteAverage!

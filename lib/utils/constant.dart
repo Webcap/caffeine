@@ -42,3 +42,6 @@ const retryOptionsStream = RetryOptions(
     delayFactor: Duration(seconds: 0),
     maxAttempts: 1);
 const timeOutStream = Duration(seconds: 15);
+
+/// easy localization run command
+// flutter pub run easy_localization:generate -S assets/translations -f keys -O lib/translations -o locale_keys.g.dart

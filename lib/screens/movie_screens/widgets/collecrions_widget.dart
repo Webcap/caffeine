@@ -472,7 +472,7 @@ class PartsListState extends State<PartsList> {
                                                   child: Row(
                                                     children: [
                                                       const Icon(
-                                                        Icons.star,
+                                                        Icons.star_rounded,
                                                       ),
                                                       Text(collectionMovieList![
                                                               index]

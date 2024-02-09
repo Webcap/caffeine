@@ -19,7 +19,6 @@ import 'package:provider/provider.dart';
 import 'package:readmore/readmore.dart';
 import 'package:caffiene/utils/constant.dart';
 
-
 class PersonImagesDisplay extends StatefulWidget {
   const PersonImagesDisplay({
     Key? key,
@@ -403,7 +402,8 @@ class PersonMovieListWidgetState extends State<PersonMovieListWidget>
                                                             child: Row(
                                                               children: [
                                                                 const Icon(
-                                                                  Icons.star,
+                                                                  Icons
+                                                                      .star_rounded,
                                                                 ),
                                                                 Text(uniqueMov![
                                                                         index]
@@ -662,7 +662,8 @@ class PersonTVListWidgetState extends State<PersonTVListWidget>
                                                             child: Row(
                                                               children: [
                                                                 const Icon(
-                                                                  Icons.star,
+                                                                  Icons
+                                                                      .star_rounded,
                                                                 ),
                                                                 Text(uniqueTV![
                                                                         index]

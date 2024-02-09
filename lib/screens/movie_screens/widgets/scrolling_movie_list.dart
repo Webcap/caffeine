@@ -12,7 +12,6 @@ import 'package:caffiene/widgets/shimmer_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:caffiene/utils/constant.dart';
 
-
 class ScrollingMovies extends StatefulWidget {
   final String api, title;
   final dynamic discoverType;
@@ -263,7 +262,7 @@ class ScrollingMoviesState extends State<ScrollingMovies>
                                                   child: Row(
                                                     children: [
                                                       const Icon(
-                                                        Icons.star,
+                                                        Icons.star_rounded,
                                                       ),
                                                       Text(moviesList![index]
                                                           .voteAverage!

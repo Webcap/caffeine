@@ -6,7 +6,6 @@ import 'package:caffiene/widgets/shimmer_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/utils/constant.dart';
 
-
 class HorizontalScrollingTVList extends StatelessWidget {
   const HorizontalScrollingTVList({
     Key? key,
@@ -110,7 +109,7 @@ class HorizontalScrollingTVList extends StatelessWidget {
                                 child: Row(
                                   children: [
                                     const Icon(
-                                      Icons.star,
+                                      Icons.star_rounded,
                                     ),
                                     Text(tvList![index]
                                         .voteAverage!

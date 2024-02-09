@@ -6,7 +6,6 @@ import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/widgets/shimmer_widget.dart';
 import 'package:caffiene/utils/constant.dart';
 
-
 class HorizontalScrollingMoviesList extends StatelessWidget {
   const HorizontalScrollingMoviesList({
     Key? key,
@@ -110,7 +109,7 @@ class HorizontalScrollingMoviesList extends StatelessWidget {
                                 child: Row(
                                   children: [
                                     const Icon(
-                                      Icons.star,
+                                      Icons.star_rounded,
                                     ),
                                     Text(movieList![index]
                                         .voteAverage!
