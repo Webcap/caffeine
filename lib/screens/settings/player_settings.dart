@@ -318,16 +318,26 @@ class _PlayerSettingsState extends State<PlayerSettings> {
                     }),
               ),
               ListTile(
-                onTap: () {
-                  nextScreen(context, const SubLangChoose());
-                },
                 leading: Icon(
-                  FontAwesomeIcons.closedCaptioning,
+                  FontAwesomeIcons.solidClock,
                   color: Theme.of(context).colorScheme.primary,
                 ),
                 title: Text(
-                  tr("subtitle_language"),
+                  tr("player_time_display"),
                 ),
+                trailing: DropdownButton(
+                    value: settingValues.playerTimeDisplay,
+                    items: [
+                      DropdownMenuItem(
+                          value: 1, child: Text(tr("elapsed_total"))),
+                      DropdownMenuItem(
+                          value: 2, child: Text(tr("elapsed_remaining"))),
+                    ],
+                    onChanged: (int? value) {
+                      setState(() {
+                        settingValues.playerTimeDisplay = value!;
+                      });
+                    }),
               ),
               SwitchListTile(
                 inactiveThumbColor: Colors.white,
@@ -346,16 +356,31 @@ class _PlayerSettingsState extends State<PlayerSettings> {
               ),
               ListTile(
                 onTap: () {
-                  nextScreen(context, ProviderChooseScreen());
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: ((context) {
+                    return const SubLangChoose();
+                  })));
+                },
+                leading: Icon(
+                  FontAwesomeIcons.closedCaptioning,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                title: Text(
+                  tr("subtitle_language"),
+                ),
+              ),
+              ListTile(
+                onTap: () {
+                  nextScreen(context, const ProviderChooseScreen());
                 },
                 leading: Icon(
                   FontAwesomeIcons.server,
                   color: Theme.of(context).colorScheme.primary,
                 ),
                 title: Text(
-                  tr("provider_precedence")
+                  tr("provider_precedence"),
                 ),
-              )
+              ),
             ],
           ),
         ),

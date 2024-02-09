@@ -2,8 +2,8 @@
 import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/utils/constant.dart';
 
-class AdultModePreferences {
-  static const ADULT_MODE_STATUS = "adultStatus";
+class SettingsPreferences {
+  static const ADULT_MODE_STATUS = "adultStatus-v2";
 
   setAdultMode(bool value) async {
     sharedPrefsSingleton.setBool(ADULT_MODE_STATUS, value);
@@ -12,9 +12,7 @@ class AdultModePreferences {
   Future<bool> getAdultMode() async {
     return sharedPrefsSingleton.getBool(ADULT_MODE_STATUS) ?? false;
   }
-}
 
-class CountryPreferences {
   static const COUNTRY_STATUS = 'US';
 
   setCountryName(String countryName) async {
@@ -24,9 +22,7 @@ class CountryPreferences {
   Future<String> getCountryName() async {
     return sharedPrefsSingleton.getString(COUNTRY_STATUS) ?? 'US';
   }
-}
 
-class DefaultHomePreferences {
   static const DEFAULT_SCREEN_STATUS = 'defaultStatus';
   setDefaultHome(int deafultHomeValue) async {
     sharedPrefsSingleton.setInt(DEFAULT_SCREEN_STATUS, deafultHomeValue);
@@ -35,9 +31,7 @@ class DefaultHomePreferences {
   Future<int> getDefaultHome() async {
     return sharedPrefsSingleton.getInt(DEFAULT_SCREEN_STATUS) ?? 0;
   }
-}
 
-class ImagePreferences {
   static const IMAGE_QUALITY_STATUS = "w500/";
   setImageQuality(String imageQuality) async {
     sharedPrefsSingleton.setString(IMAGE_QUALITY_STATUS, imageQuality);
@@ -46,9 +40,7 @@ class ImagePreferences {
   Future<String> getImageQuality() async {
     return sharedPrefsSingleton.getString(IMAGE_QUALITY_STATUS) ?? "w500/";
   }
-}
 
-class Material3Preferences {
   static const MATERIAL3_MODE_STATUS = "materialStatus";
 
   setMaterial3Mode(bool value) async {
@@ -58,9 +50,7 @@ class Material3Preferences {
   Future<bool> getMaterial3Mode() async {
     return sharedPrefsSingleton.getBool(MATERIAL3_MODE_STATUS) ?? false;
   }
-}
 
-class ThemeModePreferences {
   static const THEME_MODE_STATUS = "themeStatusV2";
 
   setThemeMode(String value) async {
@@ -70,9 +60,7 @@ class ThemeModePreferences {
   Future<String> getThemeMode() async {
     return sharedPrefsSingleton.getString(THEME_MODE_STATUS) ?? "dark";
   }
-}
 
-class ViewPreferences {
   static const VIEW_PREFERENCE_STATUS = "list";
   setViewType(String viewType) async {
     sharedPrefsSingleton.setString(VIEW_PREFERENCE_STATUS, viewType);
@@ -81,9 +69,7 @@ class ViewPreferences {
   Future<String> getViewType() async {
     return sharedPrefsSingleton.getString(VIEW_PREFERENCE_STATUS) ?? "grid";
   }
-}
 
-class VideoPlayerPreferences {
   static const SEEK_PREFERENCE = 'seek';
   setSeekDuration(int seekDuration) async {
     sharedPrefsSingleton.setInt(SEEK_PREFERENCE, seekDuration);
@@ -95,13 +81,13 @@ class VideoPlayerPreferences {
 
   // static const MIN_BUFFER_PREFERENCE = 'min_buffer';
   // setMinBufferDuration(int bufferDuration) async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   prefs.setInt(MIN_BUFFER_PREFERENCE, bufferDuration);
+  //
+  //   sharedPrefsSingleton.setInt(MIN_BUFFER_PREFERENCE, bufferDuration);
   // }
 
   // Future<int> getMinBuffer() async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   return prefs.getInt(MIN_BUFFER_PREFERENCE) ?? 120000;
+  //
+  //   return sharedPrefsSingleton.getInt(MIN_BUFFER_PREFERENCE) ?? 120000;
   // }
 
   static const MAX_BUFFER_PREFERENCE = 'max_buffer';
@@ -146,7 +132,8 @@ class VideoPlayerPreferences {
   }
 
   Future<String> subtitleForeground() async {
-    return sharedPrefsSingleton.getString(SUBTITLE_FOREGROUND_COLOR) ?? 'Color(0xffffffff)';
+    return sharedPrefsSingleton.getString(SUBTITLE_FOREGROUND_COLOR) ??
+        'Color(0xffffffff)';
   }
 
   static const SUBTITLE_BACKGROUND_COLOR = 'subtitle_background_color';
@@ -155,7 +142,8 @@ class VideoPlayerPreferences {
   }
 
   Future<String> subtitleBackground() async {
-    return sharedPrefsSingleton.getString(SUBTITLE_BACKGROUND_COLOR) ?? 'Color(0x73000000)';
+    return sharedPrefsSingleton.getString(SUBTITLE_BACKGROUND_COLOR) ??
+        'Color(0x73000000)';
   }
 
   static const SUBTITLE_FONT_SIZE = 'subtitle_font_size';
@@ -175,9 +163,7 @@ class VideoPlayerPreferences {
   Future<bool> getSubtitleMode() async {
     return sharedPrefsSingleton.getBool(SUBTITLE_MODE) ?? false;
   }
-}
 
-class AppLanguagePreferences {
   static const APP_LANGUAGE_CODE = 'en';
 
   setAppLanguage(String lang) async {
@@ -187,9 +173,7 @@ class AppLanguagePreferences {
   Future<String> getAppLang() async {
     return sharedPrefsSingleton.getString(APP_LANGUAGE_CODE) ?? 'en';
   }
-}
 
-class AppColorPreferences {
   static const APP_COLOR_INDEX = "appColorIndex";
 
   setAppColorIndex(int index) async {
@@ -199,9 +183,7 @@ class AppColorPreferences {
   Future<int> getAppColorIndex() async {
     return sharedPrefsSingleton.getInt(APP_COLOR_INDEX) ?? -1;
   }
-}
 
-class ProviderPrecedencePreference {
   static const PROVIDER_PRECEDENCE = "providerPrecedence-v6";
 
   setProviderPrecedence(String pre) async {
@@ -209,6 +191,17 @@ class ProviderPrecedencePreference {
   }
 
   Future<String> getProviderPrecedence() async {
-    return sharedPrefsSingleton.getString(PROVIDER_PRECEDENCE) ?? providerPreference;
+    return sharedPrefsSingleton.getString(PROVIDER_PRECEDENCE) ??
+        providerPreference;
+  }
+
+  static const PLAYER_STYLE_INDEX = "playerStyleIndex";
+
+  setPlayerStyleIndex(int index) async {
+    sharedPrefsSingleton.setInt(PLAYER_STYLE_INDEX, index);
+  }
+
+  Future<int> getPlayerStyleIndex() async {
+    return sharedPrefsSingleton.getInt(PLAYER_STYLE_INDEX) ?? 1;
   }
 }
