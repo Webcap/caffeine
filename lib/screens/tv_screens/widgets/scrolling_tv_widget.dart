@@ -191,9 +191,10 @@ class ScrollingTVState extends State<ScrollingTV>
                                                             .posterPath ==
                                                         null
                                                     ? Image.asset(
-                                                        'assets/images/na_rect.png',
+                                                        'assets/images/na_logo.png',
                                                         fit: BoxFit.cover,
-                                                      )
+                                                        width: double.infinity,
+                                                        height: double.infinity)
                                                     : CachedNetworkImage(
                                                         cacheManager:
                                                             cacheProp(),
@@ -237,9 +238,13 @@ class ScrollingTVState extends State<ScrollingTV>
                                                         errorWidget: (context,
                                                                 url, error) =>
                                                             Image.asset(
-                                                          'assets/images/na_rect.png',
-                                                          fit: BoxFit.cover,
-                                                        ),
+                                                                'assets/images/na_logo.png',
+                                                                fit: BoxFit
+                                                                    .cover,
+                                                                width: double
+                                                                    .infinity,
+                                                                height: double
+                                                                    .infinity),
                                                       ),
                                               ),
                                               Positioned(

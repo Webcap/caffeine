@@ -1,4 +1,5 @@
 import 'package:caffiene/controller/bookmark_database_controller.dart';
+import 'package:caffiene/utils/globlal_methods.dart';
 import 'package:caffiene/utils/textStyle.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -9,6 +10,7 @@ import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/screens/bookmarks/bookmark_tv_screen.dart';
 import 'package:caffiene/screens/bookmarks/movie_bookmark_tab.dart';
 import 'package:caffiene/screens/bookmarks/sync_screen.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 
 class BookmarkScreen extends StatefulWidget {
@@ -77,22 +79,22 @@ class _BookmarkScreenState extends State<BookmarkScreen>
               onPressed: () {
                 Navigator.pop(context);
               },
-              icon: const Icon(Icons.arrow_back)),
+              icon: const Icon(Icons.arrow_back_rounded)),
           title: Text(tr("bookmarks")),
           actions: [
             IconButton(
                 onPressed: () {
                   if (user!.isAnonymous) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          tr("bookmark_feature_notice"),
-                          style: kTextVerySmallBodyStyle,
-                          maxLines: 6,
+                    GlobalMethods.showCustomScaffoldMessage(
+                        SnackBar(
+                          content: Text(
+                            tr("bookmark_feature_notice"),
+                            style: kTextVerySmallBodyStyle,
+                            maxLines: 6,
+                          ),
+                          duration: const Duration(seconds: 10),
                         ),
-                        duration: const Duration(seconds: 10),
-                      ),
-                    );
+                        context);
                   } else {
                     Navigator.push(context,
                         MaterialPageRoute(builder: ((context) {
@@ -103,7 +105,7 @@ class _BookmarkScreenState extends State<BookmarkScreen>
                     });
                   }
                 },
-                icon: const Icon(Icons.sync_sharp))
+                icon: const Icon(FontAwesomeIcons.rotate))
           ]),
       body: Column(
         children: [
@@ -117,7 +119,7 @@ class _BookmarkScreenState extends State<BookmarkScreen>
                   children: [
                     const Padding(
                       padding: EdgeInsets.only(right: 8.0),
-                      child: Icon(Icons.movie_creation_rounded),
+                      child: Icon(FontAwesomeIcons.clapperboard),
                     ),
                     Text(
                       tr("movies"),

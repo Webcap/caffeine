@@ -48,10 +48,10 @@ class CastDetailQuickInfo extends StatelessWidget {
                               width: 120,
                               height: 120,
                               child: widget.cast!.profilePath == null
-                                  ? Image.asset(
-                                      'assets/images/na_rect.png',
+                                  ? Image.asset('assets/images/na_logo.png',
                                       fit: BoxFit.cover,
-                                    )
+                                      width: double.infinity,
+                                      height: double.infinity)
                                   : CachedNetworkImage(
                                       fit: BoxFit.cover,
                                       placeholder: (context, url) =>

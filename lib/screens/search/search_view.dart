@@ -462,7 +462,7 @@ class Search extends SearchDelegate<String> {
                                       Row(
                                         children: <Widget>[
                                           const Icon(
-                                            Icons.star_rounded_rounded,
+                                            Icons.star_rounded,
                                           ),
                                           Text(
                                             moviesList[index].voteAverage ==

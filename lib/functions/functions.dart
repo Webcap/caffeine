@@ -73,13 +73,6 @@ Future<bool> checkConnection() async {
   return isInternetWorking;
 }
 
-String removeCharacters(String input) {
-  String charactersToRemove = "|^_/,.?\"'&#^*%@!-[]()\$";
-  String pattern = '[$charactersToRemove]';
-  String result = input.replaceAll(RegExp(pattern), '');
-  return result;
-}
-
 Future<bool> clearTempCache() async {
   try {
     Directory tempDir = await getTemporaryDirectory();
@@ -194,6 +187,10 @@ List<VideoProvider?> parseProviderPrecedenceString(String raw) {
   }).toList();
 
   return videoProviders;
+}
+
+int createUniqueId() {
+  return DateTime.now().millisecondsSinceEpoch.remainder(100000);
 }
 
 bool isReleased(String target) {

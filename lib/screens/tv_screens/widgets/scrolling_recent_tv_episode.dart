@@ -7,6 +7,7 @@ import 'package:caffiene/provider/recently_watched_provider.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/screens/tv_screens/tv_video_loader.dart';
 import 'package:caffiene/utils/config.dart';
+import 'package:caffiene/utils/globlal_methods.dart';
 import 'package:caffiene/utils/textStyle.dart';
 import 'package:caffiene/widgets/common_widgets.dart';
 import 'package:caffiene/widgets/shimmer_widget.dart';
@@ -14,7 +15,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:caffiene/utils/constant.dart';
-
 
 class ScrollingRecentEpisodes extends StatefulWidget {
   const ScrollingRecentEpisodes({required this.episodesList, Key? key})
@@ -113,30 +113,30 @@ class _ScrollingRecentEpisodesState extends State<ScrollingRecentEpisodes> {
                                                 ? StreamRoute.flixHQ
                                                 : StreamRoute.tmDB,
                                             metadata: TVStreamMetadata(
-                                              elapsed: widget
-                                                  .episodesList[index].elapsed,
-                                              episodeId:
-                                                  widget.episodesList[index].id,
-                                              episodeName: widget
-                                                  .episodesList[index]
-                                                  .episodeName,
-                                              episodeNumber: widget
-                                                  .episodesList[index]
-                                                  .episodeNum,
-                                              posterPath: widget
-                                                  .episodesList[index]
-                                                  .posterPath,
-                                              seasonNumber: widget
-                                                  .episodesList[index]
-                                                  .seasonNum,
-                                              seriesName: widget
-                                                  .episodesList[index]
-                                                  .seriesName,
-                                              tvId: widget
-                                                  .episodesList[index].seriesId,
-                                              airDate: null
-                                            ))))
-                                : ScaffoldMessenger.of(context).showSnackBar(
+                                                elapsed: widget
+                                                    .episodesList[index]
+                                                    .elapsed,
+                                                episodeId: widget
+                                                    .episodesList[index].id,
+                                                episodeName: widget
+                                                    .episodesList[index]
+                                                    .episodeName,
+                                                episodeNumber: widget
+                                                    .episodesList[index]
+                                                    .episodeNum,
+                                                posterPath: widget
+                                                    .episodesList[index]
+                                                    .posterPath,
+                                                seasonNumber: widget
+                                                    .episodesList[index]
+                                                    .seasonNum,
+                                                seriesName: widget
+                                                    .episodesList[index]
+                                                    .seriesName,
+                                                tvId: widget.episodesList[index]
+                                                    .seriesId,
+                                                airDate: null))))
+                                : GlobalMethods.showCustomScaffoldMessage(
                                     SnackBar(
                                       content: Text(
                                         tr("check_connection"),
@@ -145,7 +145,7 @@ class _ScrollingRecentEpisodesState extends State<ScrollingRecentEpisodes> {
                                       ),
                                       duration: const Duration(seconds: 3),
                                     ),
-                                  );
+                                    context);
                           });
                         },
                         child: SizedBox(
@@ -166,9 +166,10 @@ class _ScrollingRecentEpisodesState extends State<ScrollingRecentEpisodes> {
                                                     .posterPath ==
                                                 null
                                             ? Image.asset(
-                                                'assets/images/na_rect.png',
+                                                'assets/images/na_logo.png',
                                                 fit: BoxFit.cover,
-                                              )
+                                                width: double.infinity,
+                                                height: double.infinity)
                                             : CachedNetworkImage(
                                                 cacheManager: cacheProp(),
                                                 fadeOutDuration: const Duration(
@@ -200,12 +201,14 @@ class _ScrollingRecentEpisodesState extends State<ScrollingRecentEpisodes> {
                                                 placeholder: (context, url) =>
                                                     scrollingImageShimmer(
                                                         themeMode),
-                                                errorWidget:
-                                                    (context, url, error) =>
-                                                        Image.asset(
-                                                  'assets/images/na_rect.png',
-                                                  fit: BoxFit.cover,
-                                                ),
+                                                errorWidget: (context, url,
+                                                        error) =>
+                                                    Image.asset(
+                                                        'assets/images/na_logo.png',
+                                                        fit: BoxFit.cover,
+                                                        width: double.infinity,
+                                                        height:
+                                                            double.infinity),
                                               ),
                                       ),
                                       Positioned(

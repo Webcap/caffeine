@@ -66,7 +66,7 @@ class DiscoverMoviesState extends State<DiscoverMovies>
     moviesApi()
         .fetchMovies(
             '$TMDB_API_BASE_URL/discover/movie?api_key=$TMDB_API_KEY&sort_by=popularity.desc&watch_region=US&include_adult=${widget.includeAdult}&primary_release_year=${years.first}&with_genres=${genres.first.genreValue}')
-        .then((value) {
+        .then((value) async {
       if (mounted) {
         setState(() {
           moviesList = value;

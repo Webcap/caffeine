@@ -314,15 +314,17 @@ class PersonMovieListWidgetState extends State<PersonMovieListWidget>
                                                               BorderRadius
                                                                   .circular(
                                                                       8.0),
-                                                          child: uniqueMov![
-                                                                          index]
+                                                          child: uniqueMov![index]
                                                                       .posterPath ==
                                                                   null
                                                               ? Image.asset(
-                                                                  'assets/images/na_rect.png',
+                                                                  'assets/images/na_logo.png',
                                                                   fit: BoxFit
                                                                       .cover,
-                                                                )
+                                                                  width: double
+                                                                      .infinity,
+                                                                  height: double
+                                                                      .infinity)
                                                               : CachedNetworkImage(
                                                                   cacheManager:
                                                                       cacheProp(),
@@ -367,12 +369,14 @@ class PersonMovieListWidgetState extends State<PersonMovieListWidget>
                                                                   errorWidget: (context,
                                                                           url,
                                                                           error) =>
-                                                                      Image
-                                                                          .asset(
-                                                                    'assets/images/na_rect.png',
-                                                                    fit: BoxFit
-                                                                        .cover,
-                                                                  ),
+                                                                      Image.asset(
+                                                                      'assets/images/na_logo.png',
+                                                                      fit: BoxFit
+                                                                          .cover,
+                                                                      width: double
+                                                                          .infinity,
+                                                                      height: double
+                                                                          .infinity),
                                                                 ),
                                                         ),
                                                         Positioned(
@@ -579,10 +583,13 @@ class PersonTVListWidgetState extends State<PersonTVListWidget>
                                                                       .posterPath ==
                                                                   null
                                                               ? Image.asset(
-                                                                  'assets/images/na_rect.png',
+                                                                  'assets/images/na_logo.png',
                                                                   fit: BoxFit
                                                                       .cover,
-                                                                )
+                                                                  width: double
+                                                                      .infinity,
+                                                                  height: double
+                                                                      .infinity)
                                                               : CachedNetworkImage(
                                                                   cacheManager:
                                                                       cacheProp(),
@@ -627,12 +634,14 @@ class PersonTVListWidgetState extends State<PersonTVListWidget>
                                                                   errorWidget: (context,
                                                                           url,
                                                                           error) =>
-                                                                      Image
-                                                                          .asset(
-                                                                    'assets/images/na_rect.png',
-                                                                    fit: BoxFit
-                                                                        .cover,
-                                                                  ),
+                                                                      Image.asset(
+                                                                      'assets/images/na_logo.png',
+                                                                      fit: BoxFit
+                                                                          .cover,
+                                                                      width: double
+                                                                          .infinity,
+                                                                      height: double
+                                                                          .infinity),
                                                                 ),
                                                         ),
                                                         Positioned(

@@ -56,10 +56,10 @@ class HorizontalScrollingTVList extends StatelessWidget {
                             ClipRRect(
                               borderRadius: BorderRadius.circular(8.0),
                               child: tvList![index].posterPath == null
-                                  ? Image.asset(
-                                      'assets/images/na_rect.png',
+                                  ? Image.asset('assets/images/na_logo.png',
                                       fit: BoxFit.cover,
-                                    )
+                                      width: double.infinity,
+                                      height: double.infinity)
                                   : CachedNetworkImage(
                                       cacheManager: cacheProp(),
                                       fadeOutDuration:

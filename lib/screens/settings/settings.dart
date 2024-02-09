@@ -5,6 +5,7 @@ import 'package:caffiene/models/app_colors.dart';
 import 'package:caffiene/models/app_languages.dart';
 import 'package:caffiene/screens/settings/language_choose.dart';
 import 'package:caffiene/screens/settings/player_settings.dart';
+import 'package:caffiene/utils/globlal_methods.dart';
 import 'package:caffiene/utils/helpers/next_screen.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -573,19 +574,23 @@ class _SettingsState extends State<Settings> {
             trailing: ElevatedButton(
                 onPressed: () async {
                   await clearCache().then((value) =>
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          duration:
-                              const Duration(seconds: 1, milliseconds: 500),
-                          content: Text(value
-                              ? tr("cleared_cache")
-                              : tr("cache_doesnt_exist")))));
+                      GlobalMethods.showCustomScaffoldMessage(
+                          SnackBar(
+                              duration:
+                                  const Duration(seconds: 1, milliseconds: 500),
+                              content: Text(value
+                                  ? tr("cleared_cache")
+                                  : tr("cache_doesnt_exist"))),
+                          context));
                   await clearTempCache().then((value) =>
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          duration:
-                              const Duration(seconds: 1, milliseconds: 500),
-                          content: Text(value
-                              ? tr("cleared_cache")
-                              : tr("cache_doesnt_exist")))));
+                      GlobalMethods.showCustomScaffoldMessage(
+                          SnackBar(
+                              duration:
+                                  const Duration(seconds: 1, milliseconds: 500),
+                              content: Text(value
+                                  ? tr("cleared_cache")
+                                  : tr("cache_doesnt_exist"))),
+                          context));
                 },
                 child: Text(tr("clear"))),
           ),

@@ -69,7 +69,8 @@ class _MovieAboutState extends State<MovieAbout> {
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: widget.movie.overview!.isEmpty
+              child: widget.movie.overview == null ||
+                      widget.movie.overview!.isEmpty
                   ? Text(tr("no_overview_movie"))
                   : ReadMoreText(
                       widget.movie.overview!,
