@@ -82,6 +82,14 @@ class _caffeineState extends State<caffeine>
           _remoteConfig.getString('streaming_server_zoro');
       appDependencyProvider.isForcedUpdate =
           _remoteConfig.getBool('forced_update');
+      appDependencyProvider.flixhqZoeServer =
+          _remoteConfig.getString("flixhq_zoe_server");
+      appDependencyProvider.goMoviesServer =
+          _remoteConfig.getString("gomovies_server");
+      appDependencyProvider.vidSrcServer =
+          _remoteConfig.getString("vidsrc_server");
+      appDependencyProvider.vidSrcToServer =
+          _remoteConfig.getString("vidsrcto_server");
     }
     // await requestNotificationPermissions();
   }
