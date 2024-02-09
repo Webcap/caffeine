@@ -91,7 +91,7 @@ class _caffeineState extends State<caffeine>
       appDependencyProvider.vidSrcToServer =
           _remoteConfig.getString("vidsrcto_server");
     }
-    // await requestNotificationPermissions();
+    await requestNotificationPermissions();
   }
 
   @override

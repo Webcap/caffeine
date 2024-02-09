@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:permission_handler/permission_handler.dart';
+// import 'package:permission_handler/permission_handler.dart';
 
 
 class LandingScreen extends StatefulWidget {
@@ -24,10 +24,10 @@ class _LandingScreenState extends State<LandingScreen> {
 
   @override
   void initState() {
-    [
-      Permission.notification,
-      Permission.storage
-    ].request();
+    // [
+    //   Permission.notification,
+    //   Permission.storage
+    // ].request();
     super.initState();
   }
 
