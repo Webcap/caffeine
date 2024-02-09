@@ -253,4 +253,5 @@ abstract class MovixIcon {
   static const setting = "assets/movixIcon/Setting.svg";
   static const server = "assets/movixIcon/server-rack.svg";
   static const info = "assets/movixIcon/Info Square.svg";
+  static const chromecast = "assets/movixIcon/Chromecast.svg";
 }

@@ -39,6 +39,7 @@ class _MainMoviesDisplayState extends State<MainMoviesDisplay> {
         children: [
           DiscoverMovies(
             includeAdult: includeAdult,
+            discoverType: "discover"
           ),
           const UpdateBottom(),
           // ScrollingMovies(

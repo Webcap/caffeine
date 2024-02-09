@@ -24,10 +24,10 @@ const kTextSmallHeaderStyle = TextStyle(
   overflow: TextOverflow.ellipsis,
 );
 
-//********************************* */
+
 //********************************* */
 // ** VERSION CONTROL BUDDY //
-const String currentAppVersion = '1.6.0-dev';
+const String currentAppVersion = '1.6.0-build-5';
 //*********************************** */
 
 const kTextHeaderStyle = TextStyle(
@@ -54,7 +54,7 @@ final List<String> appNames = [
 
 CacheManager cacheProp() {
   return CacheManager(
-      Config('cacheKey', stalePeriod: const Duration(days: 10)));
+      Config('cacheKey', stalePeriod: const Duration(days: 15)));
 }
 
 enum MediaType { movie, tvShow }

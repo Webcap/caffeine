@@ -4,15 +4,15 @@ import 'dart:io';
 
 import 'package:caffiene/models/custom_exceptions.dart';
 import 'package:caffiene/utils/constant.dart';
+import 'package:caffiene/video_providers/caffeine_api_source.dart';
 import 'package:caffiene/video_providers/dcva.dart';
 import 'package:caffiene/video_providers/flixhq.dart';
+import 'package:retry/retry.dart';
 
 import '../models/external_subtitles.dart';
 import '../models/movie_models.dart';
 import '../utils/config.dart';
 import '../video_providers/dramacool.dart';
-import '../video_providers/flixhq_flixquest.dart';
-import '../video_providers/superstream.dart';
 import '../video_providers/zoro.dart';
 import '/models/update.dart';
 import '/models/images.dart';
@@ -308,18 +308,23 @@ Future<List<TV>> fetchPersonTV(String api) async {
 Future checkForUpdate(String api) async {
   UpdateChecker updateChecker;
   try {
-    var res = await retryOptions.retry(
+    var res = await const RetryOptions(
+            maxDelay: Duration(milliseconds: 300),
+            delayFactor: Duration(seconds: 0),
+            maxAttempts: 3)
+        .retry(
       (() => http.get(Uri.parse(api)).timeout(timeOut)),
       retryIf: (e) => e is SocketException || e is TimeoutException,
     );
     var decodeRes = jsonDecode(res.body);
     updateChecker = UpdateChecker.fromJson(decodeRes);
-  } finally {
     client.close();
+  } catch (e) {
+    print("Exception thrown");
+    rethrow;
   }
   return updateChecker;
 }
-
 Future<Movie> getMovie(String api) async {
   Movie movie;
   try {
@@ -360,7 +365,7 @@ Future<List<FlixHQMovieSearchEntry>> fetchMoviesForStreamFlixHQ(
     );
     var decodeRes = jsonDecode(res.body);
     if (decodeRes.containsKey('message') || res.statusCode != 200) {
-      throw ServerDownException();
+      throw NotFoundException();
     }
     movieStream = FlixHQMovieSearch.fromJson(decodeRes);
 
@@ -383,7 +388,7 @@ Future<List<FlixHQMovieInfoEntries>> getMovieStreamEpisodesFlixHQ(
     );
     var decodeRes = jsonDecode(res.body);
     if (decodeRes.containsKey('message') || res.statusCode != 200) {
-      throw ServerDownException();
+      throw NotFoundException();
     }
     movieInfo = FlixHQMovieInfo.fromJson(decodeRes);
 
@@ -440,7 +445,7 @@ Future<List<FlixHQTVSearchEntry>> fetchTVForStreamFlixHQ(String api) async {
     );
     var decodeRes = jsonDecode(res.body);
     if (decodeRes.containsKey('message') || res.statusCode != 200) {
-      throw ServerDownException();
+      throw NotFoundException();
     }
     tvStream = FlixHQTVSearch.fromJson(decodeRes);
 
@@ -462,7 +467,7 @@ Future<FlixHQTVInfo> getTVStreamEpisodesFlixHQ(String api) async {
     );
     var decodeRes = jsonDecode(res.body);
     if (decodeRes.containsKey('message') || res.statusCode != 200) {
-      throw ServerDownException();
+      throw NotFoundException();
     }
     tvInfo = FlixHQTVInfo.fromJson(decodeRes);
 
@@ -660,43 +665,6 @@ Future<SubtitleDownload> downloadExternalSubtitle(
   return sub;
 }
 
-/// Superstream function(s)
-Future<SuperstreamStreamSources> getSuperstreamStreamingLinks(
-    String api) async {
-  SuperstreamStreamSources superstreamSources;
-  int tries = 3;
-  dynamic decodeRes;
-  try {
-    dynamic res;
-    while (tries > 0) {
-      res = await retryOptionsStream.retry(
-        (() => http.get(Uri.parse(api)).timeout(timeOutStream)),
-        retryIf: (e) => e is SocketException || e is TimeoutException,
-      );
-      decodeRes = jsonDecode(res.body);
-      if (decodeRes.containsKey('message')) {
-        --tries;
-      } else {
-        break;
-      }
-    }
-
-    if (decodeRes.containsKey('message') || res.statusCode != 200) {
-      throw ServerDownException();
-    }
-
-    superstreamSources = SuperstreamStreamSources.fromJson(decodeRes);
-
-    if (superstreamSources.videoLinks == null ||
-        superstreamSources.videoLinks!.isEmpty) {
-      throw NotFoundException();
-    }
-  } catch (e) {
-    rethrow;
-  }
-  return superstreamSources;
-}
-
 Future<List<DCVASearchEntry>> fetchMovieTVForStreamDCVA(String api) async {
   DCVASearch dcvaStream;
   try {
@@ -706,7 +674,7 @@ Future<List<DCVASearchEntry>> fetchMovieTVForStreamDCVA(String api) async {
     );
     var decodeRes = jsonDecode(res.body);
     if (decodeRes.containsKey('message') || res.statusCode != 200) {
-      throw ServerDownException();
+      throw NotFoundException();
     }
     dcvaStream = DCVASearch.fromJson(decodeRes);
 
@@ -728,7 +696,7 @@ Future<List<DCVAInfoEntries>> getMovieTVStreamEpisodesDCVA(String api) async {
     );
     var decodeRes = jsonDecode(res.body);
     if (decodeRes.containsKey('message') || res.statusCode != 200) {
-      throw ServerDownException();
+      throw NotFoundException();
     }
     dcvaInfo = DCVAInfo.fromJson(decodeRes);
 
@@ -841,7 +809,7 @@ Future<ZoroStreamSources> getMovieTVStreamLinksAndSubsZoro(String api) async {
       }
     }
     if (decodeRes.containsKey('message') || res.statusCode != 200) {
-      throw ServerDownException();
+      throw NotFoundException();
     }
     zoroVideoSources = ZoroStreamSources.fromJson(decodeRes);
 
@@ -855,8 +823,8 @@ Future<ZoroStreamSources> getMovieTVStreamLinksAndSubsZoro(String api) async {
   return zoroVideoSources;
 }
 
-Future<FlixHQFlixQuestSources> getFlixHQFlixQuestLinks(String api) async {
-  FlixHQFlixQuestSources fqstreamSources;
+Future<CaffeineAPIStreamSources> getCaffeineAPILinks(String api) async {
+  CaffeineAPIStreamSources fqAPIStreamSources;
   int tries = 3;
   dynamic decodeRes;
   try {
@@ -876,14 +844,14 @@ Future<FlixHQFlixQuestSources> getFlixHQFlixQuestLinks(String api) async {
     if (decodeRes.containsKey('message') || res.statusCode != 200) {
       throw ServerDownException();
     }
-    fqstreamSources = FlixHQFlixQuestSources.fromJson(decodeRes);
+    fqAPIStreamSources = CaffeineAPIStreamSources.fromJson(decodeRes);
 
-    if (fqstreamSources.videoLinks == null ||
-        fqstreamSources.videoLinks!.isEmpty) {
+    if (fqAPIStreamSources.videoLinks == null ||
+        fqAPIStreamSources.videoLinks!.isEmpty) {
       throw NotFoundException();
     }
   } catch (e) {
     rethrow;
   }
-  return fqstreamSources;
+  return fqAPIStreamSources;
 }

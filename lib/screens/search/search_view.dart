@@ -19,8 +19,6 @@ import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:caffiene/utils/constant.dart';
 
-
-
 class Search extends SearchDelegate<String> {
   final Mixpanel mixpanel;
   final bool includeAdult;
@@ -451,7 +449,7 @@ class Search extends SearchDelegate<String> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        '${moviesList[index].title!} ${moviesList[index].releaseDate == null ? '' : moviesList[index].releaseDate == "" ? '' : '(${DateTime.parse(moviesList[index].releaseDate!).year})'}',
+                                        '${moviesList[index].title!} ${moviesList[index].releaseDate == null || moviesList[index].releaseDate == '' ? '' : '(${DateTime.parse(moviesList[index].releaseDate!).year})'}',
                                         style: TextStyle(
                                             fontFamily: 'PoppinsSB',
                                             fontSize: 15,
@@ -464,12 +462,15 @@ class Search extends SearchDelegate<String> {
                                       Row(
                                         children: <Widget>[
                                           const Icon(
-                                            Icons.star,
+                                            Icons.star_rounded,
                                           ),
                                           Text(
-                                            moviesList[index]
-                                                .voteAverage!
-                                                .toStringAsFixed(1),
+                                            moviesList[index].voteAverage ==
+                                                    null
+                                                ? 'NR'
+                                                : moviesList[index]
+                                                    .voteAverage!
+                                                    .toStringAsFixed(1),
                                             style: TextStyle(
                                                 fontFamily: 'Poppins',
                                                 color: themeMode == "dark" ||
@@ -606,12 +607,14 @@ class Search extends SearchDelegate<String> {
                                       Row(
                                         children: <Widget>[
                                           const Icon(
-                                            Icons.star,
+                                            Icons.star_rounded,
                                           ),
                                           Text(
-                                            tvList[index]
-                                                .voteAverage!
-                                                .toStringAsFixed(1),
+                                            tvList[index].voteAverage == null
+                                                ? 'NR'
+                                                : tvList[index]
+                                                    .voteAverage!
+                                                    .toStringAsFixed(1),
                                             style: TextStyle(
                                                 fontFamily: 'Poppins',
                                                 color: themeMode == "dark" ||

@@ -4,29 +4,13 @@ import 'dart:io';
 import 'dart:math';
 import 'package:caffiene/video_providers/provider_names.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:caffiene/models/live_tv.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:caffiene/models/update.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:permission_handler/permission_handler.dart';
-
-
-Future checkForUpdate(String api) async {
-  UpdateChecker updateChecker;
-  try {
-    var res = await retryOptions.retry(
-      (() => http.get(Uri.parse(api)).timeout(timeOut)),
-      retryIf: (e) => e is SocketException || e is TimeoutException,
-    );
-    var decodeRes = jsonDecode(res.body);
-    updateChecker = UpdateChecker.fromJson(decodeRes);
-  } finally {
-    client.close();
-  }
-  return updateChecker;
-}
 
 Future<List<Channel>> fetchChannels(String api) async {
   ChannelsList channelsList;
@@ -49,7 +33,7 @@ String episodeSeasonFormatter(int episodeNumber, int seasonNumber) {
       seasonNumber <= 9 ? 'S0$seasonNumber' : 'S$seasonNumber';
   String formattedEpisode =
       episodeNumber <= 9 ? 'E0$episodeNumber' : 'E$episodeNumber';
-  return "$formattedSeason | $formattedEpisode";
+  return "$formattedSeason : $formattedEpisode";
 }
 
 Future<void> requestNotificationPermissions() async {
@@ -71,13 +55,6 @@ Future<bool> checkConnection() async {
   }
 
   return isInternetWorking;
-}
-
-String removeCharacters(String input) {
-  String charactersToRemove = "|^_/,.?\"'&#^*%@!-[]()\$";
-  String pattern = '[$charactersToRemove]';
-  String result = input.replaceAll(RegExp(pattern), '');
-  return result;
 }
 
 Future<bool> clearTempCache() async {
@@ -194,4 +171,23 @@ List<VideoProvider?> parseProviderPrecedenceString(String raw) {
   }).toList();
 
   return videoProviders;
+}
+
+int createUniqueId() {
+  return DateTime.now().millisecondsSinceEpoch.remainder(100000);
+}
+
+bool isReleased(String target) {
+  DateTime currentDate = DateTime.now();
+  DateTime mediaDate = DateFormat('yyyy-MM-dd').parse(target);
+  return mediaDate.isBefore(currentDate) ||
+      mediaDate.isAtSameMomentAs(currentDate);
+}
+
+String normalizeTitle(String title) {
+  return title
+      .trim()
+      .toLowerCase()
+      .replaceAll(RegExp('[":\']'), '')
+      .replaceAll(RegExp('[^a-zA-Z0-9]+'), '_');
 }

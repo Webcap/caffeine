@@ -358,16 +358,6 @@ class Endpoints {
     return '$baseUrl' 'v3/tv/sources/' '$id/' '$seasonNum/' '$episodeNum';
   }
 
-  static String getSuperstreamStreamMovie(String baseUrl, int tmdbId) {
-    return '$baseUrl' 'superstream/watch-movie?tmdbId=$tmdbId';
-  }
-
-  static String getSuperstreamStreamTV(
-      String baseUrl, int tmdbId, int seasonNumber, int episodeNumber) {
-    return '$baseUrl'
-        'superstream/watch-tv?tmdbId=$tmdbId&episode=$episodeNumber&season=$seasonNumber';
-  }
-
   static String searchMovieTVForStreamDramacool(
       String titleName, String baseUrl) {
     return '$baseUrl' 'movies/dramacool/$titleName';
@@ -414,13 +404,14 @@ class Endpoints {
     return '$baseUrl' 'anime/zoro/watch?episodeId=$episodeId&server=$server';
   }
 
-  static String getMovieLinksFlixHQFQ(String baseUrl, int tmdbId) {
-    return '$baseUrl' 'flixhq/watch-movie?tmdbId=$tmdbId';
+  static String getMovieEndpointCaffeineAPI(
+      String baseUrl, int tmdbId, String provider, String server) {
+    return '$baseUrl' '$provider/watch-movie?tmdbId=$tmdbId&server=$server';
   }
 
-  static String getTVLinksFlixHQFQ(
-      String baseUrl, int episode, int season, int tmdbId) {
+  static String getTVEndpointCaffeineAPI(String baseUrl, int episode,
+      int season, int tmdbId, String provider, String server) {
     return '$baseUrl'
-        'flixhq/watch-tv?tmdbId=$tmdbId&season=$season&episode=$episode';
+        '$provider/watch-tv?tmdbId=$tmdbId&season=$season&episode=$episode&server=$server';
   }
 }

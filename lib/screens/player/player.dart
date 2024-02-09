@@ -9,11 +9,11 @@ import 'package:caffiene/provider/recently_watched_provider.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/widgets/common_widgets.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:better_player/better_player.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
-//import 'package:wakelock/wakelock.dart';
 
 class Player extends StatefulWidget {
   const Player(
@@ -58,8 +58,11 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
   // ignore: unused_field
   Timer? _resetTimer;
 
+  late SettingsProvider settings;
+
   @override
   void initState() {
+    settings = Provider.of<SettingsProvider>(context, listen: false);
     super.initState();
     String backgroundColorString = widget.settings.subtitleBackgroundColor;
     String foregroundColorString = widget.settings.subtitleForegroundColor;
@@ -77,41 +80,48 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
       minBufferMs: 15000,
     );
     betterPlayerControlsConfiguration = BetterPlayerControlsConfiguration(
-      onFullScreenChange: () {
-        widget.mediaType == MediaType.movie
-            ? insertRecentMovieData()
-            : insertRecentEpisodeData();
-      },
-      enableFullscreen: true,
-      name: widget.mediaType == MediaType.movie
-          ? "${widget.movieMetadata!.movieName!} (${widget.movieMetadata!.releaseYear!})"
-          : "${widget.tvMetadata!.seriesName!} | ${widget.tvMetadata!.episodeName!} | ${episodeSeasonFormatter(widget.tvMetadata!.episodeNumber!, widget.tvMetadata!.seasonNumber!)}",
-      backgroundColor: Colors.black,
-      progressBarBackgroundColor: Colors.white,
-      controlBarColor: Colors.black.withOpacity(0.3),
-      muteIcon: Icons.volume_off_rounded,
-      unMuteIcon: Icons.volume_up_rounded,
-      pauseIcon: Icons.pause_rounded,
-      pipMenuIcon: Icons.picture_in_picture_rounded,
-      playIcon: Icons.play_arrow_rounded,
-      showControlsOnInitialize: false,
-      loadingColor: widget.colors.first,
-      iconsColor: widget.colors.first,
-      backwardSkipTimeInMilliseconds:
-          Duration(seconds: widget.settings.defaultSeekDuration).inMilliseconds,
-      forwardSkipTimeInMilliseconds:
-          Duration(seconds: widget.settings.defaultSeekDuration).inMilliseconds,
-      progressBarPlayedColor: widget.colors.first,
-      progressBarBufferedColor: Colors.black45,
-      skipForwardIcon: FontAwesomeIcons.rotateRight,
-      skipBackIcon: FontAwesomeIcons.rotateLeft,
-      fullscreenEnableIcon: Icons.fullscreen_rounded,
-      fullscreenDisableIcon: Icons.fullscreen_exit_rounded,
-      overflowMenuIcon: Icons.menu_rounded,
-      subtitlesIcon: Icons.closed_caption_rounded,
-      qualitiesIcon: Icons.hd_rounded,
-      enableAudioTracks: false,
-    );
+        onFullScreenChange: () {
+          widget.mediaType == MediaType.movie
+              ? insertRecentMovieData()
+              : insertRecentEpisodeData();
+        },
+        enableFullscreen: true,
+        name: widget.mediaType == MediaType.movie
+            ? "${widget.movieMetadata!.movieName!} (${widget.movieMetadata!.releaseYear!})"
+            : "${widget.tvMetadata!.seriesName!} - ${widget.tvMetadata!.episodeName!} | ${episodeSeasonFormatter(widget.tvMetadata!.episodeNumber!, widget.tvMetadata!.seasonNumber!)}",
+        backgroundColor: Colors.black,
+        progressBarBackgroundColor: Colors.white,
+        controlBarColor: Colors.black.withOpacity(0.3),
+        muteIcon: Icons.volume_off_rounded,
+        unMuteIcon: Icons.volume_up_rounded,
+        pauseIcon: Icons.pause_rounded,
+        pipMenuIcon: Icons.picture_in_picture_rounded,
+        playIcon: Icons.play_arrow_rounded,
+        showControlsOnInitialize: false,
+        loadingColor: widget.colors.first,
+        iconsColor: widget.colors.first,
+        backwardSkipTimeInMilliseconds:
+            Duration(seconds: widget.settings.defaultSeekDuration)
+                .inMilliseconds,
+        forwardSkipTimeInMilliseconds:
+            Duration(seconds: widget.settings.defaultSeekDuration)
+                .inMilliseconds,
+        progressBarPlayedColor: widget.colors.first,
+        progressBarBufferedColor: Colors.black45,
+        skipForwardIcon: FontAwesomeIcons.rotateRight,
+        skipBackIcon: FontAwesomeIcons.rotateLeft,
+        fullscreenEnableIcon: Icons.fullscreen_rounded,
+        fullscreenDisableIcon: Icons.fullscreen_exit_rounded,
+        overflowMenuIcon: Icons.menu_rounded,
+        overflowMenuIconsColor: widget.colors.first,
+        overflowModalTextColor: widget.colors.first,
+        overflowModalColor: widget.colors.last,
+        subtitlesIcon: Icons.closed_caption_rounded,
+        qualitiesIcon: Icons.hd_rounded,
+        enableAudioTracks: false,
+        controlBarHeight: 50,
+        watchingText: tr("watching_text"),
+        playerTimeMode: settings.playerTimeDisplay);
 
     BetterPlayerConfiguration betterPlayerConfiguration =
         BetterPlayerConfiguration(
@@ -320,11 +330,16 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
     return WillPopScope(
       onWillPop: () async {
         if (_betterPlayerController.isVideoInitialized()!) {
-          widget.mediaType == MediaType.movie
-              ? insertRecentMovieData()
-              : insertRecentEpisodeData();
+          Navigator.pop(
+              context,
+              widget.mediaType == MediaType.movie
+                  ? insertRecentMovieData
+                  : insertRecentEpisodeData);
+        } else {
+          Navigator.pop(context);
         }
-        return true;
+
+        return false;
       },
       child: Scaffold(
         body: Center(
@@ -343,7 +358,8 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
                 showModalBottomSheet(
                     builder: (context) {
                       return ExternalPlay(
-                        sources: widget.sources,
+                        videoSources: widget.sources,
+                        subtitleSources: widget.subs,
                       );
                     },
                     context: context);

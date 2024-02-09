@@ -72,12 +72,16 @@ class _caffeineState extends State<caffeine>
           _remoteConfig.getBool('trending_holiday_scroller');
       appDependencyProvider.displayWatchNowButton =
           _remoteConfig.getBool('enable_stream');
+      appDependencyProvider.displayCastButton =
+          _remoteConfig.getBool('enable_chromecast_feature');
       appDependencyProvider.displayOTTDrawer =
           _remoteConfig.getBool('enable_ott');
       appDependencyProvider.caffeineAPIURL =
           _remoteConfig.getString('caffeine_api_url');
       appDependencyProvider.streamingServerZoro =
           _remoteConfig.getString('streaming_server_zoro');
+      appDependencyProvider.isForcedUpdate =
+          _remoteConfig.getBool('forced_update');
     }
     // await requestNotificationPermissions();
   }
@@ -89,6 +93,7 @@ class _caffeineState extends State<caffeine>
     fileDelete();
     FirebaseMessaging.onMessage.listen((RemoteMessage event) {});
     FirebaseMessaging.onMessageOpenedApp.listen((message) {});
+    print(appDependencyProvider.displayOTTDrawer);
   }
 
   @override

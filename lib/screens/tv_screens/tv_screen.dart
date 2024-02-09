@@ -33,7 +33,7 @@ class _MainTVDisplayState extends State<MainTVDisplay> {
       child: ListView(
         children: [
           DiscoverTV(
-              includeAdult: Provider.of<SettingsProvider>(context).isAdult),
+              includeAdult: Provider.of<SettingsProvider>(context).isAdult, discoverType: 'discover',),
           rEpisodes.isEmpty
               ? Container()
               : ScrollingRecentEpisodes(episodesList: rEpisodes),

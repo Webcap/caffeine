@@ -6,7 +6,6 @@ import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/widgets/shimmer_widget.dart';
 import 'package:caffiene/utils/constant.dart';
 
-
 class MovieListView extends StatelessWidget {
   const MovieListView({
     Key? key,
@@ -112,7 +111,7 @@ class MovieListView extends StatelessWidget {
                               Row(
                                 children: <Widget>[
                                   const Icon(
-                                    Icons.star,
+                                    Icons.star_rounded,
                                   ),
                                   Text(
                                     moviesList![index]

@@ -3,10 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:caffiene/models/custom_exceptions.dart';
 import 'package:caffiene/utils/constant.dart';
-import 'package:caffiene/video_providers/dcva.dart';
 import 'package:caffiene/video_providers/flixhq.dart';
-import 'package:caffiene/video_providers/flixhq_flixquest.dart';
-import 'package:caffiene/video_providers/superstream.dart';
 import 'package:caffiene/video_providers/zoro.dart';
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
@@ -75,52 +72,6 @@ class moviesApi {
     return movieVideoSources;
   }
 
-  Future<List<FlixHQMovieInfoEntries>> getMovieStreamEpisodesFlixHQ(
-      String api) async {
-    FlixHQMovieInfo movieInfo;
-    try {
-      var res = await retryOptionsStream.retry(
-        (() => http.get(Uri.parse(api)).timeout(timeOutStream)),
-        retryIf: (e) => e is SocketException || e is TimeoutException,
-      );
-      var decodeRes = jsonDecode(res.body);
-      if (decodeRes.containsKey('message') || res.statusCode != 200) {
-        throw ServerDownException();
-      }
-      movieInfo = FlixHQMovieInfo.fromJson(decodeRes);
-
-      if (movieInfo.episodes == null || movieInfo.episodes!.isEmpty) {
-        throw NotFoundException();
-      }
-    } catch (e) {
-      rethrow;
-    }
-
-    return movieInfo.episodes ?? [];
-  }
-
-  Future<List<FlixHQMovieSearchEntry>> fetchMoviesForStreamFlixHQ(
-      String api) async {
-    FlixHQMovieSearch movieStream;
-    try {
-      var res = await retryOptionsStream.retry(
-        (() => http.get(Uri.parse(api)).timeout(timeOutStream)),
-        retryIf: (e) => e is SocketException || e is TimeoutException,
-      );
-      var decodeRes = jsonDecode(res.body);
-      if (decodeRes.containsKey('message') || res.statusCode != 200) {
-        throw ServerDownException();
-      }
-      movieStream = FlixHQMovieSearch.fromJson(decodeRes);
-
-      if (movieStream.results == null || movieStream.results!.isEmpty) {
-        throw NotFoundException();
-      }
-    } catch (e) {
-      rethrow;
-    }
-    return movieStream.results ?? [];
-  }
 
   Future<WatchProviders> fetchWatchProviders(String api, String country) async {
     WatchProviders watchProviders;
@@ -360,66 +311,6 @@ class moviesApi {
     }
   }
 
-  /// Superstream function(s)
-  Future<SuperstreamStreamSources> getSuperstreamStreamingLinks(
-      String api) async {
-    SuperstreamStreamSources superstreamSources;
-    int tries = 3;
-    dynamic decodeRes;
-    try {
-      dynamic res;
-      while (tries > 0) {
-        res = await retryOptionsStream.retry(
-          (() => http.get(Uri.parse(api)).timeout(timeOutStream)),
-          retryIf: (e) => e is SocketException || e is TimeoutException,
-        );
-        decodeRes = jsonDecode(res.body);
-        if (decodeRes.containsKey('message')) {
-          --tries;
-        } else {
-          break;
-        }
-      }
-
-      if (decodeRes.containsKey('message') || res.statusCode != 200) {
-        throw ServerDownException();
-      }
-
-      superstreamSources = SuperstreamStreamSources.fromJson(decodeRes);
-
-      if (superstreamSources.videoLinks == null ||
-          superstreamSources.videoLinks!.isEmpty) {
-        throw NotFoundException();
-      }
-    } catch (e) {
-      rethrow;
-    }
-    return superstreamSources;
-  }
-
-  Future<List<DCVAInfoEntries>> getMovieTVStreamEpisodesDCVA(String api) async {
-    DCVAInfo dcvaInfo;
-    try {
-      var res = await retryOptionsStream.retry(
-        (() => http.get(Uri.parse(api)).timeout(timeOutStream)),
-        retryIf: (e) => e is SocketException || e is TimeoutException,
-      );
-      var decodeRes = jsonDecode(res.body);
-      if (decodeRes.containsKey('message') || res.statusCode != 200) {
-        throw ServerDownException();
-      }
-      dcvaInfo = DCVAInfo.fromJson(decodeRes);
-
-      if (dcvaInfo.episodes == null || dcvaInfo.episodes!.isEmpty) {
-        throw NotFoundException();
-      }
-    } catch (e) {
-      rethrow;
-    }
-
-    return dcvaInfo.episodes ?? [];
-  }
-
   // ZORO MOVIE FUNCTIONS
 
   Future<List<ZoroSearchEntry>> fetchMovieTVForStreamZoro(String api) async {
@@ -467,38 +358,5 @@ class moviesApi {
     }
 
     return zoroInfo.episodes ?? [];
-  }
-
-  Future<FlixHQFlixQuestSources> getFlixHQCaffeineLinks(String api) async {
-    FlixHQFlixQuestSources fqstreamSources;
-    int tries = 3;
-    dynamic decodeRes;
-    try {
-      dynamic res;
-      while (tries > 0) {
-        res = await retryOptionsStream.retry(
-          (() => http.get(Uri.parse(api)).timeout(timeOutStream)),
-          retryIf: (e) => e is SocketException || e is TimeoutException,
-        );
-        decodeRes = jsonDecode(res.body);
-        if (decodeRes.containsKey('message')) {
-          --tries;
-        } else {
-          break;
-        }
-      }
-      if (decodeRes.containsKey('message') || res.statusCode != 200) {
-        throw ServerDownException();
-      }
-      fqstreamSources = FlixHQFlixQuestSources.fromJson(decodeRes);
-
-      if (fqstreamSources.videoLinks == null ||
-          fqstreamSources.videoLinks!.isEmpty) {
-        throw NotFoundException();
-      }
-    } catch (e) {
-      rethrow;
-    }
-    return fqstreamSources;
   }
 }

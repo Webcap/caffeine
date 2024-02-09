@@ -5,13 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:caffiene/api/movies_api.dart';
 import 'package:caffiene/models/movie_models.dart';
 import 'package:caffiene/provider/settings_provider.dart';
-import 'package:caffiene/screens/movie_screens/main_movie_list.dart';
+import 'package:caffiene/screens/movie_screens/widgets/main_movie_list.dart';
 import 'package:caffiene/screens/movie_screens/movie_details.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/widgets/shimmer_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:caffiene/utils/constant.dart';
-
 
 class ScrollingMovies extends StatefulWidget {
   final String api, title;
@@ -165,7 +164,7 @@ class ScrollingMoviesState extends State<ScrollingMovies>
                                         builder: (context) => MovieDetailPage(
                                             movie: moviesList![index],
                                             heroId:
-                                                '${moviesList![index].id}${widget.title}')));
+                                                '${moviesList![index].id}${widget.title}-${widget.discoverType}')));
                               },
                               child: SizedBox(
                                 width: 100,
@@ -175,7 +174,7 @@ class ScrollingMoviesState extends State<ScrollingMovies>
                                       flex: 6,
                                       child: Hero(
                                         tag:
-                                            '${moviesList![index].id}${widget.title}',
+                                            '${moviesList![index].id}${widget.title}-${widget.discoverType}',
                                         child: Material(
                                           type: MaterialType.transparency,
                                           child: Stack(
@@ -188,9 +187,10 @@ class ScrollingMoviesState extends State<ScrollingMovies>
                                                             .posterPath ==
                                                         null
                                                     ? Image.asset(
-                                                        'assets/images/na_rect.png',
+                                                        'assets/images/na_logo.png',
                                                         fit: BoxFit.cover,
-                                                      )
+                                                        width: double.infinity,
+                                                        height: double.infinity)
                                                     : CachedNetworkImage(
                                                         cacheManager:
                                                             cacheProp(),
@@ -236,9 +236,13 @@ class ScrollingMoviesState extends State<ScrollingMovies>
                                                         errorWidget: (context,
                                                                 url, error) =>
                                                             Image.asset(
-                                                          'assets/images/na_rect.png',
-                                                          fit: BoxFit.cover,
-                                                        ),
+                                                                'assets/images/na_logo.png',
+                                                                fit: BoxFit
+                                                                    .cover,
+                                                                width: double
+                                                                    .infinity,
+                                                                height: double
+                                                                    .infinity),
                                                       ),
                                               ),
                                               Positioned(
@@ -263,7 +267,7 @@ class ScrollingMoviesState extends State<ScrollingMovies>
                                                   child: Row(
                                                     children: [
                                                       const Icon(
-                                                        Icons.star,
+                                                        Icons.star_rounded,
                                                       ),
                                                       Text(moviesList![index]
                                                           .voteAverage!

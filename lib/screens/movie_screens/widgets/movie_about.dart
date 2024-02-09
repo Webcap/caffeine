@@ -69,7 +69,8 @@ class _MovieAboutState extends State<MovieAbout> {
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: widget.movie.overview!.isEmpty
+              child: widget.movie.overview == null ||
+                      widget.movie.overview!.isEmpty
                   ? Text(tr("no_overview_movie"))
                   : ReadMoreText(
                       widget.movie.overview!,
@@ -123,6 +124,7 @@ class _MovieAboutState extends State<MovieAbout> {
                         posterPath: widget.movie.posterPath,
                         backdropPath: widget.movie.backdropPath,
                         api: Endpoints.movieDetailsUrl(widget.movie.id!, lang),
+                        releaseDate: widget.movie.releaseDate,
                       )
                     : Container()
                 // const SizedBox(

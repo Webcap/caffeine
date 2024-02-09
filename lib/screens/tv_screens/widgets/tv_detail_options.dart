@@ -58,7 +58,7 @@ class _TVDetailOptionsState extends State<TVDetailOptions> {
                   animationDuration: 2500,
                   progressColor: Theme.of(context).colorScheme.primary,
                   center: Text(
-                    '${widget.tvSeries.voteAverage!.toStringAsFixed(1)}/10',
+                    '${widget.tvSeries.voteAverage!.toStringAsFixed(1).endsWith('0') ? widget.tvSeries.voteAverage!.toStringAsFixed(0) : widget.tvSeries.voteAverage!.toStringAsFixed(1)}/10',
                     style: const TextStyle(
                       fontWeight: FontWeight.w700,
                     ),
@@ -99,9 +99,9 @@ class _TVDetailOptionsState extends State<TVDetailOptions> {
               ),
               child: Text(
                 widget.tvSeries.voteCount!.toString(),
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 18,
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.onPrimary,
                   fontWeight: FontWeight.w600,
                 ),
               ),

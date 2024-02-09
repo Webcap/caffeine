@@ -51,37 +51,22 @@ Widget scrollingMoviesAndTVShimmer(String themeMode) => Column(
       ],
     );
 
-Widget discoverMoviesAndTVShimmer(String themeMode) => Column(
-      mainAxisSize: MainAxisSize.max,
-      children: <Widget>[
-        Expanded(
-          child: ShimmerBase(
-            themeMode: themeMode,
-            child: CarouselSlider.builder(
-              options: CarouselOptions(
-                disableCenter: true,
-                viewportFraction: 0.6,
-                enlargeCenterPage: true,
-                autoPlay: true,
-              ),
-              itemBuilder: (context, index, pageViewIndex) => Container(
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8.0),
-                    color: Colors.grey.shade600),
-              ),
-              itemCount: 10,
-            ),
-          ),
+Widget discoverMoviesAndTVShimmer(String themeMode) => ShimmerBase(
+      themeMode: themeMode,
+      child: CarouselSlider.builder(
+        options: CarouselOptions(
+          disableCenter: true,
+          viewportFraction: 0.6,
+          enlargeCenterPage: true,
+          autoPlay: true,
         ),
-        ShimmerBase(
-          themeMode: themeMode,
-          child: Container(
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8.0),
-                color: Colors.grey.shade600),
-          ),
-        )
-      ],
+        itemBuilder: (context, index, pageViewIndex) => Container(
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8.0),
+              color: Colors.grey.shade600),
+        ),
+        itemCount: 10,
+      ),
     );
 
 Widget scrollingImageShimmer(String themeMode) => ShimmerBase(

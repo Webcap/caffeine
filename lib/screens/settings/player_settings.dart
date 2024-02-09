@@ -1,7 +1,7 @@
 import 'package:caffiene/screens/common/sublanguage_choose.dart';
 import 'package:caffiene/screens/settings/provider_choose_screen.dart';
 import 'package:caffiene/utils/config.dart';
-import 'package:caffiene/utils/next_screen.dart';
+import 'package:caffiene/utils/helpers/next_screen.dart';
 import 'package:caffiene/utils/textStyle.dart';
 import 'package:caffiene/widgets/common_widgets.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -318,16 +318,26 @@ class _PlayerSettingsState extends State<PlayerSettings> {
                     }),
               ),
               ListTile(
-                onTap: () {
-                  nextScreen(context, const SubLangChoose());
-                },
                 leading: Icon(
-                  FontAwesomeIcons.closedCaptioning,
+                  FontAwesomeIcons.solidClock,
                   color: Theme.of(context).colorScheme.primary,
                 ),
                 title: Text(
-                  tr("subtitle_language"),
+                  tr("player_time_display"),
                 ),
+                trailing: DropdownButton(
+                    value: settingValues.playerTimeDisplay,
+                    items: [
+                      DropdownMenuItem(
+                          value: 1, child: Text(tr("elapsed_total"))),
+                      DropdownMenuItem(
+                          value: 2, child: Text(tr("elapsed_remaining"))),
+                    ],
+                    onChanged: (int? value) {
+                      setState(() {
+                        settingValues.playerTimeDisplay = value!;
+                      });
+                    }),
               ),
               SwitchListTile(
                 inactiveThumbColor: Colors.white,
@@ -346,16 +356,31 @@ class _PlayerSettingsState extends State<PlayerSettings> {
               ),
               ListTile(
                 onTap: () {
-                  nextScreen(context, ProviderChooseScreen());
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: ((context) {
+                    return const SubLangChoose();
+                  })));
+                },
+                leading: Icon(
+                  FontAwesomeIcons.closedCaptioning,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                title: Text(
+                  tr("subtitle_language"),
+                ),
+              ),
+              ListTile(
+                onTap: () {
+                  nextScreen(context, const ProviderChooseScreen());
                 },
                 leading: Icon(
                   FontAwesomeIcons.server,
                   color: Theme.of(context).colorScheme.primary,
                 ),
                 title: Text(
-                  tr("provider_precedence")
+                  tr("provider_precedence"),
                 ),
-              )
+              ),
             ],
           ),
         ),

@@ -34,7 +34,6 @@ class EpisodeAbout extends StatefulWidget {
 class _EpisodeAboutState extends State<EpisodeAbout> {
   late AppDependencyProvider appDependency =
       Provider.of<AppDependencyProvider>(context, listen: false);
-
   @override
   Widget build(BuildContext context) {
     final lang = Provider.of<SettingsProvider>(context).appLanguage;
@@ -66,7 +65,7 @@ class _EpisodeAboutState extends State<EpisodeAbout> {
               padding: const EdgeInsets.all(8.0),
               child: ReadMoreText(
                 widget.episodeList.overview!.isEmpty
-                    ? ''
+                    ? tr("no_episode_overview")
                     : widget.episodeList.overview!,
                 trimLines: 4,
                 style: const TextStyle(fontFamily: 'Poppins'),
@@ -102,14 +101,17 @@ class _EpisodeAboutState extends State<EpisodeAbout> {
               ],
             ),
             const SizedBox(height: 20),
-            appDependency.displayWatchNowButton && widget.posterPath != null
-              ? WatchNowButtonTV(
-                  episodeList: widget.episodeList,
-                  seriesName: widget.seriesName!,
-                  tvId: widget.tvId!,
-                  posterPath: widget.posterPath!,
-                )
-              : Container(),
+            Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              appDependency.displayWatchNowButton && widget.posterPath != null
+                  ? WatchNowButtonTV(
+                      episode: widget.episodeList,
+                      seriesName: widget.seriesName!,
+                      tvId: widget.tvId!,
+                      posterPath: widget.posterPath!,
+                    )
+                  : Container(),
+            ]),
+
             const SizedBox(height: 15),
             ScrollingTVEpisodeCasts(
               passedFrom: 'episode_detail',

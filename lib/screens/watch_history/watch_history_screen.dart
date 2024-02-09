@@ -7,7 +7,7 @@ import 'package:caffiene/models/tv.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/screens/watch_history/widgets/movie_watch_history_widget.dart';
 import 'package:caffiene/screens/watch_history/widgets/tv_watch_history_tab.dart';
-import 'package:caffiene/utils/snackbar.dart';
+import 'package:caffiene/utils/helpers/snackbar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';

@@ -62,9 +62,7 @@ class SignInProvider extends ChangeNotifier {
   Future<DocumentReference> insertUsername(String username, String uid) async {
     // Get the Firestore instance
     var firestore = FirebaseFirestore.instance;
-    // Get the collection reference for 'users'
     var usersRef = firestore.collection('usernames');
-    // Get the document reference for the username
     var docRef = usersRef.doc(username);
     // Set the document data with the username field
     await docRef.set({'uname': username, 'uid': uid});
@@ -80,25 +78,16 @@ class SignInProvider extends ChangeNotifier {
   Future<String> createRandomUsername() async {
     // Get the Firestore instance
     var firestore = FirebaseFirestore.instance;
-
-    // Declare a variable to store the username
     var username;
-
-    // Declare a boolean variable to store the availability status
     var available = false;
 
     // Loop until the username is available
     while (!available) {
-      // Generate a random username using the package
       username = generator.generateRandom();
 
-      // Get the document reference for the username
       var docRef = firestore.collection('users').doc(username);
-
-      // Get the document snapshot
       var docSnap = await docRef.get();
 
-      // Check if the document exists or not
       if (docSnap.exists) {
         available = false;
       } else {
@@ -134,12 +123,8 @@ class SignInProvider extends ChangeNotifier {
         _uid = userDetails.uid;
         _imageUrl = userDetails.photoURL;
         _provider = "google";
+        _firstRun = false;
         notifyListeners();
-
-        await createRandomUsername().then((value) {
-          _username = value;
-          insertUsername(_username!, _uid!);
-        });
       } on FirebaseAuthException catch (e) {
         switch (e.code) {
           case "account-exists-with-different-credential":
@@ -187,7 +172,6 @@ class SignInProvider extends ChangeNotifier {
     await r.set({
       "id": _uid,
       "name": _name,
-      "username": _username,
       "email": _email,
       "profileId": 0,
       "image_url": _imageUrl,
@@ -205,11 +189,10 @@ class SignInProvider extends ChangeNotifier {
     final SharedPreferences s = await SharedPreferences.getInstance();
     await s.setString('name', _name!);
     await s.setString('email', _email!);
-    await s.setString('username', _username!);
     await s.setString('uid', _uid!);
     await s.setString('imageUrl', _imageUrl!);
     await s.setString('provider', _provider!);
-    await s.setBool('firstRun', false);
+    await s.setBool('firstRun', _firstRun!);
     notifyListeners();
   }
 

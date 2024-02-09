@@ -1,13 +1,16 @@
 import 'package:caffiene/functions/functions.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/screens/auth_screens/forgot_password.dart';
-import 'package:caffiene/utils/config.dart';
+import 'package:caffiene/utils/app_images.dart';
 import 'package:caffiene/utils/globlal_methods.dart';
+import 'package:caffiene/utils/routes/app_pages.dart';
 import 'package:caffiene/utils/textStyle.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/screens/home_screen/dash_screen.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -82,16 +85,16 @@ class _LoginScreenState extends State<LoginScreen> {
           }
         }
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              tr("check_connection"),
-              maxLines: 3,
-              style: kTextSmallBodyStyle,
+        GlobalMethods.showCustomScaffoldMessage(
+            SnackBar(
+              content: Text(
+                tr("check_connection"),
+                maxLines: 3,
+                style: kTextSmallBodyStyle,
+              ),
+              duration: const Duration(seconds: 3),
             ),
-            duration: const Duration(seconds: 3),
-          ),
-        );
+            context);
       }
     });
   }
@@ -101,7 +104,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final themeMode = Provider.of<SettingsProvider>(context).appTheme;
 
     return Scaffold(
-      backgroundColor: themeMode == "black"
+      backgroundColor: themeMode == "dark"
           ? const Color(0xFF171717)
           : themeMode == "amoled"
               ? Colors.black
@@ -115,11 +118,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Hero(
-                      tag: 'logo_shadow',
-                      child: SizedBox(
-                          height: 150,
-                          width: 150,
-                          child: Image.asset(appConfig.app_icon))),
+                    tag: 'logo_shadow',
+                    child: SvgPicture.asset(
+                      MovixIcon.appLogo,
+                      height: Get.height / 4,
+                    ),
+                  ),
                   SingleChildScrollView(
                     child: Center(
                       child: Form(
@@ -192,6 +196,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                   obscureText: obscureText,
                                 ),
                               ),
+                              const SizedBox(
+                                height: 15,
+                              ),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
@@ -222,19 +229,40 @@ class _LoginScreenState extends State<LoginScreen> {
                               const SizedBox(
                                 height: 20,
                               ),
-                              TextButton(
-                                  style: const ButtonStyle(
-                                      backgroundColor: MaterialStatePropertyAll(
-                                          Colors.transparent)),
-                                  onPressed: () {
-                                    Navigator.push(context,
-                                        MaterialPageRoute(builder: ((context) {
-                                      return const ForgotPasswordScreen();
-                                    })));
-                                  },
-                                  child: Text(
-                                    tr("forgot_password"),
-                                  )),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  TextButton(
+                                      style: const ButtonStyle(
+                                          backgroundColor:
+                                              MaterialStatePropertyAll(
+                                                  Colors.transparent)),
+                                      onPressed: () {
+                                        Get.toNamed(Routes.signup);
+                                      },
+                                      child: Text(
+                                        tr("sign_up"),
+                                      )),
+                                  const SizedBox(
+                                    width: 5,
+                                  ),
+                                  TextButton(
+                                      style: const ButtonStyle(
+                                          backgroundColor:
+                                              MaterialStatePropertyAll(
+                                                  Colors.transparent)),
+                                      onPressed: () {
+                                        Navigator.push(context,
+                                            MaterialPageRoute(
+                                                builder: ((context) {
+                                          return const ForgotPasswordScreen();
+                                        })));
+                                      },
+                                      child: Text(
+                                        tr("forgot_password"),
+                                      )),
+                                ],
+                              )
                             ],
                           )),
                     ),

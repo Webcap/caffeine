@@ -16,9 +16,11 @@ import 'package:caffiene/widgets/shimmer_widget.dart';
 import 'package:provider/provider.dart';
 
 class DiscoverMovies extends StatefulWidget {
-  const DiscoverMovies({Key? key, required this.includeAdult})
+  const DiscoverMovies(
+      {Key? key, required this.includeAdult, required this.discoverType})
       : super(key: key);
   final bool includeAdult;
+  final String discoverType;
   @override
   DiscoverMoviesState createState() => DiscoverMoviesState();
 }
@@ -63,10 +65,9 @@ class DiscoverMoviesState extends State<DiscoverMovies>
     List<MovieGenreFilterChipWidget> genres = movieGenreFilterdata;
     years.shuffle();
     genres.shuffle();
-    moviesApi()
-        .fetchMovies(
+    moviesApi().fetchMovies(
             '$TMDB_API_BASE_URL/discover/movie?api_key=$TMDB_API_KEY&sort_by=popularity.desc&watch_region=US&include_adult=${widget.includeAdult}&primary_release_year=${years.first}&with_genres=${genres.first.genreValue}')
-        .then((value) {
+        .then((value) async {
       if (mounted) {
         setState(() {
           moviesList = value;
@@ -135,10 +136,11 @@ class DiscoverMoviesState extends State<DiscoverMovies>
                                       builder: (context) => MovieDetailPage(
                                           movie: moviesList![index],
                                           heroId:
-                                              '${moviesList![index].id}discover')));
+                                              '${moviesList![index].id}-${widget.discoverType}')));
                             },
                             child: Hero(
-                              tag: '${moviesList![index].id}discover',
+                              tag:
+                                  '${moviesList![index].id}-${widget.discoverType}',
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(8.0),
                                 child: CachedNetworkImage(

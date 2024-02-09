@@ -28,7 +28,7 @@ class AppDependencies {
 
   Future<String> getFQURL() async {
     return sharedPrefsSingleton.getString(CAFFEINE_API_URL) ??
-        'https://flixquest-api.beamlak.dev';
+        'https://caffeine-api.vercel.app/';
   }
 
   setCaffeineAPIUrl(String value) async {

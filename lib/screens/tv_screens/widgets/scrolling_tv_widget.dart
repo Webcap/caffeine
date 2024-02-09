@@ -53,7 +53,9 @@ class ScrollingTVState extends State<ScrollingTV>
           isLoading = true;
         });
 
-        tvApi().fetchTV('${widget.api}&page=$pageNum&include_adult=${widget.includeAdult}')
+        tvApi()
+            .fetchTV(
+                '${widget.api}&page=$pageNum&include_adult=${widget.includeAdult}')
             .then((value) {
           if (mounted) {
             setState(() {
@@ -70,7 +72,9 @@ class ScrollingTVState extends State<ScrollingTV>
   @override
   void initState() {
     super.initState();
-    tvApi().fetchTV('${widget.api}&include_adult=${widget.includeAdult}').then((value) {
+    tvApi()
+        .fetchTV('${widget.api}&include_adult=${widget.includeAdult}')
+        .then((value) {
       if (mounted) {
         setState(() {
           tvList = value;
@@ -164,7 +168,7 @@ class ScrollingTVState extends State<ScrollingTV>
                                         builder: (context) => TVDetailPage(
                                             tvSeries: tvList![index],
                                             heroId:
-                                                '${tvList![index].id}${widget.title}')));
+                                                '${tvList![index].id}${widget.title}-${widget.discoverType}')));
                               },
                               child: SizedBox(
                                 width: 100,
@@ -174,7 +178,7 @@ class ScrollingTVState extends State<ScrollingTV>
                                       flex: 6,
                                       child: Hero(
                                         tag:
-                                            '${tvList![index].id}${widget.title}',
+                                            '${tvList![index].id}${widget.title}-${widget.discoverType}',
                                         child: Material(
                                           type: MaterialType.transparency,
                                           child: Stack(
@@ -187,9 +191,10 @@ class ScrollingTVState extends State<ScrollingTV>
                                                             .posterPath ==
                                                         null
                                                     ? Image.asset(
-                                                        'assets/images/na_rect.png',
+                                                        'assets/images/na_logo.png',
                                                         fit: BoxFit.cover,
-                                                      )
+                                                        width: double.infinity,
+                                                        height: double.infinity)
                                                     : CachedNetworkImage(
                                                         cacheManager:
                                                             cacheProp(),
@@ -233,9 +238,13 @@ class ScrollingTVState extends State<ScrollingTV>
                                                         errorWidget: (context,
                                                                 url, error) =>
                                                             Image.asset(
-                                                          'assets/images/na_rect.png',
-                                                          fit: BoxFit.cover,
-                                                        ),
+                                                                'assets/images/na_logo.png',
+                                                                fit: BoxFit
+                                                                    .cover,
+                                                                width: double
+                                                                    .infinity,
+                                                                height: double
+                                                                    .infinity),
                                                       ),
                                               ),
                                               Positioned(
@@ -260,7 +269,7 @@ class ScrollingTVState extends State<ScrollingTV>
                                                   child: Row(
                                                     children: [
                                                       const Icon(
-                                                        Icons.star,
+                                                        Icons.star_rounded,
                                                       ),
                                                       Text(tvList![index]
                                                           .voteAverage!

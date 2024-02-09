@@ -111,9 +111,17 @@ class _SignupScreenState extends State<SignupScreen> {
                 'joinedAt': date,
                 'createdAt': Timestamp.now(),
                 'isSubscribed': false,
-                'firstRun': false,
+                'firstRun': true,
+                'image_url': "",
                 'provider': "email"
               });
+
+              sharedPrefsSingleton.setString('name', _fullName);
+              sharedPrefsSingleton.setString('email', _emailAddress);
+              sharedPrefsSingleton.setString('username', "");
+              sharedPrefsSingleton.setString('uid', uid);
+              sharedPrefsSingleton.setString('provider', "email");
+
               await FirebaseFirestore.instance
                   .collection('usernames')
                   .doc(_userName)
@@ -211,16 +219,16 @@ class _SignupScreenState extends State<SignupScreen> {
           }
         }
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              tr("check_connection"),
-              maxLines: 3,
-              style: kTextSmallBodyStyle,
+        GlobalMethods.showCustomScaffoldMessage(
+            SnackBar(
+              content: Text(
+                tr("check_connection"),
+                maxLines: 3,
+                style: kTextSmallBodyStyle,
+              ),
+              duration: const Duration(seconds: 3),
             ),
-            duration: const Duration(seconds: 3),
-          ),
-        );
+            context);
       }
     });
   }

@@ -15,10 +15,13 @@ import 'package:caffiene/widgets/shimmer_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:caffiene/utils/constant.dart';
 
-
 class DiscoverTV extends StatefulWidget {
   final bool includeAdult;
-  const DiscoverTV({required this.includeAdult, Key? key}) : super(key: key);
+  const DiscoverTV(
+      {required this.includeAdult, required this.discoverType, Key? key})
+      : super(key: key);
+
+  final String discoverType;
   @override
   DiscoverTVState createState() => DiscoverTVState();
 }
@@ -134,10 +137,12 @@ class DiscoverTVState extends State<DiscoverTV>
                                   MaterialPageRoute(
                                       builder: (context) => TVDetailPage(
                                           tvSeries: tvList![index],
-                                          heroId: '${tvList![index].id}')));
+                                          heroId:
+                                              '${tvList![index].id}-${widget.discoverType}')));
                             },
                             child: Hero(
-                              tag: '${tvList![index].id}',
+                              tag:
+                                  '${tvList![index].id}-${widget.discoverType}',
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(8.0),
                                 child: CachedNetworkImage(

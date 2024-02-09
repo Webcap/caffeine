@@ -19,7 +19,6 @@ import 'package:provider/provider.dart';
 import 'package:readmore/readmore.dart';
 import 'package:caffiene/utils/constant.dart';
 
-
 class PersonImagesDisplay extends StatefulWidget {
   const PersonImagesDisplay({
     Key? key,
@@ -315,15 +314,17 @@ class PersonMovieListWidgetState extends State<PersonMovieListWidget>
                                                               BorderRadius
                                                                   .circular(
                                                                       8.0),
-                                                          child: uniqueMov![
-                                                                          index]
+                                                          child: uniqueMov![index]
                                                                       .posterPath ==
                                                                   null
                                                               ? Image.asset(
-                                                                  'assets/images/na_rect.png',
+                                                                  'assets/images/na_logo.png',
                                                                   fit: BoxFit
                                                                       .cover,
-                                                                )
+                                                                  width: double
+                                                                      .infinity,
+                                                                  height: double
+                                                                      .infinity)
                                                               : CachedNetworkImage(
                                                                   cacheManager:
                                                                       cacheProp(),
@@ -368,12 +369,14 @@ class PersonMovieListWidgetState extends State<PersonMovieListWidget>
                                                                   errorWidget: (context,
                                                                           url,
                                                                           error) =>
-                                                                      Image
-                                                                          .asset(
-                                                                    'assets/images/na_rect.png',
-                                                                    fit: BoxFit
-                                                                        .cover,
-                                                                  ),
+                                                                      Image.asset(
+                                                                      'assets/images/na_logo.png',
+                                                                      fit: BoxFit
+                                                                          .cover,
+                                                                      width: double
+                                                                          .infinity,
+                                                                      height: double
+                                                                          .infinity),
                                                                 ),
                                                         ),
                                                         Positioned(
@@ -403,7 +406,8 @@ class PersonMovieListWidgetState extends State<PersonMovieListWidget>
                                                             child: Row(
                                                               children: [
                                                                 const Icon(
-                                                                  Icons.star,
+                                                                  Icons
+                                                                      .star_rounded,
                                                                 ),
                                                                 Text(uniqueMov![
                                                                         index]
@@ -579,10 +583,13 @@ class PersonTVListWidgetState extends State<PersonTVListWidget>
                                                                       .posterPath ==
                                                                   null
                                                               ? Image.asset(
-                                                                  'assets/images/na_rect.png',
+                                                                  'assets/images/na_logo.png',
                                                                   fit: BoxFit
                                                                       .cover,
-                                                                )
+                                                                  width: double
+                                                                      .infinity,
+                                                                  height: double
+                                                                      .infinity)
                                                               : CachedNetworkImage(
                                                                   cacheManager:
                                                                       cacheProp(),
@@ -627,12 +634,14 @@ class PersonTVListWidgetState extends State<PersonTVListWidget>
                                                                   errorWidget: (context,
                                                                           url,
                                                                           error) =>
-                                                                      Image
-                                                                          .asset(
-                                                                    'assets/images/na_rect.png',
-                                                                    fit: BoxFit
-                                                                        .cover,
-                                                                  ),
+                                                                      Image.asset(
+                                                                      'assets/images/na_logo.png',
+                                                                      fit: BoxFit
+                                                                          .cover,
+                                                                      width: double
+                                                                          .infinity,
+                                                                      height: double
+                                                                          .infinity),
                                                                 ),
                                                         ),
                                                         Positioned(
@@ -662,7 +671,8 @@ class PersonTVListWidgetState extends State<PersonTVListWidget>
                                                             child: Row(
                                                               children: [
                                                                 const Icon(
-                                                                  Icons.star,
+                                                                  Icons
+                                                                      .star_rounded,
                                                                 ),
                                                                 Text(uniqueTV![
                                                                         index]

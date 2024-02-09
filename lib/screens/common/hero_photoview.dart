@@ -3,7 +3,9 @@
 import 'dart:io';
 import 'dart:isolate';
 import 'dart:ui';
+import 'package:caffiene/functions/functions.dart';
 import 'package:caffiene/provider/settings_provider.dart';
+import 'package:caffiene/utils/globlal_methods.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
@@ -33,49 +35,38 @@ class _HeroPhotoViewState extends State<HeroPhotoView> {
   final ReceivePort _port = ReceivePort();
 
   Future<String> createFolder(
-      String caffieneFolderName,
+      String caffeineFolderName,
       String imageTypeFolderName,
       String posterFolder,
       String stillFolder,
       String personImageFolder) async {
-    final cinefolderName = caffieneFolderName;
+    final cinefolderName = caffeineFolderName;
     final imagefolderName = imageTypeFolderName;
     final posterFolderName = posterFolder;
     final stillFolderName = stillFolder;
     final personImageFolderName = personImageFolder;
-    final caffienePath = Directory("storage/emulated/0/$cinefolderName");
+    final caffeinePath = Directory("storage/emulated/0/$cinefolderName");
     final imageTypePath =
-        Directory("storage/emulated/0/Caffiene/$imagefolderName");
+        Directory("storage/emulated/0/caffeine/$imagefolderName");
     final posterPath =
-        Directory("storage/emulated/0/Caffiene/$posterFolderName");
-    final stillPath = Directory("storage/emulated/0/Caffiene/$stillFolderName");
+        Directory("storage/emulated/0/caffeine/$posterFolderName");
+    final stillPath = Directory("storage/emulated/0/caffeine/$stillFolderName");
     final personImagePath =
-        Directory("storage/emulated/0/Caffiene/$personImageFolderName");
-    var storageStatus = await Permission.storage.status;
-    var externalStatus = await Permission.manageExternalStorage.status;
-    var mediaStatus = await Permission.accessMediaLocation.status;
-    if (!storageStatus.isGranted) {
-      await Permission.storage.request();
-    }
-    if (!externalStatus.isGranted) {
-      await Permission.manageExternalStorage.request();
-    }
-    if (!mediaStatus.isGranted) {
-      await Permission.accessMediaLocation.request();
-    }
-    if ((await caffienePath.exists())) {
+        Directory("storage/emulated/0/caffeine/$personImageFolderName");
+
+    if ((await caffeinePath.exists())) {
       imageTypePath.create();
       posterPath.create();
       stillPath.create();
       personImagePath.create();
-      return caffienePath.path;
+      return caffeinePath.path;
     } else {
-      caffienePath.create();
+      caffeinePath.create();
       posterPath.create();
       imageTypePath.create();
       stillPath.create();
       personImagePath.create();
-      return caffienePath.path;
+      return caffeinePath.path;
     }
   }
 
@@ -109,33 +100,32 @@ class _HeroPhotoViewState extends State<HeroPhotoView> {
   }
 
   void _download(String url, String currentIndex, String themeMode) async {
-    final status = await Permission.storage.request();
-    // final status2 = await Permission.accessMediaLocation.request();
+    var externalStatus = await Permission.manageExternalStorage.status;
+    if (externalStatus.isPermanentlyDenied) {
+      GlobalMethods.showScaffoldMessage(tr("give_file_permission"), context);
+      return;
+    } else if (!externalStatus.isGranted) {
+      await Permission.manageExternalStorage.request().then((value) {
+        if (value.isDenied) {
+          GlobalMethods.showScaffoldMessage(
+              tr("give_file_permission_short"), context);
+          return;
+        }
+      });
+    }
 
-    if (status.isGranted) {
+    if (externalStatus.isGranted) {
       await createFolder(
-          'FlixQuest', 'Backdrops', 'Posters', 'Stills', 'Person Images');
+          'caffeine', 'Backdrops', 'Posters', 'Stills', 'Person Images');
       await FlutterDownloader.enqueue(
         url: url,
-        fileName: '${widget.name}_$currentIndex.jpg',
+        fileName: '${widget.name}_${createUniqueId()}.jpg',
         headers: {}, // optional: header send with url (auth token etc)
-        savedDir: '/storage/emulated/0/FlixQuest/Person Images/',
+        savedDir: '/storage/emulated/0/caffeine/Person Images/',
         showNotification:
             true, // show download progress in status bar (for Android)
         openFileFromNotification:
             true, // click on notification to open downloaded file (for Android)
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-            content: Text(
-          tr("no_file_premission"),
-          style: TextStyle(
-              color: themeMode == "dark" || themeMode == "amoled"
-                  ? Colors.white
-                  : Colors.black,
-              fontFamily: 'PoppinsSB'),
-        )),
       );
     }
   }

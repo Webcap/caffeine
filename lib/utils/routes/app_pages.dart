@@ -1,4 +1,5 @@
-import 'package:caffiene/screens/auth_screens/login_screen1.dart';
+import 'package:caffiene/screens/auth_screens/register_screen.dart';
+import 'package:caffiene/screens/auth_screens/welcome.dart';
 import 'package:caffiene/screens/auth_screens/splash_screen.dart';
 import 'package:caffiene/screens/auth_screens/user_state.dart';
 import 'package:caffiene/screens/common/landing_screen.dart';
@@ -6,6 +7,7 @@ import 'package:caffiene/screens/settings/settings.dart';
 import 'package:caffiene/screens/user/edit_profile.dart';
 import 'package:caffiene/screens/user/password_change.dart';
 import 'package:caffiene/screens/home_screen/dash_screen.dart';
+import 'package:caffiene/screens/user/profile_page.dart';
 import 'package:caffiene/utils/helpers/no_connection_screen.dart';
 import 'package:get/get.dart';
 
@@ -25,7 +27,7 @@ abstract class AppPages {
     ),
     GetPage(
       name: Routes.login,
-      page: LoginScreen1.new,
+      page: welcomeScreen.new,
       transition: Transition.downToUp,
     ),
     GetPage(
@@ -56,6 +58,16 @@ abstract class AppPages {
     GetPage(
       name: Routes.noConnection,
       page: NetworkErrorItem.new,
+      transition: Transition.upToDown,
+    ),
+    GetPage(
+      name: Routes.profile,
+      page: ProfilePage.new,
+      transition: Transition.upToDown,
+    ),
+    GetPage(
+      name: Routes.signup,
+      page: SignupScreen.new,
       transition: Transition.upToDown,
     ),
   ];

@@ -7,6 +7,7 @@ import 'package:caffiene/provider/recently_watched_provider.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/screens/movie_screens/widgets/movie_video_loader.dart';
 import 'package:caffiene/utils/config.dart';
+import 'package:caffiene/utils/globlal_methods.dart';
 import 'package:caffiene/utils/textStyle.dart';
 import 'package:caffiene/widgets/common_widgets.dart';
 import 'package:caffiene/widgets/shimmer_widget.dart';
@@ -110,23 +111,24 @@ class _ScrollingRecentMoviesState extends State<ScrollingRecentMovies> {
                                                     ? StreamRoute.flixHQ
                                                     : StreamRoute.tmDB,
                                             metadata: MovieStreamMetadata(
-                                              backdropPath: widget
-                                                  .moviesList[index]
-                                                  .backdropPath,
-                                              elapsed: widget
-                                                  .moviesList[index].elapsed,
-                                              isAdult: null,
-                                              movieId:
-                                                  widget.moviesList[index].id,
-                                              movieName: widget
-                                                  .moviesList[index].title,
-                                              posterPath: widget
-                                                  .moviesList[index].posterPath,
-                                              releaseYear: widget
-                                                  .moviesList[index]
-                                                  .releaseYear,
-                                            ))))
-                                : ScaffoldMessenger.of(context).showSnackBar(
+                                                backdropPath: widget
+                                                    .moviesList[index]
+                                                    .backdropPath,
+                                                elapsed: widget
+                                                    .moviesList[index].elapsed,
+                                                isAdult: null,
+                                                movieId:
+                                                    widget.moviesList[index].id,
+                                                movieName: widget
+                                                    .moviesList[index].title,
+                                                posterPath: widget
+                                                    .moviesList[index]
+                                                    .posterPath,
+                                                releaseYear: widget
+                                                    .moviesList[index]
+                                                    .releaseYear,
+                                                releaseDate: null))))
+                                : GlobalMethods.showCustomScaffoldMessage(
                                     SnackBar(
                                       content: Text(
                                         tr("check_connection"),
@@ -135,17 +137,17 @@ class _ScrollingRecentMoviesState extends State<ScrollingRecentMovies> {
                                       ),
                                       duration: const Duration(seconds: 3),
                                     ),
-                                  );
+                                    context);
                           });
                         },
                         child: SizedBox(
                           width: 100,
                           child: Column(
                             children: <Widget>[
-                              Expanded(
-                                flex: 6,
-                                child: Material(
-                                  type: MaterialType.transparency,
+                              Material(
+                                type: MaterialType.transparency,
+                                child: SizedBox(
+                                  height: 155,
                                   child: Stack(
                                     alignment: Alignment.bottomCenter,
                                     children: [
@@ -156,9 +158,10 @@ class _ScrollingRecentMoviesState extends State<ScrollingRecentMovies> {
                                                     .posterPath ==
                                                 null
                                             ? Image.asset(
-                                                'assets/images/na_rect.png',
+                                                'assets/images/na_logo.png',
                                                 fit: BoxFit.cover,
-                                              )
+                                                width: double.infinity,
+                                                height: double.infinity)
                                             : CachedNetworkImage(
                                                 cacheManager: cacheProp(),
                                                 fadeOutDuration: const Duration(
@@ -189,12 +192,14 @@ class _ScrollingRecentMoviesState extends State<ScrollingRecentMovies> {
                                                 placeholder: (context, url) =>
                                                     scrollingImageShimmer(
                                                         themeMode),
-                                                errorWidget:
-                                                    (context, url, error) =>
-                                                        Image.asset(
-                                                  'assets/images/na_rect.png',
-                                                  fit: BoxFit.cover,
-                                                ),
+                                                errorWidget: (context, url,
+                                                        error) =>
+                                                    Image.asset(
+                                                        'assets/images/na_logo.png',
+                                                        fit: BoxFit.cover,
+                                                        width: double.infinity,
+                                                        height:
+                                                            double.infinity),
                                               ),
                                       ),
                                       SizedBox(
@@ -233,16 +238,13 @@ class _ScrollingRecentMoviesState extends State<ScrollingRecentMovies> {
                                   ),
                                 ),
                               ),
-                              Expanded(
-                                flex: 3,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    widget.moviesList[index].title!,
-                                    maxLines: 2,
-                                    textAlign: TextAlign.center,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  widget.moviesList[index].title!,
+                                  maxLines: 3,
+                                  textAlign: TextAlign.center,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
                             ],

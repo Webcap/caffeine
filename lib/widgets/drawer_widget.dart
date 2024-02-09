@@ -1,6 +1,5 @@
 import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:caffiene/screens/common/server_status_screen.dart';
-import 'package:caffiene/screens/wip/chromecast_test.dart';
 import 'package:caffiene/screens/tv_screens/live_tv_screen.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +10,7 @@ import 'package:caffiene/screens/bookmarks/bookmark_screen.dart';
 import 'package:caffiene/screens/common/update_screen.dart';
 import 'package:caffiene/screens/settings/settings.dart';
 import 'package:caffiene/utils/config.dart';
-import 'package:caffiene/utils/next_screen.dart';
+import 'package:caffiene/utils/helpers/next_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -56,7 +55,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                       child: Image.asset(appConfig.app_icon),
                     ),
                   ),
-                  appDependencyProvider.displayOTTDrawer
+                  appDependencyProvider.displayOTTDrawer == true
                       ? ListTile(
                           leading: Icon(
                             FontAwesomeIcons.tv,
@@ -68,16 +67,6 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                           },
                         )
                       : Container(),
-                  ListTile(
-                    leading: Icon(
-                      FontAwesomeIcons.userPlus,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                    title: Text("Testing Zone"),
-                    onTap: () {
-                      nextScreen(context, const ChromecastHome());
-                    },
-                  ),
                   ListTile(
                     leading: Icon(
                       FontAwesomeIcons.bookmark,
@@ -115,7 +104,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                     ),
                     title: Text(tr("check_for_update")),
                     onTap: () {
-                      nextScreen(context, const UpdateScreen());
+                      nextScreen(context, const UpdateScreen(isForced: false));
                     },
                   ),
                   ListTile(

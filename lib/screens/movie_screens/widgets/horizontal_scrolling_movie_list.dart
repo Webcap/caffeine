@@ -6,7 +6,6 @@ import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/widgets/shimmer_widget.dart';
 import 'package:caffiene/utils/constant.dart';
 
-
 class HorizontalScrollingMoviesList extends StatelessWidget {
   const HorizontalScrollingMoviesList({
     Key? key,
@@ -57,10 +56,10 @@ class HorizontalScrollingMoviesList extends StatelessWidget {
                             ClipRRect(
                               borderRadius: BorderRadius.circular(8.0),
                               child: movieList![index].posterPath == null
-                                  ? Image.asset(
-                                      'assets/images/na_rect.png',
+                                  ? Image.asset('assets/images/na_logo.png',
                                       fit: BoxFit.cover,
-                                    )
+                                      width: double.infinity,
+                                      height: double.infinity)
                                   : CachedNetworkImage(
                                       cacheManager: cacheProp(),
                                       fadeOutDuration:
@@ -88,9 +87,10 @@ class HorizontalScrollingMoviesList extends StatelessWidget {
                                           scrollingImageShimmer(themeMode),
                                       errorWidget: (context, url, error) =>
                                           Image.asset(
-                                        'assets/images/na_rect.png',
-                                        fit: BoxFit.cover,
-                                      ),
+                                              'assets/images/na_logo.png',
+                                              fit: BoxFit.cover,
+                                              width: double.infinity,
+                                              height: double.infinity),
                                     ),
                             ),
                             Positioned(
@@ -110,7 +110,7 @@ class HorizontalScrollingMoviesList extends StatelessWidget {
                                 child: Row(
                                   children: [
                                     const Icon(
-                                      Icons.star,
+                                      Icons.star_rounded,
                                     ),
                                     Text(movieList![index]
                                         .voteAverage!

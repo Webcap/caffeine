@@ -19,7 +19,6 @@ const String CAFFEINE_UPDATE_URL =
     "https://webcap.github.io/caffiene/res/update.json";
 const String ERROROCCURRED = "an error has occurred";
 
-
 //API KEYS//
 String CONSUMET_API = dotenv.env['CONSUMET_URL']!;
 String CONSUMET_INFO_API = dotenv.env['CONSUMET_URL']!;
@@ -35,10 +34,13 @@ const String STREAMING_SERVER_DCVA = "asianload";
 const String STREAMING_SERVER_ZORO = "vidcloud";
 
 const providerPreference =
-    'flixhqS2-FlixHQ_S2 superstream-Superstream flixhq-FlixHQ viewasian-ViewAsian dramacool-Dramacool zoro-Zoro ';
+    'gomovies-GoMovies flixhqS2-FlixHQ_S2 flixhq-FlixHQ showbox-ShowBox vidsrcto-VidSrcTo zoe-Zoechip zoro-Zoro vidsrc-VidSrc dramacool-Dramacool viewasian-ViewAsian';
 
 const retryOptionsStream = RetryOptions(
     maxDelay: Duration(milliseconds: 300),
     delayFactor: Duration(seconds: 0),
     maxAttempts: 1);
 const timeOutStream = Duration(seconds: 15);
+
+/// easy localization run command
+// flutter pub run easy_localization:generate -S assets/translations -f keys -O lib/translations -o locale_keys.g.dart

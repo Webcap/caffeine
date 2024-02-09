@@ -6,6 +6,7 @@ import 'package:caffiene/models/tv_stream_metadata.dart';
 import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:caffiene/screens/tv_screens/tv_video_loader.dart';
 import 'package:caffiene/utils/config.dart';
+import 'package:caffiene/utils/globlal_methods.dart';
 import 'package:caffiene/utils/textStyle.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +15,7 @@ import 'package:provider/provider.dart';
 class WatchNowButtonTV extends StatefulWidget {
   const WatchNowButtonTV(
       {Key? key,
-      required this.episodeList,
+      required this.episode,
       required this.seriesName,
       required this.tvId,
       required this.posterPath})
@@ -22,15 +23,13 @@ class WatchNowButtonTV extends StatefulWidget {
 
   final String seriesName, posterPath;
   final int tvId;
-  final EpisodeList episodeList;
+  final EpisodeList episode;
 
   @override
   State<WatchNowButtonTV> createState() => _WatchNowButtonTVState();
 }
 
 class _WatchNowButtonTVState extends State<WatchNowButtonTV> {
-  bool? isVisible = false;
-  double? buttonWidth = 160;
   TVDetails? tvDetails;
 
   Color _borderColor = Colors.red; // Initial border color
@@ -75,14 +74,8 @@ class _WatchNowButtonTVState extends State<WatchNowButtonTV> {
           ),
         ],
       ),
-      child: TextButton(
-        style: ButtonStyle(
-            maximumSize: MaterialStateProperty.all(Size(buttonWidth!, 100)),
-            minimumSize: MaterialStateProperty.all(Size(buttonWidth!, 50)),
-            backgroundColor: MaterialStateProperty.all(
-              Theme.of(context).colorScheme.primary,
-            )),
-        onPressed: () async {
+      child: GestureDetector(
+        onTap: () async {
           if (mounted) {
             if (mounted) {
               await checkConnection().then((value) {
@@ -95,17 +88,17 @@ class _WatchNowButtonTVState extends State<WatchNowButtonTV> {
                                 ? StreamRoute.flixHQ
                                 : StreamRoute.tmDB,
                             metadata: TVStreamMetadata(
-                              elapsed: null,
-                              episodeId: widget.episodeList.episodeId,
-                              episodeName: widget.episodeList.name,
-                              episodeNumber: widget.episodeList.episodeNumber!,
-                              posterPath: widget.posterPath,
-                              seasonNumber: widget.episodeList.seasonNumber!,
-                              seriesName: widget.seriesName,
-                              tvId: widget.tvId,
-                            ));
+                                elapsed: null,
+                                episodeId: widget.episode.episodeId,
+                                episodeName: widget.episode.name,
+                                episodeNumber: widget.episode.episodeNumber!,
+                                posterPath: widget.posterPath,
+                                seasonNumber: widget.episode.seasonNumber!,
+                                seriesName: widget.seriesName,
+                                tvId: widget.tvId,
+                                airDate: widget.episode.airDate));
                       })))
-                    : ScaffoldMessenger.of(context).showSnackBar(
+                    : GlobalMethods.showCustomScaffoldMessage(
                         SnackBar(
                           content: Text(
                             tr("check_connection"),
@@ -114,44 +107,28 @@ class _WatchNowButtonTVState extends State<WatchNowButtonTV> {
                           ),
                           duration: const Duration(seconds: 3),
                         ),
-                      );
+                        context);
               });
             }
           }
         },
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const Padding(
-              padding: EdgeInsets.only(right: 10, left: 10),
-              child: Icon(
-                Icons.play_circle,
-                color: Colors.white,
-              ),
+        child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.primary,
+              borderRadius: BorderRadius.circular(10),
             ),
-            Padding(
-              padding: const EdgeInsets.only(right: 10),
-              child: Text(
-                tr("watch_now"),
-                style: const TextStyle(color: Colors.white),
+            child: Row(children: [
+              Icon(
+                Icons.play_circle_fill_rounded,
+                color: Theme.of(context).colorScheme.onPrimary,
               ),
-            ),
-            Visibility(
-              visible: isVisible!,
-              child: const Padding(
-                padding: EdgeInsets.only(left: 10.0, right: 10.0),
-                child: SizedBox(
-                  height: 16,
-                  width: 16,
-                  child: CircularProgressIndicator(
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
+              const SizedBox(width: 6),
+              Text(tr("watch_now"),
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onPrimary,
+                  ))
+            ])),
       ),
     );
   }

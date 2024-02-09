@@ -24,7 +24,10 @@ class _LandingScreenState extends State<LandingScreen> {
 
   @override
   void initState() {
-    [Permission.storage].request();
+    [
+      Permission.notification,
+      Permission.storage
+    ].request();
     super.initState();
   }
 
