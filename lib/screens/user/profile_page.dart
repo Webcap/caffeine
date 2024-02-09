@@ -170,14 +170,15 @@ class _ProfilePageState extends State<ProfilePage> {
                                     height: 10,
                                   ),
                                   Text(
-                                    "Provider: ${snapshot.data!['provider']}".toUpperCase(),
+                                    "Provider: ${snapshot.data!['provider']}"
+                                        .toUpperCase(),
                                     style: titalstyle2,
                                   ),
                                   const SizedBox(
                                     height: 3,
                                   ),
                                   Text(
-                                    'Joined: ${DateFormat('MMMM').format(DateTime(0, DateTime.parse(snapshot.data!['joinedAt']).month))} ${DateTime.parse(snapshot.data!['joinedAt']).year}'),
+                                      'Joined: ${DateFormat('MMMM').format(DateTime(0, DateTime.parse(snapshot.data!['joinedAt']).month))} ${DateTime.parse(snapshot.data!['joinedAt']).year}'),
                                   const SizedBox(
                                     height: 3,
                                   ),
@@ -237,7 +238,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                                   BorderRadius.circular(22),
                                               border: Border.all(
                                                 width: 1.5,
-                                                color: ColorValues.redColor,
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .primary,
                                               ),
                                             ),
                                             child: Row(
@@ -247,7 +250,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                               children: [
                                                 Image.asset(
                                                   MovixIcon.king,
-                                                  color: ColorValues.redColor,
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .primary,
                                                   height: SizeConfig
                                                           .blockSizeVertical *
                                                       5,
@@ -266,8 +271,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                                         fontWeight:
                                                             FontWeight.bold,
                                                         fontSize: 19,
-                                                        color: ColorValues
-                                                            .redColor,
+                                                        color: Theme.of(context)
+                                                            .colorScheme
+                                                            .primary,
                                                       ),
                                                     ),
                                                     SizedBox(
@@ -297,7 +303,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                                   height: SizeConfig
                                                           .blockSizeVertical *
                                                       3,
-                                                  color: ColorValues.redColor,
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .primary,
                                                 ),
                                               ],
                                             ),
@@ -313,7 +321,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                                   BorderRadius.circular(22),
                                               border: Border.all(
                                                 width: 1.5,
-                                                color: ColorValues.redColor,
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .primary,
                                               ),
                                             ),
                                             child: Row(
@@ -322,7 +332,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                               children: [
                                                 Image.asset(
                                                   MovixIcon.king,
-                                                  color: ColorValues.redColor,
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .primary,
                                                   height: SizeConfig
                                                           .blockSizeVertical *
                                                       5,
@@ -334,15 +346,17 @@ class _ProfilePageState extends State<ProfilePage> {
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.start,
                                                   children: [
+                                                    // TODO translate
                                                     Text(
-                                                      "Your Plan is Running Now!...",
+                                                      "You're Subscribed",
                                                       style:
                                                           GoogleFonts.urbanist(
                                                         fontWeight:
                                                             FontWeight.bold,
                                                         fontSize: 17,
-                                                        color: ColorValues
-                                                            .redColor,
+                                                        color: Theme.of(context)
+                                                            .colorScheme
+                                                            .primary,
                                                       ),
                                                     ),
                                                     SizedBox(
@@ -366,7 +380,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                                         fontWeight:
                                                             FontWeight.w500,
                                                       ),
-                                                    ),
+                                                    )
                                                   ],
                                                 ),
                                               ],
