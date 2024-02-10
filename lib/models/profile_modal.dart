@@ -5,6 +5,7 @@ import 'package:caffiene/screens/settings/settings.dart';
 import 'package:caffiene/screens/user/edit_profile.dart';
 import 'package:caffiene/utils/app_images.dart';
 import 'package:caffiene/utils/helpers/web_page.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -34,7 +35,7 @@ List<ProfileModal> settingdata = [
       size: 15,
     ),
     iconImage: MovixIcon.profile,
-    tital: "Edit Profile",
+    tital: tr("edit_profile"),
   ),
   ProfileModal(
     onTap: () {
@@ -47,7 +48,7 @@ List<ProfileModal> settingdata = [
       size: 15,
     ),
     iconImage: MovixIcon.setting,
-    tital: "App Settings",
+    tital: tr("settings"),
   ),
 
   ProfileModal(
@@ -61,7 +62,7 @@ List<ProfileModal> settingdata = [
       size: 15,
     ),
     iconImage: MovixIcon.server,
-    tital: "Check Server Status",
+    tital: tr("check_server"),
   ),
 
   ProfileModal(
@@ -75,7 +76,7 @@ List<ProfileModal> settingdata = [
       size: 15,
     ),
     iconImage: MovixIcon.info,
-    tital: "About",
+    tital: tr("about"),
   ),
 
   // ProfileModal(
@@ -131,6 +132,6 @@ List<ProfileModal> settingdata = [
       size: 15,
     ),
     iconImage: MovixIcon.helpCenter,
-    tital: "Privacy Policy",
+    tital: tr("privacy_policy"),
   ),
 ];

@@ -1,5 +1,6 @@
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/utils/app_colors.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
@@ -31,12 +32,12 @@ class _NetworkErrorItemState extends State<NetworkErrorItem> {
                   : ColorValues.blackColor,
             ),
             const SizedBox(height: 30),
-            const Text(
-              'Internet connection lost!',
+            Text(
+              tr("internet_lost"),
               style: TextStyle(fontSize: 16, color: Colors.grey),
             ),
-            const Text(
-              'Check your connection and try again.',
+            Text(
+              tr("check_try_again"),
               style: TextStyle(fontSize: 16, color: Colors.grey),
             ),
             const SizedBox(

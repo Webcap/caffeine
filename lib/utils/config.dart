@@ -27,7 +27,7 @@ const kTextSmallHeaderStyle = TextStyle(
 
 //********************************* */
 // ** VERSION CONTROL BUDDY //
-const String currentAppVersion = '1.6.0-build-6';
+const String currentAppVersion = '1.6.0-devbuild-6';
 //*********************************** */
 
 const kTextHeaderStyle = TextStyle(

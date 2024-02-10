@@ -323,6 +323,7 @@
 	"email": "بريد إلكتروني",
 	"joined": "انضم بتاريخ",
 	"sign_out": "تسجيل الخروج",
+	"yes_sign_out": "نعم، قم بتسجيل الخروج",
 	"want_to_sign_out": "هل تريد تسجيل الخروج؟",
 	"cancel": "الغاء",
 	"ok": "نعم",
@@ -510,5 +511,9 @@
 	"episode_may_not_be_available": "قد لا تكون الحلقة التلفزيونية التي تريد بثها متاحة بعد.",
 	"player_time_display": "عرض وقت اللاعب",
 	"elapsed_total": "المنقضي / الإجمالي",
-    "elapsed_remaining": "المنقضي / المتبقي"
+    "elapsed_remaining": "المنقضي / المتبقي",
+	"privacy_policy": "سياسة الخصوصية",
+	"internet_lost": "انقطع الاتصال بالإنترنت!",
+    "check_try_again": "تحقق من اتصالك وحاول مرة أخرى.",
+	"get_started": "البدء"
 }

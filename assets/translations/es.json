@@ -324,6 +324,7 @@
 	"email": "Correo electrónico",
 	"joined": "Unido",
 	"sign_out": "Cerrar sesión",
+    "yes_sign_out": "Sí, cerrar sesión",
 	"want_to_sign_out": "¿Quieres cerrar sesión?",
 	"cancel": "Cancelar",
 	"ok": "Ok",
@@ -514,5 +515,9 @@
     "episode_may_not_be_available": "Es posible que el episodio de TV que deseas transmitir aún no esté disponible.",
     "player_time_display": "Visualización del tiempo del jugador",
     "elapsed_total": "Transcurrido / Total",
-    "elapsed_remaining": "Transcurrida / Restante"
+    "elapsed_remaining": "Transcurrida / Restante",
+    "internet_lost": "La conexión a Internet se ha perdido",
+    "check_try_again": "Comprueba tu conexión y vuelve a intentarlo.",
+    "get_started": "Empezar",
+    "privacy_policy": "política de privacidad"
 }
