@@ -270,25 +270,30 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
           'Movie id': widget.metadata.movieId,
           'Is Movie adult?': widget.metadata.isAdult ?? 'unknown',
         });
-        Navigator.pushReplacement(context, MaterialPageRoute(
-          builder: (context) {
-            return Player(
-                mediaType: MediaType.movie,
-                sources: reversedVids,
-                subs: subs,
-                colors: [
-                  Theme.of(context).primaryColor,
-                  Theme.of(context).colorScheme.background
-                ],
-                settings: settings,
-                movieMetadata: widget.metadata);
-          },
-        )).then((value) async {
-          if (value != null) {
-            Function callback = value;
-            await callback.call();
-          }
-        });
+// ADS HERE
+        if (interstitialAd != null) {
+          interstitialAd!.show();
+          loadInterstitialAd().whenComplete(
+              () => Navigator.pushReplacement(context, MaterialPageRoute(
+                    builder: (context) {
+                      return Player(
+                          mediaType: MediaType.movie,
+                          sources: reversedVids,
+                          subs: subs,
+                          colors: [
+                            Theme.of(context).primaryColor,
+                            Theme.of(context).colorScheme.background
+                          ],
+                          settings: settings,
+                          movieMetadata: widget.metadata);
+                    },
+                  )).then((value) async {
+                    if (value != null) {
+                      Function callback = value;
+                      await callback.call();
+                    }
+                  }));
+        }
       } else {
         if (mounted) {
           Navigator.pop(context);

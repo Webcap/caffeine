@@ -1,6 +1,6 @@
 // ignore_for_file: unused_local_variable
 
-import 'package:caffiene/models/profile_modal.dart';
+import 'package:caffiene/preferences/profile_tab_preference.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/provider/sign_in_provider.dart';
 import 'package:caffiene/screens/common/landing_screen.dart';
