@@ -112,7 +112,7 @@ List<ProfileModal> settingdata = [
       size: 15,
     ),
     iconImage: MovixIcon.helpCenter,
-    tital: "Help Center",
+    tital: tr("help_center"),
     onTap: () {
       Get.to(
         () => const HelpCenterProfileScreen(),

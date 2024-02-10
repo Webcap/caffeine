@@ -518,5 +518,6 @@ abstract class  LocaleKeys {
   static const internet_lost = 'internet_lost';
   static const check_try_again = 'check_try_again';
   static const get_started = 'get_started';
+  static const help_center = 'help_center';
 
 }

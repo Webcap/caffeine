@@ -519,5 +519,6 @@
     "elapsed_remaining": "Elapsed / Remaining",
     "internet_lost": "Internet connection lost!",
     "check_try_again": "Check your connection and try again.",
-    "privacy_policy": "Privacy Policy"
+    "privacy_policy": "Privacy Policy",
+    "help_center": "Help Center"
 }

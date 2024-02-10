@@ -519,5 +519,6 @@
     "internet_lost": "La conexión a Internet se ha perdido",
     "check_try_again": "Comprueba tu conexión y vuelve a intentarlo.",
     "get_started": "Empezar",
-    "privacy_policy": "política de privacidad"
+    "privacy_policy": "política de privacidad",
+    "help_center": "Centro de ayuda"
 }
