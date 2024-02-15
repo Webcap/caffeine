@@ -1,4 +1,4 @@
-// ignore_for_file: unused_local_variable
+// ignore_for_file: unused_local_variable, use_build_context_synchronously
 
 import 'dart:io';
 import 'dart:isolate';
@@ -93,7 +93,7 @@ class _HeroPhotoViewState extends State<HeroPhotoView> {
       await createFolder('caffeine', 'Backdrops', 'Posters', 'Stills');
       await FlutterDownloader.enqueue(
         url: url,
-        fileName: '${widget.name}_${widget.imageType}_$createUniqueId.jpg',
+        fileName: '${widget.name}_${widget.imageType}_${createUniqueId()}.jpg',
         savedDir: widget.imageType == 'backdrop'
             ? '/storage/emulated/0/caffeine/Backdrops/'
             : widget.imageType == 'poster'
