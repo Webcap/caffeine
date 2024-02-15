@@ -221,172 +221,173 @@ class _ProfilePageState extends State<ProfilePage> {
                                   ),
 
                                   /// SubscribetoPremium ///
-                                  (snapshot.data!['isSubscribed'] == false)
-                                      ? GestureDetector(
-                                          onTap: () {
-                                            Get.to(
-                                              () => const SubscribeToPremium(),
-                                              transition: Transition.downToUp,
-                                            );
-                                          },
-                                          child: Container(
-                                            width:
-                                                SizeConfig.screenWidth / 1.15,
-                                            padding: const EdgeInsets.all(15),
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(22),
-                                              border: Border.all(
-                                                width: 1.5,
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .primary,
-                                              ),
-                                            ),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Image.asset(
-                                                  MovixIcon.king,
-                                                  color: Theme.of(context)
-                                                      .colorScheme
-                                                      .primary,
-                                                  height: SizeConfig
-                                                          .blockSizeVertical *
-                                                      5,
-                                                  width: SizeConfig
-                                                          .blockSizeVertical *
-                                                      5,
-                                                ),
-                                                Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text(
-                                                      "Join Premium!",
-                                                      style:
-                                                          GoogleFonts.urbanist(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: 19,
-                                                        color: Theme.of(context)
-                                                            .colorScheme
-                                                            .primary,
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                      height: SizeConfig
-                                                              .blockSizeVertical *
-                                                          0.7,
-                                                    ),
-                                                    Text(
-                                                      "Enjoy watching Premium Movie",
-                                                      style:
-                                                          GoogleFonts.urbanist(
-                                                        fontSize: 11,
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                        color: themeMode ==
-                                                                    "dark" ||
-                                                                themeMode ==
-                                                                    "amoled"
-                                                            ? Colors.white
-                                                            : Colors.black,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                                SvgPicture.asset(
-                                                  MovixIcon.smallArrowRight,
-                                                  height: SizeConfig
-                                                          .blockSizeVertical *
-                                                      3,
-                                                  color: Theme.of(context)
-                                                      .colorScheme
-                                                      .primary,
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        )
-                                      : GestureDetector(
-                                          child: Container(
-                                            width:
-                                                SizeConfig.screenWidth / 1.15,
-                                            padding: const EdgeInsets.all(15),
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(22),
-                                              border: Border.all(
-                                                width: 1.5,
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .primary,
-                                              ),
-                                            ),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceAround,
-                                              children: [
-                                                Image.asset(
-                                                  MovixIcon.king,
-                                                  color: Theme.of(context)
-                                                      .colorScheme
-                                                      .primary,
-                                                  height: SizeConfig
-                                                          .blockSizeVertical *
-                                                      5,
-                                                  width: SizeConfig
-                                                          .blockSizeVertical *
-                                                      5,
-                                                ),
-                                                Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    // TODO translate
-                                                    Text(
-                                                      "You're Subscribed",
-                                                      style:
-                                                          GoogleFonts.urbanist(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: 17,
-                                                        color: Theme.of(context)
-                                                            .colorScheme
-                                                            .primary,
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                      height: SizeConfig
-                                                              .blockSizeVertical *
-                                                          0.7,
-                                                    ),
-                                                    Text(
-                                                      "Enjoying Premium Benefits",
-                                                      style:
-                                                          GoogleFonts.urbanist(
-                                                        fontSize: 13,
-                                                        color: themeMode ==
-                                                                    "dark" ||
-                                                                themeMode ==
-                                                                    "amoled"
-                                                            ? ColorValues
-                                                                .whiteColor
-                                                            : const Color(
-                                                                0xFF616161),
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                      ),
-                                                    )
-                                                  ],
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
+                                  /// 
+                                  // (snapshot.data!['isSubscribed'] == false)
+                                  //     ? GestureDetector(
+                                  //         onTap: () {
+                                  //           Get.to(
+                                  //             () => const SubscribeToPremium(),
+                                  //             transition: Transition.downToUp,
+                                  //           );
+                                  //         },
+                                  //         child: Container(
+                                  //           width:
+                                  //               SizeConfig.screenWidth / 1.15,
+                                  //           padding: const EdgeInsets.all(15),
+                                  //           decoration: BoxDecoration(
+                                  //             borderRadius:
+                                  //                 BorderRadius.circular(22),
+                                  //             border: Border.all(
+                                  //               width: 1.5,
+                                  //               color: Theme.of(context)
+                                  //                   .colorScheme
+                                  //                   .primary,
+                                  //             ),
+                                  //           ),
+                                  //           child: Row(
+                                  //             mainAxisAlignment:
+                                  //                 MainAxisAlignment
+                                  //                     .spaceBetween,
+                                  //             children: [
+                                  //               Image.asset(
+                                  //                 MovixIcon.king,
+                                  //                 color: Theme.of(context)
+                                  //                     .colorScheme
+                                  //                     .primary,
+                                  //                 height: SizeConfig
+                                  //                         .blockSizeVertical *
+                                  //                     5,
+                                  //                 width: SizeConfig
+                                  //                         .blockSizeVertical *
+                                  //                     5,
+                                  //               ),
+                                  //               Column(
+                                  //                 crossAxisAlignment:
+                                  //                     CrossAxisAlignment.start,
+                                  //                 children: [
+                                  //                   Text(
+                                  //                     "Join Premium!",
+                                  //                     style:
+                                  //                         GoogleFonts.urbanist(
+                                  //                       fontWeight:
+                                  //                           FontWeight.bold,
+                                  //                       fontSize: 19,
+                                  //                       color: Theme.of(context)
+                                  //                           .colorScheme
+                                  //                           .primary,
+                                  //                     ),
+                                  //                   ),
+                                  //                   SizedBox(
+                                  //                     height: SizeConfig
+                                  //                             .blockSizeVertical *
+                                  //                         0.7,
+                                  //                   ),
+                                  //                   Text(
+                                  //                     "Enjoy watching Premium Movie",
+                                  //                     style:
+                                  //                         GoogleFonts.urbanist(
+                                  //                       fontSize: 11,
+                                  //                       fontWeight:
+                                  //                           FontWeight.w500,
+                                  //                       color: themeMode ==
+                                  //                                   "dark" ||
+                                  //                               themeMode ==
+                                  //                                   "amoled"
+                                  //                           ? Colors.white
+                                  //                           : Colors.black,
+                                  //                     ),
+                                  //                   ),
+                                  //                 ],
+                                  //               ),
+                                  //               SvgPicture.asset(
+                                  //                 MovixIcon.smallArrowRight,
+                                  //                 height: SizeConfig
+                                  //                         .blockSizeVertical *
+                                  //                     3,
+                                  //                 color: Theme.of(context)
+                                  //                     .colorScheme
+                                  //                     .primary,
+                                  //               ),
+                                  //             ],
+                                  //           ),
+                                  //         ),
+                                  //       )
+                                  //     : GestureDetector(
+                                  //         child: Container(
+                                  //           width:
+                                  //               SizeConfig.screenWidth / 1.15,
+                                  //           padding: const EdgeInsets.all(15),
+                                  //           decoration: BoxDecoration(
+                                  //             borderRadius:
+                                  //                 BorderRadius.circular(22),
+                                  //             border: Border.all(
+                                  //               width: 1.5,
+                                  //               color: Theme.of(context)
+                                  //                   .colorScheme
+                                  //                   .primary,
+                                  //             ),
+                                  //           ),
+                                  //           child: Row(
+                                  //             mainAxisAlignment:
+                                  //                 MainAxisAlignment.spaceAround,
+                                  //             children: [
+                                  //               Image.asset(
+                                  //                 MovixIcon.king,
+                                  //                 color: Theme.of(context)
+                                  //                     .colorScheme
+                                  //                     .primary,
+                                  //                 height: SizeConfig
+                                  //                         .blockSizeVertical *
+                                  //                     5,
+                                  //                 width: SizeConfig
+                                  //                         .blockSizeVertical *
+                                  //                     5,
+                                  //               ),
+                                  //               Column(
+                                  //                 crossAxisAlignment:
+                                  //                     CrossAxisAlignment.start,
+                                  //                 children: [
+                                  //                   // TODO translate
+                                  //                   Text(
+                                  //                     "You're Subscribed",
+                                  //                     style:
+                                  //                         GoogleFonts.urbanist(
+                                  //                       fontWeight:
+                                  //                           FontWeight.bold,
+                                  //                       fontSize: 17,
+                                  //                       color: Theme.of(context)
+                                  //                           .colorScheme
+                                  //                           .primary,
+                                  //                     ),
+                                  //                   ),
+                                  //                   SizedBox(
+                                  //                     height: SizeConfig
+                                  //                             .blockSizeVertical *
+                                  //                         0.7,
+                                  //                   ),
+                                  //                   Text(
+                                  //                     "Enjoying Premium Benefits",
+                                  //                     style:
+                                  //                         GoogleFonts.urbanist(
+                                  //                       fontSize: 13,
+                                  //                       color: themeMode ==
+                                  //                                   "dark" ||
+                                  //                               themeMode ==
+                                  //                                   "amoled"
+                                  //                           ? ColorValues
+                                  //                               .whiteColor
+                                  //                           : const Color(
+                                  //                               0xFF616161),
+                                  //                       fontWeight:
+                                  //                           FontWeight.w500,
+                                  //                     ),
+                                  //                   )
+                                  //                 ],
+                                  //               ),
+                                  //             ],
+                                  //           ),
+                                  //         ),
+                                  //       ),
 
                                   // end premium block //
                                   SizedBox(
