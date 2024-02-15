@@ -70,6 +70,7 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
   var startAppSdk = StartAppSdk();
   StartAppInterstitialAd? interstitialAd;
 
+
   double loadProgress = 0.00;
   late SettingsProvider settings =
       Provider.of<SettingsProvider>(context, listen: false);
@@ -95,12 +96,32 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
         parseProviderPrecedenceString(prefString.proPreference)
             .where((provider) => provider != null)
             .cast<VideoProvider>());
-
     if (appDep.enableADS) {
       loadInterstitialAd();
     }
     loadVideo();
   }
+
+  // void getData() async {
+  //   User? user = _auth.currentUser;
+  //   uid = user!.uid;
+
+  //   if (user.isAnonymous) {
+  //     if (mounted) {
+  //       setState(() {
+  //         userAnonymous = true;
+  //       });
+  //     }
+  //   } else {
+  //     userDoc =
+  //         await FirebaseFirestore.instance.collection('users').doc(uid).get();
+  //     if (mounted) {
+  //       setState(() {
+  //         userAnonymous = false;
+  //       });
+  //     }
+  //   }
+  // }
 
   Future<void> loadInterstitialAd() async {
     startAppSdk.loadInterstitialAd().then((interstitialAd) {

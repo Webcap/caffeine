@@ -3,6 +3,7 @@ import 'package:caffiene/screens/common/helpcenter.dart';
 import 'package:caffiene/screens/common/server_status_screen.dart';
 import 'package:caffiene/screens/settings/settings.dart';
 import 'package:caffiene/screens/user/edit_profile.dart';
+import 'package:caffiene/screens/watch_history/watch_history_v2.dart';
 import 'package:caffiene/utils/app_images.dart';
 import 'package:caffiene/utils/helpers/web_page.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -36,6 +37,19 @@ List<ProfileModal> settingdata = [
     ),
     iconImage: MovixIcon.profile,
     tital: tr("edit_profile"),
+  ),
+  ProfileModal(
+    onTap: () {
+      Get.to(
+        () => const WatchHistoryV2(),
+      );
+    },
+    widget: const Icon(
+      Icons.arrow_forward_ios_rounded,
+      size: 15,
+    ),
+    iconImage: MovixIcon.paper,
+    tital: tr("watch_history"),
   ),
   ProfileModal(
     onTap: () {
@@ -131,7 +145,7 @@ List<ProfileModal> settingdata = [
       Icons.arrow_forward_ios_rounded,
       size: 15,
     ),
-    iconImage: MovixIcon.helpCenter,
+    iconImage: MovixIcon.shield_fail,
     tital: tr("privacy_policy"),
   ),
 ];
