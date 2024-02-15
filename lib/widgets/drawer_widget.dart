@@ -5,10 +5,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:caffiene/provider/settings_provider.dart';
-import 'package:caffiene/screens/common/about.dart';
 import 'package:caffiene/screens/bookmarks/bookmark_screen.dart';
 import 'package:caffiene/screens/common/update_screen.dart';
-import 'package:caffiene/screens/settings/settings.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/utils/helpers/next_screen.dart';
 import 'package:provider/provider.dart';
@@ -55,6 +53,16 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                       child: Image.asset(appConfig.app_icon),
                     ),
                   ),
+                  ListTile(
+                    leading: Icon(
+                      FontAwesomeIcons.bookmark,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    title: Text(tr("bookmarks")),
+                    onTap: () {
+                      nextScreen(context, const BookmarkScreen());
+                    },
+                  ),
                   appDependencyProvider.displayOTTDrawer == true
                       ? ListTile(
                           leading: Icon(
@@ -67,16 +75,6 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                           },
                         )
                       : Container(),
-                  ListTile(
-                    leading: Icon(
-                      FontAwesomeIcons.bookmark,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                    title: Text(tr("bookmarks")),
-                    onTap: () {
-                      nextScreen(context, const BookmarkScreen());
-                    },
-                  ),
                   // ListTile(
                   //   leading: Icon(
                   //     FontAwesomeIcons.clockRotateLeft,
@@ -87,16 +85,6 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                   //     nextScreen(context, const WatchHistory());
                   //   },
                   // ),
-                  ListTile(
-                    leading: Icon(
-                      Icons.info_outline,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                    title: Text(tr("about")),
-                    onTap: () {
-                      nextScreen(context, const AboutPage());
-                    },
-                  ),
                   ListTile(
                     leading: Icon(
                       Icons.update,
@@ -115,16 +103,6 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                     title: Text(tr("check_server")),
                     onTap: () {
                       nextScreen(context, const ServerStatusScreen());
-                    },
-                  ),
-                  ListTile(
-                    leading: Icon(
-                      Icons.settings,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                    title: Text(tr("settings")),
-                    onTap: () {
-                      nextScreen(context, const Settings());
                     },
                   ),
                   ListTile(

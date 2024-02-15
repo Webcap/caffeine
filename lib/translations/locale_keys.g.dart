@@ -325,6 +325,7 @@ abstract class  LocaleKeys {
   static const email = 'email';
   static const joined = 'joined';
   static const sign_out = 'sign_out';
+  static const yes_sign_out = 'yes_sign_out';
   static const want_to_sign_out = 'want_to_sign_out';
   static const cancel = 'cancel';
   static const ok = 'ok';
@@ -513,5 +514,10 @@ abstract class  LocaleKeys {
   static const player_time_display = 'player_time_display';
   static const elapsed_total = 'elapsed_total';
   static const elapsed_remaining = 'elapsed_remaining';
+  static const privacy_policy = 'privacy_policy';
+  static const internet_lost = 'internet_lost';
+  static const check_try_again = 'check_try_again';
+  static const get_started = 'get_started';
+  static const help_center = 'help_center';
 
 }

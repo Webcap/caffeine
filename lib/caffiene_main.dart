@@ -13,6 +13,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:get/get.dart';
@@ -91,7 +92,11 @@ class _caffeineState extends State<caffeine>
       appDependencyProvider.vidSrcToServer =
           _remoteConfig.getString("vidsrcto_server");
     }
-    await requestNotificationPermissions();
+    // await requestNotificationPermissions();
+    [
+      Permission.notification,
+      Permission.storage
+    ].request();
   }
 
   @override

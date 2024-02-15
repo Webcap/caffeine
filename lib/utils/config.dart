@@ -24,10 +24,12 @@ const kTextSmallHeaderStyle = TextStyle(
   overflow: TextOverflow.ellipsis,
 );
 
+// change to false on production builds ofc
+bool devMode = false;
 
 //********************************* */
 // ** VERSION CONTROL BUDDY //
-const String currentAppVersion = '1.6.0-build-6';
+const String currentAppVersion = '1.6.1';
 //*********************************** */
 
 const kTextHeaderStyle = TextStyle(
@@ -45,10 +47,10 @@ const retryOptions = RetryOptions(
 const timeOut = Duration(seconds: 15);
 
 final List<String> appNames = [
-  'caffeine-v1.4.2.apk',
   'caffeine-v1.5.0.apk',
   'caffeine-v1.6.0.apk',
   'caffeine-v1.6.0-6.apk',
+  'caffeine-v1.6.1.apk',
 ];
 
 CacheManager cacheProp() {

@@ -1,6 +1,6 @@
 // ignore_for_file: unused_local_variable
 
-import 'package:caffiene/models/profile_modal.dart';
+import 'package:caffiene/preferences/profile_tab_preference.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/provider/sign_in_provider.dart';
 import 'package:caffiene/screens/common/landing_screen.dart';
@@ -221,6 +221,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   ),
 
                                   /// SubscribetoPremium ///
+                                  /// 
                                   // (snapshot.data!['isSubscribed'] == false)
                                   //     ? GestureDetector(
                                   //         onTap: () {
@@ -493,7 +494,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                                     2,
                                           ),
                                           Text(
-                                            "Logout",
+                                            tr("sign_out"),
                                             style: GoogleFonts.urbanist(
                                               fontSize: 16,
                                               fontWeight: FontWeight.bold,
@@ -553,7 +554,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                                   ),
                                                 ),
                                                 Text(
-                                                  "Logout",
+                                                  tr("sign_out"),
                                                   style: GoogleFonts.urbanist(
                                                       fontSize: 22,
                                                       color:
@@ -567,7 +568,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                                   endIndent: 15,
                                                 ),
                                                 Text(
-                                                  "Are you sure you want to log out?",
+                                                  tr("want_to_sign_out"),
                                                   style: GoogleFonts.urbanist(
                                                     fontWeight: FontWeight.bold,
                                                     fontSize: 18,
@@ -613,7 +614,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                                                   .redBoxColor,
                                                         ),
                                                         child: Text(
-                                                          "Cancel",
+                                                          tr("cancel"),
                                                           style: GoogleFonts
                                                               .urbanist(
                                                             fontWeight:
@@ -650,7 +651,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                                               .redColor,
                                                         ),
                                                         child: Text(
-                                                          "Yes, Logout",
+                                                          tr("yes_sign_out"),
                                                           style: GoogleFonts
                                                               .urbanist(
                                                             color: ColorValues

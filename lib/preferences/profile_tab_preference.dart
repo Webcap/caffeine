@@ -3,8 +3,10 @@ import 'package:caffiene/screens/common/helpcenter.dart';
 import 'package:caffiene/screens/common/server_status_screen.dart';
 import 'package:caffiene/screens/settings/settings.dart';
 import 'package:caffiene/screens/user/edit_profile.dart';
+import 'package:caffiene/screens/watch_history/watch_history_v2.dart';
 import 'package:caffiene/utils/app_images.dart';
 import 'package:caffiene/utils/helpers/web_page.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -34,7 +36,20 @@ List<ProfileModal> settingdata = [
       size: 15,
     ),
     iconImage: MovixIcon.profile,
-    tital: "Edit Profile",
+    tital: tr("edit_profile"),
+  ),
+  ProfileModal(
+    onTap: () {
+      Get.to(
+        () => const WatchHistoryV2(),
+      );
+    },
+    widget: const Icon(
+      Icons.arrow_forward_ios_rounded,
+      size: 15,
+    ),
+    iconImage: MovixIcon.paper,
+    tital: tr("watch_history"),
   ),
   ProfileModal(
     onTap: () {
@@ -47,7 +62,7 @@ List<ProfileModal> settingdata = [
       size: 15,
     ),
     iconImage: MovixIcon.setting,
-    tital: "App Settings",
+    tital: tr("settings"),
   ),
 
   ProfileModal(
@@ -61,7 +76,7 @@ List<ProfileModal> settingdata = [
       size: 15,
     ),
     iconImage: MovixIcon.server,
-    tital: "Check Server Status",
+    tital: tr("check_server"),
   ),
 
   ProfileModal(
@@ -75,7 +90,7 @@ List<ProfileModal> settingdata = [
       size: 15,
     ),
     iconImage: MovixIcon.info,
-    tital: "About",
+    tital: tr("about"),
   ),
 
   // ProfileModal(
@@ -111,7 +126,7 @@ List<ProfileModal> settingdata = [
       size: 15,
     ),
     iconImage: MovixIcon.helpCenter,
-    tital: "Help Center",
+    tital: tr("help_center"),
     onTap: () {
       Get.to(
         () => const HelpCenterProfileScreen(),
@@ -130,7 +145,7 @@ List<ProfileModal> settingdata = [
       Icons.arrow_forward_ios_rounded,
       size: 15,
     ),
-    iconImage: MovixIcon.helpCenter,
-    tital: "Privacy Policy",
+    iconImage: MovixIcon.shield_fail,
+    tital: tr("privacy_policy"),
   ),
 ];

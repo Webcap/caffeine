@@ -2,6 +2,7 @@ import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:caffiene/provider/recently_watched_provider.dart';
 import 'package:caffiene/screens/common/update_screen.dart';
 import 'package:caffiene/screens/movie_screens/widgets/scrolling_recent_movies.dart';
+import 'package:caffiene/utils/config.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/api/endpoints.dart';
@@ -41,7 +42,9 @@ class _MainMoviesDisplayState extends State<MainMoviesDisplay> {
             includeAdult: includeAdult,
             discoverType: "discover"
           ),
-          const UpdateBottom(),
+          devMode == false
+            ? const UpdateBottom()
+            : Container(),
           // ScrollingMovies(
           //   title: tr("trending_horror_movies"),
           //   api: Endpoints.halloweenMoviesUrl(1, lang),

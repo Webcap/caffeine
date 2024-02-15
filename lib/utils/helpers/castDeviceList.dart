@@ -47,6 +47,7 @@ class _CastDeviceListState extends State<CastDeviceList> {
     });
   }
 
+
   Future<void> _connectAndPlayMedia(
       BuildContext context, CastDevice object) async {
     final session = await CastSessionManager().startSession(object);
@@ -151,7 +152,7 @@ class _CastDeviceListState extends State<CastDeviceList> {
               enableFeedback: true,
               splashColor: Colors.blueAccent,
               onTap: () {
-                _connectAndPlayMedia(context, device);
+                _connectToYourApp(context, device);
               },
             );
           }).toList(),

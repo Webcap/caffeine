@@ -70,6 +70,7 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
   var startAppSdk = StartAppSdk();
   StartAppInterstitialAd? interstitialAd;
 
+
   double loadProgress = 0.00;
   late SettingsProvider settings =
       Provider.of<SettingsProvider>(context, listen: false);
@@ -95,12 +96,32 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
         parseProviderPrecedenceString(prefString.proPreference)
             .where((provider) => provider != null)
             .cast<VideoProvider>());
-
     if (appDep.enableADS) {
       loadInterstitialAd();
     }
     loadVideo();
   }
+
+  // void getData() async {
+  //   User? user = _auth.currentUser;
+  //   uid = user!.uid;
+
+  //   if (user.isAnonymous) {
+  //     if (mounted) {
+  //       setState(() {
+  //         userAnonymous = true;
+  //       });
+  //     }
+  //   } else {
+  //     userDoc =
+  //         await FirebaseFirestore.instance.collection('users').doc(uid).get();
+  //     if (mounted) {
+  //       setState(() {
+  //         userAnonymous = false;
+  //       });
+  //     }
+  //   }
+  // }
 
   Future<void> loadInterstitialAd() async {
     startAppSdk.loadInterstitialAd().then((interstitialAd) {
@@ -270,25 +291,30 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
           'Movie id': widget.metadata.movieId,
           'Is Movie adult?': widget.metadata.isAdult ?? 'unknown',
         });
-        Navigator.pushReplacement(context, MaterialPageRoute(
-          builder: (context) {
-            return Player(
-                mediaType: MediaType.movie,
-                sources: reversedVids,
-                subs: subs,
-                colors: [
-                  Theme.of(context).primaryColor,
-                  Theme.of(context).colorScheme.background
-                ],
-                settings: settings,
-                movieMetadata: widget.metadata);
-          },
-        )).then((value) async {
-          if (value != null) {
-            Function callback = value;
-            await callback.call();
-          }
-        });
+// ADS HERE
+        if (interstitialAd != null) {
+          interstitialAd!.show();
+          loadInterstitialAd().whenComplete(
+              () => Navigator.pushReplacement(context, MaterialPageRoute(
+                    builder: (context) {
+                      return Player(
+                          mediaType: MediaType.movie,
+                          sources: reversedVids,
+                          subs: subs,
+                          colors: [
+                            Theme.of(context).primaryColor,
+                            Theme.of(context).colorScheme.background
+                          ],
+                          settings: settings,
+                          movieMetadata: widget.metadata);
+                    },
+                  )).then((value) async {
+                    if (value != null) {
+                      Function callback = value;
+                      await callback.call();
+                    }
+                  }));
+        }
       } else {
         if (mounted) {
           Navigator.pop(context);

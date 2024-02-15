@@ -324,7 +324,8 @@
     "email": "Email",
     "joined": "Joined",
     "sign_out": "Sign out",
-    "want_to_sign_out": "Do you want to Sign out?",
+    "yes_sign_out": "Yes, Sign out",
+    "want_to_sign_out": "Are you sure you want to sign out?",
     "cancel": "Cancel",
     "ok": "Ok",
     "logout": "Logout",
@@ -470,7 +471,7 @@
     "admin_notified": "Admin will be notified and it'll be fixed after few minutes",
     "goto_update": "Go to update screen",
     "disable_notification_version": "Disable notification for this version",
-    "report_telegram": "Report error to telegram group",
+    "report_telegram": "Join our Telegram group",
     "check_connection": "Connect to the internet to continue.",
     "open_external": "Open in external player",
     "no_channels": "No channels found :(",
@@ -515,5 +516,9 @@
     "player_time_display": "Player time display",
     "episode_may_not_be_available": "The TV episode you are looking to stream might not be available yet.",
     "elapsed_total": "Elapsed / Total",
-    "elapsed_remaining": "Elapsed / Remaining"
+    "elapsed_remaining": "Elapsed / Remaining",
+    "internet_lost": "Internet connection lost!",
+    "check_try_again": "Check your connection and try again.",
+    "privacy_policy": "Privacy Policy",
+    "help_center": "Help Center"
 }

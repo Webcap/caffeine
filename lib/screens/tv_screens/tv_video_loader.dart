@@ -277,25 +277,30 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
           'TV series season number': '${widget.metadata.seasonNumber}',
           'TV series episode number': '${widget.metadata.episodeNumber}'
         });
-        Navigator.pushReplacement(context, MaterialPageRoute(
-          builder: (context) {
-            return Player(
-                mediaType: MediaType.tvShow,
-                sources: reversedVids,
-                subs: subs,
-                colors: [
-                  Theme.of(context).primaryColor,
-                  Theme.of(context).colorScheme.background
-                ],
-                settings: settings,
-                tvMetadata: widget.metadata);
-          },
-        )).then((value) async {
-          if (value != null) {
-            Function callback = value;
-            await callback.call();
-          }
-        });
+//ADS
+        if (interstitialAd != null) {
+          interstitialAd!.show();
+          loadInterstitialAd().whenComplete(
+              () => Navigator.pushReplacement(context, MaterialPageRoute(
+                    builder: (context) {
+                      return Player(
+                          mediaType: MediaType.tvShow,
+                          sources: reversedVids,
+                          subs: subs,
+                          colors: [
+                            Theme.of(context).primaryColor,
+                            Theme.of(context).colorScheme.background
+                          ],
+                          settings: settings,
+                          tvMetadata: widget.metadata);
+                    },
+                  )).then((value) async {
+                    if (value != null) {
+                      Function callback = value;
+                      await callback.call();
+                    }
+                  }));
+        }
       } else {
         if (mounted) {
           Navigator.pop(context);

@@ -12,6 +12,7 @@ abstract class Routes {
   static const dash = '/dash_screen';
   static const login = '/login';
   static const profile = '/profile';
+  static const watchHistory = '/watchHistory';
 }
 
 abstract class AppRoutes {
@@ -26,4 +27,5 @@ abstract class AppRoutes {
   static const passwordchangescreen = Routes.passwordChangeScreen;
   static const noConnection = Routes.noConnection;
   static const profile = Routes.profile;
+  static const WatchHistory = Routes.watchHistory;
 }
