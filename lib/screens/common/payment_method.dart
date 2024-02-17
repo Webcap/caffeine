@@ -6,9 +6,9 @@ import 'package:caffiene/utils/theme/app_colors.dart';
 import 'package:caffiene/widgets/appbarlayout.dart';
 import 'package:caffiene/widgets/size_configuration.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:pay/pay.dart';
 import 'package:provider/provider.dart';
 
 class paymentMethod extends StatefulWidget {
@@ -19,8 +19,28 @@ class paymentMethod extends StatefulWidget {
 }
 
 class _paymentMethodState extends State<paymentMethod> {
+  late final Future<PaymentConfiguration> _googlePayConfigFuture;
   String? payment;
   Map<String, dynamic>? paymentIntent;
+
+  static const _paymentItems = [
+    PaymentItem(
+      label: 'Total',
+      amount: '99.99',
+      status: PaymentItemStatus.final_price,
+    )
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _googlePayConfigFuture =
+        PaymentConfiguration.fromAsset('default_google_pay_config.json');
+  }
+
+  void onGooglePayResult(paymentResult) {
+    debugPrint(paymentResult.toString());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,6 +89,28 @@ class _paymentMethodState extends State<paymentMethod> {
                       height: SizeConfig.screenHeight / 45,
                     ),
 
+                    // google pay //
+                    FutureBuilder<PaymentConfiguration>(
+                        future: _googlePayConfigFuture,
+                        builder: (context, snapshot) => snapshot.hasData
+                            ? GooglePayButton(
+                                paymentConfiguration: snapshot.data!,
+                                paymentItems: _paymentItems,
+                                type: GooglePayButtonType.subscribe,
+                                margin: const EdgeInsets.only(top: 15.0),
+                                height: SizeConfig.screenHeight / 11,
+                                width: SizeConfig.screenWidth,
+                                onPaymentResult: onGooglePayResult,
+                                loadingIndicator: const Center(
+                                  child: CircularProgressIndicator(),
+                                ),
+                              )
+                            : const SizedBox.shrink()),
+
+                    SizedBox(
+                      height: SizeConfig.screenHeight / 45,
+                    ),
+
                     /// Razor Pay ///
                     Padding(
                       padding: EdgeInsets.only(
@@ -105,56 +147,6 @@ class _paymentMethodState extends State<paymentMethod> {
                                   (states) => ColorValues.redColor),
                               activeColor: ColorValues.redColor,
                               value: "Razorpay",
-                              groupValue: payment,
-                              onChanged: (value) {
-                                setState(() {
-                                  payment = value.toString();
-                                });
-                              },
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    /// Google pay ///
-                    Padding(
-                      padding: EdgeInsets.only(
-                        top: SizeConfig.blockSizeVertical * 1,
-                        bottom: SizeConfig.blockSizeVertical * 1,
-                      ),
-                      child: InkWell(
-                        onTap: () {
-                          setState(() {
-                            payment = "Google Pay";
-                          });
-                        },
-                        child: Container(
-                          height: SizeConfig.screenHeight / 11,
-                          decoration: BoxDecoration(
-                            color: themeMode == "dark" || themeMode == "amoled"
-                                ? ColorValues.darkmodesecond
-                                : ColorValues.whiteColor,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          alignment: Alignment.center,
-                          child: ListTile(
-                            leading: SvgPicture.asset(
-                              MovixIcon.google,
-                              height: SizeConfig.blockSizeVertical * 4,
-                            ),
-                            title: Text(
-                              "Google Pay",
-                              style: GoogleFonts.urbanist(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            trailing: Radio(
-                              fillColor: MaterialStateColor.resolveWith(
-                                  (states) => ColorValues.redColor),
-                              activeColor: ColorValues.redColor,
-                              value: "Google Pay",
                               groupValue: payment,
                               onChanged: (value) {
                                 setState(() {
@@ -298,7 +290,8 @@ class _paymentMethodState extends State<paymentMethod> {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 duration: const Duration(milliseconds: 500),
-                                backgroundColor: Theme.of(context).colorScheme.primary,
+                                backgroundColor:
+                                    Theme.of(context).colorScheme.primary,
                                 content: const Text(
                                   "Please select any Payment Option",
                                   style: TextStyle(
