@@ -175,7 +175,10 @@ class PremiumItemCard extends StatelessWidget {
             InkWell(
               onTap: () {
                 Get.to(
-                  () => const paymentMethod(),
+                  () => paymentMethod(
+                    planPrice: subscriptionPrice,
+                    planType: subscriptionTime,
+                  ),
                 );
               },
               child: Container(

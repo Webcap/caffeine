@@ -30,7 +30,7 @@ bool devMode = true;
 
 //********************************* */
 // ** VERSION CONTROL BUDDY //
-const String currentAppVersion = '1.6.1-dev';
+const String currentAppVersion = '1.6.1-devbuild-1';
 //*********************************** */
 
 const kTextHeaderStyle = TextStyle(

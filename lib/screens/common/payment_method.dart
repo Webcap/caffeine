@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/utils/app_images.dart';
 import 'package:caffiene/utils/config.dart';
@@ -12,7 +14,9 @@ import 'package:pay/pay.dart';
 import 'package:provider/provider.dart';
 
 class paymentMethod extends StatefulWidget {
-  const paymentMethod({super.key});
+  String planPrice;
+  String planType;
+  paymentMethod({super.key, required this.planPrice, required this.planType});
 
   @override
   State<paymentMethod> createState() => _paymentMethodState();
@@ -25,10 +29,15 @@ class _paymentMethodState extends State<paymentMethod> {
 
   static const _paymentItems = [
     PaymentItem(
-      label: 'Total',
+      label: 'month',
+      amount: '9.99',
+      status: PaymentItemStatus.final_price,
+    ),
+    PaymentItem(
+      label: 'year',
       amount: '99.99',
       status: PaymentItemStatus.final_price,
-    )
+    ),
   ];
 
   @override
@@ -78,7 +87,7 @@ class _paymentMethodState extends State<paymentMethod> {
                       height: SizeConfig.screenHeight / 55,
                     ),
                     Text(
-                      "Plan starts from $formatted and ends on 03-17-2024. \nThe price is 9.99/month.",
+                      "Plan starts from $formatted and ends on 03-17-2024. \nThe price is \$${widget.planPrice}/${widget.planType}.",
                       style: GoogleFonts.urbanist(
                         color: ColorValues.grey600,
                         fontSize: 20,
