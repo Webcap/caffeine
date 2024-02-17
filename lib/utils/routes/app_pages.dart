@@ -1,7 +1,6 @@
 import 'package:caffiene/screens/auth_screens/register_screen.dart';
 import 'package:caffiene/screens/auth_screens/welcome.dart';
 import 'package:caffiene/screens/auth_screens/splash_screen.dart';
-import 'package:caffiene/screens/auth_screens/user_state.dart';
 import 'package:caffiene/screens/common/landing_screen.dart';
 import 'package:caffiene/screens/settings/settings.dart';
 import 'package:caffiene/screens/user/edit_profile.dart';
@@ -29,11 +28,6 @@ abstract class AppPages {
     GetPage(
       name: Routes.login,
       page: welcomeScreen.new,
-      transition: Transition.downToUp,
-    ),
-    GetPage(
-      name: Routes.welcome,
-      page: UserState.new,
       transition: Transition.downToUp,
     ),
     GetPage(

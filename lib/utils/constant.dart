@@ -42,5 +42,16 @@ const retryOptionsStream = RetryOptions(
     maxAttempts: 1);
 const timeOutStream = Duration(seconds: 15);
 
+class AppStaticData {
+  static const List<String> subscriptionCardFeaturesTitle = [
+    'Watch all you want. Ad-free.',
+    'Allows streaming of 4K.',
+    'Video & Audio Quality is Better.',
+    'Live TV'
+  ];
+}
+
+bool enabled = true;
+
 /// easy localization run command
 // flutter pub run easy_localization:generate -S assets/translations -f keys -O lib/translations -o locale_keys.g.dart

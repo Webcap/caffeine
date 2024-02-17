@@ -1,7 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:caffiene/functions/functions.dart';
-import 'package:caffiene/utils/textStyle.dart';
+import 'package:caffiene/utils/theme/textStyle.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';

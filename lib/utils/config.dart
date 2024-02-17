@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:intl/intl.dart';
 import 'package:retry/retry.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -25,11 +26,11 @@ const kTextSmallHeaderStyle = TextStyle(
 );
 
 // change to false on production builds ofc
-bool devMode = false;
+bool devMode = true;
 
 //********************************* */
 // ** VERSION CONTROL BUDDY //
-const String currentAppVersion = '1.6.1';
+const String currentAppVersion = '1.6.1-dev';
 //*********************************** */
 
 const kTextHeaderStyle = TextStyle(
@@ -72,3 +73,5 @@ class MyHttpOverrides extends HttpOverrides {
 }
 
 late SharedPreferences sharedPrefsSingleton;
+
+final DateFormat formatter = DateFormat('MM-dd-yyyy');

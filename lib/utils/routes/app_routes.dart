@@ -4,7 +4,6 @@ abstract class Routes {
   static const splash = '/';
   static const landingScreen = '/landing';
   static const signup = '/signup';
-  static const welcome = '/UserState';
   static const profileEdit = '/ProfileEdit';
   static const settings = '/Settings';
   static const passwordChangeScreen = '/passwordChangeScreen';
@@ -17,7 +16,6 @@ abstract class Routes {
 
 abstract class AppRoutes {
   static const splash = Routes.splash;
-  static const welcome = Routes.welcome;
   static const login = Routes.login;
   static const signup = Routes.signup;
   static const LandingScreen = Routes.landingScreen;

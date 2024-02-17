@@ -1,6 +1,6 @@
 import 'package:caffiene/screens/user/delete_account.dart';
 import 'package:caffiene/screens/user/password_change.dart';
-import 'package:caffiene/utils/textStyle.dart';
+import 'package:caffiene/utils/theme/textStyle.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';

@@ -4,7 +4,7 @@ import 'package:caffiene/screens/auth_screens/forgot_password.dart';
 import 'package:caffiene/utils/app_images.dart';
 import 'package:caffiene/utils/globlal_methods.dart';
 import 'package:caffiene/utils/routes/app_pages.dart';
-import 'package:caffiene/utils/textStyle.dart';
+import 'package:caffiene/utils/theme/textStyle.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';

@@ -21,4 +21,21 @@ abstract class ColorValues {
   static const Color darkmodethird = Color(0xff35383F);
   static Color redShimmer = Colors.red.shade200;
   static Color grayShimmer = Colors.grey.shade100;
+
+  // Greyscale Colors
+  static const Color grey900 = Color(0xff121212);
+  static const Color grey800 = Color(0xff424242);
+  static const Color grey700 = Color(0xff616161);
+  static const Color grey600 = Color(0xff757575);
+  static const Color grey500 = Color(0xff9E9E9E);
+  static const Color grey400 = Color(0xffBDBDBD);
+  static const Color grey300 = Color(0xffE0E0E0);
+  static const Color grey200 = Color(0xffEEEEEE);
+  static const Color grey100 = Color(0xffF5F5F5);
+  static const Color grey50 = Color(0xffFAFAFA);
+
+  // Dark Colors
+  static const Color dark1 = Color(0xff181A20);
+  static const Color dark2 = Color(0xff1F222A);
+  static const Color dark3 = Color(0xff35383F);
 }

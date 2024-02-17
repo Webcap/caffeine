@@ -198,4 +198,5 @@ abstract class MovixIcon {
   static const chromecast = "assets/movixIcon/Chromecast.svg";
   static const paper = "assets/movixIcon/Paper.svg";
   static const shield_fail = "assets/movixIcon/Shield Fail.svg";
+  static const iconPremium = "assets/movixIcon/icon_premium.svg";
 }

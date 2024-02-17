@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:caffiene/utils/helpers/castButton.dart';
-import 'package:caffiene/utils/app_colors.dart';
+import 'package:caffiene/utils/theme/app_colors.dart';
 import 'package:caffiene/utils/helpers/castDeviceList.dart';
 import 'package:caffiene/widgets/size_configuration.dart';
 import 'package:flutter/material.dart';

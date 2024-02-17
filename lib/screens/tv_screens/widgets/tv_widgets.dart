@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:caffiene/models/watch_providers.dart';
 import 'package:caffiene/screens/common/photoview.dart';
-import 'package:caffiene/utils/textStyle.dart';
+import 'package:caffiene/utils/theme/textStyle.dart';
 import 'package:caffiene/widgets/common_widgets.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -2103,7 +2103,7 @@ class _TVWatchProvidersDetailsState extends State<TVWatchProvidersDetails>
                                             BorderRadius.circular(8.0),
                                         child: const FadeInImage(
                                           image: AssetImage(
-                                              'assets/images/logo_shadow.png'),
+                                              appConfig.app_icon),
                                           fit: BoxFit.cover,
                                           placeholder: AssetImage(
                                               'assets/images/loading_5.gif'),
