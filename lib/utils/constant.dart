@@ -47,7 +47,8 @@ class AppStaticData {
     'Watch all you want. Ad-free.',
     'Allows streaming of 4K.',
     'Video & Audio Quality is Better.',
-    'Live TV'
+    'Live TV',
+    '24/7 Customer Support.'
   ];
 }
 

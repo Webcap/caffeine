@@ -1,5 +1,6 @@
 import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:caffiene/screens/common/server_status_screen.dart';
+import 'package:caffiene/screens/tv_screens/live_sports_screen.dart';
 import 'package:caffiene/screens/tv_screens/live_tv_screen.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -71,7 +72,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                           ),
                           title: Text(tr("live_tv")),
                           onTap: () {
-                            nextScreen(context, const LiveTV());
+                            nextScreen(context, const LiveSportsScreen());
                           },
                         )
                       : Container(),
