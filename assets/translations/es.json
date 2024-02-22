@@ -520,5 +520,6 @@
     "check_try_again": "Comprueba tu conexión y vuelve a intentarlo.",
     "get_started": "Empezar",
     "privacy_policy": "política de privacidad",
-    "help_center": "Centro de ayuda"
+    "help_center": "Centro de ayuda",
+    "channels_fetch_failed": "No se pudieron cargar los canales"
 }

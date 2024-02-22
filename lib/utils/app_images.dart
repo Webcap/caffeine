@@ -29,6 +29,7 @@ abstract class AssetValues {
   static const String card = "assets/images/card.png";
   static const String noimage = "assets/images/noimageavailable.png";
   static const String noimage1 = "assets/images/noimage.png";
+  static const String grid_landing_photo = "assets/images/grid_final.jpg";
 }
 
 abstract class IconAssetValues {

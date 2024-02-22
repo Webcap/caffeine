@@ -520,5 +520,6 @@
     "internet_lost": "Internet connection lost!",
     "check_try_again": "Check your connection and try again.",
     "privacy_policy": "Privacy Policy",
-    "help_center": "Help Center"
+    "help_center": "Help Center",
+    "channels_fetch_failed": "Failed to load channels"
 }

@@ -72,7 +72,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                           ),
                           title: Text(tr("live_tv")),
                           onTap: () {
-                            nextScreen(context, const LiveSportsScreen());
+                            nextScreen(context, const ChannelList());
                           },
                         )
                       : Container(),

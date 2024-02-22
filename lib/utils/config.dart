@@ -30,15 +30,13 @@ bool devMode = true;
 
 //********************************* */
 // ** VERSION CONTROL BUDDY //
-const String currentAppVersion = '1.6.1-devbuild-1';
+const String currentAppVersion = '1.6.1-devbuild-3';
 //*********************************** */
 
 const kTextHeaderStyle = TextStyle(
   fontFamily: 'PoppinsSB',
   fontSize: 22,
 );
-
-const String grid_landing_photo = "assets/images/grid_final.jpg";
 
 final client = HttpClient();
 const retryOptions = RetryOptions(

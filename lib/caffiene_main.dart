@@ -159,7 +159,6 @@ class _caffeineState extends State<caffeine>
                       locale: context.locale,
                       debugShowCheckedModeBanner: false,
                       getPages: AppPages.pages,
-                      title: tr("caffiene"),
                       theme: Styles.themeData(
                           appThemeMode: settingsProvider.appTheme,
                           isM3Enabled: settingsProvider.isMaterial3Enabled,

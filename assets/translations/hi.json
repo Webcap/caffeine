@@ -515,5 +515,6 @@
     "check_try_again": "अपना कनेक्शन जांचें और पुनः प्रयास करें।",
     "get_started": "शुरू हो जाओ",
     "yes_sign_out": "हाँ, साइन आउट करें",
-    "help_center": "सहायता केंद्र"
+    "help_center": "सहायता केंद्र",
+    "channels_fetch_failed": "चैनल लोड करने में विफल"
 }

@@ -42,7 +42,7 @@ class ReportErrorWidget extends StatelessWidget {
                     child: ElevatedButton(
                         onPressed: () async {
                           await launchUrl(
-                              Uri.parse("https://t.me/flixquestgroup"),
+                              Uri.parse("mailto:solox312@gmail.com"),
                               mode: LaunchMode.externalApplication);
                         },
                         child: Row(
