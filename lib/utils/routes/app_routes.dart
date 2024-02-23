@@ -12,6 +12,8 @@ abstract class Routes {
   static const login = '/login';
   static const profile = '/profile';
   static const watchHistory = '/watchHistory';
+  static const paymentMethod = '/paymentMethod';
+  static const addNewCard = '/addNewCard';
 }
 
 abstract class AppRoutes {
@@ -26,4 +28,6 @@ abstract class AppRoutes {
   static const noConnection = Routes.noConnection;
   static const profile = Routes.profile;
   static const WatchHistory = Routes.watchHistory;
+  static const paymentMethod = Routes.paymentMethod;
+  static const addNewCard = Routes.addNewCard;
 }

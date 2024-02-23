@@ -5,6 +5,7 @@
 abstract class AssetValues {
   static const String appLogo = 'assets/images/logo.png';
   static const String Razorpay = 'assets/images/Razorpay.png';
+  static const String paypal = 'assets/images/paypal.png';
   static const String lodeImage = 'assets/images/lodeImage.png';
   static const String welcome = 'assets/images/welcomeimage.png';
   static const String letsYouIn = 'assets/images/letsyouin.png';

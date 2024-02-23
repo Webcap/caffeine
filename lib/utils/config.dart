@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:retry/retry.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -37,6 +38,8 @@ const kTextHeaderStyle = TextStyle(
   fontFamily: 'PoppinsSB',
   fontSize: 22,
 );
+
+final kApiUrl = GetPlatform.isAndroid ? 'http://144.62.246.54:4242' : 'http://localhost:4242';
 
 final client = HttpClient();
 const retryOptions = RetryOptions(

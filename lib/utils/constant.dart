@@ -27,6 +27,8 @@ const String SUPABASE_URL = 'https://quzrpdvpbnydfjzigcoi.supabase.co';
 const String STREAMING_SERVER = "vidcloud";
 String openSubtitlesKey = dotenv.env['OPENSUBTITLES_API_KEY']!;
 String mixpanelKey = dotenv.env['MIXPANEL_API_KEY']!;
+String stripeSecret = dotenv.env['STRIPE_SECRET']!;
+String stripePublic = dotenv.env['STRIPE_PUBLIC']!;
 
 //VIDEO PROVIDERS//
 const String STREAMING_SERVER_FLIXHQ = "vidcloud";

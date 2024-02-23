@@ -1,6 +1,7 @@
 import 'package:caffiene/screens/auth_screens/register_screen.dart';
 import 'package:caffiene/screens/auth_screens/welcome.dart';
 import 'package:caffiene/screens/auth_screens/splash_screen.dart';
+import 'package:caffiene/screens/common/addNewCard.dart';
 import 'package:caffiene/screens/common/landing_screen.dart';
 import 'package:caffiene/screens/settings/settings.dart';
 import 'package:caffiene/screens/user/edit_profile.dart';
@@ -68,6 +69,11 @@ abstract class AppPages {
     GetPage(
       name: Routes.watchHistory,
       page: WatchHistoryV2.new,
+      transition: Transition.upToDown,
+    ),
+    GetPage(
+      name: Routes.addNewCard,
+      page: AddNewCard.new,
       transition: Transition.upToDown,
     ),
   ];

@@ -1,6 +1,7 @@
 // ignore_for_file: must_be_immutable
 
 import 'package:caffiene/provider/settings_provider.dart';
+import 'package:caffiene/screens/common/stripe_card.dart';
 import 'package:caffiene/utils/app_images.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/utils/constant.dart';
@@ -87,7 +88,7 @@ class _paymentMethodState extends State<paymentMethod> {
                       height: SizeConfig.screenHeight / 55,
                     ),
                     Text(
-                      "Plan starts from $formatted and ends on 03-17-2024. \nThe price is \$${widget.planPrice}/${widget.planType}.",
+                      "Plan starts from $formatted \nThe price is \$${widget.planPrice}/${widget.planType}.",
                       style: GoogleFonts.urbanist(
                         color: ColorValues.grey600,
                         fontSize: 20,
@@ -120,7 +121,7 @@ class _paymentMethodState extends State<paymentMethod> {
                       height: SizeConfig.screenHeight / 45,
                     ),
 
-                    /// Razor Pay ///
+                    /// paypal ///
                     Padding(
                       padding: EdgeInsets.only(
                         top: SizeConfig.blockSizeVertical * 1,
@@ -129,7 +130,7 @@ class _paymentMethodState extends State<paymentMethod> {
                       child: InkWell(
                         onTap: () {
                           setState(() {
-                            payment = "Razorpay";
+                            payment = "Paypal";
                           });
                         },
                         child: Container(
@@ -143,11 +144,11 @@ class _paymentMethodState extends State<paymentMethod> {
                           alignment: Alignment.center,
                           child: ListTile(
                             leading: Image.asset(
-                              AssetValues.Razorpay,
+                              AssetValues.paypal,
                               height: SizeConfig.blockSizeVertical * 6,
                             ),
                             title: Text(
-                              "Razorpay",
+                              "Paypal",
                               style: GoogleFonts.urbanist(
                                   fontSize: 16, fontWeight: FontWeight.bold),
                             ),
@@ -155,7 +156,7 @@ class _paymentMethodState extends State<paymentMethod> {
                               fillColor: MaterialStateColor.resolveWith(
                                   (states) => ColorValues.redColor),
                               activeColor: ColorValues.redColor,
-                              value: "Razorpay",
+                              value: "Paypal",
                               groupValue: payment,
                               onChanged: (value) {
                                 setState(() {
@@ -283,18 +284,15 @@ class _paymentMethodState extends State<paymentMethod> {
                               });
                             });
                           });
-                          if (payment == "Razorpay") {
+                          if (payment == "Paypal") {
                             // openCheckout();
-                          } else if (payment == "Google Pay") {
-                            // Get.to(
-                            //   const InappPurchase(),
-                            // );
-                            print("Google Pay");
+                            print("paypal");
                           } else if (payment == "Apple Pay") {
                             print("Apple Pay");
                           } else if (payment == "Select Card") {
-                            print("login type 4 :: creditcard use in payments");
-                            print("Select Card");
+                            Get.to(() =>
+                              NoWebhookPaymentCardFormScreen()
+                            );
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(

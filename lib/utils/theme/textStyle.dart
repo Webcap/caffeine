@@ -22,6 +22,11 @@ TextStyle get titalstyle2 {
   return GoogleFonts.urbanist(fontSize: 15, fontWeight: FontWeight.w500);
 }
 
+TextStyle get titalstyle3 {
+  return GoogleFonts.urbanist(fontSize: 15, fontWeight: FontWeight.w600);
+}
+
+
 const kBoldItemTitleStyle = TextStyle(
   fontFamily: 'PoppinsSB',
   fontSize: 19,
