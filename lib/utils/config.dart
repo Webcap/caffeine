@@ -26,12 +26,9 @@ const kTextSmallHeaderStyle = TextStyle(
   overflow: TextOverflow.ellipsis,
 );
 
-// change to false on production builds ofc
-bool devMode = true;
-
 //********************************* */
 // ** VERSION CONTROL BUDDY //
-const String currentAppVersion = '1.6.1-devbuild-3';
+const String currentAppVersion = '1.6.2-dev-1';
 //*********************************** */
 
 const kTextHeaderStyle = TextStyle(

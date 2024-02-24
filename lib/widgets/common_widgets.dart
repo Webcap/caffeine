@@ -1,12 +1,14 @@
 import 'package:better_player/better_player.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:caffiene/functions/functions.dart';
+import 'package:caffiene/functions/network.dart';
+import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/utils/constant.dart';
 import 'package:caffiene/utils/globlal_methods.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:caffiene/api/movies_api.dart';
 import 'package:caffiene/models/movie_models.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/widgets/shimmer_widget.dart';
@@ -15,86 +17,91 @@ import 'package:shimmer/shimmer.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 Widget watchProvidersTabData(
-        {required String themeMode,
-        required String imageQuality,
-        required String noOptionMessage,
-        required List? watchOptions}) =>
-    Container(
-      padding: const EdgeInsets.all(8.0),
-      child: watchOptions == null
-          ? Center(
-              child: Text(
-              noOptionMessage,
-              textAlign: TextAlign.center,
-            ))
-          : GridView.builder(
-              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 100,
-                childAspectRatio: 0.65,
-                crossAxisSpacing: 5,
-                mainAxisSpacing: 5,
-              ),
-              itemCount: watchOptions.length,
-              itemBuilder: (BuildContext context, int index) {
-                return Padding(
-                  padding: const EdgeInsets.all(4.0),
-                  child: Column(
-                    children: [
-                      Expanded(
-                        flex: 6,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(8.0),
-                          child: watchOptions[index].logoPath == null
-                              ? Image.asset(
-                                  'assets/images/na_logo.png',
-                                  fit: BoxFit.cover,
-                                )
-                              : CachedNetworkImage(
-                                  cacheManager: cacheProp(),
-                                  fadeOutDuration:
-                                      const Duration(milliseconds: 300),
-                                  fadeOutCurve: Curves.easeOut,
-                                  fadeInDuration:
-                                      const Duration(milliseconds: 700),
-                                  fadeInCurve: Curves.easeIn,
-                                  imageUrl: TMDB_BASE_IMAGE_URL +
-                                      imageQuality +
-                                      watchOptions[index].logoPath!,
-                                  imageBuilder: (context, imageProvider) =>
-                                      Container(
-                                    decoration: BoxDecoration(
-                                      image: DecorationImage(
-                                        image: imageProvider,
-                                        fit: BoxFit.cover,
-                                      ),
+    {required String themeMode,
+    required String imageQuality,
+    required String noOptionMessage,
+    required List? watchOptions,
+    required BuildContext context}) {
+  final isProxyEnabled = Provider.of<SettingsProvider>(context).enableProxy;
+  final proxyUrl = Provider.of<AppDependencyProvider>(context).tmdbProxy;
+  return Container(
+    padding: const EdgeInsets.all(8.0),
+    child: watchOptions == null
+        ? Center(
+            child: Text(
+            noOptionMessage,
+            textAlign: TextAlign.center,
+          ))
+        : GridView.builder(
+            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+              maxCrossAxisExtent: 100,
+              childAspectRatio: 0.65,
+              crossAxisSpacing: 5,
+              mainAxisSpacing: 5,
+            ),
+            itemCount: watchOptions.length,
+            itemBuilder: (BuildContext context, int index) {
+              return Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: Column(
+                  children: [
+                    Expanded(
+                      flex: 6,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8.0),
+                        child: watchOptions[index].logoPath == null
+                            ? Image.asset(
+                                'assets/images/na_logo.png',
+                                fit: BoxFit.cover,
+                              )
+                            : CachedNetworkImage(
+                                cacheManager: cacheProp(),
+                                fadeOutDuration:
+                                    const Duration(milliseconds: 300),
+                                fadeOutCurve: Curves.easeOut,
+                                fadeInDuration:
+                                    const Duration(milliseconds: 700),
+                                fadeInCurve: Curves.easeIn,
+                                imageUrl: buildImageUrl(TMDB_BASE_IMAGE_URL,
+                                        proxyUrl, isProxyEnabled, context) +
+                                    imageQuality +
+                                    watchOptions[index].logoPath!,
+                                imageBuilder: (context, imageProvider) =>
+                                    Container(
+                                  decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                      image: imageProvider,
+                                      fit: BoxFit.cover,
                                     ),
                                   ),
-                                  placeholder: (context, url) =>
-                                      watchProvidersImageShimmer(themeMode),
-                                  errorWidget: (context, url, error) =>
-                                      Image.asset(
-                                    'assets/images/na_logo.png',
-                                    fit: BoxFit.cover,
-                                  ),
                                 ),
-                        ),
+                                placeholder: (context, url) =>
+                                    watchProvidersImageShimmer(themeMode),
+                                errorWidget: (context, url, error) =>
+                                    Image.asset(
+                                  'assets/images/na_logo.png',
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
                       ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      Expanded(
-                          flex: 3,
-                          child: Text(
-                            watchOptions[index].providerName!,
-                            textAlign: TextAlign.center,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          )),
-                    ],
-                  ),
-                );
-              }),
-    );
+                    ),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    Expanded(
+                        flex: 3,
+                        child: Text(
+                          watchOptions[index].providerName!,
+                          textAlign: TextAlign.center,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        )),
+                  ],
+                ),
+              );
+            }),
+  );
+}
 
 class DidYouKnow extends StatefulWidget {
   const DidYouKnow({Key? key, required this.api}) : super(key: key);
@@ -110,7 +117,12 @@ class _DidYouKnowState extends State<DidYouKnow> {
 
   @override
   void initState() {
-    moviesApi().fetchSocialLinks(widget.api!).then((value) {
+    final isProxyEnabled =
+        Provider.of<SettingsProvider>(context, listen: false).enableProxy;
+    final proxyUrl =
+        Provider.of<AppDependencyProvider>(context, listen: false).tmdbProxy;
+
+    fetchSocialLinks(widget.api!, isProxyEnabled, proxyUrl).then((value) {
       if (mounted) {
         setState(() {
           externalLinks = value;

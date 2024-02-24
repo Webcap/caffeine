@@ -1,6 +1,6 @@
 import 'package:caffiene/video_providers/regularVideoLinks.dart';
 
-/// Currently available providers from the FlixQuest API: flixhq, zoe, gomovies, vidsrc, showbox
+/// Currently available providers from the caffeine API: flixhq, zoe, gomovies, vidsrc, showbox
 
 class CaffeineAPIStreamSources {
   CaffeineAPIStreamSources(

@@ -1,5 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:caffiene/controller/bookmark_database_controller.dart';
+import 'package:caffiene/functions/functions.dart';
+import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:caffiene/utils/constant.dart';
 import 'package:caffiene/utils/theme/textStyle.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -770,6 +772,8 @@ class _SyncScreenState extends State<SyncScreen>
   }
 
   Widget horizontalSyncedTV(String imageQuality, String themeMode) {
+    final isProxyEnabled = Provider.of<SettingsProvider>(context).enableProxy;
+    final proxyUrl = Provider.of<AppDependencyProvider>(context).tmdbProxy;
     return ListView.builder(
       physics: const BouncingScrollPhysics(),
       itemCount: firebaseTvShows.length,
@@ -814,7 +818,11 @@ class _SyncScreenState extends State<SyncScreen>
                                                 .posterPath ==
                                             null
                                         ? ''
-                                        : TMDB_BASE_IMAGE_URL +
+                                        : buildImageUrl(
+                                                TMDB_BASE_IMAGE_URL,
+                                                proxyUrl,
+                                                isProxyEnabled,
+                                                context) +
                                             imageQuality +
                                             firebaseTvShows[index].posterPath!,
                                     imageBuilder: (context, imageProvider) =>
@@ -875,6 +883,8 @@ class _SyncScreenState extends State<SyncScreen>
   }
 
   Widget horizontalSyncedMovies(String imageQuality, String themeMode) {
+    final isProxyEnabled = Provider.of<SettingsProvider>(context).enableProxy;
+    final proxyUrl = Provider.of<AppDependencyProvider>(context).tmdbProxy;
     return ListView.builder(
       physics: const BouncingScrollPhysics(),
       itemCount: firebaseMovies.length,
@@ -918,7 +928,11 @@ class _SyncScreenState extends State<SyncScreen>
                                     imageUrl:
                                         firebaseMovies[index].posterPath == null
                                             ? ''
-                                            : TMDB_BASE_IMAGE_URL +
+                                            : buildImageUrl(
+                                                    TMDB_BASE_IMAGE_URL,
+                                                    proxyUrl,
+                                                    isProxyEnabled,
+                                                    context) +
                                                 imageQuality +
                                                 firebaseMovies[index]
                                                     .posterPath!,

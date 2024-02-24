@@ -1,10 +1,14 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:caffiene/functions/functions.dart';
+import 'package:caffiene/provider/app_dependency_provider.dart';
+import 'package:caffiene/provider/settings_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/models/movie_models.dart';
 import 'package:caffiene/screens/movie_screens/movie_details.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/widgets/shimmer_widget.dart';
 import 'package:caffiene/utils/constant.dart';
+import 'package:provider/provider.dart';
 
 class MovieGridView extends StatelessWidget {
   const MovieGridView({
@@ -23,6 +27,8 @@ class MovieGridView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isProxyEnabled = Provider.of<SettingsProvider>(context).enableProxy;
+    final proxyUrl = Provider.of<AppDependencyProvider>(context).tmdbProxy;
     return GridView.builder(
         controller: _scrollController,
         gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
@@ -69,7 +75,11 @@ class MovieGridView extends StatelessWidget {
                                       fadeInDuration:
                                           const Duration(milliseconds: 700),
                                       fadeInCurve: Curves.easeIn,
-                                      imageUrl: TMDB_BASE_IMAGE_URL +
+                                      imageUrl: buildImageUrl(
+                                              TMDB_BASE_IMAGE_URL,
+                                              proxyUrl,
+                                              isProxyEnabled,
+                                              context) +
                                           imageQuality +
                                           moviesList![index].posterPath!,
                                       imageBuilder: (context, imageProvider) =>

@@ -3,19 +3,18 @@ import 'dart:developer';
 
 import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/utils/helpers/utils.dart';
+import 'package:caffiene/utils/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:http/http.dart' as http;
 
-class NoWebhookPaymentCardFormScreen extends StatefulWidget {
+class NoWebhookPaymentScreen extends StatefulWidget {
   @override
-  _NoWebhookPaymentCardFormScreenState createState() =>
-      _NoWebhookPaymentCardFormScreenState();
+  _NoWebhookPaymentScreenState createState() => _NoWebhookPaymentScreenState();
 }
 
-class _NoWebhookPaymentCardFormScreenState
-    extends State<NoWebhookPaymentCardFormScreen> {
-  final controller = CardFormEditController();
+class _NoWebhookPaymentScreenState extends State<NoWebhookPaymentScreen> {
+  final controller = CardEditController();
 
   @override
   void initState() {
@@ -34,26 +33,21 @@ class _NoWebhookPaymentCardFormScreenState
   @override
   Widget build(BuildContext context) {
     return ExampleScaffold(
-      title: 'Card Form',
+      title: 'Card Field',
       tags: ['No Webhook'],
       padding: EdgeInsets.symmetric(horizontal: 16),
       children: [
-        CardFormField(
+        CardField(
           controller: controller,
-          countryCode: 'US',
-          style: CardFormStyle(
-            borderColor: Colors.blueGrey,
-            textColor: Colors.black,
-            placeholderColor: Colors.blue,
-          ),
         ),
+        SizedBox(height: 20),
         LoadingButton(
-          onPressed:
-              controller.details.complete == true ? _handlePayPress : null,
           text: 'Pay',
+          onPressed: controller.complete ? _handlePayPress : null,
         ),
+        SizedBox(height: 20),
         Divider(),
-        Padding(
+        Container(
           padding: EdgeInsets.all(8),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -66,6 +60,11 @@ class _NoWebhookPaymentCardFormScreenState
               OutlinedButton(
                 onPressed: () => controller.blur(),
                 child: Text('Blur'),
+              ),
+              SizedBox(width: 12),
+              OutlinedButton(
+                onPressed: () => controller.clear(),
+                child: Text('Clear'),
               ),
             ],
           ),
@@ -80,13 +79,12 @@ class _NoWebhookPaymentCardFormScreenState
   }
 
   Future<void> _handlePayPress() async {
-    if (!controller.details.complete) {
+    if (!controller.complete) {
       return;
     }
 
     try {
       // 1. Gather customer billing information (ex. email)
-
       final billingDetails = BillingDetails(
         email: 'email@stripe.com',
         phone: '+48888000888',
@@ -136,16 +134,10 @@ class _NoWebhookPaymentCardFormScreenState
       if (paymentIntentResult['clientSecret'] != null &&
           paymentIntentResult['requiresAction'] == true) {
         // 4. if payment requires action calling handleNextAction
-        final paymentIntent = await Stripe.instance
-            .handleNextAction(paymentIntentResult['clientSecret']);
-
-        // todo handle error
-        /*if (cardActionError) {
-        Alert.alert(
-        `Error code: ${cardActionError.code}`,
-        cardActionError.message
+        final paymentIntent = await Stripe.instance.handleNextAction(
+          paymentIntentResult['clientSecret'],
+          returnURL: 'flutterstripe://redirect',
         );
-      } else*/
 
         if (paymentIntent.status == PaymentIntentsStatus.RequiresConfirmation) {
           // 5. Call API to confirm intent
@@ -211,7 +203,6 @@ class _NoWebhookPaymentCardFormScreenState
     return json.decode(response.body);
   }
 }
-
 class ExampleScaffold extends StatelessWidget {
   final List<Widget> children;
   final List<String> tags;
@@ -335,7 +326,7 @@ class ResponseCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.grey[200],
+        color: ColorValues.blackColor,
         borderRadius: BorderRadius.circular(8),
       ),
       padding: EdgeInsets.all(12),

@@ -1,5 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:caffiene/functions/functions.dart';
+import 'package:caffiene/functions/network.dart';
 import 'package:caffiene/models/watch_providers.dart';
+import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:caffiene/screens/common/photoview.dart';
 import 'package:caffiene/utils/theme/textStyle.dart';
 import 'package:caffiene/widgets/common_widgets.dart';
@@ -7,8 +10,6 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/api/endpoints.dart';
-import 'package:caffiene/api/movies_api.dart';
-import 'package:caffiene/api/tv_api.dart';
 import 'package:caffiene/models/credits.dart';
 import 'package:caffiene/models/images.dart';
 import 'package:caffiene/models/tv.dart';
@@ -23,7 +24,6 @@ import 'package:caffiene/widgets/shimmer_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:caffiene/utils/constant.dart';
-
 
 class TVShowsFromWatchProviders extends StatefulWidget {
   const TVShowsFromWatchProviders({Key? key}) : super(key: key);
@@ -250,10 +250,13 @@ class ParticularStreamingServiceTVShowsState
         setState(() {
           isLoading = true;
         });
-
-        tvApi()
-            .fetchTV(
-                '${widget.api}&page=$pageNum&include_adult=${widget.includeAdult}')
+        final isProxyEnabled =
+            Provider.of<SettingsProvider>(context, listen: false).enableProxy;
+        final proxyUrl =
+            Provider.of<AppDependencyProvider>(context, listen: false)
+                .tmdbProxy;
+        fetchTV('${widget.api}&page=$pageNum&include_adult=${widget.includeAdult}',
+                isProxyEnabled, proxyUrl)
             .then((value) {
           if (mounted) {
             setState(() {
@@ -270,8 +273,12 @@ class ParticularStreamingServiceTVShowsState
   @override
   void initState() {
     super.initState();
-    tvApi()
-        .fetchTV('${widget.api}&include_adult=${widget.includeAdult}')
+    final isProxyEnabled =
+        Provider.of<SettingsProvider>(context, listen: false).enableProxy;
+    final proxyUrl =
+        Provider.of<AppDependencyProvider>(context, listen: false).tmdbProxy;
+    fetchTV('${widget.api}&include_adult=${widget.includeAdult}',
+            isProxyEnabled, proxyUrl)
         .then((value) {
       if (mounted) {
         setState(() {
@@ -351,7 +358,11 @@ class TVEpisodeCastTabState extends State<TVEpisodeCastTab>
   @override
   void initState() {
     super.initState();
-    moviesApi().fetchCredits(widget.api!).then((value) {
+    final isProxyEnabled =
+        Provider.of<SettingsProvider>(context, listen: false).enableProxy;
+    final proxyUrl =
+        Provider.of<AppDependencyProvider>(context, listen: false).tmdbProxy;
+    fetchCredits(widget.api!, isProxyEnabled, proxyUrl).then((value) {
       if (mounted) {
         setState(() {
           credits = value;
@@ -365,6 +376,8 @@ class TVEpisodeCastTabState extends State<TVEpisodeCastTab>
     super.build(context);
     final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
+    final isProxyEnabled = Provider.of<SettingsProvider>(context).enableProxy;
+    final proxyUrl = Provider.of<AppDependencyProvider>(context).tmdbProxy;
     return credits == null
         ? Container(
             padding: const EdgeInsets.only(top: 8),
@@ -434,12 +447,14 @@ class TVEpisodeCastTabState extends State<TVEpisodeCastTab>
                                                         const Duration(
                                                             milliseconds: 700),
                                                     fadeInCurve: Curves.easeIn,
-                                                    imageUrl:
-                                                        TMDB_BASE_IMAGE_URL +
-                                                            imageQuality +
-                                                            credits!
-                                                                .cast![index]
-                                                                .profilePath!,
+                                                    imageUrl: buildImageUrl(
+                                                            TMDB_BASE_IMAGE_URL,
+                                                            proxyUrl,
+                                                            isProxyEnabled,
+                                                            context) +
+                                                        imageQuality +
+                                                        credits!.cast![index]
+                                                            .profilePath!,
                                                     imageBuilder: (context,
                                                             imageProvider) =>
                                                         Container(
@@ -572,7 +587,11 @@ class TVImagesDisplayState extends State<TVImagesDisplay> {
   @override
   void initState() {
     super.initState();
-    moviesApi().fetchImages(widget.api!).then((value) {
+    final isProxyEnabled =
+        Provider.of<SettingsProvider>(context, listen: false).enableProxy;
+    final proxyUrl =
+        Provider.of<AppDependencyProvider>(context, listen: false).tmdbProxy;
+    fetchImages(widget.api!, isProxyEnabled, proxyUrl).then((value) {
       if (mounted) {
         setState(() {
           tvImages = value;
@@ -585,6 +604,8 @@ class TVImagesDisplayState extends State<TVImagesDisplay> {
   Widget build(BuildContext context) {
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     final themeMode = Provider.of<SettingsProvider>(context).appTheme;
+    final isProxyEnabled = Provider.of<SettingsProvider>(context).enableProxy;
+    final proxyUrl = Provider.of<AppDependencyProvider>(context).tmdbProxy;
     return SizedBox(
       height: 260,
       width: double.infinity,
@@ -628,284 +649,233 @@ class TVImagesDisplayState extends State<TVImagesDisplay> {
                             Expanded(
                               flex: 1,
                               child: Container(
-                                child: tvImages!.poster!.isEmpty
-                                    ? SizedBox(
-                                        width: 120,
-                                        height: 180,
-                                        child: Center(
-                                          child: Image.asset(
-                                            'assets/images/na_logo.png',
-                                            fit: BoxFit.cover,
-                                          ),
-                                        ),
-                                      )
-                                    : Container(
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Stack(
-                                              alignment: AlignmentDirectional
-                                                  .bottomStart,
-                                              children: [
-                                                SizedBox(
-                                                  height: 180,
-                                                  child: ClipRRect(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            8.0),
-                                                    child: tvImages!.poster![0]
-                                                                .posterPath ==
-                                                            null
-                                                        ? Image.asset(
-                                                            'assets/images/na_logo.png',
-                                                            fit: BoxFit.cover,
-                                                          )
-                                                        : CachedNetworkImage(
-                                                            cacheManager:
-                                                                cacheProp(),
-                                                            fadeOutDuration:
-                                                                const Duration(
-                                                                    milliseconds:
-                                                                        300),
-                                                            fadeOutCurve:
-                                                                Curves.easeOut,
-                                                            fadeInDuration:
-                                                                const Duration(
-                                                                    milliseconds:
-                                                                        700),
-                                                            fadeInCurve:
-                                                                Curves.easeIn,
-                                                            imageUrl: TMDB_BASE_IMAGE_URL +
-                                                                imageQuality +
-                                                                tvImages!
-                                                                    .poster![0]
-                                                                    .posterPath!,
-                                                            imageBuilder: (context,
-                                                                    imageProvider) =>
-                                                                GestureDetector(
-                                                              onTap: () {
-                                                                Navigator.push(
-                                                                    context,
-                                                                    MaterialPageRoute(
-                                                                        builder:
-                                                                            ((context) {
-                                                                  return HeroPhotoView(
-                                                                    posters:
-                                                                        tvImages!
-                                                                            .poster!,
-                                                                    name: widget
-                                                                        .name,
-                                                                    imageType:
-                                                                        'poster',
-                                                                  );
-                                                                })));
-                                                              },
-                                                              child: Hero(
-                                                                tag: TMDB_BASE_IMAGE_URL +
-                                                                    imageQuality +
-                                                                    tvImages!
-                                                                        .poster![
-                                                                            0]
-                                                                        .posterPath!,
-                                                                child:
-                                                                    Container(
-                                                                  decoration:
-                                                                      BoxDecoration(
-                                                                    image:
-                                                                        DecorationImage(
-                                                                      image:
-                                                                          imageProvider,
-                                                                      fit: BoxFit
-                                                                          .cover,
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            placeholder: (context,
-                                                                    url) =>
-                                                                detailImageImageSimmer(
-                                                                    themeMode),
-                                                            errorWidget:
-                                                                (context, url,
-                                                                        error) =>
-                                                                    Image.asset(
-                                                              'assets/images/na_logo.png',
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Stack(
+                                      alignment:
+                                          AlignmentDirectional.bottomStart,
+                                      children: [
+                                        SizedBox(
+                                          height: 180,
+                                          child: ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(8.0),
+                                            child: tvImages!.poster!.isEmpty
+                                                ? Image.asset(
+                                                    'assets/images/na_logo.png',
+                                                    fit: BoxFit.cover,
+                                                  )
+                                                : CachedNetworkImage(
+                                                    cacheManager: cacheProp(),
+                                                    fadeOutDuration:
+                                                        const Duration(
+                                                            milliseconds: 300),
+                                                    fadeOutCurve:
+                                                        Curves.easeOut,
+                                                    fadeInDuration:
+                                                        const Duration(
+                                                            milliseconds: 700),
+                                                    fadeInCurve: Curves.easeIn,
+                                                    imageUrl: buildImageUrl(
+                                                            TMDB_BASE_IMAGE_URL,
+                                                            proxyUrl,
+                                                            isProxyEnabled,
+                                                            context) +
+                                                        imageQuality +
+                                                        tvImages!.poster![0]
+                                                            .posterPath!,
+                                                    imageBuilder: (context,
+                                                            imageProvider) =>
+                                                        GestureDetector(
+                                                      onTap: () {
+                                                        Navigator.push(context,
+                                                            MaterialPageRoute(
+                                                                builder:
+                                                                    ((context) {
+                                                          return HeroPhotoView(
+                                                            posters: tvImages!
+                                                                .poster!,
+                                                            name: widget.name,
+                                                            imageType: 'poster',
+                                                          );
+                                                        })));
+                                                      },
+                                                      child: Hero(
+                                                        tag: buildImageUrl(
+                                                                TMDB_BASE_IMAGE_URL,
+                                                                proxyUrl,
+                                                                isProxyEnabled,
+                                                                context) +
+                                                            imageQuality +
+                                                            tvImages!.poster![0]
+                                                                .posterPath!,
+                                                        child: Container(
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            image:
+                                                                DecorationImage(
+                                                              image:
+                                                                  imageProvider,
                                                               fit: BoxFit.cover,
                                                             ),
                                                           ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    placeholder: (context,
+                                                            url) =>
+                                                        detailImageImageSimmer(
+                                                            themeMode),
+                                                    errorWidget:
+                                                        (context, url, error) =>
+                                                            Image.asset(
+                                                      'assets/images/na_logo.png',
+                                                      fit: BoxFit.cover,
+                                                    ),
                                                   ),
-                                                ),
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(8.0),
-                                                  child: Container(
-                                                    color: Colors.black38,
-                                                    child: Text(tvImages!
-                                                                .poster!
-                                                                .length ==
-                                                            1
-                                                        ? tr("poster_singular",
-                                                            namedArgs: {
-                                                                "poster": tvImages!
-                                                                    .poster!
-                                                                    .length
-                                                                    .toString()
-                                                              })
-                                                        : tr("poster_plural",
-                                                            namedArgs: {
-                                                                "poster": tvImages!
-                                                                    .poster!
-                                                                    .length
-                                                                    .toString()
-                                                              })),
-                                                  ),
-                                                )
-                                              ]),
+                                          ),
                                         ),
-                                      ),
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Container(
+                                            color: Colors.black38,
+                                            child: Text(
+                                                tvImages!.poster!.length == 1
+                                                    ? tr("poster_singular",
+                                                        namedArgs: {
+                                                            "poster": tvImages!
+                                                                .poster!.length
+                                                                .toString()
+                                                          })
+                                                    : tr("poster_plural",
+                                                        namedArgs: {
+                                                            "poster": tvImages!
+                                                                .poster!.length
+                                                                .toString()
+                                                          })),
+                                          ),
+                                        )
+                                      ]),
+                                ),
                               ),
                             ),
                             Expanded(
                               flex: 2,
                               child: Container(
-                                child: tvImages!.backdrop!.isEmpty
-                                    ? SizedBox(
-                                        width: 120,
-                                        height: 180,
-                                        child: Center(
-                                          child: Image.asset(
-                                            'assets/images/na_logo.png',
-                                            fit: BoxFit.cover,
-                                          ),
-                                        ),
-                                      )
-                                    : Container(
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Stack(
-                                              alignment: AlignmentDirectional
-                                                  .bottomStart,
-                                              children: [
-                                                SizedBox(
-                                                  height: 180,
-                                                  child: ClipRRect(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            8.0),
-                                                    child: tvImages!
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Stack(
+                                      alignment:
+                                          AlignmentDirectional.bottomStart,
+                                      children: [
+                                        SizedBox(
+                                          height: 180,
+                                          child: ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(8.0),
+                                            child: tvImages!.backdrop!.isEmpty
+                                                ? Image.asset(
+                                                    'assets/images/na_logo.png',
+                                                    fit: BoxFit.cover,
+                                                  )
+                                                : CachedNetworkImage(
+                                                    cacheManager: cacheProp(),
+                                                    fadeOutDuration:
+                                                        const Duration(
+                                                            milliseconds: 300),
+                                                    fadeOutCurve:
+                                                        Curves.easeOut,
+                                                    fadeInDuration:
+                                                        const Duration(
+                                                            milliseconds: 700),
+                                                    fadeInCurve: Curves.easeIn,
+                                                    imageUrl: buildImageUrl(
+                                                            TMDB_BASE_IMAGE_URL,
+                                                            proxyUrl,
+                                                            isProxyEnabled,
+                                                            context) +
+                                                        imageQuality +
+                                                        tvImages!.backdrop![0]
+                                                            .filePath!,
+                                                    imageBuilder: (context,
+                                                            imageProvider) =>
+                                                        GestureDetector(
+                                                      onTap: () {
+                                                        Navigator.push(context,
+                                                            MaterialPageRoute(
+                                                                builder:
+                                                                    ((context) {
+                                                          return HeroPhotoView(
+                                                            backdrops: tvImages!
+                                                                .backdrop!,
+                                                            name: widget.name,
+                                                            imageType:
+                                                                'backdrop',
+                                                          );
+                                                        })));
+                                                      },
+                                                      child: Hero(
+                                                        tag: buildImageUrl(
+                                                                TMDB_BASE_IMAGE_URL,
+                                                                proxyUrl,
+                                                                isProxyEnabled,
+                                                                context) +
+                                                            imageQuality +
+                                                            tvImages!
                                                                 .backdrop![0]
-                                                                .filePath ==
-                                                            null
-                                                        ? Image.asset(
-                                                            'assets/images/na_logo.png',
-                                                            fit: BoxFit.cover,
-                                                          )
-                                                        : CachedNetworkImage(
-                                                            cacheManager:
-                                                                cacheProp(),
-                                                            fadeOutDuration:
-                                                                const Duration(
-                                                                    milliseconds:
-                                                                        300),
-                                                            fadeOutCurve:
-                                                                Curves.easeOut,
-                                                            fadeInDuration:
-                                                                const Duration(
-                                                                    milliseconds:
-                                                                        700),
-                                                            fadeInCurve:
-                                                                Curves.easeIn,
-                                                            imageUrl: TMDB_BASE_IMAGE_URL +
-                                                                imageQuality +
-                                                                tvImages!
-                                                                    .backdrop![
-                                                                        0]
-                                                                    .filePath!,
-                                                            imageBuilder: (context,
-                                                                    imageProvider) =>
-                                                                GestureDetector(
-                                                              onTap: () {
-                                                                Navigator.push(
-                                                                    context,
-                                                                    MaterialPageRoute(
-                                                                        builder:
-                                                                            ((context) {
-                                                                  return HeroPhotoView(
-                                                                    backdrops:
-                                                                        tvImages!
-                                                                            .backdrop!,
-                                                                    name: widget
-                                                                        .name,
-                                                                    imageType:
-                                                                        'backdrop',
-                                                                  );
-                                                                })));
-                                                              },
-                                                              child: Hero(
-                                                                tag: TMDB_BASE_IMAGE_URL +
-                                                                    imageQuality +
-                                                                    tvImages!
-                                                                        .backdrop![
-                                                                            0]
-                                                                        .filePath!,
-                                                                child:
-                                                                    Container(
-                                                                  decoration:
-                                                                      BoxDecoration(
-                                                                    image:
-                                                                        DecorationImage(
-                                                                      image:
-                                                                          imageProvider,
-                                                                      fit: BoxFit
-                                                                          .cover,
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            placeholder: (context,
-                                                                    url) =>
-                                                                detailImageImageSimmer(
-                                                                    themeMode),
-                                                            errorWidget:
-                                                                (context, url,
-                                                                        error) =>
-                                                                    Image.asset(
-                                                              'assets/images/na_logo.png',
+                                                                .filePath!,
+                                                        child: Container(
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            image:
+                                                                DecorationImage(
+                                                              image:
+                                                                  imageProvider,
                                                               fit: BoxFit.cover,
                                                             ),
                                                           ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    placeholder: (context,
+                                                            url) =>
+                                                        detailImageImageSimmer(
+                                                            themeMode),
+                                                    errorWidget:
+                                                        (context, url, error) =>
+                                                            Image.asset(
+                                                      'assets/images/na_logo.png',
+                                                      fit: BoxFit.cover,
+                                                    ),
                                                   ),
-                                                ),
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(8.0),
-                                                  child: Container(
-                                                    color: Colors.black38,
-                                                    child: Text(tvImages!
-                                                                .backdrop!
-                                                                .length ==
-                                                            1
-                                                        ? tr(
-                                                            "backdrop_singular",
-                                                            namedArgs: {
-                                                                "backdrop": tvImages!
-                                                                    .backdrop!
-                                                                    .length
-                                                                    .toString()
-                                                              })
-                                                        : tr("backdrop_plural",
-                                                            namedArgs: {
-                                                                "backdrop": tvImages!
-                                                                    .backdrop!
-                                                                    .length
-                                                                    .toString()
-                                                              })),
-                                                  ),
-                                                )
-                                              ]),
+                                          ),
                                         ),
-                                      ),
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Container(
+                                            color: Colors.black38,
+                                            child: Text(
+                                                tvImages!.backdrop!.length == 1
+                                                    ? tr("backdrop_singular",
+                                                        namedArgs: {
+                                                            "backdrop":
+                                                                tvImages!
+                                                                    .backdrop!
+                                                                    .length
+                                                                    .toString()
+                                                          })
+                                                    : tr("backdrop_plural",
+                                                        namedArgs: {
+                                                            "backdrop":
+                                                                tvImages!
+                                                                    .backdrop!
+                                                                    .length
+                                                                    .toString()
+                                                          })),
+                                          ),
+                                        )
+                                      ]),
+                                ),
                               ),
                             ),
                           ],
@@ -935,7 +905,11 @@ class TVVideosDisplayState extends State<TVVideosDisplay> {
   @override
   void initState() {
     super.initState();
-    moviesApi().fetchVideos(widget.api!).then((value) {
+    final isProxyEnabled =
+        Provider.of<SettingsProvider>(context, listen: false).enableProxy;
+    final proxyUrl =
+        Provider.of<AppDependencyProvider>(context, listen: false).tmdbProxy;
+    fetchVideos(widget.api!, isProxyEnabled, proxyUrl).then((value) {
       if (mounted) {
         setState(() {
           tvVideos = value;
@@ -1136,7 +1110,11 @@ class TVInfoTableState extends State<TVInfoTable> {
   @override
   void initState() {
     super.initState();
-    tvApi().fetchTVDetails(widget.api!).then((value) {
+    final isProxyEnabled =
+        Provider.of<SettingsProvider>(context, listen: false).enableProxy;
+    final proxyUrl =
+        Provider.of<AppDependencyProvider>(context, listen: false).tmdbProxy;
+    fetchTVDetails(widget.api!, isProxyEnabled, proxyUrl).then((value) {
       if (mounted) {
         setState(() {
           tvDetails = value;
@@ -1330,254 +1308,6 @@ class TVInfoTableState extends State<TVInfoTable> {
   }
 }
 
-// class TVSeasonsTab extends StatefulWidget {
-//   final String? api;
-//   final int? tvId;
-//   final String? seriesName;
-//   final bool? adult;
-//   const TVSeasonsTab(
-//       {Key? key, this.api, this.tvId, this.seriesName, required this.adult})
-//       : super(key: key);
-
-//   @override
-//   TVSeasonsTabState createState() => TVSeasonsTabState();
-// }
-
-// class TVSeasonsTabState extends State<TVSeasonsTab>
-//     with AutomaticKeepAliveClientMixin<TVSeasonsTab> {
-//   TVDetails? tvDetails;
-//   bool requestFailed = false;
-
-//   @override
-//   void initState() {
-//     super.initState();
-//     getData();
-//   }
-
-//   void getData() {
-//     tvApi().fetchTVDetails(widget.api!).then((value) {
-//       setState(() {
-//         tvDetails = value;
-//       });
-//     });
-//     Future.delayed(const Duration(seconds: 11), () {
-//       if (tvDetails == null) {
-//         setState(() {
-//           requestFailed = true;
-//           tvDetails = TVDetails(seasons: [Seasons()]);
-//         });
-//       }
-//     });
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     // final themeMode = Provider.of<DarkthemeProvider>(context).darktheme;
-//     super.build(context);
-//     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
-//     return tvDetails == null
-//         ? Container(
-//             color: const Color(0xFFFFFFFF), child: tvDetailsSeasonsTabShimmer())
-//         : tvDetails!.seasons!.isEmpty
-//             ? Container(
-//                 color: const Color(0xFFFFFFFF),
-//                 child: const Center(
-//                   child: Text('There is no season available for this TV show',
-//                       style: kTextSmallHeaderStyle),
-//                 ),
-//               )
-//             : requestFailed == true
-//                 ? retryWidget()
-//                 : Container(
-//                     color: const Color(0xFFFFFFFF),
-//                     child: Column(
-//                       children: [
-//                         Expanded(
-//                           child: ListView.builder(
-//                               itemCount: tvDetails!.seasons!.length,
-//                               itemBuilder: (BuildContext context, int index) {
-//                                 return GestureDetector(
-//                                   onTap: () {
-//                                     Navigator.push(
-//                                         context,
-//                                         MaterialPageRoute(
-//                                             builder: (context) => SeasonsDetail(
-//                                                 adult: widget.adult,
-//                                                 seriesName: widget.seriesName,
-//                                                 tvId: widget.tvId,
-//                                                 tvDetails: tvDetails!,
-//                                                 seasons:
-//                                                     tvDetails!.seasons![index],
-//                                                 heroId:
-//                                                     '${tvDetails!.seasons![index].seasonId}')));
-//                                   },
-//                                   child: Container(
-//                                     color: const Color(0xFFFFFFFF),
-//                                     child: Padding(
-//                                       padding: const EdgeInsets.only(
-//                                         top: 0.0,
-//                                         bottom: 5.0,
-//                                         left: 15,
-//                                       ),
-//                                       child: Column(
-//                                         children: [
-//                                           Row(
-//                                             // crossAxisAlignment:
-//                                             //     CrossAxisAlignment.start,
-//                                             children: [
-//                                               Padding(
-//                                                 padding: const EdgeInsets.only(
-//                                                     right: 30.0),
-//                                                 child: SizedBox(
-//                                                   width: 85,
-//                                                   height: 130,
-//                                                   child: Hero(
-//                                                     tag:
-//                                                         '${tvDetails!.seasons![index].seasonId}',
-//                                                     child: ClipRRect(
-//                                                       borderRadius:
-//                                                           BorderRadius.circular(
-//                                                               10.0),
-//                                                       child: tvDetails!
-//                                                                   .seasons![
-//                                                                       index]
-//                                                                   .posterPath ==
-//                                                               null
-//                                                           ? Image.asset(
-//                                                               'assets/images/na_logo.png',
-//                                                               fit: BoxFit.cover,
-//                                                             )
-//                                                           : CachedNetworkImage(
-//                                                               fadeOutDuration:
-//                                                                   const Duration(
-//                                                                       milliseconds:
-//                                                                           300),
-//                                                               fadeOutCurve:
-//                                                                   Curves
-//                                                                       .easeOut,
-//                                                               fadeInDuration:
-//                                                                   const Duration(
-//                                                                       milliseconds:
-//                                                                           700),
-//                                                               fadeInCurve:
-//                                                                   Curves.easeIn,
-//                                                               imageUrl: TMDB_BASE_IMAGE_URL +
-//                                                                   imageQuality +
-//                                                                   tvDetails!
-//                                                                       .seasons![
-//                                                                           index]
-//                                                                       .posterPath!,
-//                                                               imageBuilder:
-//                                                                   (context,
-//                                                                           imageProvider) =>
-//                                                                       Container(
-//                                                                 decoration:
-//                                                                     BoxDecoration(
-//                                                                   image:
-//                                                                       DecorationImage(
-//                                                                     image:
-//                                                                         imageProvider,
-//                                                                     fit: BoxFit
-//                                                                         .cover,
-//                                                                   ),
-//                                                                 ),
-//                                                               ),
-//                                                               placeholder: (context,
-//                                                                       url) =>
-//                                                                   recommendationAndSimilarTabImageShimmer(),
-//                                                               errorWidget: (context,
-//                                                                       url,
-//                                                                       error) =>
-//                                                                   Image.asset(
-//                                                                 'assets/images/na_logo.png',
-//                                                                 fit: BoxFit
-//                                                                     .cover,
-//                                                               ),
-//                                                             ),
-//                                                     ),
-//                                                   ),
-//                                                 ),
-//                                               ),
-//                                               Expanded(
-//                                                 child: Column(
-//                                                   crossAxisAlignment:
-//                                                       CrossAxisAlignment.start,
-//                                                   children: [
-//                                                     Text(
-//                                                       tvDetails!.seasons![index]
-//                                                           .name!,
-//                                                       style: const TextStyle(
-//                                                           fontSize: 20,
-//                                                           fontFamily:
-//                                                               'PoppinsSB',
-//                                                           overflow: TextOverflow
-//                                                               .ellipsis),
-//                                                     ),
-//                                                   ],
-//                                                 ),
-//                                               )
-//                                             ],
-//                                           ),
-//                                           Divider(
-//                                             color: Colors.white54,
-//                                             thickness: 1,
-//                                             endIndent: 20,
-//                                             indent: 10,
-//                                           ),
-//                                         ],
-//                                       ),
-//                                     ),
-//                                   ),
-//                                 );
-//                               }),
-//                         ),
-//                       ],
-//                     ));
-//   }
-
-//   Widget retryWidget() {
-//     return Center(
-//       child: Container(
-//           width: double.infinity,
-//           color: const Color(0xFFFFFFFF),
-//           child: Column(
-//             mainAxisAlignment: MainAxisAlignment.center,
-//             children: [
-//               Image.asset('assets/images/network-signal.png',
-//                   width: 60, height: 60),
-//               const Padding(
-//                 padding: EdgeInsets.only(top: 8.0),
-//                 child: Text('Please connect to the Internet and try again',
-//                     textAlign: TextAlign.center),
-//               ),
-//               TextButton(
-//                   style: ButtonStyle(
-//                       backgroundColor:
-//                           MaterialStateProperty.all(const Color(0x0DF57C00)),
-//                       maximumSize:
-//                           MaterialStateProperty.all(const Size(200, 60)),
-//                       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-//                           RoundedRectangleBorder(
-//                               borderRadius: BorderRadius.circular(5.0),
-//                               side:
-//                                   const BorderSide(color: Color(0xFFF57C00))))),
-//                   onPressed: () {
-//                     setState(() {
-//                       requestFailed = false;
-//                       tvDetails = null;
-//                     });
-//                     getData();
-//                   },
-//                   child: const Text('Retry')),
-//             ],
-//           )),
-//     );
-//   }
-
-//   @override
-//   bool get wantKeepAlive => true;
-// }
-
 class TVCastTab extends StatefulWidget {
   final String? api;
   const TVCastTab({
@@ -1596,7 +1326,11 @@ class TVCastTabState extends State<TVCastTab>
   @override
   void initState() {
     super.initState();
-    moviesApi().fetchCredits(widget.api!).then((value) {
+    final isProxyEnabled =
+        Provider.of<SettingsProvider>(context, listen: false).enableProxy;
+    final proxyUrl =
+        Provider.of<AppDependencyProvider>(context, listen: false).tmdbProxy;
+    fetchCredits(widget.api!, isProxyEnabled, proxyUrl).then((value) {
       if (mounted) {
         setState(() {
           credits = value;
@@ -1610,6 +1344,8 @@ class TVCastTabState extends State<TVCastTab>
     super.build(context);
     final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
+    final isProxyEnabled = Provider.of<SettingsProvider>(context).enableProxy;
+    final proxyUrl = Provider.of<AppDependencyProvider>(context).tmdbProxy;
     return credits == null
         ? Container(child: tvCastAndCrewTabShimmer(themeMode))
         : credits!.cast!.isEmpty
@@ -1676,12 +1412,14 @@ class TVCastTabState extends State<TVCastTab>
                                                         const Duration(
                                                             milliseconds: 700),
                                                     fadeInCurve: Curves.easeIn,
-                                                    imageUrl:
-                                                        TMDB_BASE_IMAGE_URL +
-                                                            imageQuality +
-                                                            credits!
-                                                                .cast![index]
-                                                                .profilePath!,
+                                                    imageUrl: buildImageUrl(
+                                                            TMDB_BASE_IMAGE_URL,
+                                                            proxyUrl,
+                                                            isProxyEnabled,
+                                                            context) +
+                                                        imageQuality +
+                                                        credits!.cast![index]
+                                                            .profilePath!,
                                                     imageBuilder: (context,
                                                             imageProvider) =>
                                                         Container(
@@ -1778,6 +1516,7 @@ class TVCastTabState extends State<TVCastTab>
   bool get wantKeepAlive => true;
 }
 
+
 class TVCrewTab extends StatefulWidget {
   final String? api;
   const TVCrewTab({Key? key, this.api}) : super(key: key);
@@ -1793,7 +1532,11 @@ class TVCrewTabState extends State<TVCrewTab>
   @override
   void initState() {
     super.initState();
-    moviesApi().fetchCredits(widget.api!).then((value) {
+    final isProxyEnabled =
+        Provider.of<SettingsProvider>(context, listen: false).enableProxy;
+    final proxyUrl =
+        Provider.of<AppDependencyProvider>(context, listen: false).tmdbProxy;
+    fetchCredits(widget.api!, isProxyEnabled, proxyUrl).then((value) {
       if (mounted) {
         setState(() {
           credits = value;
@@ -1807,6 +1550,8 @@ class TVCrewTabState extends State<TVCrewTab>
     super.build(context);
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     final themeMode = Provider.of<SettingsProvider>(context).appTheme;
+    final isProxyEnabled = Provider.of<SettingsProvider>(context).enableProxy;
+    final proxyUrl = Provider.of<AppDependencyProvider>(context).tmdbProxy;
     return credits == null
         ? Container(
             padding: const EdgeInsets.only(top: 8),
@@ -1876,12 +1621,14 @@ class TVCrewTabState extends State<TVCrewTab>
                                                         const Duration(
                                                             milliseconds: 700),
                                                     fadeInCurve: Curves.easeIn,
-                                                    imageUrl:
-                                                        TMDB_BASE_IMAGE_URL +
-                                                            imageQuality +
-                                                            credits!
-                                                                .crew![index]
-                                                                .profilePath!,
+                                                    imageUrl: buildImageUrl(
+                                                            TMDB_BASE_IMAGE_URL,
+                                                            proxyUrl,
+                                                            isProxyEnabled,
+                                                            context) +
+                                                        imageQuality +
+                                                        credits!.crew![index]
+                                                            .profilePath!,
                                                     imageBuilder: (context,
                                                             imageProvider) =>
                                                         Container(
@@ -1972,7 +1719,12 @@ class _TVWatchProvidersDetailsState extends State<TVWatchProvidersDetails>
   void initState() {
     super.initState();
     tabController = TabController(length: 5, vsync: this);
-    moviesApi().fetchWatchProviders(widget.api, widget.country).then((value) {
+    final isProxyEnabled =
+        Provider.of<SettingsProvider>(context, listen: false).enableProxy;
+    final proxyUrl =
+        Provider.of<AppDependencyProvider>(context, listen: false).tmdbProxy;
+    fetchWatchProviders(widget.api, widget.country, isProxyEnabled, proxyUrl)
+        .then((value) {
       if (mounted) {
         setState(() {
           watchProviders = value;
@@ -1991,7 +1743,7 @@ class _TVWatchProvidersDetailsState extends State<TVWatchProvidersDetails>
           Container(
             width: double.infinity,
             decoration: BoxDecoration(
-               color: themeMode == "dark" || themeMode == "amoled"
+              color: themeMode == "dark" || themeMode == "amoled"
                   ? const Color(0xFF2b2c30)
                   : const Color(0xFFDFDEDE),
             ),
@@ -2064,22 +1816,26 @@ class _TVWatchProvidersDetailsState extends State<TVWatchProvidersDetails>
                           themeMode: themeMode,
                           imageQuality: imageQuality,
                           noOptionMessage: tr("no_buy_tv"),
-                          watchOptions: watchProviders!.buy),
+                          watchOptions: watchProviders!.buy,
+                          context: context),
                       watchProvidersTabData(
                           themeMode: themeMode,
                           imageQuality: imageQuality,
                           noOptionMessage: tr("no_stream_tv"),
-                          watchOptions: watchProviders!.flatRate),
+                          watchOptions: watchProviders!.flatRate,
+                          context: context),
                       watchProvidersTabData(
                           themeMode: themeMode,
                           imageQuality: imageQuality,
                           noOptionMessage: tr("no_ads_tv"),
-                          watchOptions: watchProviders!.ads),
+                          watchOptions: watchProviders!.ads,
+                          context: context),
                       watchProvidersTabData(
                           themeMode: themeMode,
                           imageQuality: imageQuality,
                           noOptionMessage: tr("no_rent_tv"),
-                          watchOptions: watchProviders!.rent),
+                          watchOptions: watchProviders!.rent,
+                          context: context),
                       Container(
                         padding: const EdgeInsets.all(8.0),
                         child: GridView.builder(
@@ -2103,7 +1859,7 @@ class _TVWatchProvidersDetailsState extends State<TVWatchProvidersDetails>
                                             BorderRadius.circular(8.0),
                                         child: const FadeInImage(
                                           image: AssetImage(
-                                              appConfig.app_icon),
+                                              'assets/images/logo.png'),
                                           fit: BoxFit.cover,
                                           placeholder: AssetImage(
                                               'assets/images/loading_5.gif'),
@@ -2116,7 +1872,7 @@ class _TVWatchProvidersDetailsState extends State<TVWatchProvidersDetails>
                                     Expanded(
                                         flex: 6,
                                         child: Text(
-                                          tr("caffiene"),
+                                          tr("cinemax"),
                                           textAlign: TextAlign.center,
                                           maxLines: 2,
                                           overflow: TextOverflow.ellipsis,

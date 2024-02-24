@@ -1,11 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:caffiene/functions/functions.dart';
+import 'package:caffiene/provider/app_dependency_provider.dart';
+import 'package:caffiene/utils/config.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/screens/search/searched_person.dart';
 import 'package:caffiene/widgets/shimmer_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:caffiene/utils/constant.dart';
-
 
 class SearchedPersonQuickInfo extends StatelessWidget {
   const SearchedPersonQuickInfo({
@@ -19,6 +21,8 @@ class SearchedPersonQuickInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeMode = Provider.of<SettingsProvider>(context).appTheme;
+    final isProxyEnabled = Provider.of<SettingsProvider>(context).enableProxy;
+    final proxyUrl = Provider.of<AppDependencyProvider>(context).tmdbProxy;
     return SizedBox(
       height: 200,
       width: double.infinity,
@@ -52,6 +56,7 @@ class SearchedPersonQuickInfo extends StatelessWidget {
                                       fit: BoxFit.cover,
                                     )
                                   : CachedNetworkImage(
+                                      cacheManager: cacheProp(),
                                       fit: BoxFit.cover,
                                       placeholder: (context, url) =>
                                           scrollingImageShimmer(themeMode),
@@ -60,7 +65,11 @@ class SearchedPersonQuickInfo extends StatelessWidget {
                                         'assets/images/na_logo.png',
                                         fit: BoxFit.cover,
                                       ),
-                                      imageUrl: TMDB_BASE_IMAGE_URL +
+                                      imageUrl: buildImageUrl(
+                                              TMDB_BASE_IMAGE_URL,
+                                              proxyUrl,
+                                              isProxyEnabled,
+                                              context) +
                                           imageQuality +
                                           widget.person!.profilePath!,
                                     ),

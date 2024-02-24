@@ -1,12 +1,10 @@
 import 'dart:io';
-
 import 'package:caffiene/functions/functions.dart';
 import 'package:caffiene/models/app_colors.dart';
 import 'package:caffiene/models/app_languages.dart';
 import 'package:caffiene/screens/settings/language_choose.dart';
 import 'package:caffiene/screens/settings/player_settings.dart';
 import 'package:caffiene/utils/globlal_methods.dart';
-import 'package:caffiene/utils/helpers/next_screen.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -364,7 +362,9 @@ class _SettingsState extends State<Settings> {
               tr("player_settings"),
             ),
             onTap: () {
-              nextScreen(context, const PlayerSettings());
+              Navigator.push(context, MaterialPageRoute(builder: ((context) {
+                return const PlayerSettings();
+              })));
             },
           ),
           Visibility(
@@ -390,6 +390,59 @@ class _SettingsState extends State<Settings> {
               },
             ),
           ),
+          SwitchListTile(
+              inactiveThumbColor: Colors.white,
+              inactiveTrackColor: const Color(0xFF9B9B9B),
+              subtitle: Text(
+                tr("enable_warning"),
+              ),
+              value: settingsValues.enableProxy,
+              secondary: Icon(
+                FontAwesomeIcons.networkWired,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              title: Text(
+                tr("use_proxy"),
+              ),
+              onChanged: (bool value) {
+                if (value) {
+                   showDialog(
+                                      context: context,
+                                      builder: (BuildContext ctx) {
+                                        return AlertDialog(
+                                          title: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Text(tr("use_proxy_title")),
+                                          ),
+                                          content: Text(tr("use_proxy_detail")),
+                                          actions: [
+                                            ElevatedButton(
+                                                onPressed: () async {
+                                                  Navigator.pop(context);
+                                                },
+                                                child: Text(tr("cancel"))),
+                                            TextButton(
+                                                onPressed: () async {
+                                                  setState(() {
+                                                    settingsValues.enableProxy = value;
+                                                  });
+                                                  Navigator.pop(context);
+                                                },
+                                                child: Text(
+                                                  tr("enable"),
+                                                 
+                                                ))
+                                          ],
+                                        );
+                                      });
+                } else {
+                  setState(() {
+                    settingsValues.enableProxy = value;
+                  });
+                }
+                
+              },
+            ),
           ListTile(
             leading: Icon(
               Icons.image_rounded,
@@ -504,7 +557,9 @@ class _SettingsState extends State<Settings> {
           ),
           ListTile(
             onTap: (() {
-              nextScreen(context, const AppLanguageChoose());
+              Navigator.push(context, MaterialPageRoute(builder: ((context) {
+                return const AppLanguageChoose();
+              })));
             }),
             leading: Icon(
               FontAwesomeIcons.language,
@@ -527,7 +582,9 @@ class _SettingsState extends State<Settings> {
           ),
           ListTile(
             onTap: (() {
-              nextScreen(context, const CountryChoose());
+              Navigator.push(context, MaterialPageRoute(builder: ((context) {
+                return const CountryChoose();
+              })));
             }),
             leading: Icon(
               FontAwesomeIcons.earthAmericas,
@@ -548,23 +605,23 @@ class _SettingsState extends State<Settings> {
                   Text(countryName!)
                 ]),
           ),
-          SwitchListTile(
-            inactiveThumbColor: Colors.white,
-            inactiveTrackColor: const Color(0xFF9B9B9B),
-            value: settingsValues.isAdult,
-            secondary: Icon(
-              Icons.explicit_rounded,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            title: Text(
-              tr("include_adult"),
-            ),
-            onChanged: (bool value) {
-              setState(() {
-                settingsValues.isAdult = value;
-              });
-            },
-          ),
+          // SwitchListTile(
+          //   inactiveThumbColor: Colors.white,
+          //   inactiveTrackColor: const Color(0xFF9B9B9B),
+          //   value: settingsValues.isAdult,
+          //   secondary: Icon(
+          //     Icons.explicit_rounded,
+          //     color: Theme.of(context).colorScheme.primary,
+          //   ),
+          //   title: Text(
+          //     tr("include_adult"),
+          //   ),
+          //   onChanged: (bool value) {
+          //     setState(() {
+          //       settingsValues.isAdult = value;
+          //     });
+          //   },
+          // ),
           ListTile(
             leading: Icon(
               FontAwesomeIcons.eraser,

@@ -1,4 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:caffiene/functions/functions.dart';
+import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/models/tv.dart';
@@ -8,7 +10,6 @@ import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/widgets/shimmer_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:caffiene/utils/constant.dart';
-
 
 class TVSeasonDetailQuickInfo extends StatelessWidget {
   const TVSeasonDetailQuickInfo({
@@ -27,6 +28,8 @@ class TVSeasonDetailQuickInfo extends StatelessWidget {
     final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     final appLang = Provider.of<SettingsProvider>(context).appLanguage;
+    final isProxyEnabled = Provider.of<SettingsProvider>(context).enableProxy;
+    final proxyUrl = Provider.of<AppDependencyProvider>(context).tmdbProxy;
     return SizedBox(
       height: 310,
       width: double.infinity,
@@ -81,7 +84,7 @@ class TVSeasonDetailQuickInfo extends StatelessWidget {
                                         fit: BoxFit.cover,
                                       ),
                                       imageUrl:
-                                          '${TMDB_BASE_IMAGE_URL}original/${tvSeries.backdropPath!}',
+                                          '${buildImageUrl(TMDB_BASE_IMAGE_URL, proxyUrl, isProxyEnabled, context)}original/${tvSeries.backdropPath!}',
                                       errorWidget: (context, url, error) =>
                                           Image.asset(
                                         'assets/images/na_logo.png',
@@ -150,7 +153,11 @@ class TVSeasonDetailQuickInfo extends StatelessWidget {
                                         'assets/images/na_logo.png',
                                         fit: BoxFit.cover,
                                       ),
-                                      imageUrl: TMDB_BASE_IMAGE_URL +
+                                      imageUrl: buildImageUrl(
+                                              TMDB_BASE_IMAGE_URL,
+                                              proxyUrl,
+                                              isProxyEnabled,
+                                              context) +
                                           imageQuality +
                                           season.posterPath!,
                                     ),

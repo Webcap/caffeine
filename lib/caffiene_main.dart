@@ -91,6 +91,7 @@ class _caffeineState extends State<caffeine>
           _remoteConfig.getString("vidsrc_server");
       appDependencyProvider.vidSrcToServer =
           _remoteConfig.getString("vidsrcto_server");
+      appDependencyProvider.tmdbProxy = _remoteConfig.getString("tmdb_proxy");
     }
     // await requestNotificationPermissions();
     [

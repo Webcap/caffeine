@@ -25,10 +25,13 @@ import '/models/credits.dart';
 import '/models/genres.dart';
 import '../models/live_tv.dart';
 
-Future<List<Movie>> fetchMovies(String api) async {
+Future<List<Movie>> fetchMovies(
+    String api, bool isProxyEnabled, String proxyUrl) async {
   MovieList movieList;
-
   try {
+    if (isProxyEnabled && proxyUrl.isNotEmpty) {
+      api = "$proxyUrl?destination=$api";
+    }
     var res = await retryOptions.retry(
       (() => http.get(Uri.parse(api)).timeout(timeOut)),
       retryIf: (e) => e is SocketException || e is TimeoutException,
@@ -42,9 +45,13 @@ Future<List<Movie>> fetchMovies(String api) async {
   return movieList.movies ?? [];
 }
 
-Future<List<Movie>> fetchCollectionMovies(String api) async {
+Future<List<Movie>> fetchCollectionMovies(
+    String api, bool isProxyEnabled, String proxyUrl) async {
   CollectionMovieList collectionMovieList;
   try {
+    if (isProxyEnabled && proxyUrl.isNotEmpty) {
+      api = "$proxyUrl?destination=$api";
+    }
     var res = await retryOptions.retry(
       () => http.get(Uri.parse(api)).timeout(timeOut),
       retryIf: (e) => e is SocketException || e is TimeoutException,
@@ -57,9 +64,13 @@ Future<List<Movie>> fetchCollectionMovies(String api) async {
   return collectionMovieList.movies ?? [];
 }
 
-Future fetchCollectionDetails(String api) async {
+Future fetchCollectionDetails(
+    String api, bool isProxyEnabled, String proxyUrl) async {
   CollectionDetails collectionDetails;
   try {
+    if (isProxyEnabled && proxyUrl.isNotEmpty) {
+      api = "$proxyUrl?destination=$api";
+    }
     var res = await retryOptions.retry(
       () => http.get(Uri.parse(api)).timeout(timeOut),
       retryIf: (e) => e is SocketException || e is TimeoutException,
@@ -72,9 +83,13 @@ Future fetchCollectionDetails(String api) async {
   return collectionDetails;
 }
 
-Future<List<Movie>> fetchPersonMovies(String api) async {
+Future<List<Movie>> fetchPersonMovies(
+    String api, bool isProxyEnabled, String proxyUrl) async {
   PersonMoviesList personMoviesList;
   try {
+    if (isProxyEnabled && proxyUrl.isNotEmpty) {
+      api = "$proxyUrl?destination=$api";
+    }
     var res = await retryOptions.retry(
       () => http.get(Uri.parse(api)).timeout(timeOut),
       retryIf: (e) => e is SocketException || e is TimeoutException,
@@ -87,9 +102,13 @@ Future<List<Movie>> fetchPersonMovies(String api) async {
   return personMoviesList.movies ?? [];
 }
 
-Future<Images> fetchImages(String api) async {
+Future<Images> fetchImages(
+    String api, bool isProxyEnabled, String proxyUrl) async {
   Images images;
   try {
+    if (isProxyEnabled && proxyUrl.isNotEmpty) {
+      api = "$proxyUrl?destination=$api";
+    }
     var res = await retryOptions.retry(
       (() => http.get(Uri.parse(api)).timeout(timeOut)),
       retryIf: (e) => e is SocketException || e is TimeoutException,
@@ -102,9 +121,13 @@ Future<Images> fetchImages(String api) async {
   return images;
 }
 
-Future<PersonImages> fetchPersonImages(String api) async {
+Future<PersonImages> fetchPersonImages(
+    String api, bool isProxyEnabled, String proxyUrl) async {
   PersonImages personImages;
   try {
+    if (isProxyEnabled && proxyUrl.isNotEmpty) {
+      api = "$proxyUrl?destination=$api";
+    }
     var res = await retryOptions.retry(
       (() => http.get(Uri.parse(api)).timeout(timeOut)),
       retryIf: (e) => e is SocketException || e is TimeoutException,
@@ -117,9 +140,13 @@ Future<PersonImages> fetchPersonImages(String api) async {
   return personImages;
 }
 
-Future<Videos> fetchVideos(String api) async {
+Future<Videos> fetchVideos(
+    String api, bool isProxyEnabled, String proxyUrl) async {
   Videos videos;
   try {
+    if (isProxyEnabled && proxyUrl.isNotEmpty) {
+      api = "$proxyUrl?destination=$api";
+    }
     var res = await retryOptions.retry(
       (() => http.get(Uri.parse(api)).timeout(timeOut)),
       retryIf: (e) => e is SocketException || e is TimeoutException,
@@ -132,9 +159,13 @@ Future<Videos> fetchVideos(String api) async {
   return videos;
 }
 
-Future<Credits> fetchCredits(String api) async {
+Future<Credits> fetchCredits(
+    String api, bool isProxyEnabled, String proxyUrl) async {
   Credits credits;
   try {
+    if (isProxyEnabled && proxyUrl.isNotEmpty) {
+      api = "$proxyUrl?destination=$api";
+    }
     var res = await retryOptions.retry(
       (() => http.get(Uri.parse(api)).timeout(timeOut)),
       retryIf: (e) => e is SocketException || e is TimeoutException,
@@ -147,9 +178,13 @@ Future<Credits> fetchCredits(String api) async {
   return credits;
 }
 
-Future<List<Person>> fetchPerson(String api) async {
+Future<List<Person>> fetchPerson(
+    String api, bool isProxyEnabled, String proxyUrl) async {
   PersonList credits;
   try {
+    if (isProxyEnabled && proxyUrl.isNotEmpty) {
+      api = "$proxyUrl?destination=$api";
+    }
     var res = await retryOptions.retry(
       (() => http.get(Uri.parse(api)).timeout(timeOut)),
       retryIf: (e) => e is SocketException || e is TimeoutException,
@@ -162,9 +197,13 @@ Future<List<Person>> fetchPerson(String api) async {
   return credits.person ?? [];
 }
 
-Future<List<Genres>> fetchGenre(String api) async {
+Future<List<Genres>> fetchGenre(
+    String api, bool isProxyEnabled, String proxyUrl) async {
   GenreList newGenreList;
   try {
+    if (isProxyEnabled && proxyUrl.isNotEmpty) {
+      api = "$proxyUrl?destination=$api";
+    }
     var res = await retryOptions.retry(
       (() => http.get(Uri.parse(api)).timeout(timeOut)),
       retryIf: (e) => e is SocketException || e is TimeoutException,
@@ -177,9 +216,13 @@ Future<List<Genres>> fetchGenre(String api) async {
   return newGenreList.genre ?? [];
 }
 
-Future<ExternalLinks> fetchSocialLinks(String api) async {
+Future<ExternalLinks> fetchSocialLinks(
+    String api, bool isProxyEnabled, String proxyUrl) async {
   ExternalLinks externalLinks;
   try {
+    if (isProxyEnabled && proxyUrl.isNotEmpty) {
+      api = "$proxyUrl?destination=$api";
+    }
     var res = await retryOptions.retry(
       (() => http.get(Uri.parse(api)).timeout(timeOut)),
       retryIf: (e) => e is SocketException || e is TimeoutException,
@@ -192,9 +235,13 @@ Future<ExternalLinks> fetchSocialLinks(String api) async {
   return externalLinks;
 }
 
-Future fetchBelongsToCollection(String api) async {
+Future fetchBelongsToCollection(
+    String api, bool isProxyEnabled, String proxyUrl) async {
   BelongsToCollection belongsToCollection;
   try {
+    if (isProxyEnabled && proxyUrl.isNotEmpty) {
+      api = "$proxyUrl?destination=$api";
+    }
     var res = await retryOptions.retry(
       (() => http.get(Uri.parse(api)).timeout(timeOut)),
       retryIf: (e) => e is SocketException || e is TimeoutException,
@@ -207,9 +254,13 @@ Future fetchBelongsToCollection(String api) async {
   return belongsToCollection;
 }
 
-Future<Moviedetail> fetchMovieDetails(String api) async {
+Future<Moviedetail> fetchMovieDetails(
+    String api, bool isProxyEnabled, String proxyUrl) async {
   Moviedetail movieDetails;
   try {
+    if (isProxyEnabled && proxyUrl.isNotEmpty) {
+      api = "$proxyUrl?destination=$api";
+    }
     var res = await retryOptions.retry(
       (() => http.get(Uri.parse(api)).timeout(timeOut)),
       retryIf: (e) => e is SocketException || e is TimeoutException,
@@ -221,7 +272,6 @@ Future<Moviedetail> fetchMovieDetails(String api) async {
   }
   return movieDetails;
 }
-
 // Future<Credits> fetchPerson(String api) async {
 //   Credits credits;
 //   var res = await http.get(Uri.parse(api));
@@ -230,9 +280,13 @@ Future<Moviedetail> fetchMovieDetails(String api) async {
 //   return credits;
 // }
 
-Future<PersonDetails> fetchPersonDetails(String api) async {
+Future<PersonDetails> fetchPersonDetails(
+    String api, bool isProxyEnabled, String proxyUrl) async {
   PersonDetails personDetails;
   try {
+    if (isProxyEnabled && proxyUrl.isNotEmpty) {
+      api = "$proxyUrl?destination=$api";
+    }
     var res = await retryOptions.retry(
       (() => http.get(Uri.parse(api)).timeout(timeOut)),
       retryIf: (e) => e is SocketException || e is TimeoutException,
@@ -245,9 +299,13 @@ Future<PersonDetails> fetchPersonDetails(String api) async {
   return personDetails;
 }
 
-Future<WatchProviders> fetchWatchProviders(String api, String country) async {
+Future<WatchProviders> fetchWatchProviders(
+    String api, String country, bool isProxyEnabled, String proxyUrl) async {
   WatchProviders watchProviders;
   try {
+    if (isProxyEnabled && proxyUrl.isNotEmpty) {
+      api = "$proxyUrl?destination=$api";
+    }
     var res = await retryOptions.retry(
       (() => http.get(Uri.parse(api)).timeout(timeOut)),
       retryIf: (e) => e is SocketException || e is TimeoutException,
@@ -260,9 +318,13 @@ Future<WatchProviders> fetchWatchProviders(String api, String country) async {
   return watchProviders;
 }
 
-Future<List<TV>> fetchTV(String api) async {
+Future<List<TV>> fetchTV(
+    String api, bool isProxyEnabled, String proxyUrl) async {
   TVList tvList;
   try {
+    if (isProxyEnabled && proxyUrl.isNotEmpty) {
+      api = "$proxyUrl?destination=$api";
+    }
     var res = await retryOptions.retry(
       (() => http.get(Uri.parse(api)).timeout(timeOut)),
       retryIf: (e) => e is SocketException || e is TimeoutException,
@@ -275,9 +337,13 @@ Future<List<TV>> fetchTV(String api) async {
   return tvList.tvSeries ?? [];
 }
 
-Future<TVDetails> fetchTVDetails(String api) async {
+Future<TVDetails> fetchTVDetails(
+    String api, bool isProxyEnabled, String proxyUrl) async {
   TVDetails tvDetails;
   try {
+    if (isProxyEnabled && proxyUrl.isNotEmpty) {
+      api = "$proxyUrl?destination=$api";
+    }
     var res = await retryOptions.retry(
       (() => http.get(Uri.parse(api)).timeout(timeOut)),
       retryIf: (e) => e is SocketException || e is TimeoutException,
@@ -290,9 +356,13 @@ Future<TVDetails> fetchTVDetails(String api) async {
   return tvDetails;
 }
 
-Future<List<TV>> fetchPersonTV(String api) async {
+Future<List<TV>> fetchPersonTV(
+    String api, bool isProxyEnabled, String proxyUrl) async {
   PersonTVList personTVList;
   try {
+    if (isProxyEnabled && proxyUrl.isNotEmpty) {
+      api = "$proxyUrl?destination=$api";
+    }
     var res = await retryOptions.retry(
       (() => http.get(Uri.parse(api)).timeout(timeOut)),
       retryIf: (e) => e is SocketException || e is TimeoutException,
@@ -325,9 +395,13 @@ Future checkForUpdate(String api) async {
   }
   return updateChecker;
 }
-Future<Movie> getMovie(String api) async {
+
+Future<Movie> getMovie(String api, bool isProxyEnabled, String proxyUrl) async {
   Movie movie;
   try {
+    if (isProxyEnabled && proxyUrl.isNotEmpty) {
+      api = "$proxyUrl?destination=$api";
+    }
     var res = await retryOptions.retry(
       () => http.get(Uri.parse(api)).timeout(timeOut),
       retryIf: (e) => e is SocketException || e is TimeoutException,
@@ -340,9 +414,12 @@ Future<Movie> getMovie(String api) async {
   return movie;
 }
 
-Future<TV> getTV(String api) async {
+Future<TV> getTV(String api, bool isProxyEnabled, String proxyUrl) async {
   TV tv;
   try {
+    if (isProxyEnabled && proxyUrl.isNotEmpty) {
+      api = "$proxyUrl?destination=$api";
+    }
     var res = await retryOptions.retry(
       () => http.get(Uri.parse(api)).timeout(timeOut),
       retryIf: (e) => e is SocketException || e is TimeoutException,
@@ -653,7 +730,7 @@ Future<SubtitleDownload> downloadExternalSubtitle(
     String api, int fileId, String key) async {
   SubtitleDownload sub;
   final Map<String, String> headers = {
-    'User-Agent': 'FlixQuest v2.4.0',
+    'User-Agent': 'caffeine v2.4.0',
     'Accept': 'application/json',
     'Content-Type': 'application/json',
     'Api-Key': key

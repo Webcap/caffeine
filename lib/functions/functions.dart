@@ -14,7 +14,6 @@ import 'package:http/http.dart' as http;
 import 'package:caffiene/utils/config.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-
 String episodeSeasonFormatter(int episodeNumber, int seasonNumber) {
   String formattedSeason =
       seasonNumber <= 9 ? 'S0$seasonNumber' : 'S$seasonNumber';
@@ -177,4 +176,14 @@ String normalizeTitle(String title) {
       .toLowerCase()
       .replaceAll(RegExp('[":\']'), '')
       .replaceAll(RegExp('[^a-zA-Z0-9]+'), '_');
+}
+
+String buildImageUrl(String baseImage, String proxyUrl, bool isProxyEnabled,
+    BuildContext context) {
+  String concatenated = baseImage;
+  if (isProxyEnabled && proxyUrl.isNotEmpty) {
+    concatenated = "$proxyUrl?destination=$baseImage";
+  }
+
+  return concatenated;
 }

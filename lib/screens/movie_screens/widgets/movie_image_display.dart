@@ -1,10 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:caffiene/functions/functions.dart';
+import 'package:caffiene/functions/network.dart';
+import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:caffiene/screens/common/photoview.dart';
 import 'package:caffiene/widgets/common_widgets.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:caffiene/api/movies_api.dart';
 import 'package:caffiene/models/images.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/utils/config.dart';
@@ -27,7 +29,11 @@ class MovieImagesState extends State<MovieImagesDisplay> {
   @override
   void initState() {
     super.initState();
-    moviesApi().fetchImages(widget.api!).then((value) {
+    final isProxyEnabled =
+        Provider.of<SettingsProvider>(context, listen: false).enableProxy;
+    final proxyUrl =
+        Provider.of<AppDependencyProvider>(context, listen: false).tmdbProxy;
+    fetchImages(widget.api!, isProxyEnabled, proxyUrl).then((value) {
       if (mounted) {
         setState(() {
           movieImages = value;
@@ -40,6 +46,8 @@ class MovieImagesState extends State<MovieImagesDisplay> {
   Widget build(BuildContext context) {
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     final themeMode = Provider.of<SettingsProvider>(context).appTheme;
+    final isProxyEnabled = Provider.of<SettingsProvider>(context).enableProxy;
+    final proxyUrl = Provider.of<AppDependencyProvider>(context).tmdbProxy;
     return SizedBox(
       height: 260,
       width: double.infinity,
@@ -86,294 +94,267 @@ class MovieImagesState extends State<MovieImagesDisplay> {
                               Expanded(
                                 flex: 1,
                                 child: Container(
-                                  child: movieImages!.poster!.isEmpty
-                                      ? SizedBox(
-                                          width: 120,
-                                          height: 180,
-                                          child: Center(
-                                            child: Image.asset(
-                                              'assets/images/na_logo.png',
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ),
-                                        )
-                                      : Container(
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Stack(
-                                                alignment: AlignmentDirectional
-                                                    .bottomStart,
-                                                children: [
-                                                  SizedBox(
-                                                    height: 180,
-                                                    child: ClipRRect(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              8.0),
-                                                      child: movieImages!
-                                                                  .poster![0]
-                                                                  .posterPath ==
-                                                              null
-                                                          ? Image.asset(
-                                                              'assets/images/na_logo.png',
-                                                              fit: BoxFit.cover,
-                                                            )
-                                                          : CachedNetworkImage(
-                                                              cacheManager:
-                                                                  cacheProp(),
-                                                              fadeOutDuration:
-                                                                  const Duration(
-                                                                      milliseconds:
-                                                                          300),
-                                                              fadeOutCurve:
-                                                                  Curves
-                                                                      .easeOut,
-                                                              fadeInDuration:
-                                                                  const Duration(
-                                                                      milliseconds:
-                                                                          700),
-                                                              fadeInCurve:
-                                                                  Curves.easeIn,
-                                                              imageUrl: TMDB_BASE_IMAGE_URL +
-                                                                  imageQuality +
-                                                                  movieImages!
-                                                                      .poster![
-                                                                          0]
-                                                                      .posterPath!,
-                                                              imageBuilder: (context,
-                                                                      imageProvider) =>
-                                                                  GestureDetector(
-                                                                onTap: () {
-                                                                  Navigator.push(
-                                                                      context,
-                                                                      MaterialPageRoute(
-                                                                          builder:
-                                                                              ((context) {
-                                                                    return HeroPhotoView(
-                                                                      posters:
-                                                                          movieImages!
-                                                                              .poster!,
-                                                                      name: widget
-                                                                          .name,
-                                                                      imageType:
-                                                                          'poster',
-                                                                    );
-                                                                  })));
-                                                                },
-                                                                child: Hero(
-                                                                  tag: TMDB_BASE_IMAGE_URL +
-                                                                      imageQuality +
-                                                                      movieImages!
-                                                                          .poster![
-                                                                              0]
-                                                                          .posterPath!,
-                                                                  child:
-                                                                      Container(
-                                                                    decoration:
-                                                                        BoxDecoration(
-                                                                      image:
-                                                                          DecorationImage(
-                                                                        image:
-                                                                            imageProvider,
-                                                                        fit: BoxFit
-                                                                            .cover,
-                                                                      ),
-                                                                    ),
-                                                                  ),
+                                  child: Container(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Stack(
+                                          alignment:
+                                              AlignmentDirectional.bottomStart,
+                                          children: [
+                                            SizedBox(
+                                              height: 180,
+                                              child: ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                                child: movieImages!
+                                                        .poster!.isEmpty
+                                                    ? Image.asset(
+                                                        'assets/images/na_logo.png',
+                                                        fit: BoxFit.cover,
+                                                        height: double.infinity,
+                                                        width: double.infinity)
+                                                    : CachedNetworkImage(
+                                                        cacheManager:
+                                                            cacheProp(),
+                                                        fadeOutDuration:
+                                                            const Duration(
+                                                                milliseconds:
+                                                                    300),
+                                                        fadeOutCurve:
+                                                            Curves.easeOut,
+                                                        fadeInDuration:
+                                                            const Duration(
+                                                                milliseconds:
+                                                                    700),
+                                                        fadeInCurve:
+                                                            Curves.easeIn,
+                                                        imageUrl: buildImageUrl(
+                                                                TMDB_BASE_IMAGE_URL,
+                                                                proxyUrl,
+                                                                isProxyEnabled,
+                                                                context) +
+                                                            imageQuality +
+                                                            movieImages!
+                                                                .poster![0]
+                                                                .posterPath!,
+                                                        imageBuilder: (context,
+                                                                imageProvider) =>
+                                                            GestureDetector(
+                                                          onTap: () {
+                                                            Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                    builder:
+                                                                        ((context) {
+                                                              return HeroPhotoView(
+                                                                posters:
+                                                                    movieImages!
+                                                                        .poster!,
+                                                                name:
+                                                                    widget.name,
+                                                                imageType:
+                                                                    'poster',
+                                                              );
+                                                            })));
+                                                          },
+                                                          child: Hero(
+                                                            tag: buildImageUrl(
+                                                                    TMDB_BASE_IMAGE_URL,
+                                                                    proxyUrl,
+                                                                    isProxyEnabled,
+                                                                    context) +
+                                                                imageQuality +
+                                                                movieImages!
+                                                                    .poster![0]
+                                                                    .posterPath!,
+                                                            child: Container(
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                image:
+                                                                    DecorationImage(
+                                                                  image:
+                                                                      imageProvider,
+                                                                  fit: BoxFit
+                                                                      .cover,
                                                                 ),
                                                               ),
-                                                              placeholder: (context,
-                                                                      url) =>
-                                                                  detailImageImageSimmer(
-                                                                      themeMode),
-                                                              errorWidget: (context,
-                                                                      url,
-                                                                      error) =>
-                                                                  Image.asset(
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        placeholder: (context,
+                                                                url) =>
+                                                            detailImageImageSimmer(
+                                                                themeMode),
+                                                        errorWidget: (context,
+                                                                url, error) =>
+                                                            Image.asset(
                                                                 'assets/images/na_logo.png',
                                                                 fit: BoxFit
                                                                     .cover,
-                                                              ),
-                                                            ),
-                                                    ),
-                                                  ),
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            8.0),
-                                                    child: Container(
-                                                      color: Colors.black38,
-                                                      child: Text(movieImages!
-                                                                  .poster!
-                                                                  .length ==
-                                                              1
-                                                          ? tr(
-                                                              "poster_singular",
-                                                              namedArgs: {
-                                                                  "poster": movieImages!
-                                                                      .poster!
-                                                                      .length
-                                                                      .toString()
-                                                                })
-                                                          : tr("poster_plural",
-                                                              namedArgs: {
-                                                                  "poster": movieImages!
-                                                                      .poster!
-                                                                      .length
-                                                                      .toString()
-                                                                })),
-                                                    ),
-                                                  )
-                                                ]),
-                                          ),
-                                        ),
+                                                                height: double
+                                                                    .infinity,
+                                                                width: double
+                                                                    .infinity),
+                                                      ),
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Container(
+                                                color: Colors.black38,
+                                                child: Text(movieImages!
+                                                            .poster!.length ==
+                                                        1
+                                                    ? tr("poster_singular",
+                                                        namedArgs: {
+                                                            "poster":
+                                                                movieImages!
+                                                                    .poster!
+                                                                    .length
+                                                                    .toString()
+                                                          })
+                                                    : tr("poster_plural",
+                                                        namedArgs: {
+                                                            "poster":
+                                                                movieImages!
+                                                                    .poster!
+                                                                    .length
+                                                                    .toString()
+                                                          })),
+                                              ),
+                                            )
+                                          ]),
+                                    ),
+                                  ),
                                 ),
                               ),
                               Expanded(
                                 flex: 2,
                                 child: Container(
-                                  child: movieImages!.backdrop!.isEmpty
-                                      ? SizedBox(
-                                          width: 120,
-                                          height: 180,
-                                          child: Center(
-                                            child: Image.asset(
-                                              'assets/images/na_logo.png',
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ),
-                                        )
-                                      : Container(
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Stack(
-                                                alignment: AlignmentDirectional
-                                                    .bottomStart,
-                                                children: [
-                                                  SizedBox(
-                                                    height: 180,
-                                                    child: ClipRRect(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              8.0),
-                                                      child: movieImages!
-                                                                  .backdrop![0]
-                                                                  .filePath ==
-                                                              null
-                                                          ? Image.asset(
-                                                              'assets/images/na_logo.png',
-                                                              fit: BoxFit.cover,
-                                                            )
-                                                          : CachedNetworkImage(
-                                                              cacheManager:
-                                                                  cacheProp(),
-                                                              fadeOutDuration:
-                                                                  const Duration(
-                                                                      milliseconds:
-                                                                          300),
-                                                              fadeOutCurve:
-                                                                  Curves
-                                                                      .easeOut,
-                                                              fadeInDuration:
-                                                                  const Duration(
-                                                                      milliseconds:
-                                                                          700),
-                                                              fadeInCurve:
-                                                                  Curves.easeIn,
-                                                              imageUrl: TMDB_BASE_IMAGE_URL +
-                                                                  imageQuality +
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Stack(
+                                        alignment:
+                                            AlignmentDirectional.bottomStart,
+                                        children: [
+                                          SizedBox(
+                                            height: 180,
+                                            child: ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
+                                              child: movieImages!
+                                                      .backdrop!.isEmpty
+                                                  ? Image.asset(
+                                                      'assets/images/na_logo.png',
+                                                      fit: BoxFit.cover,
+                                                    )
+                                                  : CachedNetworkImage(
+                                                      cacheManager: cacheProp(),
+                                                      fadeOutDuration:
+                                                          const Duration(
+                                                              milliseconds:
+                                                                  300),
+                                                      fadeOutCurve:
+                                                          Curves.easeOut,
+                                                      fadeInDuration:
+                                                          const Duration(
+                                                              milliseconds:
+                                                                  700),
+                                                      fadeInCurve:
+                                                          Curves.easeIn,
+                                                      imageUrl: buildImageUrl(
+                                                              TMDB_BASE_IMAGE_URL,
+                                                              proxyUrl,
+                                                              isProxyEnabled,
+                                                              context) +
+                                                          imageQuality +
+                                                          movieImages!
+                                                              .backdrop![0]
+                                                              .filePath!,
+                                                      imageBuilder: (context,
+                                                              imageProvider) =>
+                                                          GestureDetector(
+                                                        onTap: () {
+                                                          Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                  builder:
+                                                                      ((context) {
+                                                            return HeroPhotoView(
+                                                              backdrops:
                                                                   movieImages!
-                                                                      .backdrop![
-                                                                          0]
-                                                                      .filePath!,
-                                                              imageBuilder: (context,
-                                                                      imageProvider) =>
-                                                                  GestureDetector(
-                                                                onTap: () {
-                                                                  Navigator.push(
-                                                                      context,
-                                                                      MaterialPageRoute(
-                                                                          builder:
-                                                                              ((context) {
-                                                                    return HeroPhotoView(
-                                                                      backdrops:
-                                                                          movieImages!
-                                                                              .backdrop!,
-                                                                      name: widget
-                                                                          .name,
-                                                                      imageType:
-                                                                          'backdrop',
-                                                                    );
-                                                                  })));
-                                                                },
-                                                                child: Hero(
-                                                                  tag: TMDB_BASE_IMAGE_URL +
-                                                                      imageQuality +
-                                                                      movieImages!
-                                                                          .backdrop![
-                                                                              0]
-                                                                          .filePath!,
-                                                                  child:
-                                                                      Container(
-                                                                    decoration:
-                                                                        BoxDecoration(
-                                                                      image:
-                                                                          DecorationImage(
-                                                                        image:
-                                                                            imageProvider,
-                                                                        fit: BoxFit
-                                                                            .cover,
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                              placeholder: (context,
-                                                                      url) =>
-                                                                  detailImageImageSimmer(
-                                                                      themeMode),
-                                                              errorWidget: (context,
-                                                                      url,
-                                                                      error) =>
-                                                                  Image.asset(
-                                                                'assets/images/na_logo.png',
+                                                                      .backdrop!,
+                                                              name: widget.name,
+                                                              imageType:
+                                                                  'backdrop',
+                                                            );
+                                                          })));
+                                                        },
+                                                        child: Hero(
+                                                          tag: buildImageUrl(
+                                                                  TMDB_BASE_IMAGE_URL,
+                                                                  proxyUrl,
+                                                                  isProxyEnabled,
+                                                                  context) +
+                                                              imageQuality +
+                                                              movieImages!
+                                                                  .backdrop![0]
+                                                                  .filePath!,
+                                                          child: Container(
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              image:
+                                                                  DecorationImage(
+                                                                image:
+                                                                    imageProvider,
                                                                 fit: BoxFit
                                                                     .cover,
                                                               ),
                                                             ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      placeholder: (context,
+                                                              url) =>
+                                                          detailImageImageSimmer(
+                                                              themeMode),
+                                                      errorWidget: (context,
+                                                              url, error) =>
+                                                          Image.asset(
+                                                        'assets/images/na_logo.png',
+                                                        fit: BoxFit.cover,
+                                                      ),
                                                     ),
-                                                  ),
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            8.0),
-                                                    child: Container(
-                                                      color: Colors.black38,
-                                                      child: Text(movieImages!
-                                                                  .backdrop!
-                                                                  .length ==
-                                                              1
-                                                          ? tr(
-                                                              "backdrop_singular",
-                                                              namedArgs: {
-                                                                  "backdrop": movieImages!
-                                                                      .backdrop!
-                                                                      .length
-                                                                      .toString()
-                                                                })
-                                                          : tr(
-                                                              "backdrop_plural",
-                                                              namedArgs: {
-                                                                  "backdrop": movieImages!
-                                                                      .backdrop!
-                                                                      .length
-                                                                      .toString()
-                                                                })),
-                                                    ),
-                                                  )
-                                                ]),
+                                            ),
                                           ),
-                                        ),
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Container(
+                                              color: Colors.black38,
+                                              child: Text(movieImages!
+                                                          .backdrop!.length ==
+                                                      1
+                                                  ? tr("backdrop_singular",
+                                                      namedArgs: {
+                                                          "backdrop":
+                                                              movieImages!
+                                                                  .backdrop!
+                                                                  .length
+                                                                  .toString()
+                                                        })
+                                                  : tr("backdrop_plural",
+                                                      namedArgs: {
+                                                          "backdrop":
+                                                              movieImages!
+                                                                  .backdrop!
+                                                                  .length
+                                                                  .toString()
+                                                        })),
+                                            ),
+                                          )
+                                        ]),
+                                  ),
                                 ),
                               ),
                             ],

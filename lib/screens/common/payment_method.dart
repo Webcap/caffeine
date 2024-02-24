@@ -291,7 +291,7 @@ class _paymentMethodState extends State<paymentMethod> {
                             print("Apple Pay");
                           } else if (payment == "Select Card") {
                             Get.to(() =>
-                              NoWebhookPaymentCardFormScreen()
+                              NoWebhookPaymentScreen()
                             );
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(

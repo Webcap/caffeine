@@ -1,11 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:caffiene/functions/functions.dart';
+import 'package:caffiene/functions/network.dart';
+import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:caffiene/widgets/common_widgets.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/api/endpoints.dart';
-import 'package:caffiene/api/movies_api.dart';
-import 'package:caffiene/api/peoples_api.dart';
-import 'package:caffiene/api/tv_api.dart';
 import 'package:caffiene/models/movie_models.dart';
 import 'package:caffiene/models/person.dart';
 import 'package:caffiene/models/tv.dart';
@@ -63,6 +63,8 @@ class Search extends SearchDelegate<String> {
   @override
   Widget buildSuggestions(BuildContext context) {
     final themeMode = Provider.of<SettingsProvider>(context).appTheme;
+    final isProxyEnabled = Provider.of<SettingsProvider>(context).enableProxy;
+    final proxyUrl = Provider.of<AppDependencyProvider>(context).tmdbProxy;
     return DefaultTabController(
       length: 3,
       initialIndex: 0,
@@ -114,8 +116,10 @@ class Search extends SearchDelegate<String> {
                     mixpanel
                         .track("Searched query", properties: {"query": query});
                   }
-                  return await moviesApi().fetchMovies(
-                      Endpoints.movieSearchUrl(query, includeAdult, lang));
+                  return await fetchMovies(
+                      Endpoints.movieSearchUrl(query, includeAdult, lang),
+                      isProxyEnabled,
+                      proxyUrl);
                 }),
                 builder: (context, snapshot) {
                   if (query.isEmpty) return searchATermWidget(themeMode);
@@ -135,8 +139,10 @@ class Search extends SearchDelegate<String> {
               ),
               FutureBuilder<List<TV>>(
                 future: Future.delayed(const Duration(seconds: 3)).then(
-                    (value) async => await tvApi().fetchTV(
-                        Endpoints.tvSearchUrl(query, includeAdult, lang))),
+                    (value) async => await fetchTV(
+                        Endpoints.tvSearchUrl(query, includeAdult, lang),
+                        isProxyEnabled,
+                        proxyUrl)),
                 builder: (context, snapshot) {
                   if (query.isEmpty) return searchATermWidget(themeMode);
 
@@ -155,8 +161,10 @@ class Search extends SearchDelegate<String> {
               ),
               FutureBuilder<List<Person>>(
                 future: Future.delayed(const Duration(seconds: 3)).then(
-                    (value) async => await peoplesApi().fetchPerson(
-                        Endpoints.personSearchUrl(query, includeAdult, lang))),
+                    (value) async => await fetchPerson(
+                        Endpoints.personSearchUrl(query, includeAdult, lang),
+                        isProxyEnabled,
+                        proxyUrl)),
                 builder: (context, snapshot) {
                   if (query.isEmpty) return searchATermWidget(themeMode);
                   switch (snapshot.connectionState) {
@@ -360,6 +368,8 @@ class Search extends SearchDelegate<String> {
   Widget activeMovieSearch(
       List<Movie> moviesList, String themeMode, BuildContext context) {
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
+    final isProxyEnabled = Provider.of<SettingsProvider>(context).enableProxy;
+    final proxyUrl = Provider.of<AppDependencyProvider>(context).tmdbProxy;
     return Column(
       children: [
         Expanded(
@@ -415,7 +425,11 @@ class Search extends SearchDelegate<String> {
                                                 fadeInDuration: const Duration(
                                                     milliseconds: 700),
                                                 fadeInCurve: Curves.easeIn,
-                                                imageUrl: TMDB_BASE_IMAGE_URL +
+                                                imageUrl: buildImageUrl(
+                                                        TMDB_BASE_IMAGE_URL,
+                                                        proxyUrl,
+                                                        isProxyEnabled,
+                                                        context) +
                                                     imageQuality +
                                                     moviesList[index]
                                                         .posterPath!,
@@ -508,6 +522,8 @@ class Search extends SearchDelegate<String> {
   Widget activeTVSearch(
       List<TV> tvList, String themeMode, BuildContext context) {
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
+    final isProxyEnabled = Provider.of<SettingsProvider>(context).enableProxy;
+    final proxyUrl = Provider.of<AppDependencyProvider>(context).tmdbProxy;
     return Column(
       children: [
         Expanded(
@@ -561,7 +577,11 @@ class Search extends SearchDelegate<String> {
                                                 fadeInDuration: const Duration(
                                                     milliseconds: 700),
                                                 fadeInCurve: Curves.easeIn,
-                                                imageUrl: TMDB_BASE_IMAGE_URL +
+                                                imageUrl: buildImageUrl(
+                                                        TMDB_BASE_IMAGE_URL,
+                                                        proxyUrl,
+                                                        isProxyEnabled,
+                                                        context) +
                                                     imageQuality +
                                                     tvList[index].posterPath!,
                                                 imageBuilder:
@@ -652,6 +672,8 @@ class Search extends SearchDelegate<String> {
   Widget activePersonSearch(
       List<Person>? personList, String themeMode, BuildContext context) {
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
+    final isProxyEnabled = Provider.of<SettingsProvider>(context).enableProxy;
+    final proxyUrl = Provider.of<AppDependencyProvider>(context).tmdbProxy;
     return ListView.builder(
         physics: const BouncingScrollPhysics(),
         itemCount: personList!.length,
@@ -698,7 +720,11 @@ class Search extends SearchDelegate<String> {
                                         fadeInDuration:
                                             const Duration(milliseconds: 700),
                                         fadeInCurve: Curves.easeIn,
-                                        imageUrl: TMDB_BASE_IMAGE_URL +
+                                        imageUrl: buildImageUrl(
+                                                TMDB_BASE_IMAGE_URL,
+                                                proxyUrl,
+                                                isProxyEnabled,
+                                                context) +
                                             imageQuality +
                                             personList[index].profilePath!,
                                         imageBuilder:

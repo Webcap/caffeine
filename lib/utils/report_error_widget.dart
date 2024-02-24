@@ -19,7 +19,7 @@ class ReportErrorWidget extends StatelessWidget {
     //   meta += metadata[i].toString();
     // }
     // String url =
-    //     "https://t.me/share/url?url=FlixQuest error&text=${error}\n${meta}";
+    //     "https://t.me/share/url?url=caffeine error&text=${error}\n${meta}";
     return Padding(
       padding: const EdgeInsets.all(20.0),
       child: SizedBox(

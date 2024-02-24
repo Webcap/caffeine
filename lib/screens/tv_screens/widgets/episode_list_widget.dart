@@ -1,5 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:caffiene/api/tv_api.dart';
+import 'package:caffiene/functions/functions.dart';
+import 'package:caffiene/functions/network.dart';
+import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:caffiene/widgets/common_widgets.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -34,7 +36,11 @@ class EpisodeListWidgetState extends State<EpisodeListWidget>
   @override
   void initState() {
     super.initState();
-    tvApi().fetchTVDetails(widget.api!).then((value) {
+    final isProxyEnabled =
+        Provider.of<SettingsProvider>(context, listen: false).enableProxy;
+    final proxyUrl =
+        Provider.of<AppDependencyProvider>(context, listen: false).tmdbProxy;
+    fetchTVDetails(widget.api!, isProxyEnabled, proxyUrl).then((value) {
       if (mounted) {
         setState(() {
           tvDetails = value;
@@ -48,6 +54,8 @@ class EpisodeListWidgetState extends State<EpisodeListWidget>
     super.build(context);
     final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
+    final isProxyEnabled = Provider.of<SettingsProvider>(context).enableProxy;
+    final proxyUrl = Provider.of<AppDependencyProvider>(context).tmdbProxy;
     return Container(
         child: tvDetails == null
             ? Column(
@@ -253,7 +261,11 @@ class EpisodeListWidgetState extends State<EpisodeListWidget>
                                                                         700),
                                                             fadeInCurve:
                                                                 Curves.easeIn,
-                                                            imageUrl: TMDB_BASE_IMAGE_URL +
+                                                            imageUrl: buildImageUrl(
+                                                                    TMDB_BASE_IMAGE_URL,
+                                                                    proxyUrl,
+                                                                    isProxyEnabled,
+                                                                    context) +
                                                                 imageQuality +
                                                                 tvDetails!
                                                                     .episodes![
@@ -290,6 +302,8 @@ class EpisodeListWidgetState extends State<EpisodeListWidget>
                                                                     Image.asset(
                                                               'assets/images/na_logo.png',
                                                               fit: BoxFit.cover,
+                                                              width: double
+                                                                  .infinity,
                                                             ),
                                                           ),
                                                   ),

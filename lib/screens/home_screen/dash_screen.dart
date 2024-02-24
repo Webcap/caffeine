@@ -70,6 +70,7 @@ class _caffieneHomePageState extends State<caffieneHomePage>
       appDep.goMoviesServer = remoteConfig.getString("gomovies_server");
       appDep.vidSrcServer = remoteConfig.getString("vidsrc_server");
       appDep.vidSrcToServer = remoteConfig.getString("vidsrcto_server");
+      appDep.tmdbProxy = remoteConfig.getString("tmdb_proxy");
     }
   }
 

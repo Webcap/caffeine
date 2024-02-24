@@ -1,4 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:caffiene/functions/functions.dart';
+import 'package:caffiene/provider/app_dependency_provider.dart';
+import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/utils/constant.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/provider/settings_provider.dart';
@@ -20,6 +23,8 @@ class CastDetailQuickInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeMode = Provider.of<SettingsProvider>(context).appTheme;
+    final isProxyEnabled = Provider.of<SettingsProvider>(context).enableProxy;
+    final proxyUrl = Provider.of<AppDependencyProvider>(context).tmdbProxy;
     return SizedBox(
       height: 200,
       width: double.infinity,
@@ -48,11 +53,12 @@ class CastDetailQuickInfo extends StatelessWidget {
                               width: 120,
                               height: 120,
                               child: widget.cast!.profilePath == null
-                                  ? Image.asset('assets/images/na_logo.png',
+                                  ? Image.asset(
+                                      'assets/images/na_rect.png',
                                       fit: BoxFit.cover,
-                                      width: double.infinity,
-                                      height: double.infinity)
+                                    )
                                   : CachedNetworkImage(
+                                      cacheManager: cacheProp(),
                                       fit: BoxFit.cover,
                                       placeholder: (context, url) =>
                                           scrollingImageShimmer(themeMode),
@@ -61,7 +67,11 @@ class CastDetailQuickInfo extends StatelessWidget {
                                         'assets/images/na_rect.png',
                                         fit: BoxFit.cover,
                                       ),
-                                      imageUrl: TMDB_BASE_IMAGE_URL +
+                                      imageUrl: buildImageUrl(
+                                              TMDB_BASE_IMAGE_URL,
+                                              proxyUrl,
+                                              isProxyEnabled,
+                                              context) +
                                           imageQuality +
                                           widget.cast!.profilePath!,
                                     ),

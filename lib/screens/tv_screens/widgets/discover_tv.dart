@@ -1,10 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:caffiene/functions/functions.dart';
+import 'package:caffiene/functions/network.dart';
+import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:caffiene/utils/theme/textStyle.dart';
 import 'package:caffiene/widgets/common_widgets.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:caffiene/api/tv_api.dart';
 import 'package:caffiene/models/dropdown_select.dart';
 import 'package:caffiene/models/filter_chip.dart';
 import 'package:caffiene/models/tv.dart';
@@ -63,13 +65,16 @@ class DiscoverTVState extends State<DiscoverTV>
   ];
 
   void getData() {
+    final isProxyEnabled =
+        Provider.of<SettingsProvider>(context, listen: false).enableProxy;
+    final proxyUrl =
+        Provider.of<AppDependencyProvider>(context, listen: false).tmdbProxy;
     List<String> years = yearDropdownData.yearsList.getRange(1, 26).toList();
     List<TVGenreFilterChipWidget> genres = tvGenreList;
     years.shuffle();
     genres.shuffle();
-    tvApi()
-        .fetchTV(
-            '$TMDB_API_BASE_URL/discover/tv?api_key=$TMDB_API_KEY&sort_by=popularity.desc&watch_region=US&first_air_date_year=${years.first}&with_genres=${genres.first.genreValue}')
+    fetchTV('$TMDB_API_BASE_URL/discover/tv?api_key=$TMDB_API_KEY&sort_by=popularity.desc&watch_region=US&first_air_date_year=${years.first}&with_genres=${genres.first.genreValue}',
+            isProxyEnabled, proxyUrl)
         .then((value) {
       if (mounted) {
         setState(() {
@@ -85,6 +90,8 @@ class DiscoverTVState extends State<DiscoverTV>
     deviceHeight = MediaQuery.of(context).size.height;
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     final themeMode = Provider.of<SettingsProvider>(context).appTheme;
+    final isProxyEnabled = Provider.of<SettingsProvider>(context).enableProxy;
+    final proxyUrl = Provider.of<AppDependencyProvider>(context).tmdbProxy;
     return Column(
       children: <Widget>[
         Row(
@@ -155,7 +162,11 @@ class DiscoverTVState extends State<DiscoverTV>
                                   fadeInCurve: Curves.easeIn,
                                   imageUrl: tvList![index].posterPath == null
                                       ? ''
-                                      : TMDB_BASE_IMAGE_URL +
+                                      : buildImageUrl(
+                                              TMDB_BASE_IMAGE_URL,
+                                              proxyUrl,
+                                              isProxyEnabled,
+                                              context) +
                                           imageQuality +
                                           tvList![index].posterPath!,
                                   imageBuilder: (context, imageProvider) =>

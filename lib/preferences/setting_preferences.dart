@@ -204,4 +204,24 @@ class SettingsPreferences {
   Future<int> getPlayerStyleIndex() async {
     return sharedPrefsSingleton.getInt(PLAYER_STYLE_INDEX) ?? 1;
   }
+
+  static const USE_PROXY = "use_proxy";
+
+  setUseProxy(bool useProxy) {
+    sharedPrefsSingleton.setBool(USE_PROXY, useProxy);
+  }
+
+  Future<bool> getUseProxy() async {
+    return sharedPrefsSingleton.getBool(USE_PROXY) ?? false;
+  }
+
+  static const SUBTITLE_TEXT_STYLE = "subtitle_text_style";
+
+  setSubtitleStyle(String value) {
+    sharedPrefsSingleton.setString(SUBTITLE_TEXT_STYLE, value);
+  }
+
+  Future<String> getSubtitleStyle() async {
+    return sharedPrefsSingleton.getString(SUBTITLE_TEXT_STYLE) ?? "regular";
+  }
 }

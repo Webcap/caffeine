@@ -1,10 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:caffiene/functions/functions.dart';
+import 'package:caffiene/functions/network.dart';
+import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:caffiene/screens/person/guest_star_details.dart';
 import 'package:caffiene/widgets/common_widgets.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:caffiene/api/movies_api.dart';
-import 'package:caffiene/api/tv_api.dart';
 import 'package:caffiene/models/credits.dart';
 import 'package:caffiene/models/tv.dart';
 import 'package:caffiene/provider/settings_provider.dart';
@@ -46,6 +47,10 @@ class ScrollingTVState extends State<ScrollingTV>
   bool isLoading = false;
 
   void getMoreData() async {
+    final isProxyEnabled =
+        Provider.of<SettingsProvider>(context, listen: false).enableProxy;
+    final proxyUrl =
+        Provider.of<AppDependencyProvider>(context, listen: false).tmdbProxy;
     _scrollController.addListener(() async {
       if (_scrollController.position.pixels ==
           _scrollController.position.maxScrollExtent) {
@@ -53,9 +58,8 @@ class ScrollingTVState extends State<ScrollingTV>
           isLoading = true;
         });
 
-        tvApi()
-            .fetchTV(
-                '${widget.api}&page=$pageNum&include_adult=${widget.includeAdult}')
+        fetchTV('${widget.api}&page=$pageNum&include_adult=${widget.includeAdult}',
+                isProxyEnabled, proxyUrl)
             .then((value) {
           if (mounted) {
             setState(() {
@@ -72,8 +76,12 @@ class ScrollingTVState extends State<ScrollingTV>
   @override
   void initState() {
     super.initState();
-    tvApi()
-        .fetchTV('${widget.api}&include_adult=${widget.includeAdult}')
+    final isProxyEnabled =
+        Provider.of<SettingsProvider>(context, listen: false).enableProxy;
+    final proxyUrl =
+        Provider.of<AppDependencyProvider>(context, listen: false).tmdbProxy;
+    fetchTV('${widget.api}&include_adult=${widget.includeAdult}',
+            isProxyEnabled, proxyUrl)
         .then((value) {
       if (mounted) {
         setState(() {
@@ -95,6 +103,8 @@ class ScrollingTVState extends State<ScrollingTV>
     super.build(context);
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     final themeMode = Provider.of<SettingsProvider>(context).appTheme;
+    final isProxyEnabled = Provider.of<SettingsProvider>(context).enableProxy;
+    final proxyUrl = Provider.of<AppDependencyProvider>(context).tmdbProxy;
     return Column(
       children: <Widget>[
         Row(
@@ -214,7 +224,11 @@ class ScrollingTVState extends State<ScrollingTV>
                                                                     .posterPath ==
                                                                 null
                                                             ? ''
-                                                            : TMDB_BASE_IMAGE_URL +
+                                                            : buildImageUrl(
+                                                                    TMDB_BASE_IMAGE_URL,
+                                                                    proxyUrl,
+                                                                    isProxyEnabled,
+                                                                    context) +
                                                                 imageQuality +
                                                                 tvList![index]
                                                                     .posterPath!,
@@ -353,7 +367,11 @@ class ScrollingTVArtistsState extends State<ScrollingTVArtists>
   @override
   void initState() {
     super.initState();
-    moviesApi().fetchCredits(widget.api!).then((value) {
+    final isProxyEnabled =
+        Provider.of<SettingsProvider>(context, listen: false).enableProxy;
+    final proxyUrl =
+        Provider.of<AppDependencyProvider>(context, listen: false).tmdbProxy;
+    fetchCredits(widget.api!, isProxyEnabled, proxyUrl).then((value) {
       if (mounted) {
         setState(() {
           credits = value;
@@ -367,6 +385,8 @@ class ScrollingTVArtistsState extends State<ScrollingTVArtists>
     super.build(context);
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     final themeMode = Provider.of<SettingsProvider>(context).appTheme;
+    final isProxyEnabled = Provider.of<SettingsProvider>(context).enableProxy;
+    final proxyUrl = Provider.of<AppDependencyProvider>(context).tmdbProxy;
     return Column(
       children: <Widget>[
         Row(
@@ -489,11 +509,14 @@ class ScrollingTVArtistsState extends State<ScrollingTVArtists>
                                                       const Duration(
                                                           milliseconds: 700),
                                                   fadeInCurve: Curves.easeIn,
-                                                  imageUrl:
-                                                      TMDB_BASE_IMAGE_URL +
-                                                          imageQuality +
-                                                          credits!.cast![index]
-                                                              .profilePath!,
+                                                  imageUrl: buildImageUrl(
+                                                          TMDB_BASE_IMAGE_URL,
+                                                          proxyUrl,
+                                                          isProxyEnabled,
+                                                          context) +
+                                                      imageQuality +
+                                                      credits!.cast![index]
+                                                          .profilePath!,
                                                   imageBuilder: (context,
                                                           imageProvider) =>
                                                       Container(
@@ -505,7 +528,7 @@ class ScrollingTVArtistsState extends State<ScrollingTVArtists>
                                                     ),
                                                   ),
                                                   placeholder: (context, url) =>
-                                                      detailCastShimmer(
+                                                      detailCastImageShimmer(
                                                           themeMode),
                                                   errorWidget:
                                                       (context, url, error) =>
@@ -565,7 +588,11 @@ class ScrollingTVCreatorsState extends State<ScrollingTVCreators>
   @override
   void initState() {
     super.initState();
-    tvApi().fetchTVDetails(widget.api!).then((value) {
+    final isProxyEnabled =
+        Provider.of<SettingsProvider>(context, listen: false).enableProxy;
+    final proxyUrl =
+        Provider.of<AppDependencyProvider>(context, listen: false).tmdbProxy;
+    fetchTVDetails(widget.api!, isProxyEnabled, proxyUrl).then((value) {
       if (mounted) {
         setState(() {
           tvDetails = value;
@@ -579,6 +606,8 @@ class ScrollingTVCreatorsState extends State<ScrollingTVCreators>
     super.build(context);
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     final themeMode = Provider.of<SettingsProvider>(context).appTheme;
+    final isProxyEnabled = Provider.of<SettingsProvider>(context).enableProxy;
+    final proxyUrl = Provider.of<AppDependencyProvider>(context).tmdbProxy;
     return Column(
       children: <Widget>[
         Row(
@@ -662,12 +691,15 @@ class ScrollingTVCreatorsState extends State<ScrollingTVCreators>
                                                       const Duration(
                                                           milliseconds: 700),
                                                   fadeInCurve: Curves.easeIn,
-                                                  imageUrl:
-                                                      TMDB_BASE_IMAGE_URL +
-                                                          imageQuality +
-                                                          tvDetails!
-                                                              .createdBy![index]
-                                                              .profilePath!,
+                                                  imageUrl: buildImageUrl(
+                                                          TMDB_BASE_IMAGE_URL,
+                                                          proxyUrl,
+                                                          isProxyEnabled,
+                                                          context) +
+                                                      imageQuality +
+                                                      tvDetails!
+                                                          .createdBy![index]
+                                                          .profilePath!,
                                                   imageBuilder: (context,
                                                           imageProvider) =>
                                                       Container(
@@ -734,7 +766,6 @@ class ScrollingTVEpisodeCasts extends StatefulWidget {
     required this.seasonNumber,
     required this.passedFrom,
   }) : super(key: key);
-
   @override
   ScrollingTVEpisodeCastsState createState() => ScrollingTVEpisodeCastsState();
 }
@@ -745,7 +776,11 @@ class ScrollingTVEpisodeCastsState extends State<ScrollingTVEpisodeCasts>
   @override
   void initState() {
     super.initState();
-    moviesApi().fetchCredits(widget.api!).then((value) {
+    final isProxyEnabled =
+        Provider.of<SettingsProvider>(context, listen: false).enableProxy;
+    final proxyUrl =
+        Provider.of<AppDependencyProvider>(context, listen: false).tmdbProxy;
+    fetchCredits(widget.api!, isProxyEnabled, proxyUrl).then((value) {
       if (mounted) {
         setState(() {
           credits = value;
@@ -759,36 +794,72 @@ class ScrollingTVEpisodeCastsState extends State<ScrollingTVEpisodeCasts>
     super.build(context);
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     final themeMode = Provider.of<SettingsProvider>(context).appTheme;
+    final isProxyEnabled = Provider.of<SettingsProvider>(context).enableProxy;
+    final proxyUrl = Provider.of<AppDependencyProvider>(context).tmdbProxy;
     return Column(
       children: <Widget>[
         credits == null
-            ? const Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Row(
-                  children: <Widget>[
-                    Text(
-                      'Cast',
-                      style: kTextHeaderStyle,
+            ? Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        children: [
+                          const LeadingDot(),
+                          Expanded(
+                            child: Text(
+                              tr("cast"),
+                              style: kTextHeaderStyle,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               )
             : credits!.cast!.isEmpty
-                ? const Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Center(
-                        child: Text(
-                            'There is no cast list available for this episode',
-                            textAlign: TextAlign.center)),
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          children: [
+                            const LeadingDot(),
+                            Expanded(
+                              child: Text(
+                                tr("cast"),
+                                style: kTextHeaderStyle,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Center(
+                          child: Text(tr("no_cast_episode"),
+                              textAlign: TextAlign.center)),
+                    ],
                   )
                 : Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text(
-                          'Cast',
-                          style: kTextHeaderStyle,
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            children: [
+                              const LeadingDot(),
+                              Expanded(
+                                child: Text(
+                                  tr("cast"),
+                                  style: kTextHeaderStyle,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                       TextButton(
@@ -816,7 +887,7 @@ class ScrollingTVEpisodeCastsState extends State<ScrollingTVEpisodeCasts>
                               ),
                             ),
                           ),
-                          child: const Text('See all cast and crew'))
+                          child: Text(tr("see_all_cast_crew")))
                     ],
                   ),
         SizedBox(
@@ -862,13 +933,18 @@ class ScrollingTVEpisodeCastsState extends State<ScrollingTVEpisodeCasts>
                                               fit: BoxFit.cover,
                                             )
                                           : CachedNetworkImage(
+                                              cacheManager: cacheProp(),
                                               fadeOutDuration: const Duration(
                                                   milliseconds: 300),
                                               fadeOutCurve: Curves.easeOut,
                                               fadeInDuration: const Duration(
                                                   milliseconds: 700),
                                               fadeInCurve: Curves.easeIn,
-                                              imageUrl: TMDB_BASE_IMAGE_URL +
+                                              imageUrl: buildImageUrl(
+                                                      TMDB_BASE_IMAGE_URL,
+                                                      proxyUrl,
+                                                      isProxyEnabled,
+                                                      context) +
                                                   imageQuality +
                                                   credits!.cast![index]
                                                       .profilePath!,
@@ -943,10 +1019,16 @@ class ScrollingTVEpisodeGuestStarsState
   @override
   void initState() {
     super.initState();
-    moviesApi().fetchCredits(widget.api!).then((value) {
-      setState(() {
-        credits = value;
-      });
+    final isProxyEnabled =
+        Provider.of<SettingsProvider>(context, listen: false).enableProxy;
+    final proxyUrl =
+        Provider.of<AppDependencyProvider>(context, listen: false).tmdbProxy;
+    fetchCredits(widget.api!, isProxyEnabled, proxyUrl).then((value) {
+      if (mounted) {
+        setState(() {
+          credits = value;
+        });
+      }
     });
   }
 
@@ -955,35 +1037,37 @@ class ScrollingTVEpisodeGuestStarsState
     super.build(context);
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     final mixpanel = Provider.of<SettingsProvider>(context).mixpanel;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
+    final isProxyEnabled = Provider.of<SettingsProvider>(context).enableProxy;
+    final proxyUrl = Provider.of<AppDependencyProvider>(context).tmdbProxy;
     return Column(
       children: <Widget>[
         credits == null
-            ? const Padding(
-                padding: EdgeInsets.all(8.0),
+            ? Padding(
+                padding: const EdgeInsets.all(8.0),
                 child: Row(
                   children: <Widget>[
                     Text(
-                      'Guest stars',
+                      tr("guest_stars"),
                       style: kTextHeaderStyle,
                     ),
                   ],
                 ),
               )
             : credits!.episodeGuestStars!.isEmpty
-                ? const Padding(
-                    padding: EdgeInsets.all(8.0),
+                ? Padding(
+                    padding: const EdgeInsets.all(8.0),
                     child: Center(
-                        child: Text(
-                            'There is no guest star list available for this episode',
+                        child: Text(tr("no_guest_episode"),
                             textAlign: TextAlign.center)),
                   )
-                : const Row(
+                : Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       Padding(
-                        padding: EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.all(8.0),
                         child: Text(
-                          'Guest stars',
+                          tr("guest_stars"),
                           style: kTextHeaderStyle,
                         ),
                       ),
@@ -1039,17 +1123,22 @@ class ScrollingTVEpisodeGuestStarsState
                                                   .profilePath ==
                                               null
                                           ? Image.asset(
-                                              'assets/images/na_square.png',
+                                              'assets/images/na_rect.png',
                                               fit: BoxFit.cover,
                                             )
                                           : CachedNetworkImage(
+                                              cacheManager: cacheProp(),
                                               fadeOutDuration: const Duration(
                                                   milliseconds: 300),
                                               fadeOutCurve: Curves.easeOut,
                                               fadeInDuration: const Duration(
                                                   milliseconds: 700),
                                               fadeInCurve: Curves.easeIn,
-                                              imageUrl: TMDB_BASE_IMAGE_URL +
+                                              imageUrl: buildImageUrl(
+                                                      TMDB_BASE_IMAGE_URL,
+                                                      proxyUrl,
+                                                      isProxyEnabled,
+                                                      context) +
                                                   imageQuality +
                                                   credits!
                                                       .episodeGuestStars![index]
@@ -1065,14 +1154,12 @@ class ScrollingTVEpisodeGuestStarsState
                                                 ),
                                               ),
                                               placeholder: (context, url) =>
-                                                  Image.asset(
-                                                'assets/images/loading.gif',
-                                                fit: BoxFit.cover,
-                                              ),
+                                                  scrollingImageShimmer(
+                                                      themeMode),
                                               errorWidget:
                                                   (context, url, error) =>
                                                       Image.asset(
-                                                'assets/images/na_sqaure.png',
+                                                'assets/images/na_rect.png',
                                                 fit: BoxFit.cover,
                                               ),
                                             ),

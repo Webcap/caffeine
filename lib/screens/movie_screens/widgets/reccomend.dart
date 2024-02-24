@@ -1,5 +1,8 @@
+import 'package:caffiene/functions/network.dart';
+import 'package:caffiene/provider/app_dependency_provider.dart';
+import 'package:caffiene/widgets/common_widgets.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:caffiene/api/movies_api.dart';
 import 'package:caffiene/models/movie_models.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/screens/movie_screens/widgets/horizontal_scrolling_movie_list.dart';
@@ -11,12 +14,12 @@ class MovieRecommendationsTab extends StatefulWidget {
   final String api;
   final int movieId;
   final bool? includeAdult;
-  const MovieRecommendationsTab({
-    Key? key,
-    required this.api,
-    required this.movieId,
-    required this.includeAdult,
-  }) : super(key: key);
+  const MovieRecommendationsTab(
+      {Key? key,
+      required this.api,
+      required this.movieId,
+      required this.includeAdult})
+      : super(key: key);
 
   @override
   MovieRecommendationsTabState createState() => MovieRecommendationsTabState();
@@ -32,7 +35,13 @@ class MovieRecommendationsTabState extends State<MovieRecommendationsTab>
   @override
   void initState() {
     super.initState();
-    moviesApi().fetchMovies('${widget.api}&include_adult=false').then((value) {
+    final isProxyEnabled =
+        Provider.of<SettingsProvider>(context, listen: false).enableProxy;
+    final proxyUrl =
+        Provider.of<AppDependencyProvider>(context, listen: false).tmdbProxy;
+    fetchMovies('${widget.api}&include_adult=${widget.includeAdult}',
+            isProxyEnabled, proxyUrl)
+        .then((value) {
       if (mounted) {
         setState(() {
           movieList = value;
@@ -43,6 +52,10 @@ class MovieRecommendationsTabState extends State<MovieRecommendationsTab>
   }
 
   void getMoreData() async {
+    final isProxyEnabled =
+        Provider.of<SettingsProvider>(context, listen: false).enableProxy;
+    final proxyUrl =
+        Provider.of<AppDependencyProvider>(context, listen: false).tmdbProxy;
     _scrollController.addListener(() async {
       if (_scrollController.position.pixels ==
           _scrollController.position.maxScrollExtent) {
@@ -50,9 +63,10 @@ class MovieRecommendationsTabState extends State<MovieRecommendationsTab>
           isLoading = true;
         });
         if (mounted) {
-          moviesApi()
-              .fetchMovies(
-                  '${widget.api}&include_adult=${widget.includeAdult}&page=$pageNum')
+          fetchMovies(
+                  '${widget.api}&include_adult=${widget.includeAdult}&page=$pageNum',
+                  isProxyEnabled,
+                  proxyUrl)
               .then((value) {
             if (mounted) {
               setState(() {
@@ -75,14 +89,24 @@ class MovieRecommendationsTabState extends State<MovieRecommendationsTab>
     return Container(
       child: Column(
         children: <Widget>[
-          const Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Text(
-                  'Movie recommendations',
-                  style: kTextHeaderStyle,
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      const LeadingDot(),
+                      Expanded(
+                        child: Text(
+                          tr("movie_recommendations"),
+                          style: kTextHeaderStyle,
+                          maxLines: 2,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -93,9 +117,9 @@ class MovieRecommendationsTabState extends State<MovieRecommendationsTab>
             child: movieList == null || widget.includeAdult == null
                 ? scrollingMoviesAndTVShimmer(themeMode)
                 : movieList!.isEmpty
-                    ? const Center(
+                    ? Center(
                         child: Text(
-                          'There are no recommendations available for this movie',
+                          tr("no_recommendations_movie"),
                           textAlign: TextAlign.center,
                         ),
                       )
@@ -160,7 +184,13 @@ class SimilarMoviesTabState extends State<SimilarMoviesTab>
   @override
   void initState() {
     super.initState();
-    moviesApi().fetchMovies('${widget.api}&include_adult=false').then((value) {
+    final isProxyEnabled =
+        Provider.of<SettingsProvider>(context, listen: false).enableProxy;
+    final proxyUrl =
+        Provider.of<AppDependencyProvider>(context, listen: false).tmdbProxy;
+    fetchMovies('${widget.api}&include_adult=${widget.includeAdult}',
+            isProxyEnabled, proxyUrl)
+        .then((value) {
       if (mounted) {
         setState(() {
           movieList = value;
@@ -171,6 +201,10 @@ class SimilarMoviesTabState extends State<SimilarMoviesTab>
   }
 
   void getMoreData() async {
+    final isProxyEnabled =
+        Provider.of<SettingsProvider>(context, listen: false).enableProxy;
+    final proxyUrl =
+        Provider.of<AppDependencyProvider>(context, listen: false).tmdbProxy;
     _scrollController.addListener(() async {
       if (_scrollController.position.pixels ==
           _scrollController.position.maxScrollExtent) {
@@ -178,9 +212,10 @@ class SimilarMoviesTabState extends State<SimilarMoviesTab>
           isLoading = true;
         });
         if (mounted) {
-          moviesApi()
-              .fetchMovies(
-                  '${widget.api}&include_adult=${widget.includeAdult}&page=$pageNum')
+          fetchMovies(
+                  '${widget.api}&include_adult=${widget.includeAdult}&page=$pageNum',
+                  isProxyEnabled,
+                  proxyUrl)
               .then((value) {
             if (mounted) {
               setState(() {
@@ -209,9 +244,19 @@ class SimilarMoviesTabState extends State<SimilarMoviesTab>
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    'Movies similar with ${widget.movieName}',
-                    style: kTextHeaderStyle,
+                  child: Row(
+                    children: [
+                      const LeadingDot(),
+                      Expanded(
+                        child: Text(
+                          tr("movies_similar_with",
+                              namedArgs: {"movie": widget.movieName}),
+                          style: kTextHeaderStyle,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -223,9 +268,9 @@ class SimilarMoviesTabState extends State<SimilarMoviesTab>
             child: movieList == null || widget.includeAdult == null
                 ? scrollingMoviesAndTVShimmer(themeMode)
                 : movieList!.isEmpty
-                    ? const Center(
+                    ? Center(
                         child: Text(
-                          'There are no similars available for this movie',
+                          tr("no_similars_movie"),
                           textAlign: TextAlign.center,
                         ),
                       )

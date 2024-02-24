@@ -3,7 +3,7 @@ import 'package:retry/retry.dart';
 
 const String TMDB_API_BASE_URL = "https://api.themoviedb.org/3";
 String TMDB_API_KEY = dotenv.env['TMDB_API_KEY']!;
-const String TMDB_BASE_IMAGE_URL = "https://image.tmdb.org/t/p/";
+const TMDB_BASE_IMAGE_URL = "https://image.tmdb.org/t/p/";
 const String EMBED_BASE_MOVIE_URL =
     "https://www.2embed.to/embed/tmdb/movie?id=";
 const String EMBED_BASE_TV_URL = "https://www.2embed.to/embed/tmdb/tv?id=";
@@ -36,7 +36,7 @@ const String STREAMING_SERVER_DCVA = "asianload";
 const String STREAMING_SERVER_ZORO = "vidcloud";
 
 const providerPreference =
-    'vidsrc-VidSrc zoro-Zoro dramacool-Dramacool gomovies-GoMovies flixhqS2-FlixHQ_S2 flixhq-FlixHQ showbox-ShowBox vidsrcto-VidSrcTo zoe-Zoechip viewasian-ViewAsian';
+    'flixhq-FlixHQ showbox-ShowBox vidsrcto-VidSrcTo vidsrc-VidSrc gomovies-GoMovies flixhqS2-FlixHQ_S2 zoe-Zoechip zoro-Zoro dramacool-Dramacool viewasian-ViewAsian';
 
 const retryOptionsStream = RetryOptions(
     maxDelay: Duration(milliseconds: 300),
