@@ -69,8 +69,8 @@ class MoviesFromWatchProvidersState extends State<MoviesFromWatchProviders> {
                       ),
                       StreamingServicesWidget(
                         imagePath: 'assets/images/hbo_max.png',
-                        title: 'HBO Max',
-                        providerID: 384,
+                        title: 'Max',
+                        providerID: 1899,
                       ),
                       StreamingServicesWidget(
                         imagePath: 'assets/images/apple_tv.png',

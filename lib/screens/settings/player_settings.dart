@@ -1,7 +1,6 @@
 import 'package:caffiene/screens/common/sublanguage_choose.dart';
 import 'package:caffiene/screens/settings/provider_choose_screen.dart';
 import 'package:caffiene/utils/config.dart';
-import 'package:caffiene/utils/helpers/next_screen.dart';
 import 'package:caffiene/utils/theme/textStyle.dart';
 import 'package:caffiene/widgets/common_widgets.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -35,6 +34,8 @@ class _PlayerSettingsState extends State<PlayerSettings> {
 
     Color pickerColor = const Color(0xff443a49);
     Color currentColor = const Color(0xff443a49);
+
+    String st = settingValues.subtitleTextStyle;
 
 // ValueChanged<Color> callback
     void changeColor(Color color) {
@@ -114,6 +115,11 @@ class _PlayerSettingsState extends State<PlayerSettings> {
                           style: TextStyle(
                               backgroundColor: backgroundColor,
                               color: foregroundColor,
+                              fontFamily: st == 'regular'
+                                  ? 'Poppins'
+                                  : st == 'bold'
+                                      ? 'PoppinsSB'
+                                      : 'PoppinsLight',
                               fontSize:
                                   settingValues.subtitleFontSize.toDouble())),
                     ),
@@ -177,6 +183,33 @@ class _PlayerSettingsState extends State<PlayerSettings> {
                       color: backgroundColor,
                     ),
                   )
+                ],
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    tr("text_weight"),
+                    style: kTextSmallBodyStyle,
+                  ),
+                  DropdownButton(
+                      value: settingValues.subtitleTextStyle,
+                      items: [
+                        DropdownMenuItem(
+                            value: 'light', child: Text(tr("light"))),
+                        DropdownMenuItem(
+                            value: 'regular', child: Text(tr("regular"))),
+                        DropdownMenuItem(
+                            value: 'bold', child: Text(tr("bold"))),
+                      ],
+                      onChanged: (String? value) {
+                        setState(() {
+                          settingValues.subtitleTextStyle = value!;
+                        });
+                      }),
                 ],
               ),
               const SizedBox(
@@ -371,7 +404,10 @@ class _PlayerSettingsState extends State<PlayerSettings> {
               ),
               ListTile(
                 onTap: () {
-                  nextScreen(context, const ProviderChooseScreen());
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: ((context) {
+                    return const ProviderChooseScreen();
+                  })));
                 },
                 leading: Icon(
                   FontAwesomeIcons.server,
