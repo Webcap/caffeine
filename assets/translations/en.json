@@ -520,5 +520,14 @@
     "internet_lost": "Internet connection lost!",
     "check_try_again": "Check your connection and try again.",
     "privacy_policy": "Privacy Policy",
-    "help_center": "Help Center"
+    "help_center": "Help Center",
+    "channels_fetch_failed": "Failed to load channels",
+    "use_proxy": "Use proxy for TMDB fetch",
+    "enable_warning": "Only useful if the app doesn't load content initially",
+    "use_proxy_title": "Use proxy?",
+    "use_proxy_detail": "Enabling this option will result in more server load to the app, please only use this if the app doesn't load movies and TV show information initially",
+    "enable": "Enable",
+    "bold": "Bold",
+    "regular": "Regular",
+    "text_weight": "Text weight"
 }

@@ -1,7 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:caffiene/functions/functions.dart';
 import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:caffiene/utils/helpers/castButton.dart';
-import 'package:caffiene/utils/app_colors.dart';
+import 'package:caffiene/utils/theme/app_colors.dart';
 import 'package:caffiene/utils/helpers/castDeviceList.dart';
 import 'package:caffiene/widgets/size_configuration.dart';
 import 'package:flutter/material.dart';
@@ -31,7 +32,9 @@ class MovieDetailQuickInfo extends StatelessWidget {
     final appLang = Provider.of<SettingsProvider>(context).appLanguage;
     late AppDependencyProvider appDependency =
         Provider.of<AppDependencyProvider>(context, listen: false);
-        
+    final isProxyEnabled = Provider.of<SettingsProvider>(context).enableProxy;
+    final proxyUrl = Provider.of<AppDependencyProvider>(context).tmdbProxy;
+
     return SizedBox(
       height: 310,
       width: double.infinity,
@@ -86,7 +89,7 @@ class MovieDetailQuickInfo extends StatelessWidget {
                                         fit: BoxFit.cover,
                                       ),
                                       imageUrl:
-                                          '${TMDB_BASE_IMAGE_URL}original/${movie.backdropPath!}',
+                                          '${buildImageUrl(TMDB_BASE_IMAGE_URL, proxyUrl, isProxyEnabled, context)}original/${movie.backdropPath!}',
                                       errorWidget: (context, url, error) =>
                                           Image.asset(
                                         'assets/images/na_logo.png',
@@ -248,7 +251,11 @@ class MovieDetailQuickInfo extends StatelessWidget {
                                           'assets/images/na_logo.png',
                                           fit: BoxFit.cover,
                                         ),
-                                        imageUrl: TMDB_BASE_IMAGE_URL +
+                                        imageUrl: buildImageUrl(
+                                                TMDB_BASE_IMAGE_URL,
+                                                proxyUrl,
+                                                isProxyEnabled,
+                                                context) +
                                             imageQuality +
                                             movie.posterPath!,
                                       ),

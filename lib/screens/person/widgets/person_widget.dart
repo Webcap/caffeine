@@ -1,11 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:caffiene/functions/functions.dart';
+import 'package:caffiene/functions/network.dart';
+import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:caffiene/screens/common/hero_photoview.dart';
-import 'package:caffiene/utils/textStyle.dart';
+import 'package:caffiene/utils/theme/textStyle.dart';
 import 'package:caffiene/widgets/common_widgets.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:caffiene/api/movies_api.dart';
-import 'package:caffiene/api/tv_api.dart';
 import 'package:caffiene/models/images.dart';
 import 'package:caffiene/models/movie_models.dart';
 import 'package:caffiene/models/person.dart';
@@ -41,7 +42,11 @@ class _PersonImagesDisplayState extends State<PersonImagesDisplay>
   @override
   void initState() {
     super.initState();
-    moviesApi().fetchPersonImages(widget.api).then((value) {
+    final isProxyEnabled =
+        Provider.of<SettingsProvider>(context, listen: false).enableProxy;
+    final proxyUrl =
+        Provider.of<AppDependencyProvider>(context, listen: false).tmdbProxy;
+    fetchPersonImages(widget.api, isProxyEnabled, proxyUrl).then((value) {
       if (mounted) {
         setState(() {
           personImages = value;
@@ -55,6 +60,8 @@ class _PersonImagesDisplayState extends State<PersonImagesDisplay>
     super.build(context);
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     final themeMode = Provider.of<SettingsProvider>(context).appTheme;
+    final isProxyEnabled = Provider.of<SettingsProvider>(context).enableProxy;
+    final proxyUrl = Provider.of<AppDependencyProvider>(context).tmdbProxy;
     return Padding(
       padding: const EdgeInsets.only(top: 8.0),
       child: Column(
@@ -117,7 +124,11 @@ class _PersonImagesDisplayState extends State<PersonImagesDisplay>
                                               fadeInDuration: const Duration(
                                                   milliseconds: 700),
                                               fadeInCurve: Curves.easeIn,
-                                              imageUrl: TMDB_BASE_IMAGE_URL +
+                                              imageUrl: buildImageUrl(
+                                                      TMDB_BASE_IMAGE_URL,
+                                                      proxyUrl,
+                                                      isProxyEnabled,
+                                                      context) +
                                                   imageQuality +
                                                   personImages!.profile![index]
                                                       .filePath!,
@@ -132,13 +143,15 @@ class _PersonImagesDisplayState extends State<PersonImagesDisplay>
                                                       imageProvider:
                                                           imageProvider,
                                                       currentIndex: index,
-                                                      heroId:
-                                                          TMDB_BASE_IMAGE_URL +
-                                                              imageQuality +
-                                                              personImages!
-                                                                  .profile![
-                                                                      index]
-                                                                  .filePath!,
+                                                      heroId: buildImageUrl(
+                                                              TMDB_BASE_IMAGE_URL,
+                                                              proxyUrl,
+                                                              isProxyEnabled,
+                                                              context) +
+                                                          imageQuality +
+                                                          personImages!
+                                                              .profile![index]
+                                                              .filePath!,
                                                       name: widget.personName,
                                                     );
                                                   })));
@@ -207,7 +220,11 @@ class PersonMovieListWidgetState extends State<PersonMovieListWidget>
   @override
   void initState() {
     super.initState();
-    moviesApi().fetchPersonMovies(widget.api).then((value) {
+    final isProxyEnabled =
+        Provider.of<SettingsProvider>(context, listen: false).enableProxy;
+    final proxyUrl =
+        Provider.of<AppDependencyProvider>(context, listen: false).tmdbProxy;
+    fetchPersonMovies(widget.api, isProxyEnabled, proxyUrl).then((value) {
       if (mounted) {
         setState(() {
           personMoviesList = value;
@@ -232,6 +249,8 @@ class PersonMovieListWidgetState extends State<PersonMovieListWidget>
     super.build(context);
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     final themeMode = Provider.of<SettingsProvider>(context).appTheme;
+    final isProxyEnabled = Provider.of<SettingsProvider>(context).enableProxy;
+    final proxyUrl = Provider.of<AppDependencyProvider>(context).tmdbProxy;
     return uniqueMov == null
         ? personMoviesAndTVShowShimmer(themeMode)
         : widget.isPersonAdult == true && widget.includeAdult == false
@@ -342,7 +361,11 @@ class PersonMovieListWidgetState extends State<PersonMovieListWidget>
                                                                   fadeInCurve:
                                                                       Curves
                                                                           .easeIn,
-                                                                  imageUrl: TMDB_BASE_IMAGE_URL +
+                                                                  imageUrl: buildImageUrl(
+                                                                          TMDB_BASE_IMAGE_URL,
+                                                                          proxyUrl,
+                                                                          isProxyEnabled,
+                                                                          context) +
                                                                       imageQuality +
                                                                       uniqueMov![
                                                                               index]
@@ -366,10 +389,7 @@ class PersonMovieListWidgetState extends State<PersonMovieListWidget>
                                                                           url) =>
                                                                       scrollingImageShimmer(
                                                                           themeMode),
-                                                                  errorWidget: (context,
-                                                                          url,
-                                                                          error) =>
-                                                                      Image.asset(
+                                                                  errorWidget: (context, url, error) => Image.asset(
                                                                       'assets/images/na_logo.png',
                                                                       fit: BoxFit
                                                                           .cover,
@@ -472,7 +492,11 @@ class PersonTVListWidgetState extends State<PersonTVListWidget>
   @override
   void initState() {
     super.initState();
-    tvApi().fetchPersonTV(widget.api).then((value) {
+    final isProxyEnabled =
+        Provider.of<SettingsProvider>(context, listen: false).enableProxy;
+    final proxyUrl =
+        Provider.of<AppDependencyProvider>(context, listen: false).tmdbProxy;
+    fetchPersonTV(widget.api, isProxyEnabled, proxyUrl).then((value) {
       if (mounted) {
         setState(() {
           personTVList = value;
@@ -497,6 +521,8 @@ class PersonTVListWidgetState extends State<PersonTVListWidget>
     super.build(context);
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     final themeMode = Provider.of<SettingsProvider>(context).appTheme;
+    final isProxyEnabled = Provider.of<SettingsProvider>(context).enableProxy;
+    final proxyUrl = Provider.of<AppDependencyProvider>(context).tmdbProxy;
     return uniqueTV == null
         ? personMoviesAndTVShowShimmer(themeMode)
         : widget.isPersonAdult == true && widget.includeAdult == false
@@ -607,7 +633,11 @@ class PersonTVListWidgetState extends State<PersonTVListWidget>
                                                                   fadeInCurve:
                                                                       Curves
                                                                           .easeIn,
-                                                                  imageUrl: TMDB_BASE_IMAGE_URL +
+                                                                  imageUrl: buildImageUrl(
+                                                                          TMDB_BASE_IMAGE_URL,
+                                                                          proxyUrl,
+                                                                          isProxyEnabled,
+                                                                          context) +
                                                                       imageQuality +
                                                                       uniqueTV![
                                                                               index]
@@ -631,10 +661,7 @@ class PersonTVListWidgetState extends State<PersonTVListWidget>
                                                                           url) =>
                                                                       scrollingImageShimmer(
                                                                           themeMode),
-                                                                  errorWidget: (context,
-                                                                          url,
-                                                                          error) =>
-                                                                      Image.asset(
+                                                                  errorWidget: (context, url, error) => Image.asset(
                                                                       'assets/images/na_logo.png',
                                                                       fit: BoxFit
                                                                           .cover,
@@ -733,7 +760,11 @@ class _PersonAboutWidgetState extends State<PersonAboutWidget>
   @override
   void initState() {
     super.initState();
-    moviesApi().fetchPersonDetails(widget.api).then((value) {
+    final isProxyEnabled =
+        Provider.of<SettingsProvider>(context, listen: false).enableProxy;
+    final proxyUrl =
+        Provider.of<AppDependencyProvider>(context, listen: false).tmdbProxy;
+    fetchPersonDetails(widget.api, isProxyEnabled, proxyUrl).then((value) {
       if (mounted) {
         setState(() {
           personDetails = value;
@@ -815,7 +846,11 @@ class _PersonDataTableState extends State<PersonDataTable> {
   PersonDetails? personDetails;
   @override
   void initState() {
-    moviesApi().fetchPersonDetails(widget.api).then((value) {
+    final isProxyEnabled =
+        Provider.of<SettingsProvider>(context, listen: false).enableProxy;
+    final proxyUrl =
+        Provider.of<AppDependencyProvider>(context, listen: false).tmdbProxy;
+    fetchPersonDetails(widget.api, isProxyEnabled, proxyUrl).then((value) {
       if (mounted) {
         setState(() {
           personDetails = value;

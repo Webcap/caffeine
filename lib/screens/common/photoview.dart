@@ -1,12 +1,11 @@
 // ignore_for_file: unused_local_variable, use_build_context_synchronously
-
 import 'dart:io';
 import 'dart:isolate';
 import 'dart:ui';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:caffiene/functions/functions.dart';
 import 'package:caffiene/models/images.dart';
+import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/utils/constant.dart';
 import 'package:caffiene/utils/globlal_methods.dart';
@@ -56,19 +55,19 @@ class _HeroPhotoViewState extends State<HeroPhotoView> {
     final imagefolderName = imageTypeFolderName;
     final posterFolderName = posterFolder;
     final stillFolderName = stillFolder;
-    final caffeinePath = Directory("storage/emulated/0/$cinefolderName");
+    final flixquestPath = Directory("storage/emulated/0/$cinefolderName");
     final imageTypePath =
         Directory("storage/emulated/0/caffeine/$imagefolderName");
     final posterPath =
         Directory("storage/emulated/0/caffeine/$posterFolderName");
     final stillPath = Directory("storage/emulated/0/caffeine/$stillFolderName");
 
-    if ((await caffeinePath.exists())) {
+    if ((await flixquestPath.exists())) {
       imageTypePath.create();
       posterPath.create();
       stillPath.create();
     } else {
-      caffeinePath.create();
+      flixquestPath.create();
       posterPath.create();
       imageTypePath.create();
       stillPath.create();
@@ -133,6 +132,8 @@ class _HeroPhotoViewState extends State<HeroPhotoView> {
   Widget build(BuildContext context) {
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     final themeMode = Provider.of<SettingsProvider>(context).appTheme;
+    final isProxyEnabled = Provider.of<SettingsProvider>(context).enableProxy;
+    final proxyUrl = Provider.of<AppDependencyProvider>(context).tmdbProxy;
     return Scaffold(
       appBar: AppBar(
           title: Text(widget.imageType == 'backdrop'
@@ -145,14 +146,17 @@ class _HeroPhotoViewState extends State<HeroPhotoView> {
               onPressed: () async {
                 _download(
                     widget.imageType == 'backdrop'
-                        ? TMDB_BASE_IMAGE_URL +
+                        ? buildImageUrl(TMDB_BASE_IMAGE_URL, proxyUrl,
+                                isProxyEnabled, context) +
                             imageQuality +
                             widget.backdrops![currentIndex].filePath!
                         : widget.imageType == 'poster'
-                            ? TMDB_BASE_IMAGE_URL +
+                            ? buildImageUrl(TMDB_BASE_IMAGE_URL, proxyUrl,
+                                    isProxyEnabled, context) +
                                 imageQuality +
                                 widget.posters![currentIndex].posterPath!
-                            : TMDB_BASE_IMAGE_URL +
+                            : buildImageUrl(TMDB_BASE_IMAGE_URL, proxyUrl,
+                                    isProxyEnabled, context) +
                                 imageQuality +
                                 widget.stills![currentIndex].stillPath!,
                     '${currentIndex + 1}',
@@ -173,14 +177,17 @@ class _HeroPhotoViewState extends State<HeroPhotoView> {
             return PhotoViewGalleryPageOptions(
               imageProvider: CachedNetworkImageProvider(
                 widget.imageType == 'backdrop'
-                    ? TMDB_BASE_IMAGE_URL +
+                    ? buildImageUrl(TMDB_BASE_IMAGE_URL, proxyUrl,
+                            isProxyEnabled, context) +
                         imageQuality +
                         widget.backdrops![currentIndex].filePath!
                     : widget.imageType == 'poster'
-                        ? TMDB_BASE_IMAGE_URL +
+                        ? buildImageUrl(TMDB_BASE_IMAGE_URL, proxyUrl,
+                                isProxyEnabled, context) +
                             imageQuality +
                             widget.posters![currentIndex].posterPath!
-                        : TMDB_BASE_IMAGE_URL +
+                        : buildImageUrl(TMDB_BASE_IMAGE_URL, proxyUrl,
+                                isProxyEnabled, context) +
                             imageQuality +
                             widget.stills![currentIndex].stillPath!,
               ),

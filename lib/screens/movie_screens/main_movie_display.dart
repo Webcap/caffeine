@@ -2,7 +2,6 @@ import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:caffiene/provider/recently_watched_provider.dart';
 import 'package:caffiene/screens/common/update_screen.dart';
 import 'package:caffiene/screens/movie_screens/widgets/scrolling_recent_movies.dart';
-import 'package:caffiene/utils/config.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/api/endpoints.dart';
@@ -42,9 +41,7 @@ class _MainMoviesDisplayState extends State<MainMoviesDisplay> {
             includeAdult: includeAdult,
             discoverType: "discover"
           ),
-          devMode == false
-            ? const UpdateBottom()
-            : Container(),
+          const UpdateBottom(),
           // ScrollingMovies(
           //   title: tr("trending_horror_movies"),
           //   api: Endpoints.halloweenMoviesUrl(1, lang),
@@ -57,28 +54,21 @@ class _MainMoviesDisplayState extends State<MainMoviesDisplay> {
               : ScrollingRecentMovies(moviesList: rMovies),
           ScrollingMovies(
             title: tr("popular"),
-            api: Endpoints.popularMoviesUrl(1, lang),
+            api: Endpoints.popularMoviesUrl(lang),
             discoverType: 'popular',
             isTrending: false,
             includeAdult: includeAdult,
           ),
-          // UnityBannerAd(
-          //   placementId: 'Movies_one',
-          //   onLoad: (placementId) => print('Banner loaded: $placementId'),
-          //   onClick: (placementId) => print('Banner clicked: $placementId'),
-          //   onFailed: (placementId, error, message) =>
-          //       print('Banner Ad $placementId failed: $error $message'),
-          // ),
           ScrollingMovies(
             title: tr("trending_this_week"),
-            api: Endpoints.trendingMoviesUrl(1, includeAdult, lang),
+            api: Endpoints.trendingMoviesUrl(includeAdult, lang),
             discoverType: 'Trending',
             isTrending: true,
             includeAdult: includeAdult,
           ),
           ScrollingMovies(
             title: tr("top_rated"),
-            api: Endpoints.topRatedUrl(1, lang),
+            api: Endpoints.topRatedUrl(lang),
             discoverType: 'top_rated',
             isTrending: false,
             includeAdult: includeAdult,
@@ -92,7 +82,7 @@ class _MainMoviesDisplayState extends State<MainMoviesDisplay> {
           ),
           ScrollingMovies(
             title: tr("upcoming"),
-            api: Endpoints.upcomingMoviesUrl(1, lang),
+            api: Endpoints.upcomingMoviesUrl(lang),
             discoverType: 'upcoming',
             isTrending: false,
             includeAdult: includeAdult,

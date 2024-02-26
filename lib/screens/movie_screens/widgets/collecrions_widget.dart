@@ -1,16 +1,18 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:caffiene/functions/functions.dart';
+import 'package:caffiene/functions/network.dart';
+import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:caffiene/screens/movie_screens/widgets/collection_details.dart';
 import 'package:caffiene/utils/constant.dart';
 import 'package:caffiene/widgets/common_widgets.dart';
 import 'package:caffiene/widgets/shimmer_widget.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:caffiene/api/movies_api.dart';
 import 'package:caffiene/models/movie_models.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/screens/movie_screens/movie_details.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:provider/provider.dart';
-import 'package:shimmer/shimmer.dart';
 
 class BelongsToCollectionWidget extends StatefulWidget {
   final String? api;
@@ -29,7 +31,12 @@ class BelongsToCollectionWidgetState extends State<BelongsToCollectionWidget> {
   @override
   void initState() {
     super.initState();
-    moviesApi().fetchBelongsToCollection(widget.api!).then((value) {
+    final isProxyEnabled =
+        Provider.of<SettingsProvider>(context, listen: false).enableProxy;
+    final proxyUrl =
+        Provider.of<AppDependencyProvider>(context, listen: false).tmdbProxy;
+    fetchBelongsToCollection(widget.api!, isProxyEnabled, proxyUrl)
+        .then((value) {
       if (mounted) {
         setState(() {
           belongsToCollection = value;
@@ -41,6 +48,8 @@ class BelongsToCollectionWidgetState extends State<BelongsToCollectionWidget> {
   @override
   Widget build(BuildContext context) {
     final themeMode = Provider.of<SettingsProvider>(context).appTheme;
+    final isProxyEnabled = Provider.of<SettingsProvider>(context).enableProxy;
+    final proxyUrl = Provider.of<AppDependencyProvider>(context).tmdbProxy;
     return belongsToCollection == null
         ? ShimmerBase(
             themeMode: themeMode,
@@ -80,7 +89,7 @@ class BelongsToCollectionWidgetState extends State<BelongsToCollectionWidget> {
                                       placeholder: const AssetImage(
                                           'assets/images/loading_5.gif'),
                                       image: NetworkImage(
-                                          '${TMDB_BASE_IMAGE_URL}w500/${belongsToCollection!.backdropPath!}')),
+                                          '${buildImageUrl(TMDB_BASE_IMAGE_URL, proxyUrl, isProxyEnabled, context)}w500/${belongsToCollection!.backdropPath!}')),
                             ),
                             Column(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -90,7 +99,9 @@ class BelongsToCollectionWidgetState extends State<BelongsToCollectionWidget> {
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Text(
-                                      'Belongs to the ${belongsToCollection!.name!}',
+                                      tr("belongs_to_the", namedArgs: {
+                                        "collection": belongsToCollection!.name!
+                                      }),
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                         backgroundColor: Theme.of(context)
@@ -135,9 +146,10 @@ class BelongsToCollectionWidgetState extends State<BelongsToCollectionWidget> {
                                                   belongsToCollection!);
                                         }));
                                       },
-                                      child: const Text(
-                                        'View the collection',
-                                        style: TextStyle(color: Colors.white),
+                                      child: Text(
+                                        tr("view_collection"),
+                                        style: const TextStyle(
+                                            color: Colors.white),
                                       ),
                                     ),
                                   ),
@@ -163,24 +175,18 @@ class CollectionOverviewWidget extends StatefulWidget {
 
 class CollectionOverviewWidgetState extends State<CollectionOverviewWidget> {
   CollectionDetails? collectionDetails;
-  bool requestFailed = false;
+
   @override
   void initState() {
     super.initState();
-    getData();
-  }
-
-  void getData() {
-    moviesApi().fetchCollectionDetails(widget.api!).then((value) {
-      setState(() {
-        collectionDetails = value;
-      });
-    });
-    Future.delayed(const Duration(seconds: 11), () {
-      if (collectionDetails == null) {
+    final isProxyEnabled =
+        Provider.of<SettingsProvider>(context, listen: false).enableProxy;
+    final proxyUrl =
+        Provider.of<AppDependencyProvider>(context, listen: false).tmdbProxy;
+    fetchCollectionDetails(widget.api!, isProxyEnabled, proxyUrl).then((value) {
+      if (mounted) {
         setState(() {
-          requestFailed = true;
-          collectionDetails = CollectionDetails();
+          collectionDetails = value;
         });
       }
     });
@@ -188,68 +194,28 @@ class CollectionOverviewWidgetState extends State<CollectionOverviewWidget> {
 
   @override
   Widget build(BuildContext context) {
-    //final themeMode = Provider.of<DarkthemeProvider>(context).darktheme;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     return Container(
       child: collectionDetails == null
-          ? Shimmer.fromColors(
-              baseColor: Colors.grey.shade300,
-              highlightColor: Colors.grey.shade100,
-              direction: ShimmerDirection.ltr,
+          ? ShimmerBase(
+              themeMode: themeMode,
               child: Column(
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(bottom: 8.0),
                     child: Container(
-                        color: Colors.white,
+                        color: Colors.grey.shade600,
                         width: double.infinity,
                         height: 20),
                   ),
                   Container(
-                      color: Colors.white, width: double.infinity, height: 20)
+                      color: Colors.grey.shade600,
+                      width: double.infinity,
+                      height: 20)
                 ],
               ),
             )
-          : requestFailed == true
-              ? retryWidget()
-              : Text(collectionDetails!.overview!),
-    );
-  }
-
-  Widget retryWidget() {
-    return Center(
-      child: Container(
-          width: double.infinity,
-          color: const Color(0xFFFFFFFF),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset('assets/images/network-signal.png',
-                  width: 60, height: 60),
-              const Padding(
-                padding: EdgeInsets.only(top: 8.0),
-                child: Text('Please connect to the Internet and try again',
-                    textAlign: TextAlign.center),
-              ),
-              TextButton(
-                  style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all(const Color(0x0DF57C00)),
-                      maximumSize:
-                          MaterialStateProperty.all(const Size(200, 60)),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5.0),
-                              side: const BorderSide(color: maincolor)))),
-                  onPressed: () {
-                    setState(() {
-                      requestFailed = false;
-                      collectionDetails = null;
-                    });
-                    getData();
-                  },
-                  child: const Text('Retry')),
-            ],
-          )),
+          : Text(collectionDetails!.overview!),
     );
   }
 }
@@ -268,7 +234,11 @@ class PartsListState extends State<PartsList> {
   @override
   void initState() {
     super.initState();
-    moviesApi().fetchCollectionMovies(widget.api!).then((value) {
+    final isProxyEnabled =
+        Provider.of<SettingsProvider>(context, listen: false).enableProxy;
+    final proxyUrl =
+        Provider.of<AppDependencyProvider>(context, listen: false).tmdbProxy;
+    fetchCollectionMovies(widget.api!, isProxyEnabled, proxyUrl).then((value) {
       if (mounted) {
         setState(() {
           collectionMovieList = value;
@@ -281,6 +251,8 @@ class PartsListState extends State<PartsList> {
   Widget build(BuildContext context) {
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     final themeMode = Provider.of<SettingsProvider>(context).appTheme;
+    final isProxyEnabled = Provider.of<SettingsProvider>(context).enableProxy;
+    final proxyUrl = Provider.of<AppDependencyProvider>(context).tmdbProxy;
     return Column(
       children: <Widget>[
         Row(
@@ -419,12 +391,15 @@ class PartsListState extends State<PartsList> {
                                                                     700),
                                                         fadeInCurve:
                                                             Curves.easeIn,
-                                                        imageUrl:
-                                                            TMDB_BASE_IMAGE_URL +
-                                                                imageQuality +
-                                                                collectionMovieList![
-                                                                        index]
-                                                                    .posterPath!,
+                                                        imageUrl: buildImageUrl(
+                                                                TMDB_BASE_IMAGE_URL,
+                                                                proxyUrl,
+                                                                isProxyEnabled,
+                                                                context) +
+                                                            imageQuality +
+                                                            collectionMovieList![
+                                                                    index]
+                                                                .posterPath!,
                                                         imageBuilder: (context,
                                                                 imageProvider) =>
                                                             Container(
@@ -516,5 +491,184 @@ class PartsListState extends State<PartsList> {
         ),
       ],
     );
+  }
+}
+
+class CollectionMovies extends StatefulWidget {
+  final String? api;
+  const CollectionMovies({
+    Key? key,
+    this.api,
+  }) : super(key: key);
+  @override
+  CollectionMoviesState createState() => CollectionMoviesState();
+}
+
+class CollectionMoviesState extends State<CollectionMovies> {
+  List<Movie>? moviesList;
+  @override
+  void initState() {
+    super.initState();
+    final isProxyEnabled =
+        Provider.of<SettingsProvider>(context, listen: false).enableProxy;
+    final proxyUrl =
+        Provider.of<AppDependencyProvider>(context, listen: false).tmdbProxy;
+    fetchCollectionMovies(widget.api!, isProxyEnabled, proxyUrl).then((value) {
+      if (mounted) {
+        setState(() {
+          moviesList = value;
+        });
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
+    final isProxyEnabled = Provider.of<SettingsProvider>(context).enableProxy;
+    final proxyUrl = Provider.of<AppDependencyProvider>(context).tmdbProxy;
+    return moviesList == null
+        ? const Center(
+            child: CircularProgressIndicator(),
+          )
+        : moviesList!.isEmpty
+            ? Center(
+                child: Text(
+                  tr("no_watchprovider_movie"),
+                  style: const TextStyle(fontFamily: 'Poppins'),
+                ),
+              )
+            : Column(
+                children: [
+                  Expanded(
+                    child: ListView.builder(
+                      physics: const BouncingScrollPhysics(),
+                      itemCount: moviesList!.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => MovieDetailPage(
+                                        movie: moviesList![index],
+                                        heroId: '${moviesList![index].id}')));
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              children: <Widget>[
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: <Widget>[
+                                    SizedBox(
+                                      width: 85,
+                                      height: 130,
+                                      child: Hero(
+                                        tag: '${moviesList![index].id}',
+                                        child: ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(8.0),
+                                          child: moviesList![index]
+                                                      .posterPath ==
+                                                  null
+                                              ? Image.asset(
+                                                  'assets/images/na_logo.png',
+                                                  fit: BoxFit.cover,
+                                                )
+                                              : CachedNetworkImage(
+                                                  cacheManager: cacheProp(),
+                                                  fadeOutDuration:
+                                                      const Duration(
+                                                          milliseconds: 300),
+                                                  fadeOutCurve: Curves.easeOut,
+                                                  fadeInDuration:
+                                                      const Duration(
+                                                          milliseconds: 700),
+                                                  fadeInCurve: Curves.easeIn,
+                                                  imageUrl: buildImageUrl(
+                                                          TMDB_BASE_IMAGE_URL,
+                                                          proxyUrl,
+                                                          isProxyEnabled,
+                                                          context) +
+                                                      imageQuality +
+                                                      moviesList![index]
+                                                          .posterPath!,
+                                                  imageBuilder: (context,
+                                                          imageProvider) =>
+                                                      Container(
+                                                    decoration: BoxDecoration(
+                                                      image: DecorationImage(
+                                                        image: imageProvider,
+                                                        fit: BoxFit.cover,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  placeholder: (context, url) =>
+                                                      scrollingImageShimmer(
+                                                          themeMode),
+                                                  errorWidget:
+                                                      (context, url, error) =>
+                                                          Image.asset(
+                                                    'assets/images/na_logo.png',
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                ),
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: <Widget>[
+                                            Text(
+                                              moviesList![index].title!,
+                                              overflow: TextOverflow.ellipsis,
+                                              maxLines: 1,
+                                              style: const TextStyle(
+                                                  fontFamily: 'Poppins'),
+                                            ),
+                                            Row(
+                                              children: <Widget>[
+                                                Text(
+                                                  moviesList![index]
+                                                      .voteAverage!
+                                                      .toStringAsFixed(1),
+                                                  style: const TextStyle(
+                                                      fontFamily: 'Poppins'),
+                                                ),
+                                                const Icon(
+                                                  Icons.star_rounded,
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const Padding(
+                                  padding:
+                                      EdgeInsets.symmetric(horizontal: 24.0),
+                                  child: Divider(
+                                    color: Colors.white,
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              );
   }
 }

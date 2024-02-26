@@ -1,6 +1,10 @@
+import 'package:caffiene/functions/network.dart';
+import 'package:caffiene/provider/app_dependency_provider.dart';
+import 'package:caffiene/provider/settings_provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:caffiene/api/movies_api.dart';
 import 'package:caffiene/models/watch_providers.dart';
+import 'package:provider/provider.dart';
 
 class WatchProvidersButton extends StatefulWidget {
   final Function()? onTap;
@@ -22,8 +26,12 @@ class _WatchProvidersButtonState extends State<WatchProvidersButton> {
   @override
   void initState() {
     super.initState();
-
-    moviesApi().fetchWatchProviders(widget.api, widget.country).then((value) {
+    final isProxyEnabled =
+        Provider.of<SettingsProvider>(context, listen: false).enableProxy;
+    final proxyUrl =
+        Provider.of<AppDependencyProvider>(context, listen: false).tmdbProxy;
+    fetchWatchProviders(widget.api, widget.country, isProxyEnabled, proxyUrl)
+        .then((value) {
       if (mounted) {
         setState(() {
           watchProviders = value;
@@ -51,9 +59,9 @@ class _WatchProvidersButtonState extends State<WatchProvidersButton> {
         onPressed: () {
           widget.onTap!();
         },
-        child: const Text(
-          'Watch providers',
-          style: TextStyle(color: Colors.white),
+        child: Text(
+          tr("watch_providers"),
+          style: const TextStyle(color: Colors.white),
         ),
       ),
     );

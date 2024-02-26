@@ -1,4 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:caffiene/functions/functions.dart';
+import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:caffiene/utils/constant.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -25,10 +27,12 @@ class CastTabState extends State<CastTab>
     final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     super.build(context);
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
+    final isProxyEnabled = Provider.of<SettingsProvider>(context).enableProxy;
+    final proxyUrl = Provider.of<AppDependencyProvider>(context).tmdbProxy;
     return widget.credits.cast!.isEmpty
         ? Container(
-            child: const Center(
-              child: Text('There is no cast available for this movie'),
+            child: Center(
+              child: Text(tr("no_cast_movie")),
             ),
           )
         : Container(
@@ -81,13 +85,18 @@ class CastTabState extends State<CastTab>
                                                 fit: BoxFit.cover,
                                               )
                                             : CachedNetworkImage(
+                                                cacheManager: cacheProp(),
                                                 fadeOutDuration: const Duration(
                                                     milliseconds: 300),
                                                 fadeOutCurve: Curves.easeOut,
                                                 fadeInDuration: const Duration(
                                                     milliseconds: 700),
                                                 fadeInCurve: Curves.easeIn,
-                                                imageUrl: TMDB_BASE_IMAGE_URL +
+                                                imageUrl: buildImageUrl(
+                                                        TMDB_BASE_IMAGE_URL,
+                                                        proxyUrl,
+                                                        isProxyEnabled,
+                                                        context) +
                                                     imageQuality +
                                                     widget.credits.cast![index]
                                                         .profilePath!,
@@ -127,10 +136,13 @@ class CastTabState extends State<CastTab>
                                             fontFamily: 'PoppinsSB',
                                             fontSize: 20),
                                       ),
-                                      Text(
-                                        'As : '
-                                        '${widget.credits.cast![index].character!.isEmpty ? 'N/A' : widget.credits.cast![index].character!}',
-                                      ),
+                                      Text(widget.credits.cast![index]
+                                              .character!.isEmpty
+                                          ? tr("as_empty")
+                                          : tr("as", namedArgs: {
+                                              "character": widget.credits
+                                                  .cast![index].character!
+                                            })),
                                       Visibility(
                                         visible:
                                             widget.credits.cast![0].roles ==
@@ -146,8 +158,24 @@ class CastTabState extends State<CastTab>
                                                           .roles![0]
                                                           .episodeCount! ==
                                                       1
-                                                  ? '${widget.credits.cast![index].roles![0].episodeCount!} episode'
-                                                  : '${widget.credits.cast![index].roles![0].episodeCount!} episodes',
+                                                  ? tr("single_episode",
+                                                      namedArgs: {
+                                                          "count": widget
+                                                              .credits
+                                                              .cast![index]
+                                                              .roles![0]
+                                                              .episodeCount!
+                                                              .toString()
+                                                        })
+                                                  : tr("multi_episode",
+                                                      namedArgs: {
+                                                          "count": widget
+                                                              .credits
+                                                              .cast![index]
+                                                              .roles![0]
+                                                              .episodeCount!
+                                                              .toString()
+                                                        }),
                                         ),
                                       ),
                                     ],
@@ -191,6 +219,8 @@ class CrewTabState extends State<CrewTab>
     super.build(context);
     final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
+    final isProxyEnabled = Provider.of<SettingsProvider>(context).enableProxy;
+    final proxyUrl = Provider.of<AppDependencyProvider>(context).tmdbProxy;
     return widget.credits.crew!.isEmpty
         ? Center(
             child: Text(
@@ -254,7 +284,11 @@ class CrewTabState extends State<CrewTab>
                                                 fadeInDuration: const Duration(
                                                     milliseconds: 700),
                                                 fadeInCurve: Curves.easeIn,
-                                                imageUrl: TMDB_BASE_IMAGE_URL +
+                                                imageUrl: buildImageUrl(
+                                                        TMDB_BASE_IMAGE_URL,
+                                                        proxyUrl,
+                                                        isProxyEnabled,
+                                                        context) +
                                                     imageQuality +
                                                     widget.credits.crew![index]
                                                         .profilePath!,

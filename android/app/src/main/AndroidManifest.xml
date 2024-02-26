@@ -77,6 +77,9 @@
         <meta-data
         android:name="com.startapp.sdk.RETURN_ADS_ENABLED"
         android:value="false" />
+        <meta-data
+        android:name="com.google.android.gms.wallet.api.enabled"
+        android:value="true" />
         <provider
         android:authorities="com.startapp.flutter.sdk.${applicationId}"
         android:name="com.startapp.flutter.sdk.StartAppFlutterHelper"

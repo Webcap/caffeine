@@ -1,5 +1,5 @@
 import 'package:caffiene/provider/settings_provider.dart';
-import 'package:caffiene/utils/app_colors.dart';
+import 'package:caffiene/utils/theme/app_colors.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

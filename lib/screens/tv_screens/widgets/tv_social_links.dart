@@ -1,6 +1,7 @@
-import 'package:caffiene/api/movies_api.dart';
+import 'package:caffiene/functions/network.dart';
 import 'package:caffiene/models/movie_models.dart';
 import 'package:caffiene/models/social_icons_icons.dart';
+import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/widgets/common_widgets.dart';
@@ -10,7 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:caffiene/utils/constant.dart';
-
 
 class TVSocialLinks extends StatefulWidget {
   final String? api;
@@ -29,7 +29,11 @@ class TVSocialLinksState extends State<TVSocialLinks> {
   @override
   void initState() {
     super.initState();
-    moviesApi().fetchSocialLinks(widget.api!).then((value) {
+    final isProxyEnabled =
+        Provider.of<SettingsProvider>(context, listen: false).enableProxy;
+    final proxyUrl =
+        Provider.of<AppDependencyProvider>(context, listen: false).tmdbProxy;
+    fetchSocialLinks(widget.api!, isProxyEnabled, proxyUrl).then((value) {
       if (mounted) {
         setState(() {
           externalLinks = value;

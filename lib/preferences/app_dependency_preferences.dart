@@ -12,6 +12,7 @@ class AppDependencies {
   static const SHOWBOX_URL = "showbox_url";
   static const STREAM_ROUTE = "streamRoute";
   static const CAFFEINE_API_URL = "caffeineAPIURL";
+  static const TMDB_PROXY = "tmdb_proxy";
 
   setConsumetUrl(String value) async {
     sharedPrefsSingleton.setString(CONSUMET_URL_KEY, value);
@@ -44,7 +45,8 @@ class AppDependencies {
   }
 
   Future<String> getOpenSubtitlesKey() async {
-    return sharedPrefsSingleton.getString(OPENSUBTITLES_KEY) ?? openSubtitlesKey;
+    return sharedPrefsSingleton.getString(OPENSUBTITLES_KEY) ??
+        openSubtitlesKey;
   }
 
   setStreamServerFlixHQ(String value) async {
@@ -52,7 +54,8 @@ class AppDependencies {
   }
 
   Future<String> getStreamServerFlixHQ() async {
-    return sharedPrefsSingleton.getString(STREAM_SERVER_FLIXHQ) ?? STREAMING_SERVER_FLIXHQ;
+    return sharedPrefsSingleton.getString(STREAM_SERVER_FLIXHQ) ??
+        STREAMING_SERVER_FLIXHQ;
   }
 
   setStreamServerDCVA(String value) async {
@@ -60,7 +63,8 @@ class AppDependencies {
   }
 
   Future<String> getStreamServerDCVA() async {
-    return sharedPrefsSingleton.getString(STREAM_SERVER_DCVA) ?? STREAMING_SERVER_DCVA;
+    return sharedPrefsSingleton.getString(STREAM_SERVER_DCVA) ??
+        STREAMING_SERVER_DCVA;
   }
 
   Future<bool> enableAD(bool enable) async {
@@ -94,5 +98,13 @@ class AppDependencies {
   Future<String> getStreamServerZoro() async {
     return sharedPrefsSingleton.getString(STREAM_SERVER_ZORO) ??
         STREAMING_SERVER_ZORO;
+  }
+
+  setTmdbProxy(String value) async {
+    sharedPrefsSingleton.setString(TMDB_PROXY, value);
+  }
+
+  Future<String> getTmdbProxy() async {
+    return sharedPrefsSingleton.getString(TMDB_PROXY) ?? "";
   }
 }

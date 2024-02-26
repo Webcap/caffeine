@@ -1,4 +1,4 @@
-import 'package:caffiene/utils/app_colors.dart';
+import 'package:caffiene/utils/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -21,6 +21,11 @@ TextStyle get titalstyle1 {
 TextStyle get titalstyle2 {
   return GoogleFonts.urbanist(fontSize: 15, fontWeight: FontWeight.w500);
 }
+
+TextStyle get titalstyle3 {
+  return GoogleFonts.urbanist(fontSize: 15, fontWeight: FontWeight.w600);
+}
+
 
 const kBoldItemTitleStyle = TextStyle(
   fontFamily: 'PoppinsSB',

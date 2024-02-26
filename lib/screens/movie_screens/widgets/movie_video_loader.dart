@@ -306,7 +306,10 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
                             Theme.of(context).colorScheme.background
                           ],
                           settings: settings,
-                          movieMetadata: widget.metadata);
+                          movieMetadata: widget.metadata,
+                          subtitleStyle: Provider.of<SettingsProvider>(context)
+                            .subtitleTextStyle,
+                        );
                     },
                   )).then((value) async {
                     if (value != null) {
@@ -434,6 +437,10 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
   Future<void> subtitleParserFetcher(
       List<RegularSubtitleLinks> subtitles) async {
     getAppLanguage();
+    final isProxyEnabled =
+        Provider.of<SettingsProvider>(context, listen: false).enableProxy;
+    final proxyUrl =
+        Provider.of<AppDependencyProvider>(context, listen: false).tmdbProxy;
     try {
       if (subtitles.isNotEmpty) {
         if (supportedLanguages[foundIndex].englishName == '') {
@@ -511,6 +518,8 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
               await fetchSocialLinks(
                 Endpoints.getExternalLinksForMovie(
                     widget.metadata.movieId!, "en"),
+                isProxyEnabled,
+                proxyUrl,
               ).then((value) async {
                 if (value.imdbId != null) {
                   await getExternalSubtitle(

@@ -519,5 +519,11 @@ abstract class  LocaleKeys {
   static const check_try_again = 'check_try_again';
   static const get_started = 'get_started';
   static const help_center = 'help_center';
+  static const channels_fetch_failed = 'channels_fetch_failed';
+  static const use_proxy = 'use_proxy';
+  static const enable_warning = 'enable_warning';
+  static const use_proxy_title = 'use_proxy_title';
+  static const use_proxy_detail = 'use_proxy_detail';
+  static const enable = 'enable';
 
 }

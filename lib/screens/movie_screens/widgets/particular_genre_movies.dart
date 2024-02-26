@@ -1,5 +1,7 @@
+import 'package:caffiene/functions/network.dart';
+import 'package:caffiene/provider/app_dependency_provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:caffiene/api/movies_api.dart';
 import 'package:caffiene/models/movie_models.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/screens/movie_screens/widgets/movie_grid_view.dart';
@@ -30,6 +32,10 @@ class ParticularGenreMoviesState extends State<ParticularGenreMovies> {
   bool isLoading = false;
 
   void getMoreData() async {
+    final isProxyEnabled =
+        Provider.of<SettingsProvider>(context, listen: false).enableProxy;
+    final proxyUrl =
+        Provider.of<AppDependencyProvider>(context, listen: false).tmdbProxy;
     _scrollController.addListener(() async {
       if (_scrollController.position.pixels ==
           _scrollController.position.maxScrollExtent) {
@@ -37,9 +43,10 @@ class ParticularGenreMoviesState extends State<ParticularGenreMovies> {
           isLoading = true;
         });
         if (mounted) {
-          moviesApi()
-              .fetchMovies(
-                  '${widget.api}&include_adult=${widget.includeAdult}&page=$pageNum')
+          fetchMovies(
+                  '${widget.api}&include_adult=${widget.includeAdult}&page=$pageNum',
+                  isProxyEnabled,
+                  proxyUrl)
               .then((value) {
             if (mounted) {
               setState(() {
@@ -57,8 +64,12 @@ class ParticularGenreMoviesState extends State<ParticularGenreMovies> {
   @override
   void initState() {
     super.initState();
-    moviesApi()
-        .fetchMovies('${widget.api}&include_adult=${widget.includeAdult}')
+    final isProxyEnabled =
+        Provider.of<SettingsProvider>(context, listen: false).enableProxy;
+    final proxyUrl =
+        Provider.of<AppDependencyProvider>(context, listen: false).tmdbProxy;
+    fetchMovies('${widget.api}&include_adult=${widget.includeAdult}',
+            isProxyEnabled, proxyUrl)
         .then((value) {
       if (mounted) {
         setState(() {
@@ -83,9 +94,8 @@ class ParticularGenreMoviesState extends State<ParticularGenreMovies> {
                 scrollController: _scrollController)
             : moviesList!.isEmpty
                 ? Container(
-                    child: const Center(
-                      child:
-                          Text('Oops! movies for this genre doesn\'t exist :('),
+                    child: Center(
+                      child: Text(tr("no_genre_movie")),
                     ),
                   )
                 : Container(

@@ -1,6 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:caffiene/api/endpoints.dart';
+import 'package:caffiene/functions/functions.dart';
 import 'package:caffiene/models/movie_models.dart';
+import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/screens/common/sabth.dart';
 import 'package:caffiene/screens/movie_screens/widgets/collecrions_widget.dart';
@@ -36,6 +38,8 @@ class CollectionDetailsWidgetState extends State<CollectionDetailsWidget>
     final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     final lang = Provider.of<SettingsProvider>(context).appLanguage;
+    final isProxyEnabled = Provider.of<SettingsProvider>(context).enableProxy;
+    final proxyUrl = Provider.of<AppDependencyProvider>(context).tmdbProxy;
     return Scaffold(
         body: CustomScrollView(
       controller: scrollController,
@@ -124,7 +128,7 @@ class CollectionDetailsWidgetState extends State<CollectionDetailsWidget>
                                                     fit: BoxFit.cover,
                                                   ),
                                                   imageUrl:
-                                                      '${TMDB_BASE_IMAGE_URL}original/${widget.belongsToCollection!.backdropPath!}',
+                                                      '${buildImageUrl(TMDB_BASE_IMAGE_URL, proxyUrl, isProxyEnabled, context)}original/${widget.belongsToCollection!.backdropPath!}',
                                                   errorWidget:
                                                       (context, url, error) =>
                                                           Image.asset(
@@ -182,7 +186,11 @@ class CollectionDetailsWidgetState extends State<CollectionDetailsWidget>
                                                   'assets/images/na_logo.png',
                                                   fit: BoxFit.cover,
                                                 ),
-                                                imageUrl: TMDB_BASE_IMAGE_URL +
+                                                imageUrl: buildImageUrl(
+                                                        TMDB_BASE_IMAGE_URL,
+                                                        proxyUrl,
+                                                        isProxyEnabled,
+                                                        context) +
                                                     imageQuality +
                                                     widget.belongsToCollection!
                                                         .posterPath!,

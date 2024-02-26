@@ -1,3 +1,5 @@
+// ignore_for_file: unused_import
+
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -11,22 +13,6 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:caffiene/utils/config.dart';
 import 'package:permission_handler/permission_handler.dart';
-
-Future<List<Channel>> fetchChannels(String api) async {
-  ChannelsList channelsList;
-  print(api);
-  try {
-    var res = await retryOptions.retry(
-      () => http.get(Uri.parse(api)),
-      retryIf: (e) => e is SocketException || e is TimeoutException,
-    );
-    var decodeRes = jsonDecode(res.body);
-    channelsList = ChannelsList.fromJson(decodeRes);
-  } finally {
-    client.close();
-  }
-  return channelsList.channels ?? [];
-}
 
 String episodeSeasonFormatter(int episodeNumber, int seasonNumber) {
   String formattedSeason =
@@ -190,4 +176,14 @@ String normalizeTitle(String title) {
       .toLowerCase()
       .replaceAll(RegExp('[":\']'), '')
       .replaceAll(RegExp('[^a-zA-Z0-9]+'), '_');
+}
+
+String buildImageUrl(String baseImage, String proxyUrl, bool isProxyEnabled,
+    BuildContext context) {
+  String concatenated = baseImage;
+  if (isProxyEnabled && proxyUrl.isNotEmpty) {
+    concatenated = "$proxyUrl?destination=$baseImage";
+  }
+
+  return concatenated;
 }

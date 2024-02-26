@@ -38,19 +38,19 @@ List<ProfileModal> settingdata = [
     iconImage: MovixIcon.profile,
     tital: tr("edit_profile"),
   ),
-  ProfileModal(
-    onTap: () {
-      Get.to(
-        () => const WatchHistoryV2(),
-      );
-    },
-    widget: const Icon(
-      Icons.arrow_forward_ios_rounded,
-      size: 15,
-    ),
-    iconImage: MovixIcon.paper,
-    tital: tr("watch_history"),
-  ),
+  // ProfileModal(
+  //   onTap: () {
+  //     Get.to(
+  //       () => const WatchHistoryV2(),
+  //     );
+  //   },
+  //   widget: const Icon(
+  //     Icons.arrow_forward_ios_rounded,
+  //     size: 15,
+  //   ),
+  //   iconImage: MovixIcon.paper,
+  //   tital: tr("watch_history"),
+  // ),
   ProfileModal(
     onTap: () {
       Get.to(
@@ -120,19 +120,19 @@ List<ProfileModal> settingdata = [
   //     );
   //   },
   // ),
-  ProfileModal(
-    widget: const Icon(
-      Icons.arrow_forward_ios_rounded,
-      size: 15,
-    ),
-    iconImage: MovixIcon.helpCenter,
-    tital: tr("help_center"),
-    onTap: () {
-      Get.to(
-        () => const HelpCenterProfileScreen(),
-      );
-    },
-  ),
+  // ProfileModal(
+  //   widget: const Icon(
+  //     Icons.arrow_forward_ios_rounded,
+  //     size: 15,
+  //   ),
+  //   iconImage: MovixIcon.helpCenter,
+  //   tital: tr("help_center"),
+  //   onTap: () {
+  //     Get.to(
+  //       () => const HelpCenterProfileScreen(),
+  //     );
+  //   },
+  // ),
   ProfileModal(
     onTap: () {
       Get.to(

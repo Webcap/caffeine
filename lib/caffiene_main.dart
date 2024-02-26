@@ -6,7 +6,7 @@ import 'package:caffiene/provider/recently_watched_provider.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/provider/sign_in_provider.dart';
 import 'package:caffiene/utils/routes/app_pages.dart';
-import 'package:caffiene/utils/theme_data.dart';
+import 'package:caffiene/utils/theme/theme_data.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -91,6 +91,7 @@ class _caffeineState extends State<caffeine>
           _remoteConfig.getString("vidsrc_server");
       appDependencyProvider.vidSrcToServer =
           _remoteConfig.getString("vidsrcto_server");
+      appDependencyProvider.tmdbProxy = _remoteConfig.getString("tmdb_proxy");
     }
     // await requestNotificationPermissions();
     [
@@ -159,7 +160,6 @@ class _caffeineState extends State<caffeine>
                       locale: context.locale,
                       debugShowCheckedModeBanner: false,
                       getPages: AppPages.pages,
-                      title: tr("caffiene"),
                       theme: Styles.themeData(
                           appThemeMode: settingsProvider.appTheme,
                           isM3Enabled: settingsProvider.isMaterial3Enabled,

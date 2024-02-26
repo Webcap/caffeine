@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:retry/retry.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -24,12 +26,9 @@ const kTextSmallHeaderStyle = TextStyle(
   overflow: TextOverflow.ellipsis,
 );
 
-// change to false on production builds ofc
-bool devMode = false;
-
 //********************************* */
 // ** VERSION CONTROL BUDDY //
-const String currentAppVersion = '1.6.1';
+const String currentAppVersion = '1.6.2';
 //*********************************** */
 
 const kTextHeaderStyle = TextStyle(
@@ -37,7 +36,7 @@ const kTextHeaderStyle = TextStyle(
   fontSize: 22,
 );
 
-const String grid_landing_photo = "assets/images/grid_final.jpg";
+final kApiUrl = GetPlatform.isAndroid ? 'http://144.62.246.54:4242' : 'http://localhost:4242';
 
 final client = HttpClient();
 const retryOptions = RetryOptions(
@@ -51,6 +50,7 @@ final List<String> appNames = [
   'caffeine-v1.6.0.apk',
   'caffeine-v1.6.0-6.apk',
   'caffeine-v1.6.1.apk',
+  'caffeine-v1.6.2.apk',
 ];
 
 CacheManager cacheProp() {
@@ -72,3 +72,5 @@ class MyHttpOverrides extends HttpOverrides {
 }
 
 late SharedPreferences sharedPrefsSingleton;
+
+final DateFormat formatter = DateFormat('MM-dd-yyyy');

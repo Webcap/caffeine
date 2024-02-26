@@ -1,11 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:caffiene/functions/functions.dart';
+import 'package:caffiene/functions/network.dart';
+import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:caffiene/utils/constant.dart';
-import 'package:caffiene/utils/textStyle.dart';
+import 'package:caffiene/utils/theme/textStyle.dart';
 import 'package:caffiene/widgets/common_widgets.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:caffiene/api/movies_api.dart';
 import 'package:caffiene/models/dropdown_select.dart';
 import 'package:caffiene/models/filter_chip.dart';
 import 'package:caffiene/models/movie_models.dart';
@@ -65,8 +67,14 @@ class DiscoverMoviesState extends State<DiscoverMovies>
     List<MovieGenreFilterChipWidget> genres = movieGenreFilterdata;
     years.shuffle();
     genres.shuffle();
-    moviesApi().fetchMovies(
-            '$TMDB_API_BASE_URL/discover/movie?api_key=$TMDB_API_KEY&sort_by=popularity.desc&watch_region=US&include_adult=${widget.includeAdult}&primary_release_year=${years.first}&with_genres=${genres.first.genreValue}')
+    final isProxyEnabled =
+        Provider.of<SettingsProvider>(context, listen: false).enableProxy;
+    final proxyUrl =
+        Provider.of<AppDependencyProvider>(context, listen: false).tmdbProxy;
+    fetchMovies(
+            '$TMDB_API_BASE_URL/discover/movie?api_key=$TMDB_API_KEY&sort_by=popularity.desc&watch_region=US&include_adult=${widget.includeAdult}&primary_release_year=${years.first}&with_genres=${genres.first.genreValue}',
+            isProxyEnabled,
+            proxyUrl)
         .then((value) async {
       if (mounted) {
         setState(() {
@@ -82,6 +90,8 @@ class DiscoverMoviesState extends State<DiscoverMovies>
     deviceHeight = MediaQuery.of(context).size.height;
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     final themeMode = Provider.of<SettingsProvider>(context).appTheme;
+    final isProxyEnabled = Provider.of<SettingsProvider>(context).enableProxy;
+    final proxyUrl = Provider.of<AppDependencyProvider>(context).tmdbProxy;
     return Column(
       children: <Widget>[
         Row(
@@ -154,7 +164,11 @@ class DiscoverMoviesState extends State<DiscoverMovies>
                                   imageUrl:
                                       moviesList![index].posterPath == null
                                           ? ''
-                                          : TMDB_BASE_IMAGE_URL +
+                                          : buildImageUrl(
+                                                  TMDB_BASE_IMAGE_URL,
+                                                  proxyUrl,
+                                                  isProxyEnabled,
+                                                  context) +
                                               imageQuality +
                                               moviesList![index].posterPath!,
                                   imageBuilder: (context, imageProvider) =>

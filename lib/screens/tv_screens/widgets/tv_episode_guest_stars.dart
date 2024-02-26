@@ -1,16 +1,17 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:caffiene/functions/functions.dart';
+import 'package:caffiene/functions/network.dart';
+import 'package:caffiene/provider/app_dependency_provider.dart';
+import 'package:caffiene/widgets/common_widgets.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:caffiene/api/movies_api.dart';
 import 'package:caffiene/models/credits.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/screens/person/guest_star_details.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/widgets/shimmer_widget.dart';
 import 'package:provider/provider.dart';
-import 'package:shimmer/shimmer.dart';
 import 'package:caffiene/utils/constant.dart';
-
 
 class TVEpisodeGuestStarsTab extends StatefulWidget {
   final String? api;
@@ -26,7 +27,11 @@ class TVEpisodeGuestStarsTabState extends State<TVEpisodeGuestStarsTab>
   @override
   void initState() {
     super.initState();
-    moviesApi().fetchCredits(widget.api!).then((value) {
+    final isProxyEnabled =
+        Provider.of<SettingsProvider>(context, listen: false).enableProxy;
+    final proxyUrl =
+        Provider.of<AppDependencyProvider>(context, listen: false).tmdbProxy;
+    fetchCredits(widget.api!, isProxyEnabled, proxyUrl).then((value) {
       if (mounted) {
         setState(() {
           credits = value;
@@ -40,11 +45,13 @@ class TVEpisodeGuestStarsTabState extends State<TVEpisodeGuestStarsTab>
     super.build(context);
     final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
+    final isProxyEnabled = Provider.of<SettingsProvider>(context).enableProxy;
+    final proxyUrl = Provider.of<AppDependencyProvider>(context).tmdbProxy;
     return credits == null
         ? Container(
             padding: const EdgeInsets.all(8),
             child: searchedPersonShimmer(themeMode))
-        : credits!.cast!.isEmpty
+        : credits!.episodeGuestStars!.isEmpty
             ? Center(
                 child: Text(
                   tr("no_guest_episode"),
@@ -102,6 +109,8 @@ class TVEpisodeGuestStarsTabState extends State<TVEpisodeGuestStarsTab>
                                                         fit: BoxFit.cover,
                                                       )
                                                     : CachedNetworkImage(
+                                                        cacheManager:
+                                                            cacheProp(),
                                                         fadeOutDuration:
                                                             const Duration(
                                                                 milliseconds:
@@ -114,7 +123,11 @@ class TVEpisodeGuestStarsTabState extends State<TVEpisodeGuestStarsTab>
                                                                     700),
                                                         fadeInCurve:
                                                             Curves.easeIn,
-                                                        imageUrl: TMDB_BASE_IMAGE_URL +
+                                                        imageUrl: buildImageUrl(
+                                                                TMDB_BASE_IMAGE_URL,
+                                                                proxyUrl,
+                                                                isProxyEnabled,
+                                                                context) +
                                                             imageQuality +
                                                             credits!
                                                                 .episodeGuestStars![
@@ -181,7 +194,7 @@ class TVEpisodeGuestStarsTabState extends State<TVEpisodeGuestStarsTab>
                     }));
   }
 
-  Widget searchedPersonShimmer(themeMode) => ListView.builder(
+  Widget searchedPersonShimmer(String themeMode) => ListView.builder(
       physics: const BouncingScrollPhysics(),
       itemCount: 10,
       itemBuilder: (BuildContext context, int index) {
@@ -193,12 +206,8 @@ class TVEpisodeGuestStarsTabState extends State<TVEpisodeGuestStarsTab>
           ),
           child: Column(
             children: [
-              Shimmer.fromColors(
-                baseColor:
-                    themeMode ? Colors.grey.shade800 : Colors.grey.shade300,
-                highlightColor:
-                    themeMode ? Colors.grey.shade700 : Colors.grey.shade100,
-                direction: ShimmerDirection.ltr,
+              ShimmerBase(
+                themeMode: themeMode,
                 child: Row(
                   children: [
                     Padding(
@@ -209,7 +218,7 @@ class TVEpisodeGuestStarsTabState extends State<TVEpisodeGuestStarsTab>
                         child: Container(
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(100.0),
-                              color: Colors.white),
+                              color: Colors.grey.shade600),
                         ),
                       ),
                     ),
@@ -220,7 +229,7 @@ class TVEpisodeGuestStarsTabState extends State<TVEpisodeGuestStarsTab>
                           Container(
                             height: 20,
                             width: 140,
-                            color: Colors.white,
+                            color: Colors.grey.shade600,
                           )
                         ],
                       ),
@@ -229,7 +238,7 @@ class TVEpisodeGuestStarsTabState extends State<TVEpisodeGuestStarsTab>
                 ),
               ),
               Divider(
-                color: !themeMode ? Colors.black54 : Colors.white54,
+                color: themeMode == "light" ? Colors.black54 : Colors.white54,
                 thickness: 1,
                 endIndent: 20,
                 indent: 10,

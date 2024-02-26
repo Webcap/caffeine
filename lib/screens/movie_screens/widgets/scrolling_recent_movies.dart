@@ -8,7 +8,7 @@ import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/screens/movie_screens/widgets/movie_video_loader.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/utils/globlal_methods.dart';
-import 'package:caffiene/utils/textStyle.dart';
+import 'package:caffiene/utils/theme/textStyle.dart';
 import 'package:caffiene/widgets/common_widgets.dart';
 import 'package:caffiene/widgets/shimmer_widget.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -33,6 +33,8 @@ class _ScrollingRecentMoviesState extends State<ScrollingRecentMovies> {
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     final fetchRoute = Provider.of<AppDependencyProvider>(context).fetchRoute;
+    final isProxyEnabled = Provider.of<SettingsProvider>(context).enableProxy;
+    final proxyUrl = Provider.of<AppDependencyProvider>(context).tmdbProxy;
     return Column(
       children: <Widget>[
         Row(
@@ -175,7 +177,11 @@ class _ScrollingRecentMoviesState extends State<ScrollingRecentMovies> {
                                                             .posterPath ==
                                                         null
                                                     ? ''
-                                                    : TMDB_BASE_IMAGE_URL +
+                                                    : buildImageUrl(
+                                                            TMDB_BASE_IMAGE_URL,
+                                                            proxyUrl,
+                                                            isProxyEnabled,
+                                                            context) +
                                                         imageQuality +
                                                         widget.moviesList[index]
                                                             .posterPath!,

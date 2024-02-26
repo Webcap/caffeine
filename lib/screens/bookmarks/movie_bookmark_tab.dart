@@ -1,4 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:caffiene/functions/functions.dart';
+import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:caffiene/utils/constant.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -32,6 +34,8 @@ class _MovieBookmarkState extends State<MovieBookmark> {
     final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     final viewType = Provider.of<SettingsProvider>(context).defaultView;
+    final isProxyEnabled = Provider.of<SettingsProvider>(context).enableProxy;
+    final proxyUrl = Provider.of<AppDependencyProvider>(context).tmdbProxy;
     return widget.movieList == null && viewType == 'grid'
         ? Container(child: moviesAndTVShowGridShimmer(themeMode))
         : widget.movieList == null && viewType == 'list'
@@ -126,7 +130,11 @@ class _MovieBookmarkState extends State<MovieBookmark> {
                                                                             const Duration(milliseconds: 700),
                                                                         fadeInCurve:
                                                                             Curves.easeIn,
-                                                                        imageUrl: TMDB_BASE_IMAGE_URL +
+                                                                        imageUrl: buildImageUrl(
+                                                                                TMDB_BASE_IMAGE_URL,
+                                                                                proxyUrl,
+                                                                                isProxyEnabled,
+                                                                                context) +
                                                                             imageQuality +
                                                                             widget.movieList![index].posterPath!,
                                                                         imageBuilder:
@@ -158,7 +166,8 @@ class _MovieBookmarkState extends State<MovieBookmark> {
                                                                     Container(
                                                                   margin:
                                                                       const EdgeInsets
-                                                                          .all(3),
+                                                                          .all(
+                                                                          3),
                                                                   alignment:
                                                                       Alignment
                                                                           .topLeft,
@@ -296,7 +305,7 @@ class _MovieBookmarkState extends State<MovieBookmark> {
                                                                       child: Stack(children: [
                                                                         widget.movieList![index].posterPath ==
                                                                                 null
-                                                                            ?  Image.asset('assets/images/na_rect.png',
+                                                                            ? Image.asset('assets/images/na_rect.png',
                                                                                 fit: BoxFit.cover,
                                                                                 width: double.infinity)
                                                                             : CachedNetworkImage(
@@ -305,7 +314,7 @@ class _MovieBookmarkState extends State<MovieBookmark> {
                                                                                 fadeOutCurve: Curves.easeOut,
                                                                                 fadeInDuration: const Duration(milliseconds: 700),
                                                                                 fadeInCurve: Curves.easeIn,
-                                                                                imageUrl: TMDB_BASE_IMAGE_URL + imageQuality + widget.movieList![index].posterPath!,
+                                                                                imageUrl: buildImageUrl(TMDB_BASE_IMAGE_URL, proxyUrl, isProxyEnabled, context) + imageQuality + widget.movieList![index].posterPath!,
                                                                                 imageBuilder: (context, imageProvider) => Container(
                                                                                   decoration: BoxDecoration(
                                                                                     image: DecorationImage(
@@ -316,7 +325,7 @@ class _MovieBookmarkState extends State<MovieBookmark> {
                                                                                 ),
                                                                                 placeholder: (context, url) => mainPageVerticalScrollImageShimmer(themeMode),
                                                                                 errorWidget: (context, url, error) => Image.asset(
-                                                                                  'assets/images/na_logo.png',
+                                                                                  'assets/images/na_rect.png',
                                                                                   fit: BoxFit.cover,
                                                                                 ),
                                                                               ),

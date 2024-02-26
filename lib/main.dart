@@ -13,6 +13,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/utils/config.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:caffiene/utils/constant.dart';
 
@@ -32,6 +33,8 @@ final Future<FirebaseApp> _initialization = Firebase.initializeApp();
 Future<void> appInitialize() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
+  Stripe.publishableKey = stripePublic;
+  await Stripe.instance.applySettings();
   await EasyLocalization.ensureInitialized();
   sharedPrefsSingleton = await SharedPreferencesSingleton.getInstance();
   await _initialization;
@@ -59,6 +62,8 @@ Future<void> appInitialize() async {
   await settingsProvider.getAppColorIndex();
   await settingsProvider.getProviderPrecedence();
   await settingsProvider.getPlayerTimeStyle();
+  await settingsProvider.getUseProxyMode();
+  await settingsProvider.getSubtitleStyle();
   await recentProvider.fetchMovies();
   await recentProvider.fetchEpisodes();
   await appDependencyProvider.getConsumetUrl();
@@ -68,6 +73,7 @@ Future<void> appInitialize() async {
   await appDependencyProvider.getStreamingServerZoro();
   await appDependencyProvider.getStreamRoute();
   await appDependencyProvider.getFQUrl();
+  await appDependencyProvider.getTmdbProxy();
 
   await Supabase.initialize(
     url: SUPABASE_URL,

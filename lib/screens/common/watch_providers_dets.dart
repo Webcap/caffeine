@@ -1,6 +1,7 @@
+import 'package:caffiene/functions/network.dart';
+import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:caffiene/api/movies_api.dart';
 import 'package:caffiene/models/watch_providers.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/widgets/common_widgets.dart';
@@ -27,7 +28,12 @@ class _WatchProvidersDetailsState extends State<WatchProvidersDetails>
   void initState() {
     super.initState();
     tabController = TabController(length: 3, vsync: this);
-    moviesApi().fetchWatchProviders(widget.api, widget.country).then((value) {
+    final isProxyEnabled =
+        Provider.of<SettingsProvider>(context, listen: false).enableProxy;
+    final proxyUrl =
+        Provider.of<AppDependencyProvider>(context, listen: false).tmdbProxy;
+    fetchWatchProviders(widget.api, widget.country, isProxyEnabled, proxyUrl)
+        .then((value) {
       if (mounted) {
         setState(() {
           watchProviders = value;
@@ -101,17 +107,20 @@ class _WatchProvidersDetailsState extends State<WatchProvidersDetails>
                             themeMode: themeMode,
                             imageQuality: imageQuality,
                             noOptionMessage: tr("no_buy"),
-                            watchOptions: watchProviders!.buy),
+                            watchOptions: watchProviders!.buy,
+                            context: context),
                         watchProvidersTabData(
                             themeMode: themeMode,
                             imageQuality: imageQuality,
                             noOptionMessage: tr("no_stream"),
-                            watchOptions: watchProviders!.flatRate),
+                            watchOptions: watchProviders!.flatRate,
+                            context: context),
                         watchProvidersTabData(
                             themeMode: themeMode,
                             imageQuality: imageQuality,
                             noOptionMessage: tr("no_rent"),
-                            watchOptions: watchProviders!.rent),
+                            watchOptions: watchProviders!.rent,
+                            context: context),
                       ],
               ),
             ),

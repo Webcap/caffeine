@@ -5,6 +5,7 @@
 abstract class AssetValues {
   static const String appLogo = 'assets/images/logo.png';
   static const String Razorpay = 'assets/images/Razorpay.png';
+  static const String paypal = 'assets/images/paypal.png';
   static const String lodeImage = 'assets/images/lodeImage.png';
   static const String welcome = 'assets/images/welcomeimage.png';
   static const String letsYouIn = 'assets/images/letsyouin.png';
@@ -29,6 +30,7 @@ abstract class AssetValues {
   static const String card = "assets/images/card.png";
   static const String noimage = "assets/images/noimageavailable.png";
   static const String noimage1 = "assets/images/noimage.png";
+  static const String grid_landing_photo = "assets/images/grid_final.jpg";
 }
 
 abstract class IconAssetValues {
@@ -198,4 +200,5 @@ abstract class MovixIcon {
   static const chromecast = "assets/movixIcon/Chromecast.svg";
   static const paper = "assets/movixIcon/Paper.svg";
   static const shield_fail = "assets/movixIcon/Shield Fail.svg";
+  static const iconPremium = "assets/movixIcon/icon_premium.svg";
 }

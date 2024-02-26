@@ -1,5 +1,6 @@
-import 'package:caffiene/api/tv_api.dart';
+import 'package:caffiene/functions/network.dart';
 import 'package:caffiene/models/tv.dart';
+import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/screens/tv_screens/widgets/horizontal_scrolling_tv_list.dart';
 import 'package:caffiene/utils/config.dart';
@@ -30,8 +31,12 @@ class TVRecommendationsTabState extends State<TVRecommendationsTab>
   @override
   void initState() {
     super.initState();
-    tvApi()
-        .fetchTV('${widget.api}&include_adult=${widget.includeAdult}')
+    final isProxyEnabled =
+        Provider.of<SettingsProvider>(context, listen: false).enableProxy;
+    final proxyUrl =
+        Provider.of<AppDependencyProvider>(context, listen: false).tmdbProxy;
+    fetchTV('${widget.api}&include_adult=${widget.includeAdult}',
+            isProxyEnabled, proxyUrl)
         .then((value) {
       if (mounted) {
         setState(() {
@@ -54,10 +59,13 @@ class TVRecommendationsTabState extends State<TVRecommendationsTab>
         setState(() {
           isLoading = true;
         });
-
-        tvApi()
-            .fetchTV(
-                '${widget.api}&page=$pageNum&include_adult=${widget.includeAdult}')
+        final isProxyEnabled =
+            Provider.of<SettingsProvider>(context, listen: false).enableProxy;
+        final proxyUrl =
+            Provider.of<AppDependencyProvider>(context, listen: false)
+                .tmdbProxy;
+        fetchTV('${widget.api}&page=$pageNum&include_adult=${widget.includeAdult}',
+                isProxyEnabled, proxyUrl)
             .then((value) {
           if (mounted) {
             setState(() {

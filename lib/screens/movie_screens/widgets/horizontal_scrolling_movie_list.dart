@@ -1,10 +1,14 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:caffiene/functions/functions.dart';
+import 'package:caffiene/provider/app_dependency_provider.dart';
+import 'package:caffiene/provider/settings_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/models/movie_models.dart';
 import 'package:caffiene/screens/movie_screens/movie_details.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/widgets/shimmer_widget.dart';
 import 'package:caffiene/utils/constant.dart';
+import 'package:provider/provider.dart';
 
 class HorizontalScrollingMoviesList extends StatelessWidget {
   const HorizontalScrollingMoviesList({
@@ -23,6 +27,8 @@ class HorizontalScrollingMoviesList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isProxyEnabled = Provider.of<SettingsProvider>(context).enableProxy;
+    final proxyUrl = Provider.of<AppDependencyProvider>(context).tmdbProxy;
     return ListView.builder(
       controller: _scrollController,
       physics: const BouncingScrollPhysics(),
@@ -71,7 +77,11 @@ class HorizontalScrollingMoviesList extends StatelessWidget {
                                       imageUrl:
                                           movieList![index].posterPath == null
                                               ? ''
-                                              : TMDB_BASE_IMAGE_URL +
+                                              : buildImageUrl(
+                                                      TMDB_BASE_IMAGE_URL,
+                                                      proxyUrl,
+                                                      isProxyEnabled,
+                                                      context) +
                                                   imageQuality +
                                                   movieList![index].posterPath!,
                                       imageBuilder: (context, imageProvider) =>
