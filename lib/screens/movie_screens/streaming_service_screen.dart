@@ -33,7 +33,7 @@ class StreamingServicesMovies extends StatelessWidget {
         child: ParticularStreamingServiceMovies(
           includeAdult: Provider.of<SettingsProvider>(context).isAdult,
           providerID: providerId,
-          api: Endpoints.watchProvidersMovies(providerId, 1, lang),
+          api: Endpoints.watchProvidersMovies(providerId, lang),
           watchRegion: Provider.of<SettingsProvider>(context).defaultCountry,
         ),
       ),

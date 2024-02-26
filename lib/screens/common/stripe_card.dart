@@ -1,351 +1,128 @@
+// ignore_for_file: unused_import
+
 import 'dart:convert';
 import 'dart:developer';
-
+import 'package:flutter_credit_card/flutter_credit_card.dart';
+import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/utils/helpers/utils.dart';
 import 'package:caffiene/utils/theme/app_colors.dart';
+import 'package:caffiene/widgets/appbarlayout.dart';
+import 'package:caffiene/widgets/size_configuration.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 
-class NoWebhookPaymentScreen extends StatefulWidget {
+class addCardScreen extends StatefulWidget {
+  const addCardScreen({super.key});
+
   @override
-  _NoWebhookPaymentScreenState createState() => _NoWebhookPaymentScreenState();
+  State<addCardScreen> createState() => _addCardScreenState();
 }
 
-class _NoWebhookPaymentScreenState extends State<NoWebhookPaymentScreen> {
-  final controller = CardEditController();
-
-  @override
-  void initState() {
-    controller.addListener(update);
-    super.initState();
-  }
-
-  void update() => setState(() {});
-  @override
-  void dispose() {
-    controller.removeListener(update);
-    controller.dispose();
-    super.dispose();
-  }
-
+class _addCardScreenState extends State<addCardScreen> {
+  String cardNumber = '';
+  String expiryDate = '';
+  String cardHolderName = '';
+  String cvvCode = '';
+  bool isCvvFocused = false;
+  bool useGlassMorphism = false;
+  bool useBackgroundImage = false;
+  bool useFloatingAnimation = true;
+  final OutlineInputBorder border = OutlineInputBorder(
+    borderSide: BorderSide(
+      color: Colors.grey.withOpacity(0.7),
+      width: 2.0,
+    ),
+  );
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  
   @override
   Widget build(BuildContext context) {
-    return ExampleScaffold(
-      title: 'Card Field',
-      tags: ['No Webhook'],
-      padding: EdgeInsets.symmetric(horizontal: 16),
-      children: [
-        CardField(
-          controller: controller,
-        ),
-        SizedBox(height: 20),
-        LoadingButton(
-          text: 'Pay',
-          onPressed: controller.complete ? _handlePayPress : null,
-        ),
-        SizedBox(height: 20),
-        Divider(),
-        Container(
-          padding: EdgeInsets.all(8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+    SizeConfig().init(context);
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
+    return Scaffold(
+      backgroundColor: themeMode == "dark" || themeMode == "amoled"
+          ? ColorValues.blackColor
+          : ColorValues.whiteColor,
+      body: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.only(
+            left: SizeConfig.blockSizeHorizontal * 4,
+            right: SizeConfig.blockSizeHorizontal * 4,
+            top: SizeConfig.blockSizeVertical * 3,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              OutlinedButton(
-                onPressed: () => controller.focus(),
-                child: Text('Focus'),
+              Appbarlayout(),
+              SizedBox(
+                height: SizeConfig.screenHeight / 45,
               ),
-              SizedBox(width: 12),
-              OutlinedButton(
-                onPressed: () => controller.blur(),
-                child: Text('Blur'),
+              Text(
+                "Add New Card",
+                style: GoogleFonts.urbanist(
+                  color: Theme.of(context).colorScheme.primary,
+                  fontSize: 25,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-              SizedBox(width: 12),
-              OutlinedButton(
-                onPressed: () => controller.clear(),
-                child: Text('Clear'),
+              SizedBox(
+                height: SizeConfig.screenHeight / 55,
               ),
+               CreditCardWidget(
+                cardNumber: cardNumber,
+                expiryDate: expiryDate,
+                cardHolderName: cardHolderName,
+                cvvCode: cvvCode,
+                showBackView:
+                    isCvvFocused, //true when you want to show cvv(back) view
+                onCreditCardWidgetChange: (CreditCardBrand
+                    brand) {}, // Callback for anytime credit card brand is changed
+              ),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: <Widget>[
+                      CreditCardForm(
+                        formKey: formKey,
+                        obscureCvv: true,
+                        obscureNumber: false,
+                        cardNumber: cardNumber,
+                        cvvCode: cvvCode,
+                        isHolderNameVisible: true,
+                        isCardNumberVisible: true,
+                        isExpiryDateVisible: true,
+                        cardHolderName: cardHolderName,
+                        expiryDate: expiryDate,
+                        inputConfiguration: const InputConfiguration(
+                          cardNumberDecoration: InputDecoration(
+                            labelText: 'Number',
+                            hintText: 'XXXX XXXX XXXX XXXX',
+                          ),
+                          expiryDateDecoration: InputDecoration(
+                            labelText: 'Expired Date',
+                            hintText: 'XX/XX',
+                          ),
+                          cvvCodeDecoration: InputDecoration(
+                            labelText: 'CVV',
+                            hintText: 'XXX',
+                          ),
+                          cardHolderDecoration: InputDecoration(
+                            labelText: 'Card Holder',
+                          ),
+                        ), 
+                        onCreditCardModelChange: (CreditCardModel ) {  },
+                      ),
+                    ],
+                  ),
+                ),
+              )
             ],
           ),
         ),
-        Divider(),
-        SizedBox(height: 20),
-        ResponseCard(
-          response: controller.details.toJson().toPrettyString(),
-        )
-      ],
-    );
-  }
-
-  Future<void> _handlePayPress() async {
-    if (!controller.complete) {
-      return;
-    }
-
-    try {
-      // 1. Gather customer billing information (ex. email)
-      final billingDetails = BillingDetails(
-        email: 'email@stripe.com',
-        phone: '+48888000888',
-        address: Address(
-          city: 'Houston',
-          country: 'US',
-          line1: '1459  Circle Drive',
-          line2: '',
-          state: 'Texas',
-          postalCode: '77063',
-        ),
-      ); // mocked data for tests
-
-      // 2. Create payment method
-      final paymentMethod = await Stripe.instance.createPaymentMethod(
-          params: PaymentMethodParams.card(
-        paymentMethodData: PaymentMethodData(
-          billingDetails: billingDetails,
-        ),
-      ));
-
-      // 3. call API to create PaymentIntent
-      final paymentIntentResult = await callNoWebhookPayEndpointMethodId(
-        useStripeSdk: true,
-        paymentMethodId: paymentMethod.id,
-        currency: 'usd', // mocked data
-        items: ['id-1'],
-      );
-
-      if (paymentIntentResult['error'] != null) {
-        // Error during creating or confirming Intent
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error: ${paymentIntentResult['error']}')));
-        return;
-      }
-
-      if (paymentIntentResult['clientSecret'] != null &&
-          paymentIntentResult['requiresAction'] == null) {
-        // Payment succedeed
-
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content:
-                Text('Success!: The payment was confirmed successfully!')));
-        return;
-      }
-
-      if (paymentIntentResult['clientSecret'] != null &&
-          paymentIntentResult['requiresAction'] == true) {
-        // 4. if payment requires action calling handleNextAction
-        final paymentIntent = await Stripe.instance.handleNextAction(
-          paymentIntentResult['clientSecret'],
-          returnURL: 'flutterstripe://redirect',
-        );
-
-        if (paymentIntent.status == PaymentIntentsStatus.RequiresConfirmation) {
-          // 5. Call API to confirm intent
-          await confirmIntent(paymentIntent.id);
-        } else {
-          // Payment succedeed
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text('Error: ${paymentIntentResult['error']}')));
-        }
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Error: $e')));
-      rethrow;
-    }
-  }
-
-  Future<void> confirmIntent(String paymentIntentId) async {
-    final result = await callNoWebhookPayEndpointIntentId(
-        paymentIntentId: paymentIntentId);
-    if (result['error'] != null) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Error: ${result['error']}')));
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Success!: The payment was confirmed successfully!')));
-    }
-  }
-
-  Future<Map<String, dynamic>> callNoWebhookPayEndpointIntentId({
-    required String paymentIntentId,
-  }) async {
-    final url = Uri.parse('$kApiUrl/charge-card-off-session');
-    final response = await http.post(
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: json.encode({'paymentIntentId': paymentIntentId}),
-    );
-    return json.decode(response.body);
-  }
-
-  Future<Map<String, dynamic>> callNoWebhookPayEndpointMethodId({
-    required bool useStripeSdk,
-    required String paymentMethodId,
-    required String currency,
-    List<String>? items,
-  }) async {
-    final url = Uri.parse('$kApiUrl/pay-without-webhooks');
-    final response = await http.post(
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: json.encode({
-        'useStripeSdk': useStripeSdk,
-        'paymentMethodId': paymentMethodId,
-        'currency': currency,
-        'items': items
-      }),
-    );
-    return json.decode(response.body);
-  }
-}
-class ExampleScaffold extends StatelessWidget {
-  final List<Widget> children;
-  final List<String> tags;
-  final String title;
-  final EdgeInsets? padding;
-  const ExampleScaffold({
-    Key? key,
-    this.children = const [],
-    this.tags = const [],
-    this.title = '',
-    this.padding,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(),
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            SizedBox(height: 60),
-            Padding(
-              child:
-                  Text(title, style: Theme.of(context).textTheme.headlineSmall),
-              padding: EdgeInsets.symmetric(horizontal: 20),
-            ),
-            SizedBox(height: 4),
-            Padding(
-              child: Row(
-                children: [
-                  for (final tag in tags) Chip(label: Text(tag)),
-                ],
-              ),
-              padding: EdgeInsets.symmetric(horizontal: 20),
-            ),
-            SizedBox(height: 20),
-            if (padding != null)
-              Padding(
-                padding: padding!,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: children,
-                ),
-              )
-            else
-              ...children,
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class LoadingButton extends StatefulWidget {
-  final Future Function()? onPressed;
-  final String text;
-
-  const LoadingButton({Key? key, required this.onPressed, required this.text})
-      : super(key: key);
-
-  @override
-  _LoadingButtonState createState() => _LoadingButtonState();
-}
-
-class _LoadingButtonState extends State<LoadingButton> {
-  bool _isLoading = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.max,
-      children: [
-        Expanded(
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(vertical: 12)),
-            onPressed:
-                (_isLoading || widget.onPressed == null) ? null : _loadFuture,
-            child: _isLoading
-                ? SizedBox(
-                    height: 22,
-                    width: 22,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                    ))
-                : Text(widget.text),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Future<void> _loadFuture() async {
-    setState(() {
-      _isLoading = true;
-    });
-
-    try {
-      await widget.onPressed!();
-    } catch (e, s) {
-      log(e.toString(), error: e, stackTrace: s);
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Error $e')));
-      rethrow;
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
-  }
-}
-
-class ResponseCard extends StatelessWidget {
-  final String response;
-  const ResponseCard({Key? key, required this.response}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: ColorValues.blackColor,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      padding: EdgeInsets.all(12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(
-            'RESPONSE',
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Theme.of(context)
-                      .textTheme
-                      .bodySmall
-                      ?.color
-                      ?.withOpacity(0.5),
-                ),
-          ),
-          SizedBox(height: 12),
-          Text(response),
-        ],
       ),
     );
   }

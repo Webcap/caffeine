@@ -3,7 +3,7 @@ description: A new Flutter project.
 
 publish_to: "none"
 
-version: 1.6.2
+version: 1.6.3-dev
 
 environment:
   sdk: ">=2.17.6 <3.0.0"
@@ -70,6 +70,7 @@ dependencies:
   webview_flutter: ^3.0.4
   pay: ^1.1.2
   flutter_stripe: ^9.5.0+1
+  flutter_credit_card: ^4.0.1
 
 dev_dependencies:
   flutter_lints: ^2.0.0

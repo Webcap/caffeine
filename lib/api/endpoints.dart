@@ -10,11 +10,11 @@ class Endpoints {
         '=$page';
   }
 
-  static String nowPlayingMoviesUrl(int page, String l) {
+  static String nowPlayingMoviesUrl(String l) {
     return '$TMDB_API_BASE_URL'
         '/movie/now_playing?api_key='
         '$TMDB_API_KEY'
-        '&page=$page&language=$l';
+        '&language=$l';
   }
 
   static String getCreditsUrl(int id, String l) {
@@ -90,12 +90,12 @@ class Endpoints {
     return "$TMDB_API_BASE_URL/person/$personId?api_key=$TMDB_API_KEY&language=$l&append_to_response=movie_credits";
   }
 
-  static watchProvidersMovies(int providerId, int page, String l) {
+  static watchProvidersMovies(int providerId, String l) {
     return '$TMDB_API_BASE_URL'
         '/discover/movie?api_key='
         '$TMDB_API_KEY'
         '&language=$l&sort_by=popularity'
-        '.desc&include_video=false&page=$page'
+        '.desc&include_video=false'
         '&with_watch_providers=$providerId'
         '&watch_region=US';
   }

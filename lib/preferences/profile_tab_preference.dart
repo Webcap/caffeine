@@ -1,3 +1,5 @@
+// ignore_for_file: unused_import
+
 import 'package:caffiene/screens/common/about.dart';
 import 'package:caffiene/screens/common/helpcenter.dart';
 import 'package:caffiene/screens/common/server_status_screen.dart';

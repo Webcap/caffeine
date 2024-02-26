@@ -75,7 +75,7 @@ class _MainMoviesDisplayState extends State<MainMoviesDisplay> {
           ),
           ScrollingMovies(
             title: tr("now_playing"),
-            api: Endpoints.nowPlayingMoviesUrl(1, lang),
+            api: Endpoints.nowPlayingMoviesUrl(lang),
             discoverType: 'now_playing',
             isTrending: false,
             includeAdult: includeAdult,
