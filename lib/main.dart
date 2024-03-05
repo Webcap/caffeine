@@ -14,6 +14,7 @@ import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
+import 'package:payment_client/payment_client.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:caffiene/utils/constant.dart';
 
@@ -79,6 +80,8 @@ Future<void> appInitialize() async {
     anonKey: dotenv.env['SUPABASE_ANNON_KEY']!,
   );
 }
+
+final paymentClient = PaymentClient();
 
 void main() async {
   await appInitialize();

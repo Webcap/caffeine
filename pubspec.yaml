@@ -24,6 +24,8 @@ dependencies:
   flutter_download_manager: ^0.5.4
   device_info_plus: ^8.2.2
   dio: ^4.0.6
+  payment_client:
+    path: packages/payment_client
   dynamic_color: ^1.6.3
   easy_localization: ^3.0.2
   firebase_analytics: ^10.6.4
@@ -44,7 +46,7 @@ dependencies:
   google_fonts: ^4.0.4
   google_nav_bar: ^5.0.6
   google_sign_in: ^6.1.0
-  http: ^0.13.4
+  http: ^1.1.0
   intl: ^0.18.0
   mixpanel_flutter: ^2.1.1
   native_device_orientation: ^1.1.4
