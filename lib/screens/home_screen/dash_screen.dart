@@ -1,6 +1,6 @@
 import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:caffiene/screens/common/update_screen.dart';
-import 'package:caffiene/screens/user/profile_page.dart';
+import 'package:caffiene/screens/profile/profile_page.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';

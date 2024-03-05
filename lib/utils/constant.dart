@@ -28,7 +28,7 @@ const String STREAMING_SERVER = "vidcloud";
 String openSubtitlesKey = dotenv.env['OPENSUBTITLES_API_KEY']!;
 String mixpanelKey = dotenv.env['MIXPANEL_API_KEY']!;
 String stripeSecret = dotenv.env['STRIPE_SECRET']!;
-String stripePublic = dotenv.env['STRIPE_PUBLIC']!;
+String stripePublic = 'pk_test_51OmrWqJavIFj8ajQuL3d9ZfgfcoN0P5nqe4UhZhRFNsSzFASzSwMQo4VdBXmYCJvmPbJIyOGwl8twZplVcBkBzW400nIf9kIrb';
 
 //VIDEO PROVIDERS//
 const String STREAMING_SERVER_FLIXHQ = "vidcloud";

@@ -1,7 +1,7 @@
 // ignore_for_file: must_be_immutable
 
 import 'package:caffiene/provider/settings_provider.dart';
-import 'package:caffiene/screens/common/stripe_card.dart';
+import 'package:caffiene/screens/common/addNewCard.dart';
 import 'package:caffiene/utils/app_images.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/utils/constant.dart';
@@ -291,7 +291,7 @@ class _paymentMethodState extends State<paymentMethod> {
                             print("Apple Pay");
                           } else if (payment == "Select Card") {
                             Get.to(() =>
-                              addCardScreen()
+                              AddNewCard()
                             );
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(

@@ -64,6 +64,16 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                       nextScreen(context, const BookmarkScreen());
                     },
                   ),
+                  ListTile(
+                    leading: Icon(
+                      FontAwesomeIcons.football,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    title: Text("Sports"),
+                    onTap: () {
+                      nextScreen(context, const LiveSportsScreen());
+                    },
+                  ),
                   appDependencyProvider.displayOTTDrawer == true
                       ? ListTile(
                           leading: Icon(

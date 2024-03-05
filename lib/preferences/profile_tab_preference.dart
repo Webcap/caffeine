@@ -4,7 +4,7 @@ import 'package:caffiene/screens/common/about.dart';
 import 'package:caffiene/screens/common/helpcenter.dart';
 import 'package:caffiene/screens/common/server_status_screen.dart';
 import 'package:caffiene/screens/settings/settings.dart';
-import 'package:caffiene/screens/user/edit_profile.dart';
+import 'package:caffiene/screens/profile/edit_profile.dart';
 import 'package:caffiene/screens/watch_history/watch_history_v2.dart';
 import 'package:caffiene/utils/app_images.dart';
 import 'package:caffiene/utils/helpers/web_page.dart';

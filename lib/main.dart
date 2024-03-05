@@ -40,7 +40,6 @@ Future<void> appInitialize() async {
   await _initialization;
   FirebaseMessaging.onBackgroundMessage(_messageHandler);
   await FlutterDownloader.initialize(debug: true, ignoreSsl: true);
-
   await settingsProvider.getCurrentThemeMode();
   await settingsProvider.getCurrentMaterial3Mode();
   await settingsProvider.initMixpanel();
