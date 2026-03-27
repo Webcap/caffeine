@@ -62,6 +62,7 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
 
   int currentProviderIndex = 0;
   String? successProviderCode;
+  String? imdbId;
 
   @override
   void initState() {
@@ -221,6 +222,7 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
                   Provider.of<SettingsProvider>(context).subtitleTextStyle,
               availableProviders: videoProviders,
               currentProviderCode: successProviderCode,
+              imdbId: imdbId,
             );
           },
         ));
@@ -280,15 +282,16 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
       final proxyUrl =
           Provider.of<AppDependencyProvider>(context, listen: false).tmdbProxy;
       try {
-        final value = await fetchSocialLinks(
+        final imdbValue = await fetchSocialLinks(
           Endpoints.getExternalLinksForTV(widget.metadata.tvId!, "en"),
           isProxyEnabled,
           proxyUrl,
         );
-        if (value.imdbId != null) {
+        imdbId = imdbValue.imdbId;
+        if (imdbId != null) {
           final extSubs = await getExternalSubtitle(
             Endpoints.searchExternalEpisodeSubtitles(
-              value.imdbId!,
+              imdbId!,
               widget.metadata.episodeNumber!,
               widget.metadata.seasonNumber!,
               supportedLanguages[foundIndex].languageCode,

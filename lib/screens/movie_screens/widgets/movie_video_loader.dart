@@ -61,6 +61,7 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
 
   int currentProviderIndex = 0;
   String? successProviderCode;
+  String? imdbId;
 
   @override
   void initState() {
@@ -246,6 +247,7 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
                   Provider.of<SettingsProvider>(context).subtitleTextStyle,
               availableProviders: videoProviders,
               currentProviderCode: successProviderCode,
+              imdbId: imdbId,
             );
           },
         ));
@@ -303,15 +305,18 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
       final proxyUrl =
           Provider.of<AppDependencyProvider>(context, listen: false).tmdbProxy;
       try {
-        final value = await fetchSocialLinks(
+        final imdbValue = await fetchSocialLinks(
           Endpoints.getExternalLinksForMovie(widget.metadata.movieId!, "en"),
           isProxyEnabled,
           proxyUrl,
         );
-        if (value.imdbId != null) {
+        imdbId = imdbValue.imdbId;
+        if (imdbId != null) {
           final extSubs = await getExternalSubtitle(
             Endpoints.searchExternalMovieSubtitles(
-                value.imdbId!, supportedLanguages[foundIndex].languageCode),
+              imdbId!,
+              supportedLanguages[foundIndex].languageCode,
+            ),
             appDep.opensubtitlesKey,
           );
           if (extSubs.isNotEmpty &&

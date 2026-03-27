@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:caffiene/controller/recently_watched_database_controller.dart';
 import 'package:caffiene/functions/functions.dart';
 import 'package:caffiene/functions/video_utils.dart';
@@ -24,8 +23,24 @@ import 'package:flutter/material.dart';
 import 'package:better_player/better_player.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:caffiene/screens/player/widgets/language_picker_sheet.dart';
+import 'package:caffiene/functions/network.dart';
+import 'package:caffiene/api/endpoints.dart';
 
 class Player extends StatefulWidget {
+  final Map<String, String> sources;
+  final List<BetterPlayerSubtitlesSource> subs;
+  final List<Color> colors;
+  final SettingsProvider settings;
+  final MovieStreamMetadata? movieMetadata;
+  final TVStreamMetadata? tvMetadata;
+  final MediaType? mediaType;
+  final String? subtitleStyle;
+  final List<VideoProvider>? availableProviders;
+  final String? currentProviderCode;
+  final Map<String, String>? headers;
+  final String? imdbId;
+
   const Player(
       {required this.sources,
       required this.subs,
@@ -38,18 +53,8 @@ class Player extends StatefulWidget {
       this.availableProviders,
       this.currentProviderCode,
       this.headers,
+      this.imdbId,
       super.key});
-  final Map<String, String> sources;
-  final List<BetterPlayerSubtitlesSource> subs;
-  final List<Color> colors;
-  final SettingsProvider settings;
-  final MovieStreamMetadata? movieMetadata;
-  final TVStreamMetadata? tvMetadata;
-  final MediaType? mediaType;
-  final String? subtitleStyle;
-  final List<VideoProvider>? availableProviders;
-  final String? currentProviderCode;
-  final Map<String, String>? headers;
 
   @override
   State<Player> createState() => _PlayerState();
@@ -143,7 +148,29 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
         enableAudioTracks: true,
         controlBarHeight: 50,
         watchingText: tr("watching_text"),
-        playerTimeMode: settings.playerTimeDisplay);
+        playerTimeMode: settings.playerTimeDisplay,
+        overflowMenuCustomItems: [
+          BetterPlayerOverflowMenuItem(
+            Icons.language,
+            tr("search_more_subtitles"),
+            () async {
+              // Close overflow menu first
+              Navigator.of(_betterPlayerKey.currentContext!).pop();
+
+              if (!mounted) return;
+              final langCode = await showModalBottomSheet<String>(
+                context: context,
+                isScrollControlled: true,
+                backgroundColor: Colors.transparent,
+                builder: (context) => const LanguagePickerSheet(),
+              );
+
+              if (langCode != null) {
+                _searchMoreSubtitles(langCode);
+              }
+            },
+          ),
+        ]);
     BetterPlayerConfiguration betterPlayerConfiguration =
         BetterPlayerConfiguration(
             autoDetectFullscreenDeviceOrientation: true,
@@ -165,6 +192,7 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
                 fontColor: foregroundColor,
                 outlineEnabled: false,
                 fontSize: widget.settings.subtitleFontSize.toDouble()));
+
 
     _currentSources = Map.from(widget.sources);
     _currentSubs = List.from(widget.subs);
@@ -724,6 +752,151 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
         elapsedSeconds: elapsed ~/ 1000,
       ),
     );
+  }
+
+  Future<void> _searchMoreSubtitles(String langCode) async {
+    if (widget.imdbId == null) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text("Cannot search subtitles without IMDB ID")),
+        );
+      }
+      return;
+    }
+
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Searching for $langCode subtitles...")),
+      );
+    }
+
+    try {
+      final appDep = Provider.of<AppDependencyProvider>(context, listen: false);
+      final searchUrl = widget.mediaType == MediaType.movie
+          ? Endpoints.searchExternalMovieSubtitles(widget.imdbId!, langCode)
+          : Endpoints.searchExternalEpisodeSubtitles(
+              widget.imdbId!,
+              widget.tvMetadata!.episodeNumber!,
+              widget.tvMetadata!.seasonNumber!,
+              langCode,
+            );
+
+      final subtitleDataList = await getExternalSubtitle(
+        searchUrl,
+        appDep.opensubtitlesKey,
+      );
+
+      if (subtitleDataList.isNotEmpty) {
+        final List<BetterPlayerSubtitlesSource> newExternalSubs = [];
+
+        for (var subData in subtitleDataList) {
+          final fileId = subData.attr?.files?.first.fileId;
+          if (fileId != null) {
+            final download = await downloadExternalSubtitle(
+              Endpoints.externalSubtitleDownload(),
+              fileId,
+              appDep.opensubtitlesKey,
+            );
+
+            if (download.link != null) {
+              newExternalSubs.add(
+                BetterPlayerSubtitlesSource(
+                  name: "${subData.attr?.language ?? langCode} ($fileId)",
+                  urls: [download.link!],
+                  type: BetterPlayerSubtitlesSourceType.network,
+                ),
+              );
+            }
+          }
+        }
+
+        if (newExternalSubs.isNotEmpty) {
+          final List<BetterPlayerSubtitlesSource> updatedSubs = [
+            ..._currentSubs,
+            ...newExternalSubs,
+          ];
+
+          // Filter duplicates
+          final Map<String, BetterPlayerSubtitlesSource> uniqueSubs = {};
+          for (var sub in updatedSubs) {
+            uniqueSubs[sub.name!] = sub;
+          }
+
+          if (mounted) {
+            setState(() {
+              _currentSubs = uniqueSubs.values.toList();
+            });
+          }
+
+          // Re-setup data source to include new subtitles
+          final currentPosition =
+              _betterPlayerController.videoPlayerController?.value.position ??
+                  Duration.zero;
+          final currentUrl = _currentSources.isNotEmpty
+              ? _currentSources.values.first
+              : widget.sources.values.first;
+
+          await _betterPlayerController.setupDataSource(
+            BetterPlayerDataSource(
+              BetterPlayerDataSourceType.network,
+              currentUrl,
+              resolutions:
+                  _currentSources.isNotEmpty ? _currentSources : widget.sources,
+              subtitles: _currentSubs,
+              useAsmsSubtitles: true,
+              useAsmsAudioTracks: true,
+              useAsmsTracks: true,
+              headers: widget.headers,
+              videoFormat: VideoUtils.looksLikeHls(currentUrl)
+                  ? BetterPlayerVideoFormat.hls
+                  : null,
+              cacheConfiguration: BetterPlayerCacheConfiguration(
+                useCache: true,
+                preCacheSize: 471859200 * 471859200,
+                maxCacheSize: 1073741824 * 1073741824,
+                maxCacheFileSize: 471859200 * 471859200,
+                key: generateCacheKey(),
+              ),
+              bufferingConfiguration: betterPlayerBufferingConfiguration,
+              preferredAudioLanguage: settings.defaultAudioLanguage,
+            ),
+          );
+
+          _betterPlayerController.seekTo(currentPosition);
+          _betterPlayerController.play();
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content:
+                    Text("Found ${newExternalSubs.length} new subtitles")),
+          );
+        }
+        } else {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                  content: Text("No subtitles found for this language")),
+            );
+          }
+        }
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+                content: Text("No subtitles found for this language")),
+          );
+        }
+      }
+    } catch (e) {
+      debugPrint("Error searching subtitles: $e");
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Error searching subtitles")),
+        );
+      }
+    }
   }
 
   @override
