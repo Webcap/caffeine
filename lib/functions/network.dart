@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 
@@ -418,7 +419,12 @@ Future<TV> getTV(String api, bool isProxyEnabled, String proxyUrl) async {
 Future<String> getVttFileAsString(String url) async {
   try {
     var response = await retryOptions.retry(
-      () => http.get(Uri.parse(url)),
+      () => http.get(
+        Uri.parse(url),
+        headers: {
+          'User-Agent': 'caffiene v2.0.0',
+        },
+      ),
       retryIf: (e) => e is SocketException || e is TimeoutException,
     );
     if (response.statusCode == 200) {
@@ -560,18 +566,35 @@ Future<List<SubtitleData>> getExternalSubtitle(String api, String key) async {
   ExternalSubtitle subData;
 
   try {
+    debugPrint('[OpenSubtitles Search] Request: $api');
+    debugPrint('[OpenSubtitles Search] API Key present: ${key.isNotEmpty}');
+    final headers = {
+      "Api-Key": key,
+      'User-Agent': 'caffiene v2.0.0',
+      'X-User-Agent': 'caffiene v2.0.0',
+      'Accept': 'application/json',
+    };
     var res = await retryOptions.retry(
-      () =>
-          http.get(Uri.parse(api), headers: {"Api-Key": key}).timeout(timeOut),
+      () => http.get(Uri.parse(api), headers: headers).timeout(timeOut),
       retryIf: (e) => e is SocketException || e is TimeoutException,
     );
 
-    var decodeRes = jsonDecode(res.body);
-    if (decodeRes.containsKey('message') || res.statusCode != 200) {
+    debugPrint('[OpenSubtitles Search] Status: ${res.statusCode}');
+    
+    dynamic decodeRes;
+    try {
+      decodeRes = jsonDecode(res.body);
+    } catch (e) {
+      debugPrint('[OpenSubtitles Search] JSON Decode Failed. Body preview: ${res.body.substring(0, min(500, res.body.length))}');
+      rethrow;
+    }
+
+    if (res.statusCode != 200 || (decodeRes is Map && decodeRes.containsKey('message'))) {
       throw ServerDownException();
     }
     subData = ExternalSubtitle.fromJson(decodeRes);
   } catch (e) {
+    debugPrint('[OpenSubtitles Search] Error: $e');
     rethrow;
   }
 
@@ -581,8 +604,11 @@ Future<List<SubtitleData>> getExternalSubtitle(String api, String key) async {
 Future<SubtitleDownload> downloadExternalSubtitle(
     String api, int fileId, String key) async {
   SubtitleDownload sub;
+  debugPrint('[OpenSubtitles Download] Request: $api | file_id: $fileId');
+  debugPrint('[OpenSubtitles Download] API Key present: ${key.isNotEmpty}');
   final Map<String, String> headers = {
-    'User-Agent': 'caffeine v2.4.0',
+    'User-Agent': 'caffiene v2.0.0',
+    'X-User-Agent': 'caffiene v2.0.0',
     'Accept': 'application/json',
     'Content-Type': 'application/json',
     'Api-Key': key
@@ -593,8 +619,21 @@ Future<SubtitleDownload> downloadExternalSubtitle(
       () => http.post(Uri.parse(api), headers: headers, body: body),
       retryIf: (e) => e is SocketException || e is TimeoutException,
     );
-    var decodeRes = jsonDecode(response.body);
+    
+    debugPrint('[OpenSubtitles Download] Status: ${response.statusCode}');
+    
+    dynamic decodeRes;
+    try {
+      decodeRes = jsonDecode(response.body);
+    } catch (e) {
+      debugPrint('[OpenSubtitles Download] JSON Decode Failed. Body preview: ${response.body.substring(0, min(500, response.body.length))}');
+      rethrow;
+    }
+    
     sub = SubtitleDownload.fromJson(decodeRes);
+  } catch (e) {
+    debugPrint('[OpenSubtitles Download] Error: $e');
+    rethrow;
   } finally {
     client.close();
   }

@@ -335,15 +335,15 @@ class Endpoints {
     return '${_b(baseUrl)}meta/tmdb/watch/$episodeId?id=$mediaId&server=$server';
   }
 
-  static String searchExternalMovieSubtitles(String imdbId, String language) {
+  static String searchExternalMovieSubtitles(int tmdbId, String languages) {
     return '$opensubtitlesBaseUrl'
-        '/subtitles?imdb_id=$imdbId&languages=$language&ai_translated=exclude';
+        '/subtitles?tmdb_id=$tmdbId&languages=$languages&ai_translated=exclude';
   }
 
   static String searchExternalEpisodeSubtitles(
-      String imdbId, int episodeNum, int seasonNum, String language) {
+      int tmdbId, int episodeNum, int seasonNum, String languages) {
     return '$opensubtitlesBaseUrl'
-        '/subtitles?imdb_id=$imdbId&languages=$language&ai_translated=exclude&season_number=$seasonNum&episode_number=$episodeNum';
+        '/subtitles?parent_tmdb_id=$tmdbId&languages=$languages&ai_translated=exclude&season_number=$seasonNum&episode_number=$episodeNum';
   }
 
   static String externalSubtitleDownload() {

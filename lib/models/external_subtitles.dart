@@ -23,12 +23,14 @@ class SubtitleData {
 }
 
 class SubtitleAttr {
-  SubtitleAttr({required this.files, this.language});
+  SubtitleAttr({required this.files, this.language, this.languageName});
   List<SubtitleFiles>? files;
   String? language;
+  String? languageName;
 
   SubtitleAttr.fromJson(Map<String, dynamic> json) {
     language = json['language'];
+    languageName = json['language_name'];
     if (json['files'] != null) {
       files = [];
       json['files'].forEach((v) {

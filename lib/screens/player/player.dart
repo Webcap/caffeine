@@ -40,7 +40,6 @@ class Player extends StatefulWidget {
   final List<VideoProvider>? availableProviders;
   final String? currentProviderCode;
   final Map<String, String>? headers;
-  final String? imdbId;
 
   const Player(
       {required this.sources,
@@ -54,7 +53,6 @@ class Player extends StatefulWidget {
       this.availableProviders,
       this.currentProviderCode,
       this.headers,
-      this.imdbId,
       super.key});
 
   @override
@@ -737,9 +735,6 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
   }
 
   Future<void> _openSubtitleSelectionSheet() async {
-    // Close overflow menu first
-    Navigator.of(_betterPlayerKey.currentContext!).pop();
-
     if (!mounted) return;
 
     final currentSub = _betterPlayerController.betterPlayerSubtitlesSource;
@@ -777,28 +772,13 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
   }
 
   Future<void> _searchMoreSubtitles(String langCode) async {
-    if (widget.imdbId == null) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text("Cannot search subtitles without IMDB ID")),
-        );
-      }
-      return;
-    }
-
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Searching for $langCode subtitles...")),
-      );
-    }
-
     try {
       final appDep = Provider.of<AppDependencyProvider>(context, listen: false);
       final searchUrl = widget.mediaType == MediaType.movie
-          ? Endpoints.searchExternalMovieSubtitles(widget.imdbId!, langCode)
+          ? Endpoints.searchExternalMovieSubtitles(
+              widget.movieMetadata!.movieId!, langCode)
           : Endpoints.searchExternalEpisodeSubtitles(
-              widget.imdbId!,
+              widget.tvMetadata!.tvId!,
               widget.tvMetadata!.episodeNumber!,
               widget.tvMetadata!.seasonNumber!,
               langCode,

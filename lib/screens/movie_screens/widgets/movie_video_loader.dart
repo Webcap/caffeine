@@ -61,7 +61,6 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
 
   int currentProviderIndex = 0;
   String? successProviderCode;
-  String? imdbId;
 
   @override
   void initState() {
@@ -245,9 +244,7 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
               movieMetadata: widget.metadata,
               subtitleStyle:
                   Provider.of<SettingsProvider>(context).subtitleTextStyle,
-              availableProviders: videoProviders,
               currentProviderCode: successProviderCode,
-              imdbId: imdbId,
             );
           },
         ));
@@ -289,62 +286,69 @@ class _MovieVideoLoaderState extends State<MovieVideoLoader> {
       }
     }
     final defaultLanguage = supportedLanguages[foundIndex].englishName;
+    final List<RegularSubtitleLinks> allSubtitles = List.from(subtitles);
 
-    subs = await VideoUtils.parseSubtitles(
-      subtitles: subtitles,
-      defaultLanguage: defaultLanguage,
-      fetchAllLanguages: settings.fetchSpecificLangSubs,
-      getVttContent: getVttFileAsString,
-    );
-
-    if (subs.isEmpty &&
-        appDep.useExternalSubtitles &&
-        widget.metadata.movieId != null) {
-      final isProxyEnabled =
-          Provider.of<SettingsProvider>(context, listen: false).enableProxy;
-      final proxyUrl =
-          Provider.of<AppDependencyProvider>(context, listen: false).tmdbProxy;
+    // Always try to fetch best quality external subtitles if enabled
+    if (appDep.useExternalSubtitles && widget.metadata.movieId != null) {
       try {
-        final imdbValue = await fetchSocialLinks(
-          Endpoints.getExternalLinksForMovie(widget.metadata.movieId!, "en"),
-          isProxyEnabled,
-          proxyUrl,
+        // Automatically search for English, Spanish, and the user's default language
+        final searchLangs = {
+          'en',
+          'es',
+          supportedLanguages[foundIndex].languageCode
+        }.join(',');
+
+        final extSubs = await getExternalSubtitle(
+          Endpoints.searchExternalMovieSubtitles(
+            widget.metadata.movieId!,
+            searchLangs,
+          ),
+          appDep.opensubtitlesKey,
         );
-        imdbId = imdbValue.imdbId;
-        if (imdbId != null) {
-          final extSubs = await getExternalSubtitle(
-            Endpoints.searchExternalMovieSubtitles(
-              imdbId!,
-              supportedLanguages[foundIndex].languageCode,
-            ),
-            appDep.opensubtitlesKey,
-          );
-          if (extSubs.isNotEmpty &&
-              extSubs[0].attr?.files != null &&
-              extSubs[0].attr!.files!.isNotEmpty &&
-              extSubs[0].attr!.files![0].fileId != null) {
-            final download = await downloadExternalSubtitle(
-              Endpoints.externalSubtitleDownload(),
-              extSubs[0].attr!.files![0].fileId!,
-              appDep.opensubtitlesKey,
-            );
-            if (download.link != null) {
-              subs.add(
-                BetterPlayerSubtitlesSource(
-                  name: supportedLanguages[foundIndex].englishName,
-                  urls: [download.link!],
-                  selectedByDefault: true,
-                  type: BetterPlayerSubtitlesSourceType.network,
-                ),
+
+        if (extSubs.isNotEmpty) {
+          // Track which languages we've already added to prioritize diversity (one best per lang)
+          final addedLangs = <String>{};
+          int addedCount = 0;
+
+          for (var sub in extSubs) {
+            if (addedCount >= 4) break; // Limit total external subs
+
+            final lang = sub.attr?.language ?? '';
+            final fileId = sub.attr?.files?.first.fileId;
+
+            if (fileId != null && !addedLangs.contains(lang)) {
+              final download = await downloadExternalSubtitle(
+                Endpoints.externalSubtitleDownload(),
+                fileId,
+                appDep.opensubtitlesKey,
               );
+
+              if (download.link != null) {
+                addedLangs.add(lang);
+                addedCount++;
+                allSubtitles.insert(
+                    0,
+                    RegularSubtitleLinks(
+                      language:
+                          '${sub.attr?.languageName ?? lang} (OpenSubtitles)',
+                      url: download.link,
+                    ));
+              }
             }
           }
         }
       } catch (e) {
-        GlobalMethods.showErrorScaffoldMessengerGeneral(
-            e is Exception ? e : Exception(e.toString()), context);
+        debugPrint('[MovieLoader] External subtitle search failed: $e');
       }
     }
+
+    subs = await VideoUtils.parseSubtitles(
+      subtitles: allSubtitles,
+      defaultLanguage: defaultLanguage,
+      fetchAllLanguages: settings.fetchSpecificLangSubs,
+      getVttContent: getVttFileAsString,
+    );
   }
 
   @override

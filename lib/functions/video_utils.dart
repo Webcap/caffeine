@@ -78,18 +78,23 @@ class VideoUtils {
 
     // 1. Identify which subtitles match the preferred language
     final preferredIndices = <int>{};
+    int? bestPreferredIndex;
     for (int i = 0; i < subtitles.length; i++) {
       final lang = (subtitles[i].language ?? '').toLowerCase();
-      if (lang.startsWith(defaultLanguage.toLowerCase()) || lang == defaultLanguage.toLowerCase()) {
+      if (lang.startsWith(defaultLanguage.toLowerCase()) ||
+          lang == defaultLanguage.toLowerCase()) {
         preferredIndices.add(i);
+        bestPreferredIndex ??= i;
       }
     }
 
     // 2. If no preferred language found, try to find English as fallback if it wasn't the default
-    if (preferredIndices.isEmpty && defaultLanguage.toLowerCase() != 'english') {
+    if (preferredIndices.isEmpty &&
+        defaultLanguage.toLowerCase() != 'english') {
       for (int i = 0; i < subtitles.length; i++) {
         if (_isDefaultEnglish(subtitles[i].language ?? '')) {
           preferredIndices.add(i);
+          bestPreferredIndex ??= i;
           break; // Just one fallback is enough
         }
       }
@@ -98,6 +103,7 @@ class VideoUtils {
     // 3. Fallback to the first one if still nothing
     if (preferredIndices.isEmpty) {
       preferredIndices.add(0);
+      bestPreferredIndex = 0;
     }
 
     // 4. Determine which subtitles to fetch
@@ -114,26 +120,20 @@ class VideoUtils {
       try {
         final url = subtitles[i].url ?? '';
         if (url.isEmpty) continue;
-        
+
         final content = await getVttContent(url);
-        final isPreferred = preferredIndices.contains(i);
+        final isDefault = i == bestPreferredIndex;
 
         subs.add(
           BetterPlayerSubtitlesSource(
             name: subtitles[i].language ?? 'Unknown',
-            selectedByDefault: isPreferred,
+            selectedByDefault: isDefault,
             content: url.toLowerCase().endsWith('srt')
                 ? content
                 : processVttFileTimestamps(content),
             type: BetterPlayerSubtitlesSourceType.memory,
           ),
         );
-
-        // If not fetching all, and we found a preferred one, we can stop
-        if (!fetchAllLanguages && isPreferred && preferredIndices.contains(i)) {
-          // Wait, we already added it. If there were multiple preferred ones,
-          // maybe we just want the first one? The current logic adds all preferred ones.
-        }
       } catch (e) {
         continue;
       }

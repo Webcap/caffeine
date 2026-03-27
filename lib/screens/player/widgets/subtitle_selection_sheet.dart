@@ -69,7 +69,7 @@ class _SubtitleSelectionSheetState extends State<SubtitleSelectionSheet> {
                   isSelected: widget.selectedSubtitle == null,
                   onTap: () {
                     widget.onSubtitleSelected(null);
-                    Navigator.pop(context);
+                    if (mounted) Navigator.of(context).pop();
                   },
                 ),
                 ...widget.subtitles.map((sub) => _buildSubtitleTile(
@@ -78,7 +78,7 @@ class _SubtitleSelectionSheetState extends State<SubtitleSelectionSheet> {
                       isSelected: widget.selectedSubtitle == sub,
                       onTap: () {
                         widget.onSubtitleSelected(sub);
-                        Navigator.pop(context);
+                        if (mounted) Navigator.of(context).pop();
                       },
                     )),
                 const Divider(),
@@ -87,7 +87,7 @@ class _SubtitleSelectionSheetState extends State<SubtitleSelectionSheet> {
                   title: tr("search_more_subtitles"),
                   icon: Icons.search,
                   onTap: () {
-                    Navigator.pop(context);
+                    if (mounted) Navigator.of(context).pop();
                     widget.onSearchPressed();
                   },
                 ),

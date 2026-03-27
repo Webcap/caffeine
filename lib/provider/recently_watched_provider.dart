@@ -465,26 +465,34 @@ class RecentProvider extends ChangeNotifier {
     return value;
   }
 
-  /// Completed movies watch time (minutes) in last 2 weeks.
-  int get completedMoviesMinutesLast2Weeks {
+  String formatWatchTime(int totalMinutes) {
+    if (totalMinutes <= 0) return '0m';
+    final int hours = totalMinutes ~/ 60;
+    final int minutes = totalMinutes % 60;
+
+    if (hours > 0) {
+      return '${hours}h${minutes}m';
+    } else {
+      return '${minutes}m';
+    }
+  }
+
+  /// Watch time (minutes) in last 2 weeks for movies.
+  int get movieWatchTimeMinutesLast2Weeks {
     int total = 0;
     for (final m in _movies) {
       if (!_isWithinLast2Weeks(m.dateTime)) continue;
-      if (!_isCompleted(m.elapsed, m.remaining)) continue;
-      final dur = _ensureMs(m.elapsed) + _ensureMs(m.remaining);
-      total += dur;
+      total += _ensureMs(m.elapsed);
     }
     return total ~/ 60000;
   }
 
-  /// Completed TV episodes watch time (minutes) in last 2 weeks.
-  int get completedTVMinutesLast2Weeks {
+  /// Watch time (minutes) in last 2 weeks for TV episodes.
+  int get tvWatchTimeMinutesLast2Weeks {
     int total = 0;
     for (final e in _episodes) {
       if (!_isWithinLast2Weeks(e.dateTime)) continue;
-      if (!_isCompleted(e.elapsed, e.remaining)) continue;
-      final dur = _ensureMs(e.elapsed) + _ensureMs(e.remaining);
-      total += dur;
+      total += _ensureMs(e.elapsed);
     }
     return total ~/ 60000;
   }

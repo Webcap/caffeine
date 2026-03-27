@@ -201,10 +201,10 @@ class _ProfilePageState extends State<ProfilePage> {
           );
         }
 
-        final moviesMin = recent.completedMoviesMinutesLast2Weeks;
-        final tvMin = recent.completedTVMinutesLast2Weeks;
-        final moviesHrs = (moviesMin / 60).toStringAsFixed(1);
-        final tvHrs = (tvMin / 60).toStringAsFixed(1);
+        final moviesMin = recent.movieWatchTimeMinutesLast2Weeks;
+        final tvMin = recent.tvWatchTimeMinutesLast2Weeks;
+        final moviesFormatted = recent.formatWatchTime(moviesMin);
+        final tvFormatted = recent.formatWatchTime(tvMin);
 
         return Scaffold(
           backgroundColor: bg,
@@ -332,7 +332,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 child: _WatchStatCard(
                                   icon: FontAwesomeIcons.clapperboard,
                                   label: tr('movies'),
-                                  value: '$moviesHrs h',
+                                  value: moviesFormatted,
                                   isDark: isDark,
                                 ),
                               ),
@@ -341,7 +341,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 child: _WatchStatCard(
                                   icon: Icons.live_tv_rounded,
                                   label: tr('tv_series'),
-                                  value: '$tvHrs h',
+                                  value: tvFormatted,
                                   isDark: isDark,
                                 ),
                               ),
