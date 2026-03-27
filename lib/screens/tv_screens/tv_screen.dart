@@ -32,6 +32,7 @@ class _MainTVDisplayState extends State<MainTVDisplay> {
   @override
   Widget build(BuildContext context) {
     var rEpisodes = Provider.of<RecentProvider>(context).upNextEpisodes;
+    var inProgress = Provider.of<RecentProvider>(context).inProgressEpisodes;
     final lang = Provider.of<SettingsProvider>(context).appLanguage;
     final featuredEvent =
         Provider.of<AppDependencyProvider>(context).featuredEvent;
@@ -47,9 +48,16 @@ class _MainTVDisplayState extends State<MainTVDisplay> {
             includeAdult: Provider.of<SettingsProvider>(context).isAdult,
             discoverType: 'discover',
           ),
-          rEpisodes.isEmpty
-              ? Container()
-              : ScrollingRecentEpisodes(episodesList: rEpisodes),
+          if (inProgress.isNotEmpty)
+            ScrollingRecentEpisodes(
+              episodesList: inProgress,
+              title: tr("recently_watched"),
+            ),
+          if (rEpisodes.isNotEmpty)
+            ScrollingRecentEpisodes(
+              episodesList: rEpisodes,
+              title: tr("up_next"),
+            ),
           ScrollingTV(
             includeAdult: Provider.of<SettingsProvider>(context).isAdult,
             title: tr("popular"),

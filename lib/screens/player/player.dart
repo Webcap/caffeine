@@ -26,6 +26,7 @@ import 'package:provider/provider.dart';
 import 'package:caffiene/screens/player/widgets/language_picker_sheet.dart';
 import 'package:caffiene/functions/network.dart';
 import 'package:caffiene/api/endpoints.dart';
+import 'package:caffiene/screens/player/widgets/subtitle_selection_sheet.dart';
 
 class Player extends StatefulWidget {
   final Map<String, String> sources;
@@ -143,32 +144,13 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
         overflowMenuIconsColor: widget.colors.first,
         overflowModalTextColor: widget.colors.first,
         overflowModalColor: widget.colors.last,
-        subtitlesIcon: Icons.closed_caption_rounded,
-        qualitiesIcon: Icons.hd_rounded,
-        enableAudioTracks: true,
-        controlBarHeight: 50,
-        watchingText: tr("watching_text"),
         playerTimeMode: settings.playerTimeDisplay,
+        enableSubtitles: false,
         overflowMenuCustomItems: [
           BetterPlayerOverflowMenuItem(
-            Icons.language,
-            tr("search_more_subtitles"),
-            () async {
-              // Close overflow menu first
-              Navigator.of(_betterPlayerKey.currentContext!).pop();
-
-              if (!mounted) return;
-              final langCode = await showModalBottomSheet<String>(
-                context: context,
-                isScrollControlled: true,
-                backgroundColor: Colors.transparent,
-                builder: (context) => const LanguagePickerSheet(),
-              );
-
-              if (langCode != null) {
-                _searchMoreSubtitles(langCode);
-              }
-            },
+            Icons.closed_caption_rounded,
+            tr("subtitles"),
+            () => _openSubtitleSelectionSheet(),
           ),
         ]);
     BetterPlayerConfiguration betterPlayerConfiguration =
@@ -754,6 +736,46 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
     );
   }
 
+  Future<void> _openSubtitleSelectionSheet() async {
+    // Close overflow menu first
+    Navigator.of(_betterPlayerKey.currentContext!).pop();
+
+    if (!mounted) return;
+
+    final currentSub = _betterPlayerController.betterPlayerSubtitlesSource;
+
+    await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => SubtitleSelectionSheet(
+        subtitles: _currentSubs,
+        selectedSubtitle: currentSub,
+        onSubtitleSelected: (sub) {
+          if (sub == null) {
+            _betterPlayerController.setupSubtitleSource(
+                BetterPlayerSubtitlesSource(
+                    type: BetterPlayerSubtitlesSourceType.none));
+          } else {
+            _betterPlayerController.setupSubtitleSource(sub);
+          }
+        },
+        onSearchPressed: () async {
+          final langCode = await showModalBottomSheet<String>(
+            context: context,
+            isScrollControlled: true,
+            backgroundColor: Colors.transparent,
+            builder: (context) => const LanguagePickerSheet(),
+          );
+
+          if (langCode != null) {
+            _searchMoreSubtitles(langCode);
+          }
+        },
+      ),
+    );
+  }
+
   Future<void> _searchMoreSubtitles(String langCode) async {
     if (widget.imdbId == null) {
       if (mounted) {
@@ -961,27 +983,6 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
                 isCasting ? Icons.cast_connected : Icons.cast,
                 color: isCasting ? Colors.white : null,
               ),
-            ),
-            const SizedBox(height: 8),
-            FloatingActionButton(
-              heroTag: 'externalFab',
-              onPressed: () {
-                if (mounted) {
-                  showModalBottomSheet(
-                      builder: (context) {
-                        return ExternalPlay(
-                          videoSources: _currentSources.isNotEmpty
-                              ? _currentSources
-                              : widget.sources,
-                          subtitleSources: _currentSubs.isNotEmpty
-                              ? _currentSubs
-                              : widget.subs,
-                        );
-                      },
-                      context: context);
-                }
-              },
-              child: const Icon(FontAwesomeIcons.arrowUpRightFromSquare),
             ),
           ],
         ),

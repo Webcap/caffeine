@@ -18,9 +18,11 @@ import 'package:caffiene/utils/constant.dart';
 import 'package:caffiene/widgets/mobile_context_menu.dart';
 
 class ScrollingRecentEpisodes extends StatefulWidget {
-  const ScrollingRecentEpisodes({required this.episodesList, super.key});
+  const ScrollingRecentEpisodes(
+      {required this.episodesList, required this.title, super.key});
 
   final List<RecentEpisode> episodesList;
+  final String title;
 
   @override
   State<ScrollingRecentEpisodes> createState() =>
@@ -55,7 +57,7 @@ class _ScrollingRecentEpisodesState extends State<ScrollingRecentEpisodes> {
                     const LeadingDot(),
                     Expanded(
                       child: Text(
-                        tr("up_next"),
+                        widget.title,
                         style: kTextHeaderStyle,
                       ),
                     ),

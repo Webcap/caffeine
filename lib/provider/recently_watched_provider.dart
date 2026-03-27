@@ -21,6 +21,9 @@ class RecentProvider extends ChangeNotifier {
   List<RecentEpisode> _episodes = [];
   List<RecentEpisode> get episodes => _episodes;
 
+  List<RecentEpisode> _inProgressEpisodes = [];
+  List<RecentEpisode> get inProgressEpisodes => _inProgressEpisodes;
+
   List<RecentEpisode> _upNextEpisodes = [];
   List<RecentEpisode> get upNextEpisodes => _upNextEpisodes;
 
@@ -245,13 +248,14 @@ class RecentProvider extends ChangeNotifier {
       }
 
       final List<RecentEpisode> result = [];
+      final List<RecentEpisode> inProgressList = [];
       final episodesToAdvance = <RecentEpisode>[];
 
       for (var e in latestBySeries.values) {
         if (_isCompleted(e.elapsed, e.remaining)) {
           episodesToAdvance.add(e);
         } else {
-          result.add(e);
+          inProgressList.add(e);
         }
       }
 
@@ -351,7 +355,14 @@ class RecentProvider extends ChangeNotifier {
       }
 
       _upNextEpisodes = result;
+      _inProgressEpisodes = inProgressList;
+
       _upNextEpisodes.sort((a, b) {
+        final da = a.dateTime ?? '';
+        final db = b.dateTime ?? '';
+        return db.compareTo(da);
+      });
+      _inProgressEpisodes.sort((a, b) {
         final da = a.dateTime ?? '';
         final db = b.dateTime ?? '';
         return db.compareTo(da);

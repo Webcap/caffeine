@@ -71,13 +71,13 @@ android {
             applicationIdSuffix ".dev"
             versionNameSuffix "-dev"
             manifestPlaceholders = [
-                appLabel: "caffeine Dev"
+                appLabel: "Caffeine (dev)"
             ]
         }
         prod {
             dimension "default"
             manifestPlaceholders = [
-                appLabel: "caffeine"
+                appLabel: "Caffeine"
             ]
         }
     }

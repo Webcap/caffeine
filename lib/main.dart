@@ -226,7 +226,7 @@ void runAppWithFlavor() {
 void main() {
   FlavorConfig.initialize(
     flavor: Flavor.prod,
-    appName: "caffeine",
+    appName: "Caffeine",
     baseUrl: 'http://144.62.246.54:4242',
   );
   runAppWithFlavor();

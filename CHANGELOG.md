@@ -1,5 +1,24 @@
 # Changelog
- 
+
+## [2.0.0+20260328] - 2026-03-27
+
+### Added
+- **Unified Subtitle Menu**: Integrated subtitle search directly into the subtitle selection menu for a more cohesive user experience.
+- **Multi-Language Subtitle Search**: Users can now search and inject subtitles in multiple languages directly from the player interface (Mobile & TV).
+- **Subtitles Overhaul**: Standardized subtitle loading and parsing logic across platforms, improving reliability and adding smart default selection.
+- **Background Bookmark Sync**: (TV) Automatic background synchronization of bookmarks for a seamless multi-device experience.
+- **Dynamic Sports Filtering**: Real-time filtering of terminal and stale matches from the "Live Now" dashboard, with a new 6-hour threshold for ghost matches.
+- **Enhanced Analytics**: Extended Mixpanel event tracking to include content playback and search queries.
+
+### Fixed
+- **SVG Asset Rendering**: Resolved `XmlParserException` in `server_rack.svg` and `chromecast.svg`.
+- **Wakelock Management**: Improved screen-on reliability during long playback sessions and updates.
+- **TV Pairing Focus**: Refined focus behavior on the "Get new code" button for TV enrollment.
+
+### Changed
+- **Update System Hardening**: Improved update reliability with automated checks and enhanced error handling.
+- **Subtitle UI**: New platform-specific dialogs for subtitle language selection (TV & Mobile).
+
 ## [2.0.3+20260325] - 2026-03-26
  
 ### Added
