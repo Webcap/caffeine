@@ -1,0 +1,21 @@
+{
+  "consumet_url": "https://api.consumet.org",
+  "vidscr_api": "",
+  "opensubtitles_key": "",
+  "streaming_server_dcva": "asianload",
+  "streaming_server_zoro": "vidcloud",
+  "ads_enabled": true,
+  "route": "tmDB",
+  "use_external_subtitles": false,
+  "ott_ads_enabled": true,
+  "trending_holiday_scroller": true,
+  "enable_stream": true,
+  "enable_chromecast_feature": true,
+  "enable_ott": true,
+  "caffeine_api_url": "http://localhost:8080",
+  "forced_update": false,
+  "latest_version": "1.7.1",
+  "vidsrc_server": "vidsrcembed",
+  "vidsrcto_server": "vidplay",
+  "tmdb_proxy": ""
+}

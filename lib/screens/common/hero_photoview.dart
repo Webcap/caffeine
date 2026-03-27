@@ -1,0 +1,179 @@
+// ignore_for_file: unused_local_variable
+
+import 'dart:io';
+import 'dart:isolate';
+import 'dart:ui';
+import 'package:caffiene/functions/functions.dart';
+import 'package:caffiene/provider/settings_provider.dart';
+import 'package:caffiene/utils/globlal_methods.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:photo_view/photo_view.dart';
+import 'package:provider/provider.dart';
+
+class HeroPhotoView extends StatefulWidget {
+  const HeroPhotoView(
+      {required this.imageProvider,
+      required this.currentIndex,
+      required this.name,
+      required this.heroId,
+      super.key});
+  final ImageProvider imageProvider;
+  final String heroId;
+  final int currentIndex;
+  final String name;
+
+  @override
+  State<HeroPhotoView> createState() => _HeroPhotoViewState();
+}
+
+class _HeroPhotoViewState extends State<HeroPhotoView> {
+  final ReceivePort _port = ReceivePort();
+
+  Future<String> createFolder(
+      String caffeineFolderName,
+      String imageTypeFolderName,
+      String posterFolder,
+      String stillFolder,
+      String personImageFolder) async {
+    final cinefolderName = caffeineFolderName;
+    final imagefolderName = imageTypeFolderName;
+    final posterFolderName = posterFolder;
+    final stillFolderName = stillFolder;
+    final personImageFolderName = personImageFolder;
+    final caffeinePath = Directory("storage/emulated/0/$cinefolderName");
+    final imageTypePath =
+        Directory("storage/emulated/0/caffeine/$imagefolderName");
+    final posterPath =
+        Directory("storage/emulated/0/caffeine/$posterFolderName");
+    final stillPath = Directory("storage/emulated/0/caffeine/$stillFolderName");
+    final personImagePath =
+        Directory("storage/emulated/0/caffeine/$personImageFolderName");
+
+    if ((await caffeinePath.exists())) {
+      imageTypePath.create();
+      posterPath.create();
+      stillPath.create();
+      personImagePath.create();
+      return caffeinePath.path;
+    } else {
+      caffeinePath.create();
+      posterPath.create();
+      imageTypePath.create();
+      stillPath.create();
+      personImagePath.create();
+      return caffeinePath.path;
+    }
+  }
+
+  @pragma('vm:entry-point')
+  static void downloadCallback(String id, int status, int progress) {
+    final SendPort send =
+        IsolateNameServer.lookupPortByName('downloader_send_port')!;
+    send.send([id, status, progress]);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    IsolateNameServer.registerPortWithName(
+        _port.sendPort, 'downloader_send_port');
+    _port.listen((dynamic data) {
+      String id = data[0];
+      DownloadTaskStatus status = data[1];
+      int progress = data[2];
+      setState(() {});
+    });
+
+    FlutterDownloader.registerCallback(downloadCallback);
+  }
+
+  @override
+  void dispose() {
+    IsolateNameServer.removePortNameMapping('downloader_send_port');
+    super.dispose();
+  }
+
+  void _download(String url, String currentIndex, String themeMode) async {
+    var externalStatus = await Permission.manageExternalStorage.status;
+    if (externalStatus.isPermanentlyDenied) {
+      GlobalMethods.showScaffoldMessage(tr("give_file_permission"), context);
+      return;
+    } else if (!externalStatus.isGranted) {
+      await Permission.manageExternalStorage.request().then((value) {
+        if (value.isDenied) {
+          GlobalMethods.showScaffoldMessage(
+              tr("give_file_permission_short"), context);
+          return;
+        }
+      });
+    }
+
+    if (externalStatus.isGranted) {
+      await createFolder(
+          'caffeine', 'Backdrops', 'Posters', 'Stills', 'Person Images');
+      await FlutterDownloader.enqueue(
+        url: url,
+        fileName: '${widget.name}_${createUniqueId()}.jpg',
+        headers: {}, // optional: header send with url (auth token etc)
+        savedDir: '/storage/emulated/0/caffeine/Person Images/',
+        showNotification:
+            true, // show download progress in status bar (for Android)
+        openFileFromNotification:
+            true, // click on notification to open downloaded file (for Android)
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
+    return SafeArea(
+      child: Scaffold(
+          appBar: AppBar(
+            title: Text(widget.name.endsWith('s')
+                ? tr("plular_person_image", namedArgs: {"name": widget.name})
+                : tr("singular_person_image",
+                    namedArgs: {"name": widget.name})),
+          ),
+          body: Column(
+            children: [
+              Expanded(
+                flex: 10,
+                child: PhotoView(
+                  imageProvider: widget.imageProvider,
+                  enableRotation: true,
+                  heroAttributes: PhotoViewHeroAttributes(tag: widget.heroId),
+                ),
+              ),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () async {
+                    _download(
+                        widget.heroId, '${widget.currentIndex + 1}', themeMode);
+                  },
+                  style: ButtonStyle(
+                    minimumSize: WidgetStateProperty.all(
+                        const Size(double.infinity, 50)),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.only(right: 8.0),
+                        child: Icon(FontAwesomeIcons.solidFloppyDisk),
+                      ),
+                      Text(tr("download")),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          )),
+    );
+  }
+}

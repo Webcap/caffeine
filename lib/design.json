@@ -1,0 +1,635 @@
+{
+    "meta": {
+      "productType": "Movie streaming / discovery mobile app",
+      "sourceConfidence": {
+        "centerScreen": "high",
+        "leftScreen": "medium",
+        "rightScreen": "medium"
+      },
+      "designIntent": [
+        "cinematic",
+        "premium",
+        "dark-first",
+        "poster-led",
+        "high contrast CTA",
+        "rounded modern mobile UI"
+      ],
+      "visualSummary": "The UI is a mobile movie app with a black, cinematic shell, large poster-driven hero imagery, red as the primary action color, subtle white typography, rounded cards, translucent circular icon buttons, and a persistent bottom navigation. The composition emphasizes movie artwork first, then metadata, ratings, synopsis, and one dominant call-to-action."
+    },
+  
+    "layoutModel": {
+      "appShell": {
+        "shape": "Full-height mobile viewport with large rounded outer corners",
+        "feel": "Edge-to-edge content inside a soft-radius device-safe frame",
+        "surfaceStyle": "Dark glass / matte black surface with faint gradients and subtle overlay layers",
+        "safeAreas": {
+          "top": "Reserved for status bar and overlay controls",
+          "bottom": "Reserved for persistent tab bar and gesture/home indicator"
+        }
+      },
+      "pageTypesInferred": [
+        "Home / discovery",
+        "Movie details",
+        "Onboarding / intro"
+      ],
+      "navigationPattern": {
+        "primary": "Bottom tab navigation",
+        "secondary": "Top overlay actions and carousels",
+        "contentFlow": "Poster hero -> title/meta -> ratings -> CTA -> synopsis/details"
+      }
+    },
+  
+    "responsiveBreakpoints": {
+      "tailwindDefaults": {
+        "sm": "640px",
+        "md": "768px",
+        "lg": "1024px",
+        "xl": "1280px",
+        "2xl": "1536px"
+      },
+      "behavior": {
+        "base": {
+          "target": "mobile default",
+          "layout": "single-column, full-screen mobile canvas",
+          "navigation": "bottom tab bar visible",
+          "hero": "large poster image occupying the upper half of the screen",
+          "actions": "overlay circular icon buttons in top corners"
+        },
+        "sm": {
+          "target": "large phones / small tablets",
+          "layout": "single column remains, but content can breathe more horizontally",
+          "hero": "wider content margins, slightly larger typography scale",
+          "cards": "poster carousels can increase visible card count from ~2 to ~3"
+        },
+        "md": {
+          "target": "tablet portrait / small landscape",
+          "layout": "movie detail may become a split layout",
+          "hero": "poster/media can sit above or left of metadata depending on orientation",
+          "navigation": "bottom nav may remain for app parity, but can expand spacing",
+          "content": "ratings and metadata can align in rows with more separation"
+        },
+        "lg": {
+          "target": "tablet landscape / desktop entry",
+          "layout": "2-column detail layout recommended: media left, content right",
+          "home": "carousels show 4–6 posters per row",
+          "onboarding": "full-bleed art with centered marketing copy"
+        },
+        "xl": {
+          "target": "desktop",
+          "layout": "content constrained within centered max-width frame",
+          "nav": "bottom nav can transform into side rail or top nav if needed, but visual language should remain identical",
+          "density": "same spacious feel; avoid turning it into a dense dashboard"
+        },
+        "2xl": {
+          "target": "large desktop",
+          "layout": "cinematic layouts with generous negative space",
+          "hero": "poster, trailer, cast, synopsis, and recommendations can coexist on one screen",
+          "surface": "retain dark immersive mood; avoid excessive whitespace without atmospheric backgrounds"
+        }
+      }
+    },
+  
+    "colorSystem": {
+      "strategy": "Use only two primary semantic palettes plus neutrals and accents for media-heavy surfaces. Red is the dominant brand/action color. The secondary palette is a violet-magenta tone used for branding, minor highlights, and decorative gradients.",
+      "primaryPalette": {
+        "name": "Crimson Red",
+        "tailwindLike": "rose/red family",
+        "tokens": {
+          "primary-50": "#FFF1F2",
+          "primary-100": "#FFE4E6",
+          "primary-200": "#FECDD3",
+          "primary-300": "#FDA4AF",
+          "primary-400": "#FB7185",
+          "primary-500": "#EF4444",
+          "primary-600": "#DC2626",
+          "primary-700": "#B91C1C",
+          "primary-800": "#991B1B",
+          "primary-900": "#7F1D1D"
+        },
+        "usage": [
+          "main CTA buttons",
+          "active floating action button",
+          "favorite/heart state",
+          "hero artwork color harmony",
+          "progressive emphasis and urgent highlights"
+        ]
+      },
+      "secondaryPalette": {
+        "name": "Electric Violet",
+        "tailwindLike": "violet/fuchsia family",
+        "tokens": {
+          "secondary-50": "#F5F3FF",
+          "secondary-100": "#EDE9FE",
+          "secondary-200": "#DDD6FE",
+          "secondary-300": "#C4B5FD",
+          "secondary-400": "#A78BFA",
+          "secondary-500": "#8B5CF6",
+          "secondary-600": "#7C3AED",
+          "secondary-700": "#6D28D9",
+          "secondary-800": "#5B21B6",
+          "secondary-900": "#4C1D95"
+        },
+        "usage": [
+          "brand mark/icon",
+          "small decorative UI highlights",
+          "inactive micro-accents",
+          "gradient companions for red"
+        ]
+      },
+      "neutralScale": {
+        "gray-0": "#FFFFFF",
+        "gray-50": "#F8FAFC",
+        "gray-100": "#F1F5F9",
+        "gray-200": "#E2E8F0",
+        "gray-300": "#CBD5E1",
+        "gray-400": "#94A3B8",
+        "gray-500": "#64748B",
+        "gray-600": "#475569",
+        "gray-700": "#334155",
+        "gray-800": "#1F2937",
+        "gray-850": "#111827",
+        "gray-900": "#0B0F14",
+        "gray-950": "#030712"
+      },
+      "accentColors": {
+        "rating-imdb": "#EAB308",
+        "rating-rotten": "#DC2626",
+        "rating-commonSense": "#22C55E",
+        "success": "#22C55E",
+        "warning": "#F59E0B",
+        "info": "#38BDF8"
+      },
+      "complexMediaTreatments": {
+        "heroOverlayDark": "linear-gradient(to bottom, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.45) 55%, rgba(0,0,0,0.92) 100%)",
+        "heroOverlayLight": "linear-gradient(to bottom, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.12) 40%, rgba(248,250,252,0.92) 100%)",
+        "surfaceGradientDark": "linear-gradient(180deg, #101418 0%, #0A0D12 100%)",
+        "surfaceGradientLight": "linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%)",
+        "brandGradient": "linear-gradient(135deg, secondary-500 0%, primary-500 100%)",
+        "buttonGradientOptional": "linear-gradient(180deg, primary-500 0%, primary-600 100%)",
+        "shadowDark": "0 20px 50px rgba(0,0,0,0.45)",
+        "shadowCard": "0 10px 30px rgba(0,0,0,0.22)",
+        "glowPrimary": "0 0 0 1px rgba(239,68,68,0.16), 0 8px 24px rgba(220,38,38,0.32)"
+      }
+    },
+  
+    "theming": {
+      "darkMode": {
+        "themeRole": "default / canonical mode",
+        "background": "gray-950",
+        "surface": "gray-900",
+        "surfaceElevated": "rgba(255,255,255,0.04) over dark base",
+        "textPrimary": "gray-0",
+        "textSecondary": "rgba(255,255,255,0.72)",
+        "textTertiary": "rgba(255,255,255,0.50)",
+        "border": "rgba(255,255,255,0.08)",
+        "interactive": {
+          "primaryAction": "primary-600/500",
+          "secondaryAction": "translucent white",
+          "iconButtonBg": "rgba(255,255,255,0.08)",
+          "tabBarBg": "rgba(17,24,39,0.88)"
+        },
+        "mediaTreatment": "Poster artwork remains vivid against near-black surroundings with heavy bottom fade for readability"
+      },
+      "lightMode": {
+        "themeRole": "adapted variant, not shown directly but inferred",
+        "background": "gray-50",
+        "surface": "gray-0",
+        "surfaceElevated": "rgba(255,255,255,0.88)",
+        "textPrimary": "gray-900",
+        "textSecondary": "gray-600",
+        "textTertiary": "gray-500",
+        "border": "rgba(15,23,42,0.08)",
+        "interactive": {
+          "primaryAction": "primary-600",
+          "secondaryAction": "gray-100 or white with subtle border",
+          "iconButtonBg": "rgba(255,255,255,0.84) or gray-100",
+          "tabBarBg": "rgba(255,255,255,0.92)"
+        },
+        "mediaTreatment": "Hero still uses image overlays, but fade should resolve into a light surface so typography remains readable without muddying the artwork"
+      }
+    },
+  
+    "typography": {
+      "tone": "Bold, modern, clean sans-serif with compact headings and clear metadata hierarchy",
+      "fontBehavior": {
+        "titles": "semibold to bold, tight leading, slight tracking normalization",
+        "metadata": "small to body-sm, subdued contrast",
+        "body": "comfortable line height for synopsis copy",
+        "microLabels": "tiny uppercase or compact label chips"
+      },
+      "suggestedScale": {
+        "heroTitle": {
+          "mobile": "28–36px",
+          "desktop": "40–56px",
+          "weight": "700"
+        },
+        "sectionTitle": {
+          "mobile": "18–22px",
+          "desktop": "24–28px",
+          "weight": "600–700"
+        },
+        "body": {
+          "mobile": "13–15px",
+          "desktop": "15–17px",
+          "weight": "400–500"
+        },
+        "meta": {
+          "mobile": "12–13px",
+          "desktop": "13–14px",
+          "weight": "400–500"
+        },
+        "button": {
+          "mobile": "14–15px",
+          "desktop": "15–16px",
+          "weight": "600"
+        },
+        "tabLabelOptional": {
+          "mobile": "11–12px",
+          "weight": "500"
+        }
+      },
+      "observedHierarchy": [
+        "movie title is the primary textual anchor",
+        "genre, duration, year sit directly under the title",
+        "ratings row is higher priority than synopsis",
+        "CTA is given more visual priority than descriptive copy"
+      ]
+    },
+  
+    "spacingAndSizing": {
+      "baseUnit": 4,
+      "radius": {
+        "deviceShell": "28–36px",
+        "heroPoster": "20–24px",
+        "buttons": "9999px for pills, 16–20px for cards",
+        "iconButtons": "full circle",
+        "tabBar": "22–28px outer curvature integrated into shell"
+      },
+      "padding": {
+        "screenHorizontal": "16–20px mobile, 24–32px tablet/desktop",
+        "sectionVertical": "12–24px depending on density",
+        "cardInternal": "12–16px"
+      },
+      "gaps": {
+        "betweenTitleAndMeta": "6–8px",
+        "betweenMetaAndRatings": "10–14px",
+        "betweenCTAAndSynopsis": "16–20px",
+        "betweenCarouselCards": "10–14px",
+        "betweenTabIcons": "24–32px distributed"
+      }
+    },
+  
+    "components": {
+      "statusBar": {
+        "position": "top inset",
+        "contents": [
+          "time",
+          "signal",
+          "wifi",
+          "battery"
+        ],
+        "appearance": "standard OS status content over image or dark surface",
+        "contrast": "white in dark mode, dark text in light mode"
+      },
+  
+      "topOverlayControls": {
+        "type": "circular icon buttons",
+        "placement": {
+          "left": "back or menu control near upper-left over hero image",
+          "right": "overflow / additional actions near upper-right"
+        },
+        "style": {
+          "size": "36–44px",
+          "background": "translucent dark or light blur surface",
+          "icon": "white or gray-900 depending on theme",
+          "border": "very subtle"
+        },
+        "states": {
+          "default": "low-opacity glass",
+          "hoverOrPressed": "slightly brighter fill and stronger shadow",
+          "active": "can pick up primary tint if semantic"
+        }
+      },
+  
+      "branding": {
+        "observed": "Small brandmark plus wordmark on home/onboarding screens",
+        "style": "gradient or multicolor icon with white wordmark in dark mode",
+        "placement": "top-left to top-center area depending on page"
+      },
+  
+      "heroPosterSection": {
+        "role": "dominant visual identity for the selected movie",
+        "layout": {
+          "image": "portrait poster / key art filling upper half of the screen",
+          "crop": "full bleed within safe margins, rounded corners on home poster card, more integrated full-width on detail page",
+          "overlay": "strong bottom gradient for text readability"
+        },
+        "contentOverHero": [
+          "watch trailer chip/button",
+          "back button",
+          "overflow button"
+        ],
+        "behavior": {
+          "detailPage": "poster art occupies ~45–55% of visible screen height",
+          "homePage": "large central poster card within carousel",
+          "onboarding": "multiple posters form a collage with text overlay lower down"
+        }
+      },
+  
+      "watchTrailerChip": {
+        "type": "small rounded pill button",
+        "placement": "lower-left area over the hero image near the image fade boundary",
+        "style": {
+          "height": "28–34px",
+          "paddingX": "10–14px",
+          "background": "dark translucent fill",
+          "icon": "small play glyph in primary red or white",
+          "text": "white micro/body-sm"
+        }
+      },
+  
+      "movieTitleBlock": {
+        "contents": [
+          "title",
+          "genre",
+          "duration",
+          "year"
+        ],
+        "layout": "left aligned stack immediately below hero image",
+        "titleStyle": {
+          "case": "uppercase in screenshot, but token should support title case",
+          "weight": "bold",
+          "contrast": "highest"
+        },
+        "metaStyle": {
+          "separator": "dot bullets",
+          "color": "textSecondary"
+        }
+      },
+  
+      "favoriteAction": {
+        "type": "circular floating icon button",
+        "placement": "right side aligned with title/meta block",
+        "style": {
+          "size": "36–42px",
+          "background": "dark translucent circle",
+          "icon": "heart filled with primary red when active"
+        }
+      },
+  
+      "ratingsRow": {
+        "role": "social proof cluster",
+        "layout": "horizontal row of compact badges/cards",
+        "itemsObserved": [
+          "IMDb score",
+          "Rotten Tomatoes score",
+          "Common Sense badge"
+        ],
+        "style": {
+          "container": "small rounded capsules or mini-cards",
+          "height": "28–36px",
+          "paddingX": "8–12px",
+          "gap": "8–10px",
+          "background": "elevated dark surface in dark mode; white or gray-100 in light mode"
+        },
+        "content": {
+          "imdb": "yellow branded accent with numeric score",
+          "rottenTomatoes": "red branded accent with percentage",
+          "commonSense": "green badge style"
+        }
+      },
+  
+      "primaryCTA": {
+        "label": "Watch now",
+        "type": "full-width pill button",
+        "placement": "below ratings row",
+        "style": {
+          "height": "48–56px",
+          "background": "primary-600",
+          "text": "white semibold",
+          "iconOptional": "small ticket/play/media icon leading",
+          "shadow": "soft primary glow"
+        },
+        "priority": "highest interactive priority on the screen"
+      },
+  
+      "synopsisSection": {
+        "title": "Synopsis",
+        "layout": "stacked below CTA",
+        "style": {
+          "heading": "small bold section label",
+          "body": "2–5 lines preview in mobile, expandable if needed",
+          "color": "textSecondary for body"
+        },
+        "behavior": {
+          "mobile": "truncate with fade or 'Read more' after a few lines",
+          "desktop": "show more visible content"
+        }
+      },
+  
+      "homeDiscoveryScreen": {
+        "inferredFromLeftDevice": {
+          "header": {
+            "left": "menu or filter circular icon",
+            "centerOrLeft": "brand wordmark",
+            "right": "notification/profile circular icon"
+          },
+          "featuredPoster": "large centered poster with coverflow-like framing",
+          "indicator": "small carousel progress dots/pills below featured poster",
+          "section": "Trending label with flame icon",
+          "contentRow": "horizontal movie cards with poster art",
+          "fab": "prominent circular red action button near lower-left, overlapping content",
+          "tabBar": "bottom nav with search and other icons"
+        }
+      },
+  
+      "onboardingScreen": {
+        "inferredFromRightDevice": {
+          "background": "poster collage grid with dark gradient overlay",
+          "branding": "white wordmark over media background",
+          "copy": "short welcome/marketing paragraph",
+          "primaryCTA": "large red pill button near bottom",
+          "secondaryTextLink": "small sign-in / account action below button"
+        }
+      },
+  
+      "bottomTabBar": {
+        "role": "persistent primary navigation",
+        "style": {
+          "container": "integrated rounded bottom surface",
+          "background": "dark elevated layer with subtle transparency",
+          "height": "64–84px including safe area",
+          "borderTop": "very subtle or none"
+        },
+        "itemsObserved": [
+          "home/media action",
+          "search",
+          "favorites",
+          "profile/account"
+        ],
+        "visualBehavior": {
+          "default": "icon-only",
+          "active": "either filled primary circular highlight or stronger icon contrast",
+          "inactive": "muted white/gray"
+        },
+        "specialCase": "One action appears as a larger floating red circular button on some screens; treat this as a prominent primary tab or quick action"
+      },
+  
+      "cardsAndPosters": {
+        "posterCard": {
+          "ratio": "approximately 2:3",
+          "corners": "16–22px",
+          "shadow": "soft cinematic shadow",
+          "focus": "center poster has the strongest scale and visibility"
+        },
+        "carouselBehavior": {
+          "home": "horizontal scrolling rows",
+          "featured": "single highlighted poster with adjacent previews peeking"
+        }
+      }
+    },
+  
+    "interactionPatterns": {
+      "global": [
+        "Poster artwork is clickable and often the main entry into detail pages",
+        "Circular overlay buttons use low-opacity fills and become more opaque on interaction",
+        "Primary CTA remains visually dominant at all times",
+        "Bottom nav persists across core screens"
+      ],
+      "microInteractions": {
+        "ctaPress": "slight scale-down + color darken",
+        "favoriteToggle": "heart fill animation with subtle burst/glow",
+        "carouselScroll": "adjacent posters parallax or scale subtly",
+        "tabChange": "active icon tint shift + optional motion on indicator",
+        "heroTransition": "poster image expands/crossfades into detail hero"
+      }
+    },
+  
+    "accessibilityAndReadability": {
+      "contrast": {
+        "darkMode": "Use strong white-on-dark contrast for primary text; metadata may soften but should remain readable over media",
+        "lightMode": "Keep body text at gray-700/900; avoid light gray over poster fades"
+      },
+      "touchTargets": {
+        "minimum": "44x44px for all interactive icons and pills"
+      },
+      "textHandling": {
+        "movieTitle": "allow 2 lines max before truncation",
+        "metadata": "single line preferred",
+        "synopsis": "multi-line with expansion affordance"
+      },
+      "motion": {
+        "default": "smooth and cinematic",
+        "reducedMotion": "disable parallax and excessive scaling"
+      }
+    },
+  
+    "implementationTokens": {
+      "semanticColorRoles": {
+        "bg.canvas": {
+          "dark": "gray-950",
+          "light": "gray-50"
+        },
+        "bg.surface": {
+          "dark": "gray-900",
+          "light": "gray-0"
+        },
+        "bg.surfaceElevated": {
+          "dark": "rgba(255,255,255,0.04)",
+          "light": "gray-100"
+        },
+        "bg.primary": {
+          "dark": "primary-600",
+          "light": "primary-600"
+        },
+        "fg.primary": {
+          "dark": "gray-0",
+          "light": "gray-900"
+        },
+        "fg.secondary": {
+          "dark": "rgba(255,255,255,0.72)",
+          "light": "gray-600"
+        },
+        "border.subtle": {
+          "dark": "rgba(255,255,255,0.08)",
+          "light": "rgba(15,23,42,0.08)"
+        }
+      },
+      "radiusTokens": {
+        "radius-xs": "8px",
+        "radius-sm": "12px",
+        "radius-md": "16px",
+        "radius-lg": "20px",
+        "radius-xl": "24px",
+        "radius-pill": "9999px"
+      },
+      "shadowTokens": {
+        "shadow-soft": "0 8px 24px rgba(0,0,0,0.16)",
+        "shadow-card": "0 10px 30px rgba(0,0,0,0.22)",
+        "shadow-hero": "0 20px 50px rgba(0,0,0,0.45)",
+        "shadow-primary": "0 8px 24px rgba(220,38,38,0.32)"
+      },
+      "spacingTokens": {
+        "space-1": "4px",
+        "space-2": "8px",
+        "space-3": "12px",
+        "space-4": "16px",
+        "space-5": "20px",
+        "space-6": "24px",
+        "space-8": "32px"
+      }
+    },
+  
+    "screenByScreenSpec": {
+      "movieDetail": {
+        "priority": 1,
+        "structure": [
+          "status bar",
+          "hero art with overlay controls",
+          "watch trailer chip",
+          "movie title",
+          "meta row",
+          "favorite action",
+          "ratings row",
+          "primary CTA",
+          "synopsis heading",
+          "synopsis body",
+          "bottom tab bar"
+        ],
+        "visualBalance": "Top half is image-led; bottom half is text/action-led",
+        "keyMood": "immersive and dramatic"
+      },
+      "homeDiscovery": {
+        "priority": 2,
+        "structure": [
+          "top header with menu/brand/profile",
+          "large featured poster",
+          "carousel indicator",
+          "trending section label",
+          "horizontal poster row",
+          "floating red action button",
+          "bottom tab bar"
+        ],
+        "keyMood": "browse-first, poster-first"
+      },
+      "onboarding": {
+        "priority": 3,
+        "structure": [
+          "poster collage background",
+          "brand wordmark",
+          "short intro copy",
+          "primary CTA",
+          "secondary sign-in link"
+        ],
+        "keyMood": "premium marketing splash"
+      }
+    },
+  
+    "doNotDo": [
+      "Do not introduce more than two main color palettes for core UI semantics",
+      "Do not flatten the cinematic depth into a generic flat dashboard",
+      "Do not overuse outlined components; surfaces should feel soft, layered, and poster-led",
+      "Do not let text float directly on busy poster art without gradient support",
+      "Do not make light mode sterile; it should preserve the premium media-app mood"
+    ]
+  }

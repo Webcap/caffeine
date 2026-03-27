@@ -1,0 +1,100 @@
+import 'package:caffiene/models/recently_watched.dart';
+import 'package:caffiene/provider/app_dependency_provider.dart';
+import 'package:caffiene/provider/recently_watched_provider.dart';
+import 'package:caffiene/screens/common/update_screen.dart';
+import 'package:caffiene/screens/movie_screens/widgets/scrolling_recent_movies.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
+import 'package:caffiene/api/endpoints.dart';
+import 'package:caffiene/provider/settings_provider.dart';
+import 'package:caffiene/screens/discover_screens/widgets/discover_movies_widget.dart';
+import 'package:caffiene/screens/movie_screens/widgets/genre_list_grid.dart';
+import 'package:caffiene/screens/movie_screens/widgets/movies_from_watch_providers.dart';
+import 'package:caffiene/screens/movie_screens/widgets/scrolling_movie_list.dart';
+import 'package:caffiene/widgets/banner_ad_widget.dart';
+import 'package:provider/provider.dart';
+
+class MainMoviesDisplay extends StatefulWidget {
+  const MainMoviesDisplay({
+    super.key,
+  });
+
+  @override
+  State<MainMoviesDisplay> createState() => _MainMoviesDisplayState();
+}
+
+class _MainMoviesDisplayState extends State<MainMoviesDisplay> {
+  late AppDependencyProvider appDep =
+      Provider.of<AppDependencyProvider>(context, listen: false);
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    bool includeAdult = Provider.of<SettingsProvider>(context).isAdult;
+    final lang = Provider.of<SettingsProvider>(context).appLanguage;
+    final region = Provider.of<SettingsProvider>(context).defaultCountry;
+    var rMovies = Provider.of<RecentProvider>(context)
+        .movies
+        .where((m) => shouldShowInContinueWatching(m.elapsed, m.remaining))
+        .toList();
+    return Container(
+      child: ListView(
+        children: [
+          DiscoverMovies(includeAdult: includeAdult, discoverType: "discover"),
+          const UpdateBottom(),
+          // ScrollingMovies(
+          //   title: tr("trending_horror_movies"),
+          //   api: Endpoints.halloweenMoviesUrl(1, lang),
+          //   discoverType: 'horror',
+          //   isTrending: true,
+          //   includeAdult: includeAdult,
+          // ),
+          rMovies.isEmpty
+              ? Container()
+              : ScrollingRecentMovies(moviesList: rMovies),
+          const BannerAdWidget(),
+          ScrollingMovies(
+            title: tr("popular"),
+            api: Endpoints.popularMoviesUrl(lang),
+            discoverType: 'popular',
+            isTrending: false,
+            includeAdult: includeAdult,
+          ),
+          ScrollingMovies(
+            title: tr("trending_this_week"),
+            api: Endpoints.trendingMoviesUrl(includeAdult, lang),
+            discoverType: 'Trending',
+            isTrending: true,
+            includeAdult: includeAdult,
+          ),
+          ScrollingMovies(
+            title: tr("top_rated"),
+            api: Endpoints.topRatedUrl(lang, region),
+            discoverType: 'top_rated',
+            isTrending: false,
+            includeAdult: includeAdult,
+          ),
+          ScrollingMovies(
+            title: tr("now_playing"),
+            api: Endpoints.nowPlayingMoviesUrl(lang),
+            discoverType: 'now_playing',
+            isTrending: false,
+            includeAdult: includeAdult,
+          ),
+          ScrollingMovies(
+            title: tr("upcoming"),
+            api: Endpoints.upcomingMoviesUrl(lang),
+            discoverType: 'upcoming',
+            isTrending: false,
+            includeAdult: includeAdult,
+          ),
+          GenreListGrid(api: Endpoints.movieGenresUrl(lang)),
+          const MoviesFromWatchProviders(),
+        ],
+      ),
+    );
+  }
+}

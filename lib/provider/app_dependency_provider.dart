@@ -1,0 +1,396 @@
+import 'package:caffiene/utils/constant.dart';
+import 'package:caffiene/utils/constant.dart' as constants;
+import 'package:flutter/foundation.dart';
+import 'package:caffiene/models/live_tv.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import '../preferences/app_dependency_preferences.dart';
+import '../services/ad_service.dart';
+
+/// Holds app config from .env, SharedPreferences, and GET /config.
+/// Prefer [loadFromPrefs] once at startup, then [fetchConfigFromApi] to overlay API config.
+class AppDependencyProvider extends ChangeNotifier {
+  final AppDependencies _prefs = AppDependencies();
+
+  // --- API / URLs ---
+  String _caffeineAPIUrl = caffeineApiUrl;
+  String get caffeineAPIURL {
+    if (kDebugMode) {
+      final env = caffeineApiUrl.trim();
+      if (env.isNotEmpty && !env.contains('caffeine.synqholdings.com')) {
+        return env;
+      }
+    }
+    return _caffeineAPIUrl;
+  }
+
+  set caffeineAPIURL(String value) {
+    _caffeineAPIUrl = value;
+    _prefs.setCaffeineAPIUrl(value);
+    notifyListeners();
+  }
+
+  /// FlixAPI is merged into Caffeine API; same base URL.
+  String get flixApiUrl => caffeineAPIURL;
+
+  String _consumetUrl = CONSUMET_API;
+  String get consumetUrl {
+    final v = _consumetUrl.trim();
+    return v.isEmpty ? _consumetUrl : (v.endsWith('/') ? v : '$v/');
+  }
+
+  set consumetUrl(String value) {
+    final v = value.trim();
+    _consumetUrl = v.isEmpty ? value : (v.endsWith('/') ? v : '$v/');
+    _prefs.setConsumetUrl(_consumetUrl);
+    notifyListeners();
+  }
+
+  String _vidSrcApi = vidSrcApi;
+  String get vidsrcapi => _vidSrcApi;
+  set vidsrcapi(String value) {
+    _vidSrcApi = value;
+    _prefs.setvidSrcApi(value);
+    notifyListeners();
+  }
+
+  String _newFlixHQUrl = '';
+  String get newFlixHQUrl => _newFlixHQUrl;
+  set newFlixHQUrl(String value) {
+    _newFlixHQUrl = value;
+    _prefs.setNewFlixHQUrl(value);
+    notifyListeners();
+  }
+
+  // --- Streaming server options (Consumet / provider-specific) ---
+  String _streamingServerFlixHQ = STREAMING_SERVER_FLIXHQ;
+  String get streamingServerFlixHQ => _streamingServerFlixHQ;
+  set streamingServerFlixHQ(String value) {
+    _streamingServerFlixHQ = value;
+    _prefs.setStreamServerFlixHQ(value);
+    notifyListeners();
+  }
+
+  String _streamingServerDCVA = STREAMING_SERVER_DCVA;
+  String get streamingServerDCVA => _streamingServerDCVA;
+  set streamingServerDCVA(String value) {
+    _streamingServerDCVA = value;
+    _prefs.setStreamServerDCVA(value);
+    notifyListeners();
+  }
+
+  String _streamingServerZoro = STREAMING_SERVER_ZORO;
+  String get streamingServerZoro => _streamingServerZoro;
+  set streamingServerZoro(String value) {
+    _streamingServerZoro = value;
+    _prefs.setStreamServerZoro(value);
+    notifyListeners();
+  }
+
+  String _newFlixhqServer = STREAMING_SERVER_NEW_FLIXHQ;
+  String get newFlixhqServer => _newFlixhqServer;
+  set newFlixhqServer(String value) {
+    _newFlixhqServer = value;
+    _prefs.setStreamServerNewFlixHQ(value);
+    notifyListeners();
+  }
+
+  String _gokuServer = 'vidcloud';
+  String get gokuServer => _gokuServer;
+  set gokuServer(String value) {
+    _gokuServer = value;
+    _prefs.setGokuServer(value);
+    notifyListeners();
+  }
+
+  String _sflixServer = 'vidcloud';
+  String get sflixServer => _sflixServer;
+  set sflixServer(String value) {
+    _sflixServer = value;
+    _prefs.setSflixServer(value);
+    notifyListeners();
+  }
+
+  String _himoviesServer = 'vidcloud';
+  String get himoviesServer => _himoviesServer;
+  set himoviesServer(String value) {
+    _himoviesServer = value;
+    _prefs.setHimoviesServer(value);
+    notifyListeners();
+  }
+
+  String _animekaiServer = 'vidcloud';
+  String get animekaiServer => _animekaiServer;
+  set animekaiServer(String value) {
+    _animekaiServer = value;
+    _prefs.setAnimekaiServer(value);
+    notifyListeners();
+  }
+
+  String _hianimeServer = 'vidcloud';
+  String get hianimeServer => _hianimeServer;
+  set hianimeServer(String value) {
+    _hianimeServer = value;
+    _prefs.setHianimeServer(value);
+    notifyListeners();
+  }
+
+  // --- Caffeine API / provider options ---
+  String _vidSrcServer = 'vidsrcembed';
+  String get vidSrcServer => _vidSrcServer;
+  set vidSrcServer(String value) {
+    _vidSrcServer = value;
+    notifyListeners();
+  }
+
+  String _vidSrcToServer = 'vidplay';
+  String get vidSrcToServer => _vidSrcToServer;
+  set vidSrcToServer(String value) {
+    _vidSrcToServer = value;
+    notifyListeners();
+  }
+
+  String _tmdbProxy = '';
+  String get tmdbProxy => _tmdbProxy;
+  set tmdbProxy(String value) {
+    _tmdbProxy = value;
+    _prefs.setTmdbProxy(value);
+    notifyListeners();
+  }
+
+  // --- App behavior / feature flags (from /config) ---
+  String _fetchRoute = 'tmDB';
+  String get fetchRoute => _fetchRoute;
+  set fetchRoute(String value) {
+    _fetchRoute = value;
+    _prefs.setStreamRoute(value);
+    notifyListeners();
+  }
+
+  String _opensubtitlesKey = openSubtitlesKey;
+  String get opensubtitlesKey => _opensubtitlesKey;
+  set opensubtitlesKey(String value) {
+    _opensubtitlesKey = value;
+    _prefs.setOpenSubKey(value);
+    notifyListeners();
+  }
+
+  bool _useExternalSubtitles = false;
+  bool get useExternalSubtitles => _useExternalSubtitles;
+  set useExternalSubtitles(bool value) {
+    _useExternalSubtitles = value;
+    notifyListeners();
+  }
+
+  bool _displayWatchNowButton = true;
+  bool get displayWatchNowButton => _displayWatchNowButton;
+  set displayWatchNowButton(bool value) {
+    _displayWatchNowButton = value;
+    notifyListeners();
+  }
+
+  bool _displayOTTDrawer = true;
+  bool get displayOTTDrawer => _displayOTTDrawer;
+  set displayOTTDrawer(bool value) {
+    _displayOTTDrawer = value;
+    _prefs.setEnableOtt(value);
+    notifyListeners();
+  }
+
+  bool _enableADS = true;
+  bool get enableADS => _enableADS;
+  set enableADS(bool value) {
+    if (_enableADS == value) return;
+    _enableADS = value;
+    AdService.instance.updateEnabledStatus(value);
+    notifyListeners();
+  }
+
+  bool _enableOTTADS = true;
+  bool get enableOTTADS => _enableOTTADS;
+  set enableOTTADS(bool value) {
+    _enableOTTADS = value;
+    notifyListeners();
+  }
+
+  bool _disableRevenueCat = false;
+  bool get disableRevenueCat => _disableRevenueCat;
+  set disableRevenueCat(bool value) {
+    _disableRevenueCat = value;
+    _prefs.setDisableRevenueCat(value);
+    notifyListeners();
+  }
+
+  bool _enableAnonymousSignIn = false;
+  bool get enableAnonymousSignIn => _enableAnonymousSignIn;
+  set enableAnonymousSignIn(bool value) {
+    _enableAnonymousSignIn = value;
+    _prefs.setEnableAnonymousSignIn(value);
+    notifyListeners();
+  }
+
+  bool _enableGoogleSignIn = false;
+  bool get enableGoogleSignIn => _enableGoogleSignIn;
+  set enableGoogleSignIn(bool value) {
+    _enableGoogleSignIn = value;
+    _prefs.setEnableGoogleSignIn(value);
+    notifyListeners();
+  }
+
+  String _mixpanelToken = '';
+  String get mixpanelToken => _mixpanelToken;
+  set mixpanelToken(String value) {
+    if (_mixpanelToken == value) return;
+    _mixpanelToken = value;
+    _prefs.setMixpanelToken(value);
+    notifyListeners();
+  }
+
+  bool _displayPremiumBanner = true;
+  bool get displayPremiumBanner => _displayPremiumBanner;
+  set displayPremiumBanner(bool value) {
+    if (_displayPremiumBanner == value) return;
+    _displayPremiumBanner = value;
+    _prefs.setDisplayPremiumBanner(value);
+    notifyListeners();
+  }
+
+  // --- Update info (from /config) ---
+  bool _isForcedUpdate = false;
+  bool get isForcedUpdate => _isForcedUpdate;
+  set isForcedUpdate(bool value) {
+    _isForcedUpdate = value;
+    notifyListeners();
+  }
+
+  String _latestVersion = '1.7.1';
+  String get latestVersion => _latestVersion;
+  set latestVersion(String value) {
+    _latestVersion = value;
+    notifyListeners();
+  }
+
+  String _updateDownloadUrl = '';
+  String get updateDownloadUrl => _updateDownloadUrl;
+  set updateDownloadUrl(String value) {
+    _updateDownloadUrl = value;
+    notifyListeners();
+  }
+
+  String _updateStoreUrl = '';
+  String get updateStoreUrl => _updateStoreUrl;
+  set updateStoreUrl(String value) {
+    _updateStoreUrl = value;
+    notifyListeners();
+  }
+
+  String _updateChangelog = '';
+  String get updateChangelog => _updateChangelog;
+  set updateChangelog(String value) {
+    _updateChangelog = value;
+    notifyListeners();
+  }
+
+  FeaturedEvent? _featuredEvent;
+  FeaturedEvent? get featuredEvent => _featuredEvent;
+  set featuredEvent(FeaturedEvent? value) {
+    _featuredEvent = value;
+    notifyListeners();
+  }
+
+  // --- RevenueCat Config (fetched from API) ---
+  String _revenueCatApiKeyAndroid = constants.revenueCatApiKeyAndroid;
+  String get revenueCatApiKeyAndroid => _revenueCatApiKeyAndroid.isEmpty
+      ? constants.revenueCatApiKeyAndroid
+      : _revenueCatApiKeyAndroid;
+  set revenueCatApiKeyAndroid(String value) {
+    _revenueCatApiKeyAndroid = value;
+    notifyListeners();
+  }
+
+  String _revenueCatApiKeyIOS = constants.revenueCatApiKeyIOS;
+  String get revenueCatApiKeyIOS => _revenueCatApiKeyIOS.isEmpty
+      ? constants.revenueCatApiKeyIOS
+      : _revenueCatApiKeyIOS;
+  set revenueCatApiKeyIOS(String value) {
+    _revenueCatApiKeyIOS = value;
+    notifyListeners();
+  }
+
+  String _revenueCatEntitlementId = 'premium';
+  String get revenueCatEntitlementId => _revenueCatEntitlementId;
+  set revenueCatEntitlementId(String value) {
+    _revenueCatEntitlementId = value;
+    notifyListeners();
+  }
+
+  List<FeaturedEvent> _featuredEvents = [];
+  List<FeaturedEvent> get featuredEvents => _featuredEvents;
+
+  Future<void> fetchSportsStreams() async {
+    try {
+      final supabase = Supabase.instance.client;
+      final response = await supabase
+          .from('live_streams')
+          .select()
+          .eq('is_featured', true)
+          .eq('is_hidden', false)
+          .neq('video_url', '')
+          .order('updated_at', ascending: false);
+
+      _featuredEvents = (response as List)
+          .map((e) => FeaturedEvent(
+                title: e['title'] ?? '',
+                thumbnailUrl: e['poster_url']?.toString() ?? e['thumbnail_url']?.toString() ?? '',
+                videoUrl: e['video_url'] ?? '',
+                sport: e['sport'],
+                referrer: e['referrer'],
+              ))
+          .toList();
+
+      if (_featuredEvents.isNotEmpty) {
+        _featuredEvent = _featuredEvents.first;
+      }
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error fetching sports streams from Supabase: $e');
+    }
+  }
+
+  // --- Misc (stored, rarely used) ---
+  String _caffieneLogo = 'default';
+  String get caffieneLogo => _caffieneLogo;
+  set caffieneLogo(String value) {
+    _caffieneLogo = value;
+    _prefs.setCaffieneUrl(value);
+    notifyListeners();
+  }
+
+  /// Load all persisted values from SharedPreferences in one go; call once at startup.
+  /// Then call [fetchConfigFromApi] to overlay API config.
+  Future<void> loadFromPrefs() async {
+    _caffeineAPIUrl = await _prefs.getFQURL();
+    _consumetUrl = await _prefs.getConsumetUrl();
+    _vidSrcApi = await _prefs.getvidSrcApi();
+    _opensubtitlesKey = await _prefs.getOpenSubtitlesKey();
+    _streamingServerFlixHQ = await _prefs.getStreamServerFlixHQ();
+    _streamingServerDCVA = await _prefs.getStreamServerDCVA();
+    _streamingServerZoro = await _prefs.getStreamServerZoro();
+    _fetchRoute = await _prefs.getStreamRoute();
+    _newFlixHQUrl = await _prefs.getNewFlixHQUrl();
+    _newFlixhqServer = await _prefs.getStreamServerNewFlixHQ();
+    _gokuServer = await _prefs.getGokuServer();
+    _sflixServer = await _prefs.getSflixServer();
+    _himoviesServer = await _prefs.getHimoviesServer();
+    _animekaiServer = await _prefs.getAnimekaiServer();
+    _hianimeServer = await _prefs.getHianimeServer();
+    _tmdbProxy = await _prefs.getTmdbProxy();
+    _caffieneLogo = await _prefs.getCaffieneLogo();
+    _displayOTTDrawer = await _prefs.getEnableOtt();
+    _disableRevenueCat = await _prefs.getDisableRevenueCat();
+    _enableAnonymousSignIn = await _prefs.getEnableAnonymousSignIn();
+    _enableGoogleSignIn = await _prefs.getEnableGoogleSignIn();
+    _mixpanelToken = await _prefs.getMixpanelToken();
+    _displayPremiumBanner = await _prefs.getDisplayPremiumBanner();
+    notifyListeners();
+  }
+}

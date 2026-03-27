@@ -1,0 +1,708 @@
+// ignore_for_file: unused_local_variable
+
+import 'package:caffiene/preferences/profile_tab_preference.dart';
+import 'package:caffiene/provider/app_dependency_provider.dart';
+import 'package:caffiene/provider/recently_watched_provider.dart';
+import 'package:caffiene/provider/settings_provider.dart';
+import 'package:caffiene/provider/sign_in_provider.dart';
+import 'package:caffiene/screens/auth_screens/welcome.dart';
+import 'package:caffiene/utils/app_images.dart';
+import 'package:caffiene/utils/config_api.dart';
+import 'package:caffiene/utils/routes/app_pages.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
+import 'package:provider/provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+// ── Design tokens (design.json) ─────────────────────────────────────────────
+class _C {
+  static const primary = Color(0xFFDC2626);
+  static const secondary = Color(0xFF7C3AED);
+  static const bgCanvasDark = Color(0xFF030712);
+  static const bgSurfaceDark = Color(0xFF0B0F14);
+  static const bgElevatedDark = Color(0x0AFFFFFF);
+  static const bgCanvasLight = Color(0xFFF8FAFC);
+  static const bgSurfaceLight = Color(0xFFFFFFFF);
+  static const bgElevatedLight = Color(0xFFF1F5F9);
+  static const borderDark = Color(0x14FFFFFF);
+  static const borderLight = Color(0x140F172A);
+  static const textPrimDark = Color(0xFFFFFFFF);
+  static const textPrimLight = Color(0xFF0B0F14);
+  static const textSecDark = Color(0xB8FFFFFF);
+  static const textSecLight = Color(0xFF64748B);
+  static const textTertDark = Color(0x80FFFFFF);
+  static const textTertLight = Color(0xFF94A3B8);
+}
+
+class ProfilePage extends StatefulWidget {
+  const ProfilePage({super.key});
+
+  @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  final _auth = Supabase.instance.client.auth;
+  final _supabase = Supabase.instance.client;
+  String? uid;
+  bool? userAnonymous;
+  Map<String, dynamic>? profileData;
+  String? month;
+  int? year;
+
+  @override
+  void initState() {
+    super.initState();
+    getData();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted || !context.mounted) return;
+      final appDep = Provider.of<AppDependencyProvider>(context, listen: false);
+      await refreshConfig(appDep);
+      if (!mounted) return;
+      await Provider.of<RecentProvider>(context, listen: false).syncFromCloud();
+    });
+  }
+
+  Future<void> getData() async {
+    final user = _auth.currentUser;
+    uid = user?.id;
+
+    if (user == null) {
+      if (mounted) setState(() => userAnonymous = null);
+      return;
+    }
+
+    if (user.isAnonymous) {
+      if (mounted) setState(() => userAnonymous = true);
+    } else {
+      final res =
+          await _supabase.from('profiles').select().eq('id', uid!).limit(1);
+      final data = res.isNotEmpty ? res[0] : null;
+      if (mounted) {
+        setState(() {
+          userAnonymous = false;
+          profileData = data;
+          if (data?['joined_at'] != null) {
+            try {
+              final dt = DateTime.parse(data!['joined_at'].toString());
+              month = DateFormat('MMMM').format(DateTime(0, dt.month));
+              year = dt.year;
+            } catch (_) {}
+          }
+        });
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final sp = context.watch<SignInProvider>();
+    final recent = context.watch<RecentProvider>();
+    final settings = context.watch<SettingsProvider>();
+    final appDep = context.watch<AppDependencyProvider>();
+
+    final bg = isDark ? _C.bgCanvasDark : _C.bgCanvasLight;
+    final surface = isDark ? _C.bgSurfaceDark : _C.bgSurfaceLight;
+    final elevated = isDark ? _C.bgElevatedDark : _C.bgElevatedLight;
+    final border = isDark ? _C.borderDark : _C.borderLight;
+    final textPrim = isDark ? _C.textPrimDark : _C.textPrimLight;
+    final textSec = isDark ? _C.textSecDark : _C.textSecLight;
+    final textTert = isDark ? _C.textTertDark : _C.textTertLight;
+
+    if (userAnonymous == null) {
+      return Scaffold(
+        backgroundColor: bg,
+        body: Center(
+          child: CircularProgressIndicator(color: _C.primary),
+        ),
+      );
+    }
+
+    if (userAnonymous == true) {
+      return Scaffold(
+        backgroundColor: bg,
+        body: SafeArea(
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    tr('current_account_anonymous'),
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: textSec,
+                      fontFamily: 'Poppins',
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  FilledButton(
+                    onPressed: () async {
+                      final sp =
+                          Provider.of<SignInProvider>(context, listen: false);
+                      await sp.userSignOut();
+                      if (mounted) {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => const WelcomeScreen()),
+                        );
+                      }
+                    },
+                    style: FilledButton.styleFrom(
+                      backgroundColor: _C.primary,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 24, vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    ),
+                    child: Text(tr('login_signup')),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    return FutureBuilder<Map<String, dynamic>?>(
+      future: _supabase
+          .from('profiles')
+          .select()
+          .eq('id', uid!)
+          .limit(1)
+          .then((res) => res.isNotEmpty ? res[0] : null),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Scaffold(
+            backgroundColor: bg,
+            body: Center(
+              child: CircularProgressIndicator(color: _C.primary),
+            ),
+          );
+        }
+        final data = snapshot.data ?? profileData;
+        if (data == null) {
+          return Scaffold(
+            backgroundColor: bg,
+            body: Center(
+                child: Text(tr('error_occured'),
+                    style: TextStyle(color: textPrim))),
+          );
+        }
+
+        final moviesMin = recent.completedMoviesMinutesLast2Weeks;
+        final tvMin = recent.completedTVMinutesLast2Weeks;
+        final moviesHrs = (moviesMin / 60).toStringAsFixed(1);
+        final tvHrs = (tvMin / 60).toStringAsFixed(1);
+
+        return Scaffold(
+          backgroundColor: bg,
+          body: SafeArea(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 20, 16, 32),
+                child: Column(
+                  children: [
+                    // ── Avatar & name ─────────────────────────────────────
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(48),
+                      child: (data['image_url'] ?? '').toString().isNotEmpty
+                          ? CachedNetworkImage(
+                              imageUrl: data['image_url'] ?? '',
+                              width: 96,
+                              height: 96,
+                              fit: BoxFit.cover,
+                              memCacheWidth: 192,
+                              memCacheHeight: 192,
+                              placeholder: (_, __) => const SizedBox(
+                                width: 96,
+                                height: 96,
+                              ),
+                              errorWidget: (_, __, ___) => const Icon(
+                                Icons.person,
+                                size: 48,
+                              ),
+                            )
+                          : Image.asset(
+                              'assets/images/profiles/${data['profile_id'] ?? 0}.png',
+                              width: 96,
+                              height: 96,
+                              fit: BoxFit.cover,
+                            ),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      data['name'] ?? 'caffeineUser123',
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w700,
+                        color: textPrim,
+                        fontFamily: 'PoppinsSB',
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      '${tr('joined')}: ${month ?? ''} ${year ?? ''}',
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: textTert,
+                        fontFamily: 'Poppins',
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Wrap(
+                      spacing: 6,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      alignment: WrapAlignment.center,
+                      children: [
+                        Text(
+                          data['email'] ?? '',
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: textSec,
+                            fontFamily: 'Poppins',
+                          ),
+                        ),
+                        if (data['verified'] == true)
+                          Icon(
+                            Icons.verified_rounded,
+                            size: 18,
+                            color: _C.primary,
+                          ),
+                      ],
+                    ),
+
+                    // ── Premium Banner ────────────────────────────────────
+                    if (appDep.displayPremiumBanner) ...[
+                      const SizedBox(height: 24),
+                      _PremiumBanner(
+                        onTap: () => Get.toNamed(Routes.premium),
+                        isDark: isDark,
+                      ),
+                    ],
+
+                    // ── Watch time stats (last 2 weeks) ───────────────────
+                    const SizedBox(height: 24),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: elevated,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: border, width: 1),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.history_rounded,
+                                size: 20,
+                                color: _C.secondary,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                tr('last_2_weeks'),
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: textPrim,
+                                  fontFamily: 'PoppinsSB',
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: _WatchStatCard(
+                                  icon: FontAwesomeIcons.clapperboard,
+                                  label: tr('movies'),
+                                  value: '$moviesHrs h',
+                                  isDark: isDark,
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: _WatchStatCard(
+                                  icon: Icons.live_tv_rounded,
+                                  label: tr('tv_series'),
+                                  value: '$tvHrs h',
+                                  isDark: isDark,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // ── Settings list ────────────────────────────────────
+                    const SizedBox(height: 24),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: elevated,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: border, width: 1),
+                      ),
+                      child: ListView.separated(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: settingdata.length,
+                        separatorBuilder: (_, __) => Divider(
+                          height: 1,
+                          color: border,
+                          indent: 56,
+                          endIndent: 16,
+                        ),
+                        itemBuilder: (context, i) {
+                          return InkWell(
+                            onTap: settingdata[i].onTap,
+                            borderRadius: BorderRadius.circular(16),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 14),
+                              child: Row(
+                                children: [
+                                  SvgPicture.asset(
+                                    settingdata[i].iconImage,
+                                    colorFilter: ColorFilter.mode(
+                                      textPrim,
+                                      BlendMode.srcIn,
+                                    ),
+                                    height: 22,
+                                  ),
+                                  const SizedBox(width: 14),
+                                  Expanded(
+                                    child: Text(
+                                      settingdata[i].tital,
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w600,
+                                        color: textPrim,
+                                        fontFamily: 'PoppinsSB',
+                                      ),
+                                    ),
+                                  ),
+                                  if (settingdata[i].subTital != null)
+                                    Text(
+                                      '${settingdata[i].subTital}',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                        color: textSec,
+                                      ),
+                                    ),
+                                  const SizedBox(width: 8),
+                                  Icon(
+                                    Icons.arrow_forward_ios_rounded,
+                                    size: 14,
+                                    color: textTert,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+
+                    // ── Logout ───────────────────────────────────────────
+                    const SizedBox(height: 20),
+                    InkWell(
+                      onTap: () => _showSignOutSheet(context, sp),
+                      borderRadius: BorderRadius.circular(12),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 4, vertical: 12),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SvgPicture.asset(
+                              MovixIcon.logOut,
+                              colorFilter: ColorFilter.mode(
+                                _C.primary,
+                                BlendMode.srcIn,
+                              ),
+                              height: 20,
+                            ),
+                            const SizedBox(width: 10),
+                            Text(
+                              tr('sign_out'),
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                                color: _C.primary,
+                                fontFamily: 'PoppinsSB',
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 32),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _showSignOutSheet(BuildContext context, SignInProvider sp) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final surface = isDark ? _C.bgSurfaceDark : _C.bgSurfaceLight;
+    final textPrim = isDark ? _C.textPrimDark : _C.textPrimLight;
+
+    Get.bottomSheet(
+      Container(
+        padding: const EdgeInsets.fromLTRB(24, 20, 24, 32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 36,
+              height: 4,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(2),
+                color: isDark ? _C.textTertDark : _C.textTertLight,
+              ),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              tr('sign_out'),
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w700,
+                color: _C.primary,
+                fontFamily: 'PoppinsSB',
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              tr('want_to_sign_out'),
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 15,
+                color: textPrim,
+                fontFamily: 'Poppins',
+              ),
+            ),
+            const SizedBox(height: 24),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () => Get.back(),
+                    style: OutlinedButton.styleFrom(
+                      side: BorderSide(color: _C.borderDark),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                    ),
+                    child: Text(
+                      tr('cancel'),
+                      style: TextStyle(
+                        color: textPrim,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: 'PoppinsSB',
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: FilledButton(
+                    onPressed: () async {
+                      await sp.userSignOut();
+                      Get.back();
+                      Get.offNamed(Routes.login);
+                    },
+                    style: FilledButton.styleFrom(
+                      backgroundColor: _C.primary,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                    ),
+                    child: Text(
+                      tr('yes_sign_out'),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontFamily: 'PoppinsSB',
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+      backgroundColor: surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+    );
+  }
+}
+
+class _PremiumBanner extends StatelessWidget {
+  const _PremiumBanner({
+    required this.onTap,
+    required this.isDark,
+  });
+
+  final VoidCallback onTap;
+  final bool isDark;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: isDark
+                ? [const Color(0xFF1E1B4B), const Color(0xFF312E81)]
+                : [const Color(0xFF4338CA), const Color(0xFF6366F1)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.15),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.star_rounded,
+                color: Color(0xFFFACC15),
+                size: 28,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Get Caffeine Premium',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      fontFamily: 'PoppinsSB',
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Ad-free, Live Sports & 24/7 Support',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: Colors.white.withOpacity(0.8),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Icon(
+              Icons.arrow_forward_ios_rounded,
+              color: Colors.white,
+              size: 16,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _WatchStatCard extends StatelessWidget {
+  const _WatchStatCard({
+    required this.icon,
+    required this.label,
+    required this.value,
+    required this.isDark,
+  });
+
+  final IconData icon;
+  final String label;
+  final String value;
+  final bool isDark;
+
+  @override
+  Widget build(BuildContext context) {
+    final textPrim = isDark ? _C.textPrimDark : _C.textPrimLight;
+    final textTert = isDark ? _C.textTertDark : _C.textTertLight;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+      decoration: BoxDecoration(
+        color: isDark ? _C.bgSurfaceDark : _C.bgElevatedLight,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: isDark ? _C.borderDark : _C.borderLight,
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, size: 20, color: _C.secondary),
+          const SizedBox(height: 8),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+              color: textPrim,
+              fontFamily: 'PoppinsSB',
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 12,
+              color: textTert,
+              fontFamily: 'Poppins',
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
