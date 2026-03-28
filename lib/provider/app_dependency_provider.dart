@@ -16,7 +16,15 @@ class AppDependencyProvider extends ChangeNotifier {
   Map<String, dynamic> get featureFlags => _featureFlags;
 
   set featureFlags(Map<String, dynamic> value) {
+    bool hasChanged(String key) => _featureFlags[key] != value[key];
+    final syncAds = hasChanged('ads_enabled') || hasChanged('global_ads') || hasChanged('enable_ads');
+    
     _featureFlags = value;
+    
+    if (syncAds) {
+      AdService.instance.updateEnabledStatus(enableADS);
+    }
+    
     notifyListeners();
   }
 
@@ -224,7 +232,10 @@ class AppDependencyProvider extends ChangeNotifier {
   }
 
   bool _enableADS = true;
-  bool get enableADS => getFlag<bool>('ads_enabled', _enableADS);
+  bool get enableADS => getFlag<bool>(
+        'ads_enabled',
+        getFlag<bool>('enable_ads',
+            getFlag<bool>('global_ads', _enableADS)));
   set enableADS(bool value) {
     if (_enableADS == value) return;
     _enableADS = value;
@@ -256,7 +267,10 @@ class AppDependencyProvider extends ChangeNotifier {
   }
 
   bool _enableGoogleSignIn = false;
-  bool get enableGoogleSignIn => getFlag<bool>('enable_google_signin', _enableGoogleSignIn);
+  bool get enableGoogleSignIn => getFlag<bool>(
+        'enable_google_signin', 
+        getFlag<bool>('enable_google_sign_in',
+            getFlag<bool>('google_signin', _enableGoogleSignIn)));
   set enableGoogleSignIn(bool value) {
     _enableGoogleSignIn = value;
     _prefs.setEnableGoogleSignIn(value);
