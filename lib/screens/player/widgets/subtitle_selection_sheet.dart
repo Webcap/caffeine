@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 class SubtitleSelectionSheet extends StatefulWidget {
   final List<BetterPlayerSubtitlesSource> subtitles;
   final BetterPlayerSubtitlesSource? selectedSubtitle;
+  final BetterPlayerController controller;
   final VoidCallback onSearchPressed;
   final Function(BetterPlayerSubtitlesSource?) onSubtitleSelected;
 
@@ -12,6 +13,7 @@ class SubtitleSelectionSheet extends StatefulWidget {
     super.key,
     required this.subtitles,
     this.selectedSubtitle,
+    required this.controller,
     required this.onSearchPressed,
     required this.onSubtitleSelected,
   });
@@ -23,6 +25,8 @@ class SubtitleSelectionSheet extends StatefulWidget {
 class _SubtitleSelectionSheetState extends State<SubtitleSelectionSheet> {
   @override
   Widget build(BuildContext context) {
+    final currentOffset = (widget.controller.betterPlayerSubtitlesSource?.offset ?? 0) / 1000;
+
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
@@ -94,6 +98,83 @@ class _SubtitleSelectionSheetState extends State<SubtitleSelectionSheet> {
               ],
             ),
           ),
+          const Divider(),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Icon(Icons.sync, size: 20, color: Colors.grey),
+                    const SizedBox(width: 8),
+                    Text(
+                      "Subtitle Sync",
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                    const Spacer(),
+                    Text(
+                      "${currentOffset.toStringAsFixed(1)}s",
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).primaryColor,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _SyncButton(
+                      label: "-1s",
+                      onPressed: () {
+                        final off = widget.controller.betterPlayerSubtitlesSource?.offset ?? 0;
+                        widget.controller.setSubtitleOffset(off - 1000);
+                        setState(() {});
+                      },
+                    ),
+                    _SyncButton(
+                      label: "-0.1s",
+                      onPressed: () {
+                        final off = widget.controller.betterPlayerSubtitlesSource?.offset ?? 0;
+                        widget.controller.setSubtitleOffset(off - 100);
+                        setState(() {});
+                      },
+                    ),
+                    _SyncButton(
+                      label: "Reset",
+                      onPressed: () {
+                        widget.controller.setSubtitleOffset(0);
+                        setState(() {});
+                      },
+                    ),
+                    _SyncButton(
+                      label: "+0.1s",
+                      onPressed: () {
+                        final off = widget.controller.betterPlayerSubtitlesSource?.offset ?? 0;
+                        widget.controller.setSubtitleOffset(off + 100);
+                        setState(() {});
+                      },
+                    ),
+                    _SyncButton(
+                      label: "+1s",
+                      onPressed: () {
+                        final off = widget.controller.betterPlayerSubtitlesSource?.offset ?? 0;
+                        widget.controller.setSubtitleOffset(off + 1000);
+                        setState(() {});
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
           const SizedBox(height: 16),
         ],
       ),
@@ -131,6 +212,38 @@ class _SubtitleSelectionSheetState extends State<SubtitleSelectionSheet> {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SyncButton extends StatelessWidget {
+  final String label;
+  final VoidCallback onPressed;
+
+  const _SyncButton({
+    required this.label,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onPressed,
+      borderRadius: BorderRadius.circular(8),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey.withOpacity(0.3)),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Text(
+          label,
+          style: const TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+          ),
         ),
       ),
     );

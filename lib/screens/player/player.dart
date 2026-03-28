@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:caffiene/controller/recently_watched_database_controller.dart';
+import 'package:caffiene/models/sub_languages.dart';
+import 'package:caffiene/models/external_subtitles.dart';
 import 'package:caffiene/functions/functions.dart';
 import 'package:caffiene/functions/video_utils.dart';
 import 'package:caffiene/models/movie_stream_metadata.dart';
@@ -319,6 +321,130 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
       'season': widget.tvMetadata?.seasonNumber,
       'provider': widget.currentProviderCode,
     });
+
+    // Auto-discover subtitles after a short delay
+    Future.delayed(const Duration(seconds: 2), () {
+      if (mounted) {
+        _autoDiscoverSubtitles();
+      }
+    });
+  }
+
+  Future<void> _autoDiscoverSubtitles() async {
+    if (!settings.fetchSpecificLangSubs) {
+      return;
+    }
+
+    final langCode = settings.defaultSubtitleLanguage;
+    if (langCode.isEmpty) {
+      return;
+    }
+
+    final lang = supportedLanguages.firstWhere(
+      (l) => l.languageCode == langCode,
+      orElse: () => SubLanguages(
+          languageName: '', languageCode: '', englishName: 'Unknown'),
+    );
+    final langName = lang.englishName;
+
+    // Check if already present
+    final existing =
+        _currentSubs.any((s) => s.name?.contains(langName) ?? false);
+    if (existing) {
+      return;
+    }
+
+    final int? tmdbId = widget.mediaType == MediaType.movie
+        ? widget.movieMetadata?.movieId
+        : widget.tvMetadata?.tvId;
+
+    if (tmdbId == null) {
+      return;
+    }
+
+    try {
+      final appDep = Provider.of<AppDependencyProvider>(context, listen: false);
+      final searchUrl = widget.mediaType == MediaType.movie
+          ? Endpoints.searchExternalMovieSubtitles(tmdbId, langCode)
+          : Endpoints.searchExternalEpisodeSubtitles(
+              tmdbId,
+              widget.tvMetadata!.episodeNumber!,
+              widget.tvMetadata!.seasonNumber!,
+              langCode,
+            );
+
+      final subtitleDataList = await getExternalSubtitle(
+        searchUrl,
+        appDep.opensubtitlesKey,
+      );
+
+      if (subtitleDataList.isNotEmpty && mounted) {
+        // Just pick the first one for auto-discovery
+        final subData = subtitleDataList.first;
+        final fileId = subData.attr?.files?.first.fileId;
+
+        if (fileId != null) {
+          final download = await downloadExternalSubtitle(
+            Endpoints.externalSubtitleDownload(),
+            fileId,
+            appDep.opensubtitlesKey,
+          );
+
+          if (download.link != null && mounted) {
+            final newSource = BetterPlayerSubtitlesSource(
+              name: '$langName (Auto)',
+              urls: [download.link!],
+              type: BetterPlayerSubtitlesSourceType.network,
+            );
+
+            setState(() {
+              _currentSubs.add(newSource);
+              // Ensure uniqueness
+              final Map<String, BetterPlayerSubtitlesSource> uniqueSubs = {};
+              for (var sub in _currentSubs) {
+                if (sub.name != null) uniqueSubs[sub.name!] = sub;
+              }
+              _currentSubs = uniqueSubs.values.toList();
+            });
+
+            // Update data source but don't activate
+            final currentPosition = await _betterPlayerController
+                    .videoPlayerController?.position ??
+                Duration.zero;
+            final currentUrl = _currentStreamUrl;
+
+            final dataSource = BetterPlayerDataSource(
+              BetterPlayerDataSourceType.network,
+              currentUrl,
+              resolutions: _currentSources,
+              subtitles: _currentSubs,
+              headers: widget.headers,
+              videoFormat: VideoUtils.looksLikeHls(currentUrl)
+                  ? BetterPlayerVideoFormat.hls
+                  : null,
+              cacheConfiguration: BetterPlayerCacheConfiguration(
+                useCache: true,
+                preCacheSize: 471859200 * 471859200,
+                maxCacheSize: 1073741824 * 1073741824,
+                maxCacheFileSize: 471859200 * 471859200,
+                key: generateCacheKey(),
+              ),
+              bufferingConfiguration: betterPlayerBufferingConfiguration,
+              preferredAudioLanguage: settings.defaultAudioLanguage,
+            );
+
+            await _betterPlayerController.setupDataSource(dataSource);
+            if (mounted) {
+              await _betterPlayerController.videoPlayerController
+                  ?.seekTo(currentPosition);
+              _betterPlayerController.play();
+            }
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint('[Player] ❌ Auto-discovery error: $e');
+    }
   }
 
   void startDurationTimer() {
@@ -746,6 +872,7 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
       builder: (context) => SubtitleSelectionSheet(
         subtitles: _currentSubs,
         selectedSubtitle: currentSub,
+        controller: _betterPlayerController,
         onSubtitleSelected: (sub) {
           if (sub == null) {
             _betterPlayerController.setupSubtitleSource(
