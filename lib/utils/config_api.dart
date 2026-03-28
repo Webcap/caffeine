@@ -3,8 +3,10 @@ import 'dart:convert';
 import 'package:caffiene/models/update.dart';
 import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:caffiene/utils/constant.dart';
+import 'package:caffiene/utils/flavor_config.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 Future<void> fetchConfigFromApi(
     AppDependencyProvider appDependencyProvider) async {
@@ -105,9 +107,51 @@ Future<void> fetchConfigFromApi(
           (v) => appDependencyProvider.revenueCatApiKeyIOS = v);
       setString('revenuecat_entitlement_id',
           (v) => appDependencyProvider.revenueCatEntitlementId = v);
+          
+      // Success: Now fetch feature flags too
+      await fetchFeatureFlagsFromApi(appDependencyProvider);
     }
-  } catch (_) {
+  } catch (e) {
+    debugPrint('Error fetching config: $e');
     // Keep .env / preferences defaults on fetch failure
+  }
+}
+
+/// Fetches evaluated feature flags from the new system.
+Future<void> fetchFeatureFlagsFromApi(AppDependencyProvider provider) async {
+  try {
+    final base = provider.caffeineAPIURL;
+    final baseUrl = base.endsWith('/') ? base.substring(0, base.length - 1) : base;
+    
+    String getPlatformString() {
+      if (kIsWeb) return 'web';
+      switch (defaultTargetPlatform) {
+        case TargetPlatform.android: return 'android';
+        case TargetPlatform.iOS: return 'ios';
+        default: return 'tv';
+      }
+    }
+    
+    final platform = getPlatformString();
+    final env = FlavorConfig.instance.flavor.name;
+    final userId = Supabase.instance.client.auth.currentSession?.user.id;
+    final anonymousId = provider.anonymousId;
+
+    final uri = Uri.parse('$baseUrl/v1/feature-flags').replace(queryParameters: {
+      'platform': platform,
+      'env': env,
+      if (userId != null) 'userId': userId,
+      if (anonymousId.isNotEmpty) 'anonymousId': anonymousId,
+    });
+
+    final response = await http.get(uri).timeout(const Duration(seconds: 5));
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body) as Map<String, dynamic>;
+      provider.featureFlags = data;
+    }
+  } catch (e) {
+    debugPrint('Error fetching feature flags: $e');
   }
 }
 
@@ -119,6 +163,38 @@ Future<void> refreshConfig(AppDependencyProvider appDependencyProvider) async {
 /// Fetches config from API and returns update-related fields. Single source of truth for "is update available?" and links.
 Future<AppUpdateInfo> fetchUpdateInfoFromApi(
     AppDependencyProvider appDependencyProvider) async {
+  try {
+    final base = appDependencyProvider.caffeineAPIURL;
+    final baseUrl = base.endsWith('/') ? base.substring(0, base.length - 1) : base;
+    
+    String getPlatformString() {
+      if (kIsWeb) return 'web';
+      switch (defaultTargetPlatform) {
+        case TargetPlatform.android: return 'android';
+        case TargetPlatform.iOS: return 'ios';
+        default: return 'tv';
+      }
+    }
+
+    final platform = getPlatformString();
+    final env = FlavorConfig.instance.flavor.name;
+
+    final uri = Uri.parse('$baseUrl/v1/updates').replace(queryParameters: {
+      'platform': platform,
+      'environment': env,
+    });
+
+    final response = await http.get(uri).timeout(const Duration(seconds: 5));
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body) as Map<String, dynamic>;
+      return AppUpdateInfo.fromJson(data);
+    }
+  } catch (e) {
+    debugPrint('Error fetching updates from new API: $e. Falling back to /config fields.');
+  }
+
+  // Fallback to the old /config monolithic response if the new one fails.
   await fetchConfigFromApi(appDependencyProvider);
   final p = appDependencyProvider;
   String? opt(String s) => s.trim().isEmpty ? null : s;

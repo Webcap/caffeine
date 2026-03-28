@@ -109,13 +109,13 @@ class EspnScoreboardGame {
   /// Away team and home team - ESPN uses homeAway. Fallback to order if missing.
   EspnCompetitor? get away =>
       _firstWhere((c) => c.homeAway == 'away') ??
-      (competitors.length >= 2 ? competitors[0] : null);
+      (competitors.isNotEmpty ? competitors[0] : null);
 
   EspnCompetitor? get home =>
       _firstWhere((c) => c.homeAway == 'home') ??
       (competitors.length >= 2
           ? competitors[1]
-          : (competitors.length == 1 ? competitors[0] : null));
+          : (competitors.isNotEmpty ? competitors[0] : null));
 
   EspnCompetitor? _firstWhere(bool Function(EspnCompetitor) test) {
     for (final c in competitors) {
@@ -129,6 +129,13 @@ class EspnScoreboardGame {
 
   /// Score line e.g. "101 - 115"
   String? get scoreLine {
+    // UFC/MMA usually show as 0 - 0 until final, which is cluttered
+    final isCombat = shortName.toUpperCase().contains('UFC') || 
+                    name.toUpperCase().contains('UFC') ||
+                    (competitors.isNotEmpty && competitors.any((c) => c.displayName.contains(' vs ')));
+                    
+    if (isCombat) return null;
+
     final a = away?.score;
     final h = home?.score;
     if (a == null && h == null) return null;
@@ -208,18 +215,22 @@ class EspnCompetitor {
     String? logoUrl;
     if (athlete != null) {
       final aId = athlete['id']?.toString();
-      if (aId != null && aId.isNotEmpty) {
+      logoUrl = athlete['headshot']?.toString() ??
+          athlete['flag']?['href']?.toString() ??
+          athlete['flag']?.toString();
+          
+      if (logoUrl == null && aId != null && aId.isNotEmpty) {
         logoUrl = 'https://a.espncdn.com/i/headshots/mma/players/full/$aId.png';
       }
-      logoUrl ??= athlete['headshot']?.toString() ??
-          athlete['flag']?['href']?.toString();
-    } else {
-      logoUrl = team?['logo']?.toString();
-    }
+    } 
+    
+    // Fallback to team logos if no athlete-specific logo found
+    logoUrl ??= team?['logo']?.toString() ??
+               team?['logos']?[0]?['href']?.toString();
 
     return EspnCompetitor(
       homeAway: json['homeAway']?.toString() ?? '',
-      id: json['id']?.toString(),
+      id: json['id']?.toString() ?? athlete?['id']?.toString() ?? team?['id']?.toString(),
       displayName: displayName,
       score: json['score']?.toString() ?? '0',
       logoUrl: logoUrl,

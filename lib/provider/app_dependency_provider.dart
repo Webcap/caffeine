@@ -10,6 +10,33 @@ import '../services/ad_service.dart';
 /// Prefer [loadFromPrefs] once at startup, then [fetchConfigFromApi] to overlay API config.
 class AppDependencyProvider extends ChangeNotifier {
   final AppDependencies _prefs = AppDependencies();
+  Map<String, dynamic> _featureFlags = {};
+
+  /// Current evaluated feature flags for the user's platform/environment.
+  Map<String, dynamic> get featureFlags => _featureFlags;
+
+  set featureFlags(Map<String, dynamic> value) {
+    _featureFlags = value;
+    notifyListeners();
+  }
+
+  /// Returns the value of a feature flag, or a default value if not found.
+  T getFlag<T>(String key, T defaultValue) {
+    if (_featureFlags.containsKey(key)) {
+      final val = _featureFlags[key];
+      if (val is T) return val;
+      // Handle numeric to double/int conversion from JSON if needed.
+      if (T == double && val is num) return val.toDouble() as T;
+      if (T == int && val is num) return val.toInt() as T;
+      if (T == bool && val is String) return (val.toLowerCase() == 'true') as T;
+    }
+    return defaultValue;
+  }
+
+  /// Quick check for boolean feature flags.
+  bool isFeatureEnabled(String key, {bool defaultValue = false}) {
+    return getFlag<bool>(key, defaultValue);
+  }
 
   // --- API / URLs ---
   String _caffeineAPIUrl = caffeineApiUrl;
@@ -182,14 +209,14 @@ class AppDependencyProvider extends ChangeNotifier {
   }
 
   bool _displayWatchNowButton = true;
-  bool get displayWatchNowButton => _displayWatchNowButton;
+  bool get displayWatchNowButton => getFlag<bool>('enable_stream', _displayWatchNowButton);
   set displayWatchNowButton(bool value) {
     _displayWatchNowButton = value;
     notifyListeners();
   }
 
   bool _displayOTTDrawer = true;
-  bool get displayOTTDrawer => _displayOTTDrawer;
+  bool get displayOTTDrawer => getFlag<bool>('enable_ott', _displayOTTDrawer);
   set displayOTTDrawer(bool value) {
     _displayOTTDrawer = value;
     _prefs.setEnableOtt(value);
@@ -197,7 +224,7 @@ class AppDependencyProvider extends ChangeNotifier {
   }
 
   bool _enableADS = true;
-  bool get enableADS => _enableADS;
+  bool get enableADS => getFlag<bool>('ads_enabled', _enableADS);
   set enableADS(bool value) {
     if (_enableADS == value) return;
     _enableADS = value;
@@ -206,14 +233,14 @@ class AppDependencyProvider extends ChangeNotifier {
   }
 
   bool _enableOTTADS = true;
-  bool get enableOTTADS => _enableOTTADS;
+  bool get enableOTTADS => getFlag<bool>('ott_ads_enabled', _enableOTTADS);
   set enableOTTADS(bool value) {
     _enableOTTADS = value;
     notifyListeners();
   }
 
   bool _disableRevenueCat = false;
-  bool get disableRevenueCat => _disableRevenueCat;
+  bool get disableRevenueCat => getFlag<bool>('disable_revenuecat', _disableRevenueCat);
   set disableRevenueCat(bool value) {
     _disableRevenueCat = value;
     _prefs.setDisableRevenueCat(value);
@@ -221,7 +248,7 @@ class AppDependencyProvider extends ChangeNotifier {
   }
 
   bool _enableAnonymousSignIn = false;
-  bool get enableAnonymousSignIn => _enableAnonymousSignIn;
+  bool get enableAnonymousSignIn => getFlag<bool>('enable_anonymous_signin', _enableAnonymousSignIn);
   set enableAnonymousSignIn(bool value) {
     _enableAnonymousSignIn = value;
     _prefs.setEnableAnonymousSignIn(value);
@@ -229,7 +256,7 @@ class AppDependencyProvider extends ChangeNotifier {
   }
 
   bool _enableGoogleSignIn = false;
-  bool get enableGoogleSignIn => _enableGoogleSignIn;
+  bool get enableGoogleSignIn => getFlag<bool>('enable_google_signin', _enableGoogleSignIn);
   set enableGoogleSignIn(bool value) {
     _enableGoogleSignIn = value;
     _prefs.setEnableGoogleSignIn(value);
@@ -246,7 +273,9 @@ class AppDependencyProvider extends ChangeNotifier {
   }
 
   bool _displayPremiumBanner = true;
-  bool get displayPremiumBanner => _displayPremiumBanner;
+  bool get displayPremiumBanner => 
+      getFlag<bool>('display_premium_banner', 
+      getFlag<bool>('display_mobile_banner', _displayPremiumBanner));
   set displayPremiumBanner(bool value) {
     if (_displayPremiumBanner == value) return;
     _displayPremiumBanner = value;
@@ -365,9 +394,13 @@ class AppDependencyProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  String _anonymousId = '';
+  String get anonymousId => _anonymousId;
+
   /// Load all persisted values from SharedPreferences in one go; call once at startup.
   /// Then call [fetchConfigFromApi] to overlay API config.
   Future<void> loadFromPrefs() async {
+    _anonymousId = await _prefs.getAnonymousId();
     _caffeineAPIUrl = await _prefs.getFQURL();
     _consumetUrl = await _prefs.getConsumetUrl();
     _vidSrcApi = await _prefs.getvidSrcApi();

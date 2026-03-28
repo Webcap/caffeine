@@ -1,6 +1,7 @@
 // ignore_for_file: constant_identifier_names
 import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/utils/constant.dart';
+import 'dart:math' as math;
 
 class AppDependencies {
   static const CONSUMET_URL_KEY = "consumetUrlKey";
@@ -27,6 +28,17 @@ class AppDependencies {
   static const String ENABLE_GOOGLE_SIGNIN = 'enable_google_signin';
   static const String MIXPANEL_TOKEN = 'mixpanel_token';
   static const String DISPLAY_PREMIUM_BANNER = "display_premium_banner";
+  static const String ANONYMOUS_ID = "anonymous_id";
+
+  Future<String> getAnonymousId() async {
+    String? id = sharedPrefsSingleton.getString(ANONYMOUS_ID);
+    if (id == null || id.isEmpty) {
+      id = DateTime.now().millisecondsSinceEpoch.toString() +
+          (1000 + (math.Random().nextInt(9000))).toString();
+      await sharedPrefsSingleton.setString(ANONYMOUS_ID, id);
+    }
+    return id;
+  }
 
   Future<void> setEnableAnonymousSignIn(bool value) async {
     await sharedPrefsSingleton.setBool(ENABLE_ANONYMOUS_SIGNIN, value);

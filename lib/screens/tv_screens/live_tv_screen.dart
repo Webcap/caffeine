@@ -799,7 +799,7 @@ class _EspnEventTile extends StatelessWidget {
               _TeamRow(
                 name: g.away?.displayName ?? 'Away',
                 logoUrl: g.away?.logoUrl,
-                score: (g.isLive || g.isEffectivelyCompleted)
+                score: (!(event.sport.toUpperCase() == 'MMA' || event.league.toUpperCase() == 'UFC') && (g.isLive || g.isEffectivelyCompleted))
                     ? g.away?.score
                     : null,
                 isDark: isDark,
@@ -809,7 +809,7 @@ class _EspnEventTile extends StatelessWidget {
               _TeamRow(
                 name: g.home?.displayName ?? 'Home',
                 logoUrl: g.home?.logoUrl,
-                score: (g.isLive || g.isEffectivelyCompleted)
+                score: (!(event.sport.toUpperCase() == 'MMA' || event.league.toUpperCase() == 'UFC') && (g.isLive || g.isEffectivelyCompleted))
                     ? g.home?.score
                     : null,
                 isDark: isDark,

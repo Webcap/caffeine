@@ -1,5 +1,24 @@
 # Changelog
 
+## [2.0.1] - 2026-03-28
+
+### Added
+- **Modern Feature Flag System**: Integrated a new centralized evaluation engine with deterministic rollouts and platform-specific overrides.
+- **Anonymous ID Support**: Implemented persistent anonymous identifiers for guest users to ensure consistent feature A/B testing.
+- **Subtitle Synchronization Controls**: Added real-time timing offset controls (+/- 1s, +/- 0.1s) to the mobile player.
+- **UFC Sports Integration**: Fully integrated UFC/MMA event coverage with support for "Athlete vs. Athlete" data structures and fighter name fallbacks.
+- **Multi-Language Subtitle Discovery**: Automated discovery of English and Spanish subtitle tracks on content launch.
+- **Debug Navigation (Admin)**: Enhanced admin dashboard with active state highlighting and a centralized Debug dropdown for logs.
+
+### Fixed
+- **Premium Banner Visibility**: Resolved an issue where the "Get Premium" banner was not respecting the feature flag state in the Profile screen.
+- **Feature Flag Evaluation Logic**: Fixed a bug that caused flags to stay disabled for guest users if the rollout was < 100%.
+
+### Changed
+- **Config Deprecation**: Added a 30-day removal notice to the legacy feature flag system in the admin panel (retiring April 27, 2026).
+- **Update Routing**: Migrated all platform-specific update logic to the new centralized `/v1/updates` API.
+
+
 ## [2.0.0+20260328] - 2026-03-27
 
 ### Added
