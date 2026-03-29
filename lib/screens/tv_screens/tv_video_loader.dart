@@ -255,7 +255,7 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
     int foundIndex = 0;
     for (int i = 0; i < supportedLanguages.length; i++) {
       if (supportedLanguages[i].languageCode ==
-          settings.defaultSubtitleLanguage) {
+          settings.defaultAudioLanguage) {
         foundIndex = i;
         break;
       }
@@ -326,7 +326,7 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
     subs = await VideoUtils.parseSubtitles(
       subtitles: allSubtitles,
       defaultLanguage: defaultLanguage,
-      fetchAllLanguages: settings.fetchSpecificLangSubs,
+      fetchAllLanguages: true,
       getVttContent: getVttFileAsString,
     );
   }
@@ -368,7 +368,7 @@ class _TVVideoLoaderState extends State<TVVideoLoader> {
         child: ProviderLoadingWidget(
           providers: providerStates,
           currentIndex: currentProviderIndex,
-          additionalMessage: settings.defaultSubtitleLanguage != ''
+          additionalMessage: settings.defaultAudioLanguage != ''
               ? null
               : 'Subtitle load progress: ${loadProgress.toStringAsFixed(0)}%',
         ),

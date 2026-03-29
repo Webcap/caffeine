@@ -331,11 +331,7 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
   }
 
   Future<void> _autoDiscoverSubtitles() async {
-    if (!settings.fetchSpecificLangSubs) {
-      return;
-    }
-
-    final langCode = settings.defaultSubtitleLanguage;
+    final langCode = settings.defaultAudioLanguage;
     if (langCode.isEmpty) {
       return;
     }

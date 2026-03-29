@@ -41,8 +41,6 @@ class SettingsProvider with ChangeNotifier {
   int _defaultVideoResolution = 0;
   int get defaultVideoResolution => _defaultVideoResolution;
 
-  String _defaultSubtitleLanguage = 'en';
-  String get defaultSubtitleLanguage => _defaultSubtitleLanguage;
 
   bool _defaultViewMode = true;
   bool get defaultViewMode => _defaultViewMode;
@@ -62,8 +60,6 @@ class SettingsProvider with ChangeNotifier {
   String _defaultAudioLanguage = 'en';
   String get defaultAudioLanguage => _defaultAudioLanguage;
 
-  bool _fetchSpecificLangSubs = false;
-  bool get fetchSpecificLangSubs => _fetchSpecificLangSubs;
 
   String _proPrecedence = ProviderNames.defaultPrecedenceString;
   String get proPreference => _proPrecedence;
@@ -196,17 +192,6 @@ class SettingsProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  // subtitle
-  Future<void> getSubtitleLanguage() async {
-    defaultSubtitleLanguage = await _settingsPreferences.getSubLanguage();
-  }
-
-  // get default subtitle language
-  set defaultSubtitleLanguage(String value) {
-    _defaultSubtitleLanguage = value;
-    _settingsPreferences.setDefaultSubtitle(value);
-    notifyListeners();
-  }
 
   // subtitle foreground color
   Future<void> getForegroundSubtitleColor() async {
@@ -251,15 +236,6 @@ class SettingsProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> getSubtitleMode() async {
-    fetchSpecificLangSubs = await _settingsPreferences.getSubtitleMode();
-  }
-
-  set fetchSpecificLangSubs(bool value) {
-    _fetchSpecificLangSubs = value;
-    _settingsPreferences.setSubtitleMode(value);
-    notifyListeners();
-  }
 
   Future<void> getPlayerTimeStyle() async {
     playerTimeDisplay = await _settingsPreferences.getPlayerStyleIndex();

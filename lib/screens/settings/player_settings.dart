@@ -1,5 +1,4 @@
 import 'package:caffiene/models/sub_languages.dart';
-import 'package:caffiene/screens/common/sublanguage_choose.dart';
 import 'package:caffiene/widgets/common_widgets.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -419,33 +418,6 @@ class _PlayerSettingsState extends State<PlayerSettings> {
                   const _TileDivider(),
                   _Tile(
                     icon: FontAwesomeIcons.language,
-                    title: tr("fetch_all_subs"),
-                    textPrim: textPrim,
-                    textSec: textSec,
-                    trailing: StyledSwitch(
-                      value: sv.fetchSpecificLangSubs,
-                      onChanged: (v) =>
-                          setState(() => sv.fetchSpecificLangSubs = v),
-                      activeColor: _Design.primary,
-                      textSec: textSec,
-                    ),
-                  ),
-                  const _TileDivider(),
-                  _Tile(
-                    icon: FontAwesomeIcons.closedCaptioning,
-                    title: tr("subtitle_language"),
-                    textPrim: textPrim,
-                    textSec: textSec,
-                    onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (_) => const SubLangChoose())),
-                    trailing: Icon(Icons.chevron_right_rounded,
-                        color: textSec, size: 22),
-                  ),
-                  const _TileDivider(),
-                  _Tile(
-                    icon: FontAwesomeIcons.language,
                     title: tr("default_audio_language"),
                     textPrim: textPrim,
                     textSec: textSec,
@@ -549,7 +521,6 @@ class _Tile extends StatelessWidget {
   final IconData icon;
   final String title;
   final Widget trailing;
-  final VoidCallback? onTap;
   final Color textPrim;
   final Color textSec;
 
@@ -557,14 +528,13 @@ class _Tile extends StatelessWidget {
     required this.icon,
     required this.title,
     required this.trailing,
-    this.onTap,
     required this.textPrim,
     required this.textSec,
   });
 
   @override
   Widget build(BuildContext context) {
-    final content = Padding(
+    return Padding(
       padding: const EdgeInsets.symmetric(
           horizontal: _Design.space4, vertical: _Design.space3),
       child: Row(
@@ -582,16 +552,5 @@ class _Tile extends StatelessWidget {
         ],
       ),
     );
-    if (onTap != null) {
-      return Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(_Design.radiusMd),
-          child: content,
-        ),
-      );
-    }
-    return content;
   }
 }

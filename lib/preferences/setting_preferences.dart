@@ -101,14 +101,6 @@ class SettingsPreferences {
     return sharedPrefsSingleton.getInt(DEFAULT_VIDEO_QUALITY) ?? 0;
   }
 
-  static const DEFAULT_SUBTITLE = 'default_subtitle_v2';
-  Future<void> setDefaultSubtitle(String language) async {
-    sharedPrefsSingleton.setString(DEFAULT_SUBTITLE, language);
-  }
-
-  Future<String> getSubLanguage() async {
-    return sharedPrefsSingleton.getString(DEFAULT_SUBTITLE) ?? 'en';
-  }
 
   static const DEFAULT_FULL_SCREEN = 'default_full_screen';
   Future<void> setDefaultFullScreen(bool mode) async {
@@ -148,14 +140,6 @@ class SettingsPreferences {
     return sharedPrefsSingleton.getInt(SUBTITLE_FONT_SIZE) ?? 17;
   }
 
-  static const SUBTITLE_MODE = 'subtitle_mode';
-  Future<void> setSubtitleMode(bool mode) async {
-    sharedPrefsSingleton.setBool(SUBTITLE_MODE, mode);
-  }
-
-  Future<bool> getSubtitleMode() async {
-    return sharedPrefsSingleton.getBool(SUBTITLE_MODE) ?? false;
-  }
 
   static const APP_LANGUAGE_CODE = 'en';
 

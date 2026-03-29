@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.0.1+20260329] - 2026-03-29
+
+### Added
+- **External Subtitles Control (TV)**: Added a manual toggle for "External Subtitles (OpenSubtitles)" in the Settings screen to manually control auto-fetching.
+- **Improved Config Sync (TV)**: Fixed an issue where server-side feature flags (like OpenSubtitles discovery) were not correctly applied to the local app state during startup.
+
+### Changed
+- **Standardized Subtitle Settings (Mobile)**: Removed redundant "Subtitle Language" and "Fetch All Subtitles" settings from Player Settings.
+- **Unified Auto-Discovery (Mobile)**: Subtitle auto-discovery now automatically uses the "Default Audio Language" for a streamlined, integrated experience.
+
+### Fixed
+- **TV Subtitle Auto-Download**: Resolved a bug where subtitle discovery would be skipped despite being enabled in the remote configuration.
+
 ## [2.0.1] - 2026-03-28
 
 ### Added
