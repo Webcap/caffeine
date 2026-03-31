@@ -17,12 +17,14 @@ class TVGridView extends StatelessWidget {
     required this.imageQuality,
     required this.themeMode,
     required this.scrollController,
+    this.heroPrefix = 'tv',
   });
 
   final List<TV>? tvList;
   final String imageQuality;
   final String themeMode;
   final ScrollController scrollController;
+  final String heroPrefix;
 
   @override
   Widget build(BuildContext context) {
@@ -43,6 +45,7 @@ class TVGridView extends StatelessWidget {
         themeMode: themeMode,
         proxyUrl: proxyUrl,
         isProxyEnabled: isProxyEnabled,
+        heroPrefix: heroPrefix,
       ),
     );
   }
@@ -57,6 +60,7 @@ class TVGridItem extends StatelessWidget {
     required this.themeMode,
     required this.proxyUrl,
     required this.isProxyEnabled,
+    this.heroPrefix = 'tv',
   });
 
   final TV tv;
@@ -64,13 +68,15 @@ class TVGridItem extends StatelessWidget {
   final String themeMode;
   final String proxyUrl;
   final bool isProxyEnabled;
+  final String heroPrefix;
 
   @override
   Widget build(BuildContext context) {
+    final heroId = '${heroPrefix}_${tv.id}';
     return GestureDetector(
       onTap: () {
         Navigator.push(context, MaterialPageRoute(builder: (context) {
-          return TVDetailPage(tvSeries: tv, heroId: '${tv.id}');
+          return TVDetailPage(tvSeries: tv, heroId: heroId);
         }));
       },
       child: Padding(
@@ -80,7 +86,7 @@ class TVGridItem extends StatelessWidget {
             Expanded(
               flex: 6,
               child: Hero(
-                tag: '${tv.id}',
+                tag: heroId,
                 child: Material(
                   type: MaterialType.transparency,
                   child: Stack(

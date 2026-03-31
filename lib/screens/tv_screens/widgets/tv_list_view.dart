@@ -17,12 +17,14 @@ class TVListView extends StatelessWidget {
     required this.tvList,
     required this.themeMode,
     required this.imageQuality,
+    this.heroPrefix = 'tv',
   }) : _scrollController = scrollController;
 
   final ScrollController _scrollController;
   final List<TV>? tvList;
   final String themeMode;
   final String imageQuality;
+  final String heroPrefix;
 
   @override
   Widget build(BuildContext context) {
@@ -33,12 +35,13 @@ class TVListView extends StatelessWidget {
         physics: const BouncingScrollPhysics(),
         itemCount: tvList!.length,
         itemBuilder: (BuildContext context, int index) {
+          final heroId = '${heroPrefix}_${tvList![index].id}';
           return GestureDetector(
             onTap: () {
               Navigator.push(context, MaterialPageRoute(builder: (context) {
                 return TVDetailPage(
                   tvSeries: tvList![index],
-                  heroId: '${tvList![index].id}',
+                  heroId: heroId,
                 );
               }));
             },
@@ -60,7 +63,7 @@ class TVListView extends StatelessWidget {
                             width: 85,
                             height: 130,
                             child: Hero(
-                              tag: '${tvList![index].id}',
+                              tag: heroId,
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(10.0),
                                 child: tvList![index].posterPath == null

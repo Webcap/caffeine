@@ -17,12 +17,14 @@ class HorizontalScrollingTVList extends StatelessWidget {
     required this.tvList,
     required this.imageQuality,
     required this.themeMode,
+    this.heroPrefix = 'tv',
   }) : _scrollController = scrollController;
 
   final ScrollController _scrollController;
   final List<TV>? tvList;
   final String imageQuality;
   final String themeMode;
+  final String heroPrefix;
 
   @override
   Widget build(BuildContext context) {
@@ -39,6 +41,7 @@ class HorizontalScrollingTVList extends StatelessWidget {
         themeMode: themeMode,
         proxyUrl: proxyUrl,
         isProxyEnabled: isProxyEnabled,
+        heroPrefix: heroPrefix,
       ),
     );
   }
@@ -53,6 +56,7 @@ class HorizontalTVListItem extends StatelessWidget {
     required this.themeMode,
     required this.proxyUrl,
     required this.isProxyEnabled,
+    this.heroPrefix = 'tv',
   });
 
   final TV tv;
@@ -60,9 +64,11 @@ class HorizontalTVListItem extends StatelessWidget {
   final String themeMode;
   final String proxyUrl;
   final bool isProxyEnabled;
+  final String heroPrefix;
 
   @override
   Widget build(BuildContext context) {
+    final heroId = '${heroPrefix}_${tv.id}';
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: GestureDetector(
@@ -71,7 +77,7 @@ class HorizontalTVListItem extends StatelessWidget {
               context,
               MaterialPageRoute(
                   builder: (context) =>
-                      TVDetailPage(tvSeries: tv, heroId: '${tv.id}')));
+                      TVDetailPage(tvSeries: tv, heroId: heroId)));
         },
         child: SizedBox(
           width: 100,
@@ -80,7 +86,7 @@ class HorizontalTVListItem extends StatelessWidget {
               Expanded(
                 flex: 6,
                 child: Hero(
-                  tag: '${tv.id}',
+                  tag: heroId,
                   child: Material(
                     type: MaterialType.transparency,
                     child: Stack(

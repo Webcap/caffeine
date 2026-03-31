@@ -17,12 +17,14 @@ class HorizontalScrollingMoviesList extends StatelessWidget {
     required this.movieList,
     required this.imageQuality,
     required this.themeMode,
+    this.heroPrefix = 'movie',
   }) : _scrollController = scrollController;
 
   final ScrollController _scrollController;
   final List<Movie>? movieList;
   final String imageQuality;
   final String themeMode;
+  final String heroPrefix;
 
   @override
   Widget build(BuildContext context) {
@@ -39,6 +41,7 @@ class HorizontalScrollingMoviesList extends StatelessWidget {
         themeMode: themeMode,
         proxyUrl: proxyUrl,
         isProxyEnabled: isProxyEnabled,
+        heroPrefix: heroPrefix,
       ),
     );
   }
@@ -53,6 +56,7 @@ class HorizontalMovieListItem extends StatelessWidget {
     required this.themeMode,
     required this.proxyUrl,
     required this.isProxyEnabled,
+    this.heroPrefix = 'movie',
   });
 
   final Movie movie;
@@ -60,9 +64,11 @@ class HorizontalMovieListItem extends StatelessWidget {
   final String themeMode;
   final String proxyUrl;
   final bool isProxyEnabled;
+  final String heroPrefix;
 
   @override
   Widget build(BuildContext context) {
+    final heroId = '${heroPrefix}_${movie.id}';
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: GestureDetector(
@@ -71,7 +77,7 @@ class HorizontalMovieListItem extends StatelessWidget {
               context,
               MaterialPageRoute(
                   builder: (context) =>
-                      MovieDetailPage(movie: movie, heroId: '${movie.id}')));
+                      MovieDetailPage(movie: movie, heroId: heroId)));
         },
         child: SizedBox(
           width: 100,
@@ -80,7 +86,7 @@ class HorizontalMovieListItem extends StatelessWidget {
               Expanded(
                 flex: 6,
                 child: Hero(
-                  tag: '${movie.id}',
+                  tag: heroId,
                   child: Material(
                     type: MaterialType.transparency,
                     child: Stack(

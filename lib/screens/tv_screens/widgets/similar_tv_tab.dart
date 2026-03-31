@@ -133,7 +133,8 @@ class SimilarTVTabState extends State<SimilarTVTab>
                                 scrollController: _scrollController,
                                 tvList: tvList,
                                 imageQuality: imageQuality,
-                                themeMode: themeMode),
+                                themeMode: themeMode,
+                                heroPrefix: 'tv_similar'),
                           ),
                           Visibility(
                             visible: isLoading,

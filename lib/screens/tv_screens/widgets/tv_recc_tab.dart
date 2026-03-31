@@ -129,7 +129,8 @@ class TVRecommendationsTabState extends State<TVRecommendationsTab>
                                 scrollController: _scrollController,
                                 tvList: tvList,
                                 imageQuality: imageQuality,
-                                themeMode: themeMode),
+                                themeMode: themeMode,
+                                heroPrefix: 'tv_recommendations'),
                           ),
                           Visibility(
                             visible: isLoading,

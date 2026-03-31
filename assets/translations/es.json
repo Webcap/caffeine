@@ -481,8 +481,6 @@
     "check_server_status": "Comprobar estado del servidor",
     "check": "Comprobar",
     "check_server": "Verificar servidor",
-    "refresh_config": "Actualizar configuración",
-    "config_refreshed": "Configuración actualizada",
     "server_working": "El servidor está funcionando",
     "checking_server": "Comprobando el estado del servidor...",
     "server_check_complete": "Verificación del servidor completada",

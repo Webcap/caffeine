@@ -4,7 +4,6 @@ import 'dart:convert';
 
 import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:caffiene/provider/settings_provider.dart';
-import 'package:caffiene/utils/config_api.dart';
 import 'package:caffiene/video_providers/provider_names.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -139,7 +138,6 @@ class _ServerStatusScreenState extends State<ServerStatusScreen> {
   String? _errorMessage;
   _StatusResponse? _statusResponse;
   List<_ScraperProvider> _scraperProviders = [];
-  bool _refreshInProgress = false;
 
   String get _apiBaseUrl {
     final url = Provider.of<AppDependencyProvider>(context, listen: false)
@@ -258,31 +256,6 @@ class _ServerStatusScreenState extends State<ServerStatusScreen> {
     }
   }
 
-  Future<void> _refreshConfigAndCheck() async {
-    final appDep = Provider.of<AppDependencyProvider>(context, listen: false);
-    debugPrint('[ServerStatus] Refreshing config...');
-    if (!mounted) return;
-    setState(() => _refreshInProgress = true);
-    try {
-      await refreshConfig(appDep);
-      debugPrint('[ServerStatus] Config refreshed, re-checking API');
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(tr('config_refreshed'))),
-        );
-        await _checkCaffeineApi();
-      }
-    } catch (e) {
-      debugPrint('[ServerStatus] Refresh config error: $e');
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('${tr("error_occured")}: $e')),
-        );
-      }
-    } finally {
-      if (mounted) setState(() => _refreshInProgress = false);
-    }
-  }
 
   @override
   void initState() {
@@ -544,30 +517,6 @@ class _ServerStatusScreenState extends State<ServerStatusScreen> {
               ),
             ),
 
-            const SizedBox(height: 12),
-
-            // Refresh config
-            SizedBox(
-              height: 50,
-              child: OutlinedButton.icon(
-                onPressed: _refreshInProgress ? null : _refreshConfigAndCheck,
-                icon: _refreshInProgress
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Icon(Icons.sync_rounded, size: 22),
-                label: Text(tr('refresh_config')),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: textPrim,
-                  side: BorderSide(color: border),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(_Design.radiusMd),
-                  ),
-                ),
-              ),
-            ),
           ],
         ),
       ),

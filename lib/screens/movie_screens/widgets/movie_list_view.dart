@@ -17,12 +17,14 @@ class MovieListView extends StatelessWidget {
     required this.moviesList,
     required this.themeMode,
     required this.imageQuality,
+    this.heroPrefix = 'movie',
   }) : _scrollController = scrollController;
 
   final ScrollController _scrollController;
   final List<Movie>? moviesList;
   final String themeMode;
   final String imageQuality;
+  final String heroPrefix;
 
   @override
   Widget build(BuildContext context) {
@@ -33,12 +35,13 @@ class MovieListView extends StatelessWidget {
         physics: const BouncingScrollPhysics(),
         itemCount: moviesList!.length,
         itemBuilder: (BuildContext context, int index) {
+          final heroId = '${heroPrefix}_${moviesList![index].id}';
           return GestureDetector(
             onTap: () {
               Navigator.push(context, MaterialPageRoute(builder: (context) {
                 return MovieDetailPage(
                   movie: moviesList![index],
-                  heroId: '${moviesList![index].id}',
+                  heroId: heroId,
                 );
               }));
             },
@@ -60,7 +63,7 @@ class MovieListView extends StatelessWidget {
                             width: 85,
                             height: 130,
                             child: Hero(
-                              tag: '${moviesList![index].id}',
+                              tag: heroId,
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(10.0),
                                 child: moviesList![index].posterPath == null

@@ -17,12 +17,14 @@ class MovieGridView extends StatelessWidget {
     required this.moviesList,
     required this.imageQuality,
     required this.themeMode,
+    this.heroPrefix = 'movie',
   }) : _scrollController = scrollController;
 
   final ScrollController _scrollController;
   final List<Movie>? moviesList;
   final String imageQuality;
   final String themeMode;
+  final String heroPrefix;
 
   @override
   Widget build(BuildContext context) {
@@ -43,6 +45,7 @@ class MovieGridView extends StatelessWidget {
         themeMode: themeMode,
         proxyUrl: proxyUrl,
         isProxyEnabled: isProxyEnabled,
+        heroPrefix: heroPrefix,
       ),
     );
   }
@@ -57,6 +60,7 @@ class MovieGridItem extends StatelessWidget {
     required this.themeMode,
     required this.proxyUrl,
     required this.isProxyEnabled,
+    this.heroPrefix = 'movie',
   });
 
   final Movie movie;
@@ -64,13 +68,15 @@ class MovieGridItem extends StatelessWidget {
   final String themeMode;
   final String proxyUrl;
   final bool isProxyEnabled;
+  final String heroPrefix;
 
   @override
   Widget build(BuildContext context) {
+    final heroId = '${heroPrefix}_${movie.id}';
     return GestureDetector(
       onTap: () {
         Navigator.push(context, MaterialPageRoute(builder: (context) {
-          return MovieDetailPage(movie: movie, heroId: '${movie.id}');
+          return MovieDetailPage(movie: movie, heroId: heroId);
         }));
       },
       child: Padding(
@@ -80,7 +86,7 @@ class MovieGridItem extends StatelessWidget {
             Expanded(
               flex: 6,
               child: Hero(
-                tag: '${movie.id}',
+                tag: heroId,
                 child: Material(
                   type: MaterialType.transparency,
                   child: Stack(

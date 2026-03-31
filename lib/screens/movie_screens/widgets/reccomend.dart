@@ -132,7 +132,8 @@ class MovieRecommendationsTabState extends State<MovieRecommendationsTab>
                                 scrollController: _scrollController,
                                 movieList: movieList,
                                 imageQuality: imageQuality,
-                                themeMode: themeMode),
+                                themeMode: themeMode,
+                                heroPrefix: 'recommendations'),
                           ),
                           Visibility(
                             visible: isLoading,
@@ -282,11 +283,12 @@ class SimilarMoviesTabState extends State<SimilarMoviesTab>
                         children: [
                           Expanded(
                               child: HorizontalScrollingMoviesList(
-                            imageQuality: imageQuality,
-                            themeMode: themeMode,
-                            movieList: movieList,
-                            scrollController: _scrollController,
-                          )),
+                              imageQuality: imageQuality,
+                              themeMode: themeMode,
+                              movieList: movieList,
+                              scrollController: _scrollController,
+                              heroPrefix: 'similar',
+                            )),
                           Visibility(
                             visible: isLoading,
                             child: SizedBox(

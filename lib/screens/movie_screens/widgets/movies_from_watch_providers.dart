@@ -130,11 +130,6 @@ class MoviesFromWatchProvidersState extends State<MoviesFromWatchProviders> {
                 title: 'Netflix Kids',
                 providerID: 175,
               ),
-              StreamingServicesWidget(
-                imagePath: 'assets/images/showtime.png',
-                title: 'Showtime',
-                providerID: 37,
-              ),
             ],
           ),
         ),
