@@ -11,6 +11,7 @@ double progressPercent(int? elapsed, int? remaining) {
 }
 
 bool shouldShowInContinueWatching(int? elapsed, int? remaining) {
+  // If we don't have progress info yet, or it's within the threshold, show it.
   return progressPercent(elapsed, remaining) <
       continueWatchingProgressThreshold;
 }

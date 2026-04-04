@@ -17,12 +17,18 @@ class RecentProvider extends ChangeNotifier {
 
   List<RecentMovie> _movies = [];
   List<RecentMovie> get movies => _movies;
+  List<RecentMovie> get continueWatchingMovies => _movies
+      .where((m) => shouldShowInContinueWatching(m.elapsed, m.remaining))
+      .toList();
 
   List<RecentEpisode> _episodes = [];
   List<RecentEpisode> get episodes => _episodes;
+  List<RecentEpisode> get continueWatchingEpisodes => _episodes
+      .where((e) => shouldShowInContinueWatching(e.elapsed, e.remaining))
+      .toList();
 
   List<RecentEpisode> _inProgressEpisodes = [];
-  List<RecentEpisode> get inProgressEpisodes => _inProgressEpisodes;
+  List<RecentEpisode> get inProgressEpisodes => continueWatchingEpisodes;
 
   List<RecentEpisode> _upNextEpisodes = [];
   List<RecentEpisode> get upNextEpisodes => _upNextEpisodes;
@@ -117,10 +123,10 @@ class RecentProvider extends ChangeNotifier {
   List<RecentMovie> _mergeMovies(
       List<RecentMovie> cloud, List<RecentMovie> local) {
     final byId = <int, RecentMovie>{};
-    for (final m in cloud) {
+    for (final m in local) {
       if (m.id != null) byId[m.id!] = m;
     }
-    for (final m in local) {
+    for (final m in cloud) {
       if (m.id == null) continue;
       final existing = byId[m.id!];
       if (existing != null) {
@@ -129,10 +135,12 @@ class RecentProvider extends ChangeNotifier {
         if (mComp && !exComp) {
           byId[m.id!] = m;
         } else if (!mComp && exComp) {
-          // Keep cloud
+          // Keep local
         } else if ((m.elapsed ?? 0) > (existing.elapsed ?? 0)) {
           byId[m.id!] = m;
         }
+      } else {
+        byId[m.id!] = m;
       }
     }
     final list = byId.values.toList();
@@ -148,12 +156,11 @@ class RecentProvider extends ChangeNotifier {
       List<RecentEpisode> cloud, List<RecentEpisode> local) {
     String key(RecentEpisode e) => '${e.id}_${e.seasonNum}_${e.episodeNum}';
     final byKey = <String, RecentEpisode>{};
-    for (final e in cloud) {
-      if (e.id != null && e.seasonNum != null && e.episodeNum != null) {
-        byKey[key(e)] = e;
-      }
-    }
     for (final e in local) {
+      if (e.id == null || e.seasonNum == null || e.episodeNum == null) continue;
+      byKey[key(e)] = e;
+    }
+    for (final e in cloud) {
       if (e.id == null || e.seasonNum == null || e.episodeNum == null) continue;
       final k = key(e);
       final existing = byKey[k];
@@ -163,10 +170,12 @@ class RecentProvider extends ChangeNotifier {
         if (eComp && !exComp) {
           byKey[k] = e;
         } else if (!eComp && exComp) {
-          // Keep cloud
+          // Keep local
         } else if ((e.elapsed ?? 0) > (existing.elapsed ?? 0)) {
           byKey[k] = e;
         }
+      } else {
+        byKey[k] = e;
       }
     }
     final list = byKey.values.toList();
@@ -252,7 +261,7 @@ class RecentProvider extends ChangeNotifier {
       final episodesToAdvance = <RecentEpisode>[];
 
       for (var e in latestBySeries.values) {
-        if (_isCompleted(e.elapsed, e.remaining)) {
+        if (!shouldShowInContinueWatching(e.elapsed, e.remaining)) {
           episodesToAdvance.add(e);
         } else {
           inProgressList.add(e);
@@ -437,13 +446,6 @@ class RecentProvider extends ChangeNotifier {
     await fetchEpisodes();
   }
 
-  /// Completed = progress >= 90% (elapsed / total >= 0.9).
-  static bool _isCompleted(int? elapsed, int? remaining) {
-    if (elapsed == null || remaining == null) return false;
-    final total = elapsed + remaining;
-    if (total <= 0) return false;
-    return (elapsed / total) >= 0.9;
-  }
 
   static bool _isWithinLast2Weeks(String? dateTimeStr) {
     if (dateTimeStr == null || dateTimeStr.isEmpty) return false;

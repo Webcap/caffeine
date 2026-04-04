@@ -36,10 +36,7 @@ class _MainMoviesDisplayState extends State<MainMoviesDisplay> {
     bool includeAdult = Provider.of<SettingsProvider>(context).isAdult;
     final lang = Provider.of<SettingsProvider>(context).appLanguage;
     final region = Provider.of<SettingsProvider>(context).defaultCountry;
-    var rMovies = Provider.of<RecentProvider>(context)
-        .movies
-        .where((m) => shouldShowInContinueWatching(m.elapsed, m.remaining))
-        .toList();
+    var rMovies = Provider.of<RecentProvider>(context).continueWatchingMovies;
     return Container(
       child: ListView(
         children: [
