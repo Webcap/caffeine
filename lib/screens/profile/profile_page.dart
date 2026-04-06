@@ -107,6 +107,16 @@ class _ProfilePageState extends State<ProfilePage> {
     final appDep = context.watch<AppDependencyProvider>();
 
     final bg = isDark ? _C.bgCanvasDark : _C.bgCanvasLight;
+
+    if (!sp.isSignedIn) {
+      return Scaffold(
+        backgroundColor: bg,
+        body: Center(
+          child: CircularProgressIndicator(color: _C.primary),
+        ),
+      );
+    }
+
     final surface = isDark ? _C.bgSurfaceDark : _C.bgSurfaceLight;
     final elevated = isDark ? _C.bgElevatedDark : _C.bgElevatedLight;
     final border = isDark ? _C.borderDark : _C.borderLight;

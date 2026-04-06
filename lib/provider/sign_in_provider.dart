@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:username_generator/username_generator.dart';
+import 'package:caffiene/utils/routes/app_pages.dart';
+import 'package:get/get.dart';
 import 'dart:async';
 
 class SignInProvider extends ChangeNotifier {
@@ -175,6 +177,14 @@ class SignInProvider extends ChangeNotifier {
     }
     AnalyticsService.instance.trackEvent('Signed Out');
     AnalyticsService.instance.reset();
+
+    // Global redirect to login if we are signed out.
+    // Use a small delay to ensure providers and state are fully updated.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!_isSignedIn) {
+        Get.offAllNamed(Routes.login);
+      }
+    });
   }
 
   @override
