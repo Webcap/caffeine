@@ -26,6 +26,10 @@ const String ERROROCCURRED = "an error has occurred";
 /// Default production Caffeine API URL. Used when .env is unset or stored URL is a Vercel preview.
 const String DEFAULT_CAFFEINE_API_URL = 'https://caffeine.synqholdings.com/';
 
+/// Standard desktop browser User-Agent for scraper compatibility.
+const String BROWSER_USER_AGENT =
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
+
 /// True if [url] is a Vercel preview deployment (e.g. caffeine-xxx-projects.vercel.app).
 bool isCaffeineApiPreviewUrl(String url) {
   final host = Uri.tryParse(url)?.host ?? '';

@@ -218,10 +218,11 @@ class EpisodeListWidgetState extends State<EpisodeListWidget>
                               physics: const NeverScrollableScrollPhysics(),
                               padding: const EdgeInsets.symmetric(horizontal: 16),
                               itemBuilder: (BuildContext context, int index) {
-                                final isDark =
-                                    themeMode == 'dark' || themeMode == 'amoled';
-                                final elevated =
-                                    isDark ? _C.bgElevatedDark : _C.bgElevatedLight;
+                                final isDark = themeMode == 'dark' ||
+                                    themeMode == 'amoled';
+                                final elevated = isDark
+                                    ? _C.bgElevatedDark
+                                    : _C.bgElevatedLight;
                                 final border =
                                     isDark ? _C.borderDark : _C.borderLight;
                                 final textPrim =
@@ -233,268 +234,332 @@ class EpisodeListWidgetState extends State<EpisodeListWidget>
                                 final hasStill =
                                     stillPath != null && stillPath.isNotEmpty;
 
-                                final isWatched = recentProvider.episodes.any((e) =>
-                                    e.seriesId == widget.tvId &&
-                                    e.seasonNum == ep.seasonNumber &&
-                                    e.episodeNum == ep.episodeNumber &&
-                                    ((e.elapsed ?? 0) + (e.remaining ?? 0)) > 0 &&
-                                    ((e.elapsed ?? 0) /
-                                            ((e.elapsed ?? 0) + (e.remaining ?? 0))) >=
-                                        0.9);
+                                final isWatched = recentProvider.episodes.any(
+                                    (e) =>
+                                        e.seriesId == widget.tvId &&
+                                        e.seasonNum == ep.seasonNumber &&
+                                        e.episodeNum == ep.episodeNumber &&
+                                        ((e.elapsed ?? 0) +
+                                                (e.remaining ?? 0)) >
+                                            0 &&
+                                        ((e.elapsed ?? 0) /
+                                                ((e.elapsed ?? 0) +
+                                                    (e.remaining ?? 0))) >=
+                                            0.9);
 
                                 return Padding(
-                              padding: const EdgeInsets.only(bottom: 12),
-                              child: Material(
-                                color: Colors.transparent,
-                                child: InkWell(
-                                  onTap: () {
-                                    if (_lockTap) return;
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                EpisodeDetailPage(
+                                  padding: const EdgeInsets.only(bottom: 12),
+                                  child: Material(
+                                    color: Colors.transparent,
+                                    child: InkWell(
+                                      onTap: () {
+                                        if (_lockTap) return;
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    EpisodeDetailPage(
+                                                      seriesName:
+                                                          widget.seriesName,
+                                                      posterPath:
+                                                          widget.posterPath,
+                                                      tvId: widget.tvId,
+                                                      episodes:
+                                                          tvDetails!.episodes,
+                                                      episodeList: ep,
+                                                    )));
+                                      },
+                                      onLongPress: () {
+                                        _suppressTap();
+                                        MobileContextMenu.show(
+                                          context: context,
+                                          title: ep.name ??
+                                              'Episode ${ep.episodeNumber}',
+                                          subtitle:
+                                              'S${ep.seasonNumber} | E${ep.episodeNumber}',
+                                          items: [
+                                            MobileContextMenuItem(
+                                              label: tr("mark_as_completed"),
+                                              icon: Icons.check_circle_outline,
+                                              onTap: () {
+                                                final recentEp = RecentEpisode(
+                                                  dateTime: DateTime.now()
+                                                      .toIso8601String(),
+                                                  elapsed: 3600,
+                                                  episodeName: ep.name,
+                                                  episodeNum: ep.episodeNumber,
+                                                  id: ep.episodeId,
+                                                  posterPath: widget.posterPath,
+                                                  remaining: 0,
+                                                  seasonNum: ep.seasonNumber,
+                                                  seriesName: widget.seriesName,
+                                                  seriesId: widget.tvId,
+                                                );
+                                                recentProvider
+                                                    .markEpisodeAsCompleted(
+                                                        recentEp);
+                                              },
+                                            ),
+                                            MobileContextMenuItem(
+                                              label:
+                                                  tr("mark_watched_until_here"),
+                                              icon: Icons
+                                                  .playlist_add_check_rounded,
+                                              onTap: () {
+                                                recentProvider
+                                                    .markUntilEpisodeAsCompleted(
+                                                  allEpisodes:
+                                                      tvDetails!.episodes!,
+                                                  targetEpisode: ep,
+                                                  tvId: widget.tvId,
                                                   seriesName: widget.seriesName,
                                                   posterPath: widget.posterPath,
-                                                  tvId: widget.tvId,
-                                                  episodes: tvDetails!.episodes,
-                                                  episodeList: ep,
-                                                )));
-                                  },
-                                  onLongPress: () {
-                                    _suppressTap();
-                                    MobileContextMenu.show(
-                                      context: context,
-                                      title: ep.name ??
-                                          'Episode ${ep.episodeNumber}',
-                                      subtitle:
-                                          'S${ep.seasonNumber} | E${ep.episodeNumber}',
-                                      items: [
-                                        MobileContextMenuItem(
-                                          label: tr("mark_as_completed"),
-                                          icon: Icons.check_circle_outline,
-                                          onTap: () {
-                                            final recentEp = RecentEpisode(
-                                              dateTime: DateTime.now()
-                                                  .toIso8601String(),
-                                              elapsed: 3600,
-                                              episodeName: ep.name,
-                                              episodeNum: ep.episodeNumber,
-                                              id: ep.episodeId,
-                                              posterPath: widget.posterPath,
-                                              remaining: 0,
-                                              seasonNum: ep.seasonNumber,
-                                              seriesName: widget.seriesName,
-                                              seriesId: widget.tvId,
-                                            );
-                                            recentProvider
-                                                .markEpisodeAsCompleted(
-                                                    recentEp);
-                                          },
-                                        ),
-                                        MobileContextMenuItem(
-                                          label: tr("mark_watched_until_here"),
-                                          icon: Icons.playlist_add_check_rounded,
-                                          onTap: () {
-                                            recentProvider
-                                                .markUntilEpisodeAsCompleted(
-                                              allEpisodes: tvDetails!.episodes!,
-                                              targetEpisode: ep,
-                                              tvId: widget.tvId,
-                                              seriesName: widget.seriesName,
-                                              posterPath: widget.posterPath,
-                                            );
-                                          },
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                  borderRadius: BorderRadius.circular(16),
-                                  child: Container(
-                                    padding: const EdgeInsets.all(12),
-                                    decoration: BoxDecoration(
-                                      color: elevated,
+                                                );
+                                              },
+                                            ),
+                                          ],
+                                        );
+                                      },
                                       borderRadius: BorderRadius.circular(16),
-                                      border:
-                                          Border.all(color: border, width: 1),
-                                    ),
-                                    child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(12),
-                                          child: Stack(
-                                            children: [
-                                              SizedBox(
-                                                height: 90,
-                                                width: 160,
-                                                child: !hasStill
-                                                    ? Image.asset(
-                                                        'assets/images/na_logo.png',
-                                                        fit: BoxFit.cover,
-                                                        width: double.infinity,
-                                                      )
-                                                    : CachedNetworkImage(
-                                                        cacheManager: cacheProp(),
-                                                        fadeOutDuration:
-                                                            const Duration(
-                                                                milliseconds:
-                                                                    300),
-                                                        fadeInDuration:
-                                                            const Duration(
-                                                                milliseconds:
-                                                                    700),
-                                                        imageUrl: buildImageUrl(
-                                                                TMDB_BASE_IMAGE_URL,
-                                                                proxyUrl,
-                                                                isProxyEnabled,
-                                                                context) +
-                                                            imageQuality +
-                                                            stillPath,
-                                                        fit: BoxFit.cover,
-                                                        placeholder: (_, __) =>
-                                                            ShimmerBase(
-                                                          themeMode: themeMode,
-                                                          child: Container(
-                                                              color: Colors
-                                                                  .grey.shade600),
-                                                        ),
-                                                        errorWidget:
-                                                            (_, __, ___) =>
-                                                                Image.asset(
-                                                          'assets/images/na_logo.png',
-                                                          fit: BoxFit.cover,
-                                                          width:
-                                                              double.infinity,
-                                                        ),
-                                                      ),
-                                              ),
-                                              if (isWatched)
-                                                Positioned(
-                                                  top: 6,
-                                                  right: 6,
-                                                  child: Container(
-                                                    padding:
-                                                        const EdgeInsets.all(4),
-                                                    decoration: BoxDecoration(
-                                                      color: _C.primary,
-                                                      shape: BoxShape.circle,
-                                                      boxShadow: [
-                                                        BoxShadow(
-                                                          color: Colors.black
-                                                              .withValues(
-                                                                  alpha: 0.3),
-                                                          blurRadius: 4,
-                                                          offset: const Offset(
-                                                              0, 2),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    child: const Icon(
-                                                      Icons.check,
-                                                      color: Colors.white,
-                                                      size: 14,
-                                                    ),
-                                                  ),
-                                                ),
-                                            ],
+                                      child: LayoutBuilder(
+                                          builder: (context, constraints) {
+                                        final imgWidth =
+                                            (constraints.maxWidth * 0.38)
+                                                .clamp(120.0, 180.0);
+                                        final imgHeight = imgWidth * (9 / 16);
+                                        return Container(
+                                          padding: const EdgeInsets.all(12),
+                                          decoration: BoxDecoration(
+                                            color: elevated,
+                                            borderRadius:
+                                                BorderRadius.circular(16),
+                                            border: Border.all(
+                                                color: border, width: 1),
                                           ),
-                                        ),
-                                        const SizedBox(width: 12),
-                                        Expanded(
-                                          child: Column(
+                                          child: Row(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              Container(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 6,
-                                                        vertical: 2),
-                                                decoration: BoxDecoration(
-                                                  color: _C.primary
-                                                      .withValues(alpha: 0.2),
-                                                  borderRadius:
-                                                      BorderRadius.circular(6),
-                                                ),
-                                                child: Text(
-                                                  'E${ep.episodeNumber! <= 9 ? ep.episodeNumber.toString().padLeft(2, '0') : ep.episodeNumber}',
-                                                  style: TextStyle(
-                                                    fontSize: 11,
-                                                    fontWeight: FontWeight.w600,
-                                                    color: _C.primary,
-                                                  ),
+                                              ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                                child: Stack(
+                                                  children: [
+                                                    SizedBox(
+                                                      height: imgHeight,
+                                                      width: imgWidth,
+                                                      child: !hasStill
+                                                          ? Image.asset(
+                                                              'assets/images/na_logo.png',
+                                                              fit: BoxFit.cover,
+                                                              width: double
+                                                                  .infinity,
+                                                            )
+                                                          : CachedNetworkImage(
+                                                              cacheManager:
+                                                                  cacheProp(),
+                                                              fadeOutDuration:
+                                                                  const Duration(
+                                                                      milliseconds:
+                                                                          300),
+                                                              fadeInDuration:
+                                                                  const Duration(
+                                                                      milliseconds:
+                                                                          700),
+                                                              imageUrl: buildImageUrl(
+                                                                      TMDB_BASE_IMAGE_URL,
+                                                                      proxyUrl,
+                                                                      isProxyEnabled,
+                                                                      context) +
+                                                                  imageQuality +
+                                                                  stillPath,
+                                                              fit: BoxFit.cover,
+                                                              placeholder: (_,
+                                                                      __) =>
+                                                                  ShimmerBase(
+                                                                themeMode:
+                                                                    themeMode,
+                                                                child: Container(
+                                                                    color: Colors
+                                                                        .grey
+                                                                        .shade600),
+                                                              ),
+                                                              errorWidget: (_,
+                                                                      __,
+                                                                      ___) =>
+                                                                  Image.asset(
+                                                                'assets/images/na_logo.png',
+                                                                fit: BoxFit.cover,
+                                                                width: double
+                                                                    .infinity,
+                                                              ),
+                                                            ),
+                                                    ),
+                                                    if (isWatched)
+                                                      Positioned(
+                                                        top: 6,
+                                                        right: 6,
+                                                        child: Container(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(4),
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: _C.primary,
+                                                            shape:
+                                                                BoxShape.circle,
+                                                            boxShadow: [
+                                                              BoxShadow(
+                                                                color: Colors
+                                                                    .black
+                                                                    .withValues(
+                                                                        alpha:
+                                                                            0.3),
+                                                                blurRadius: 4,
+                                                                offset:
+                                                                    const Offset(
+                                                                        0, 2),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          child: const Icon(
+                                                            Icons.check,
+                                                            color: Colors.white,
+                                                            size: 14,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                  ],
                                                 ),
                                               ),
-                                              const SizedBox(height: 6),
-                                              Row(
-                                                children: [
-                                                  Expanded(
-                                                    child: Text(
+                                              const SizedBox(width: 14),
+                                              Expanded(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Container(
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          horizontal: 8,
+                                                          vertical: 3),
+                                                      decoration: BoxDecoration(
+                                                        color: _C.primary
+                                                            .withValues(
+                                                                alpha: 0.15),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(6),
+                                                      ),
+                                                      child: Text(
+                                                        'E${ep.episodeNumber! <= 9 ? ep.episodeNumber.toString().padLeft(2, '0') : ep.episodeNumber}',
+                                                        style: const TextStyle(
+                                                          fontSize: 12,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: _C.primary,
+                                                          letterSpacing: 0.5,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    const SizedBox(height: 10),
+                                                    Text(
                                                       ep.name ?? '—',
                                                       style: TextStyle(
-                                                        fontSize: 15,
-                                                        fontWeight: FontWeight.w600,
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.w700,
                                                         color: textPrim,
+                                                        height: 1.2,
+                                                        fontFamily: 'PoppinsSB',
                                                       ),
                                                       maxLines: 2,
-                                                      overflow: TextOverflow.ellipsis,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
                                                     ),
-                                                  ),
-                                                    const SizedBox(height: 6),
-                                              Row(
-                                                children: [
-                                                  if (ep.airDate != null && ep.airDate!.isNotEmpty) ...[
-                                                    Icon(
-                                                      Icons.calendar_month_rounded,
-                                                      size: 14,
-                                                      color: textSec,
-                                                    ),
-                                                    const SizedBox(width: 4),
-                                                    Text(
-                                                      '${DateTime.parse(ep.airDate!).day} ${DateFormat("MMM").format(DateTime.parse(ep.airDate!))} ${DateTime.parse(ep.airDate!).year}',
-                                                      style: TextStyle(
-                                                        fontSize: 12,
-                                                        color: textSec,
-                                                      ),
+                                                    const SizedBox(height: 8),
+                                                    Wrap(
+                                                      spacing: 12,
+                                                      runSpacing: 4,
+                                                      crossAxisAlignment:
+                                                          WrapCrossAlignment
+                                                              .center,
+                                                      children: [
+                                                        if (ep.airDate !=
+                                                                null &&
+                                                            ep.airDate!
+                                                                .isNotEmpty) ...[
+                                                          Row(
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .min,
+                                                            children: [
+                                                              Icon(
+                                                                Icons
+                                                                    .calendar_month_rounded,
+                                                                size: 14,
+                                                                color: textSec,
+                                                              ),
+                                                              const SizedBox(
+                                                                  width: 4),
+                                                              Text(
+                                                                '${DateTime.parse(ep.airDate!).day} ${DateFormat("MMM").format(DateTime.parse(ep.airDate!))} ${DateTime.parse(ep.airDate!).year}',
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontSize: 12,
+                                                                  color:
+                                                                      textSec,
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ],
+                                                        if (ep.voteAverage !=
+                                                                null &&
+                                                            ep.voteAverage! > 0)
+                                                          Row(
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .min,
+                                                            children: [
+                                                              const Icon(
+                                                                Icons
+                                                                    .star_rounded,
+                                                                size: 16,
+                                                                color: _C
+                                                                    .ratingGold,
+                                                              ),
+                                                              const SizedBox(
+                                                                  width: 4),
+                                                              Text(
+                                                                ep.voteAverage!
+                                                                    .toStringAsFixed(
+                                                                        1),
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontSize: 12,
+                                                                  color:
+                                                                      textSec,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                      ],
                                                     ),
                                                   ],
-                                                  if ((ep.airDate != null && ep.airDate!.isNotEmpty) &&
-                                                      (ep.voteAverage != null && ep.voteAverage! > 0))
-                                                    const SizedBox(width: 16),
-                                                  if (ep.voteAverage != null && ep.voteAverage! > 0) ...[
-                                                    Icon(
-                                                      Icons.star_rounded,
-                                                      size: 16,
-                                                      color: _C.ratingGold,
-                                                    ),
-                                                    const SizedBox(width: 4),
-                                                    Text(
-                                                      ep.voteAverage!.toStringAsFixed(1),
-                                                      style: TextStyle(
-                                                        fontSize: 12,
-                                                        color: textSec,
-                                                        fontWeight: FontWeight.bold,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ],
-                                              ),
-                                          ],
+                                                ),
                                               ),
                                             ],
                                           ),
-                                        ),
-                                      ],
+                                        );
+                                      }),
                                     ),
                                   ),
-                                  ),
-                                ),
-                              );
-                            },
-                          );
+                                );
+                              });
                         },
                       ),
                     ],

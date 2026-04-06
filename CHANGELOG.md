@@ -1,5 +1,22 @@
 # Changelog
 
+## [2.0.1+20260406] - 2026-04-06
+
+### Fixed
+- **Auth Session Expiry Redirect (Mobile)**: Resolved an issue where users remained on the current screen after a session expired or was revoked. The app now automatically redirects to the login screen on sign-out.
+- **Profile Page Error on Sign-Out (Mobile)**: Prevented an "Error Occurred" banner from appearing on the Profile page when a user's session was invalid. The page now exits gracefully while navigation resets.
+- **TV Show Availability (Mobile)**: Several shows (including The Challenge S41) were showing as unavailable on mobile while working on the TV app. Fixed by:
+  - Adding a standard browser `User-Agent` header to all scraper API requests, matching the TV app's behavior.
+  - Synchronizing the release date logic with the TV app — episodes airing today are now correctly treated as available.
+  - Removing a `posterPath != null` guard that was incorrectly hiding the **Watch Now** button for seasons without a TMDB poster (e.g., newly added seasons).
+
+### Changed
+- **Episode List Layout (Mobile)**: Refactored the TV season episode list for improved readability across different screen sizes.
+  - Thumbnail width is now percentage-based (38% of screen, clamped 120–180px) instead of fixed.
+  - Episode metadata (title, air date, rating) stacks vertically to prevent text truncation on narrow displays.
+
+---
+
 ## [2.0.1+20260329] - 2026-03-29
 
 ### Added

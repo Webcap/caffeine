@@ -161,10 +161,11 @@ int createUniqueId() {
 }
 
 bool isReleased(String target) {
-  DateTime currentDate = DateTime.now();
+  // Synchronize with TV app: Consider it released if air_date is before tomorrow.
+  // This handles time zone differences and episodes airing today.
+  DateTime now = DateTime.now();
   DateTime mediaDate = DateFormat('yyyy-MM-dd').parse(target);
-  return mediaDate.isBefore(currentDate) ||
-      mediaDate.isAtSameMomentAs(currentDate);
+  return mediaDate.isBefore(now.add(const Duration(days: 1)));
 }
 
 String normalizeTitle(String title) {

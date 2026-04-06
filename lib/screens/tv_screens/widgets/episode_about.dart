@@ -109,16 +109,15 @@ class _EpisodeAboutState extends State<EpisodeAbout> {
             const SizedBox(height: 20),
             Row(mainAxisAlignment: MainAxisAlignment.center, children: [
               appDependency.displayWatchNowButton &&
-                      widget.posterPath != null &&
                       (widget.episodeList.airDate == null ||
                           widget.episodeList.airDate!.isEmpty ||
                           DateTime.tryParse(widget.episodeList.airDate!)!
-                              .isBefore(DateTime.now()))
+                              .isBefore(DateTime.now().add(const Duration(days: 1))))
                   ? WatchNowButtonTV(
                       episode: widget.episodeList,
                       seriesName: widget.seriesName!,
                       tvId: widget.tvId!,
-                      posterPath: widget.posterPath!,
+                      posterPath: widget.posterPath ?? '',
                     )
                   : Container(),
             ]),
