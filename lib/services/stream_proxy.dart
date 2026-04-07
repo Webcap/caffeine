@@ -4,8 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 
-const _ua = 'Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 '
-    '(KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36';
+const _ua = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36';
 
 class _Variant {
   final String url;
@@ -55,6 +54,18 @@ class CastStreamServer {
   /// Chromecast.
   /// Safely closes the response; catches SocketException when client has
   /// already disconnected (e.g. Chromecast stopped, network drop).
+  /// Resolves [path] against [base], preserving query parameters if the
+  /// host is the same (essential for proxy-based CDNs).
+  String _resolve(Uri base, String path) {
+    var resolved = base.resolve(path);
+    if (resolved.query.isEmpty && base.query.isNotEmpty) {
+      if (resolved.host == base.host) {
+        resolved = resolved.replace(queryParameters: base.queryParameters);
+      }
+    }
+    return resolved.toString();
+  }
+
   Future<void> _safeCloseResponse(HttpResponse res) async {
     try {
       await res.close();
@@ -63,8 +74,16 @@ class CastStreamServer {
     }
   }
 
-  Future<String?> prepare(String masterUrl) async {
+  Future<String?> prepare(String masterUrl, {Map<String, String>? overrideHeaders}) async {
     _globalHeaders.clear();
+    // Prioritize override headers (normalized to lowercase)
+    if (overrideHeaders != null) {
+      overrideHeaders.forEach((k, v) {
+        _globalHeaders[k.toLowerCase()] = v;
+      });
+    }
+
+    // Add secondary headers from URL query if they don't conflict
     try {
       final uri = Uri.tryParse(masterUrl);
       if (uri != null && uri.queryParameters.containsKey('headers')) {
@@ -72,13 +91,17 @@ class CastStreamServer {
         if (hStr != null && hStr.isNotEmpty) {
           final parsed = jsonDecode(hStr) as Map<String, dynamic>;
           for (final entry in parsed.entries) {
-            _globalHeaders[entry.key] = entry.value.toString();
+            final lowerKey = entry.key.toLowerCase();
+            if (!_globalHeaders.containsKey(lowerKey)) {
+              _globalHeaders[lowerKey] = entry.value.toString();
+            }
           }
         }
       }
     } catch (e) {
       debugPrint('[CastStream] Error parsing headers: $e');
     }
+    debugPrint('[CastStream] Normalized global headers: $_globalHeaders');
 
     final client = HttpClient();
     client.connectionTimeout = const Duration(seconds: 10);
@@ -87,7 +110,10 @@ class CastStreamServer {
       // ── 1. fetch & follow redirects on the master playlist ─────────────
       final resolvedMaster = await _followRedirects(client, masterUrl);
       final masterBody = await _fetchPlaylist(client, resolvedMaster);
-      if (masterBody == null) return null;
+      if (masterBody == null) {
+        debugPrint('[CastStream] prepare: masterBody is null for $resolvedMaster');
+        return null;
+      }
 
       debugPrint(
           '[CastStream] Master playlist fetched (${masterBody.length} bytes)');
@@ -114,7 +140,10 @@ class CastStreamServer {
 
       final resolvedVideo = await _followRedirects(client, best.url);
       final videoBody = await _fetchPlaylist(client, resolvedVideo);
-      if (videoBody == null) return null;
+      if (videoBody == null) {
+        debugPrint('[CastStream] prepare: videoBody is null for $resolvedVideo');
+        return null;
+      }
       debugPrint('[CastStream] Video playlist fetched from $resolvedVideo');
 
       // ── 3. check for a separate audio track ───────────────────────────
@@ -195,7 +224,7 @@ class CastStreamServer {
     for (final line in body.split('\n')) {
       final t = line.trim();
       if (t.isEmpty || t.startsWith('#')) continue;
-      final abs = t.startsWith('http') ? t : baseUri.resolve(t).toString();
+      final abs = t.startsWith('http') ? t : _resolve(baseUri, t);
       segmentHost = Uri.parse(abs).host;
       break;
     }
@@ -217,7 +246,7 @@ class CastStreamServer {
           final rawUri = uriMatch.group(1)!;
           final absUri = rawUri.startsWith('http')
               ? rawUri
-              : baseUri.resolve(rawUri).toString();
+              : _resolve(baseUri, rawUri);
           final uriHost = Uri.parse(absUri).host;
 
           // Resource lives on the restricted playlist host → proxy it.
@@ -245,7 +274,7 @@ class CastStreamServer {
       } else {
         final absolute = trimmed.startsWith('http')
             ? trimmed
-            : baseUri.resolve(trimmed).toString();
+            : _resolve(baseUri, trimmed);
         firstSegmentUrl ??= absolute;
         final segPath = '/seg/$ns/$segIdx';
         segIdx++;
@@ -280,7 +309,7 @@ class CastStreamServer {
 
   // ── playlist helpers ─────────────────────────────────────────────────────
 
-  static _Variant? _pickBestVariant(String playlist, String baseUrl) {
+  _Variant? _pickBestVariant(String playlist, String baseUrl) {
     final baseUri = Uri.parse(baseUrl);
     final lines = playlist.split('\n');
     _Variant? best;
@@ -298,7 +327,7 @@ class CastStreamServer {
         if (u.isEmpty || u.startsWith('#')) continue;
         if (best == null || bandwidth > best.bandwidth) {
           best = _Variant(
-            u.startsWith('http') ? u : baseUri.resolve(u).toString(),
+            u.startsWith('http') ? u : _resolve(baseUri, u),
             bandwidth,
             ag?.group(1),
           );
@@ -310,7 +339,7 @@ class CastStreamServer {
   }
 
   /// Finds the URI of the default (or first) audio rendition in [groupId].
-  static String? _findAudioUrl(String master, String groupId, Uri baseUri) {
+  String? _findAudioUrl(String master, String groupId, Uri baseUri) {
     String? firstUrl;
     for (final line in master.split('\n')) {
       final t = line.trim();
@@ -321,7 +350,7 @@ class CastStreamServer {
       if (m == null) continue;
       final raw = m.group(1)!;
       final url =
-          raw.startsWith('http') ? raw : baseUri.resolve(raw).toString();
+          raw.startsWith('http') ? raw : _resolve(baseUri, raw);
       if (t.contains('DEFAULT=YES')) return url;
       firstUrl ??= url;
     }
@@ -334,7 +363,7 @@ class CastStreamServer {
     return tag.replaceAllMapped(_uriAttr, (m) {
       final raw = m.group(1)!;
       final absolute =
-          raw.startsWith('http') ? raw : baseUri.resolve(raw).toString();
+          raw.startsWith('http') ? raw : _resolve(baseUri, raw);
       return 'URI="$absolute"';
     });
   }
@@ -354,7 +383,7 @@ class CastStreamServer {
       if (res.statusCode >= 300 && res.statusCode < 400) {
         final loc = res.headers.value('location');
         if (loc != null) {
-          current = Uri.parse(current).resolve(loc).toString();
+          current = _resolve(Uri.parse(current), loc);
           continue;
         }
       }
@@ -403,7 +432,7 @@ class CastStreamServer {
   Future<bool> _probe(HttpClient client, String url) async {
     try {
       final req = await client.getUrl(Uri.parse(url));
-      req.headers.set('User-Agent', 'Mozilla/5.0');
+      req.headers.set('User-Agent', _ua);
       _globalHeaders.forEach((k, v) { req.headers.set(k, v); });
       final res = await req.close();
       await res.drain();
@@ -467,18 +496,30 @@ class CastStreamServer {
             req.response.statusCode = upRes.statusCode;
             req.response.headers.add('Access-Control-Allow-Origin', '*');
             final ct = upRes.headers.contentType;
-            if (ct != null) req.response.headers.contentType = ct;
+            if (path.contains('/seg/')) {
+              // Force MPEG-TS for segments even if CDN disguises them as JPG/etc.
+              req.response.headers.contentType = ContentType('video', 'mp2t');
+            } else if (ct != null) {
+              req.response.headers.contentType = ct;
+            }
             if (upRes.contentLength >= 0) {
               req.response.contentLength = upRes.contentLength;
             }
 
-            // Forward accept-ranges so the Chromecast knows it can seek.
-            final ar = upRes.headers.value('accept-ranges');
-            if (ar != null) req.response.headers.set('Accept-Ranges', ar);
+            // Copy all helpful headers from upstream (but skip we handle manually).
+            upRes.headers.forEach((name, values) {
+              final n = name.toLowerCase();
+              if (n == 'content-type' || n == 'content-length' || n == 'access-control-allow-origin') return;
+              for (final v in values) {
+                req.response.headers.add(name, v);
+              }
+            });
 
+            final sw = Stopwatch()..start();
             try {
               await upRes.pipe(req.response);
-              debugPrint('[CastStream] Done proxying $path');
+              sw.stop();
+              debugPrint('[CastStream] Done proxying $path in ${sw.elapsedMilliseconds}ms');
             } on SocketException catch (e) {
               debugPrint(
                   '[CastStream] Client disconnected during pipe $path: $e');
@@ -528,7 +569,7 @@ class CastStreamServer {
     return '127.0.0.1';
   }
 
-  Future<void> stop() async {
+  Future<void> stop({String? reason}) async {
     await _server?.close(force: true);
     _server = null;
     _proxyClient?.close(force: true);
@@ -538,6 +579,9 @@ class CastStreamServer {
     _files.clear();
     _rawFiles.clear();
     _proxyMap.clear();
-    debugPrint('[CastStream] Stopped');
+    debugPrint('[CastStream] Stopped' + (reason != null ? ': $reason' : ''));
+    if (kDebugMode) {
+      debugPrint(StackTrace.current.toString());
+    }
   }
 }

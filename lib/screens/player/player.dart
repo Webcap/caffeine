@@ -854,6 +854,7 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
         title: _castTitle,
         posterUrl: _castPosterUrl,
         elapsedSeconds: elapsed ~/ 1000,
+        headers: widget.headers,
       ),
     );
   }

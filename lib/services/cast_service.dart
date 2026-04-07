@@ -70,6 +70,7 @@ class CastService extends ChangeNotifier {
     required String title,
     String? posterUrl,
     int elapsedSeconds = 0,
+    Map<String, String>? headers,
   }) async {
     await disconnect(silent: true);
 
@@ -85,8 +86,8 @@ class CastService extends ChangeNotifier {
         '[CastService] Connecting to ${device.name} (${device.host}:${device.port})');
 
     try {
-      await _streamServer.stop();
-      final castUrl = await _streamServer.prepare(streamUrl);
+      await _streamServer.stop(reason: 'connectAndPlay');
+      final castUrl = await _streamServer.prepare(streamUrl, overrideHeaders: headers);
       final loadUrl = castUrl ?? streamUrl;
       debugPrint('[CastService] Cast URL: $loadUrl');
 
@@ -124,7 +125,7 @@ class CastService extends ChangeNotifier {
         debugPrint('[CastService] Message stream error: $e');
       });
 
-      _stateSubscription = _session!.stateStream.listen((castState) {
+      _stateSubscription = _session!.stateStream.listen((castState) async {
         debugPrint('[CastService] Session state: $castState');
         if (castState == CastSessionState.connected &&
             _state == CastState.connecting) {
@@ -141,7 +142,7 @@ class CastService extends ChangeNotifier {
           _connectedDeviceName = null;
           _nowPlayingTitle = null;
           _session = null;
-          _streamServer.stop();
+          await _streamServer.stop(reason: 'session_closed');
           notifyListeners();
         }
       }, onError: (e) {
@@ -238,7 +239,7 @@ class CastService extends ChangeNotifier {
       } catch (_) {}
       _session = null;
     }
-    await _streamServer.stop();
+    await _streamServer.stop(reason: 'disconnect(silent: $silent)');
     _wakeCh.invokeMethod('release').catchError((_) {});
     _lastCastPositionOnDisconnect =
         _castPositionSeconds > 0 ? _castPositionSeconds : null;

@@ -13,12 +13,14 @@ class CastBottomSheet extends StatefulWidget {
     required this.title,
     this.posterUrl,
     this.elapsedSeconds = 0,
+    this.headers,
   });
 
   final String streamUrl;
   final String title;
   final String? posterUrl;
   final int elapsedSeconds;
+  final Map<String, String>? headers;
 
   @override
   State<CastBottomSheet> createState() => _CastBottomSheetState();
@@ -43,6 +45,7 @@ class _CastBottomSheetState extends State<CastBottomSheet> {
       title: widget.title,
       posterUrl: widget.posterUrl,
       elapsedSeconds: widget.elapsedSeconds,
+      headers: widget.headers,
     );
   }
 
