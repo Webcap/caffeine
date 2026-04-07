@@ -6,13 +6,15 @@ import 'package:http/io_client.dart';
 
 part 'app_version.g.dart';
 
+CacheManager? _cacheManagerInstance;
+
 CacheManager cacheProp() {
-  return CacheManager(
+  _cacheManagerInstance ??= CacheManager(
     Config(
-      'cacheProp',
+      'cacheProp_v2', // Changed name to reset potentially corrupted cache
       stalePeriod: const Duration(days: 7),
-      maxNrOfCacheObjects: 100,
-      repo: JsonCacheInfoRepository(databaseName: 'cacheProp'),
+      maxNrOfCacheObjects: 200, // Increased slightly
+      repo: JsonCacheInfoRepository(databaseName: 'cacheProp_v2'),
       fileService: HttpFileService(
         httpClient: IOClient(
           HttpClient()..userAgent = BROWSER_USER_AGENT,
@@ -20,6 +22,7 @@ CacheManager cacheProp() {
       ),
     ),
   );
+  return _cacheManagerInstance!;
 }
 
 // ── Shared Text Styles ───────────────────────────────────────────────────────

@@ -765,12 +765,20 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) async {
     final isInBackground = (state == AppLifecycleState.paused) ||
         (state == AppLifecycleState.inactive);
+    final isResuming = state == AppLifecycleState.resumed;
+
     if (isInBackground) {
       if (_betterPlayerController.isVideoInitialized() == true) {
         widget.mediaType == MediaType.movie
             ? insertRecentMovieData()
             : insertRecentEpisodeData();
       }
+    } else if (isResuming) {
+      // If we are resuming and casting, check if the cast finished while away.
+      // CastService is a ChangeNotifier, so it should trigger a build automatically
+      // if it received a message while in the background (if proxy/socket stayed alive).
+      // If not, it will update on next status message.
+      setState(() {});
     }
   }
 
@@ -1043,6 +1051,30 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
           castService.castPositionSeconds;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _resumeFromCast(resumePos);
+      });
+    }
+
+    if (isCasting && castService.isMediaFinishedOnCast) {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        if (!mounted) return;
+
+        debugPrint('[Player] 🏁 Cast media finished. Marking complete and returning.');
+        
+        // Use the total duration of the media to mark as 100% complete
+        final castDurationMs = castService.totalMediaDurationSeconds * 1000;
+        final finalElapsed = castDurationMs > 0 ? castDurationMs : duration;
+
+        if (widget.mediaType == MediaType.movie) {
+          await insertRecentMovieData(manualElapsed: finalElapsed);
+        } else {
+          await insertRecentEpisodeData(manualElapsed: finalElapsed);
+        }
+
+        castService.clearFinishedStatus();
+        
+        if (Navigator.of(context).canPop()) {
+          Navigator.of(context).pop();
+        }
       });
     }
 

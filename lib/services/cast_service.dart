@@ -45,6 +45,21 @@ class CastService extends ChangeNotifier {
   String? _lastError;
   String? get lastError => _lastError;
 
+  /// Total duration of the media being cast (seconds).
+  int _totalMediaDurationSeconds = 0;
+  int get totalMediaDurationSeconds => _totalMediaDurationSeconds;
+
+  /// Whether the media has reached 100% completion on the cast device.
+  bool _isMediaFinishedOnCast = false;
+  bool get isMediaFinishedOnCast => _isMediaFinishedOnCast;
+
+  void clearFinishedStatus() {
+    if (_isMediaFinishedOnCast) {
+      _isMediaFinishedOnCast = false;
+      notifyListeners();
+    }
+  }
+
   Future<List<CastDevice>> scanForDevices(
       {Duration timeout = const Duration(seconds: 5)}) async {
     _state = CastState.scanning;
@@ -80,6 +95,8 @@ class CastService extends ChangeNotifier {
     _nowPlayingTitle = title;
     _lastError = null;
     _mediaSessionId = 0;
+    _totalMediaDurationSeconds = 0;
+    _isMediaFinishedOnCast = false;
     notifyListeners();
 
     debugPrint(
@@ -109,8 +126,21 @@ class CastService extends ChangeNotifier {
             }
             final playerState = first['playerState'];
             final idleReason = first['idleReason'];
+
+            final mediaObj = first['media'] as Map<String, dynamic>?;
+            final duration = (mediaObj?['duration'] as num?)?.toInt();
+            if (duration != null && duration > 0) {
+              _totalMediaDurationSeconds = duration;
+            }
+
             debugPrint(
-                '[CastService] playerState=$playerState idleReason=$idleReason pos=${_castPositionSeconds}s mediaSessionId=$_mediaSessionId');
+                '[CastService] playerState=$playerState idleReason=$idleReason pos=${_castPositionSeconds}s duration=${_totalMediaDurationSeconds}s mediaSessionId=$_mediaSessionId');
+
+            if (playerState == 'IDLE' && idleReason == 'FINISHED') {
+              _isMediaFinishedOnCast = true;
+              notifyListeners();
+            }
+
             if (idleReason == 'ERROR') {
               _lastError = 'Chromecast failed to load media';
               notifyListeners();

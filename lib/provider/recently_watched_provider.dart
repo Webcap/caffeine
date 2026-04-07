@@ -154,10 +154,13 @@ class RecentProvider extends ChangeNotifier {
 
   List<RecentEpisode> _mergeEpisodes(
       List<RecentEpisode> cloud, List<RecentEpisode> local) {
-    String key(RecentEpisode e) => '${e.id}_${e.seasonNum}_${e.episodeNum}';
+    String key(RecentEpisode e) =>
+        '${e.seriesId ?? e.id}_${e.seasonNum}_${e.episodeNum}';
     final byKey = <String, RecentEpisode>{};
     for (final e in local) {
-      if (e.id == null || e.seasonNum == null || e.episodeNum == null) continue;
+      if ((e.id == null && e.seriesId == null) ||
+          e.seasonNum == null ||
+          e.episodeNum == null) continue;
       byKey[key(e)] = e;
     }
     for (final e in cloud) {
