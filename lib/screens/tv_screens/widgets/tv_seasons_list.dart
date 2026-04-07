@@ -98,9 +98,6 @@ class SeasonsListState extends State<SeasonsList> {
                             itemCount: tvDetails!.seasons!.length,
                             scrollDirection: Axis.horizontal,
                             itemBuilder: (context, index) {
-                              // Reverse the list logic to show latest season first
-                              final reversedIndex =
-                                  tvDetails!.seasons!.length - 1 - index;
                               return Padding(
                                 padding:
                                     const EdgeInsets.only(left: 10, right: 10),
@@ -113,10 +110,10 @@ class SeasonsListState extends State<SeasonsList> {
                                                 tvId: widget.tvId,
                                                 seriesName: widget.seriesName,
                                                 tvDetails: tvDetails!,
-                                                seasons: tvDetails!
-                                                    .seasons![reversedIndex],
+                                                seasons:
+                                                    tvDetails!.seasons![index],
                                                 heroId:
-                                                    '${tvDetails!.seasons![reversedIndex].seasonNumber}')));
+                                                    '${tvDetails!.seasons![index].seasonNumber}')));
                                   },
                                   child: SizedBox(
                                     width: 105,
@@ -126,12 +123,11 @@ class SeasonsListState extends State<SeasonsList> {
                                           flex: 6,
                                           child: Hero(
                                             tag:
-                                                '${tvDetails!.seasons![reversedIndex].seasonNumber}',
+                                                '${tvDetails!.seasons![index].seasonNumber}',
                                             child: ClipRRect(
                                               borderRadius:
                                                   BorderRadius.circular(8.0),
-                                              child: tvDetails!
-                                                          .seasons![reversedIndex]
+                                              child: tvDetails!.seasons![index]
                                                           .posterPath ==
                                                       null
                                                   ? Image.asset(
@@ -159,8 +155,7 @@ class SeasonsListState extends State<SeasonsList> {
                                                               context) +
                                                           imageQuality +
                                                           tvDetails!
-                                                              .seasons![
-                                                                  reversedIndex]
+                                                              .seasons![index]
                                                               .posterPath!,
                                                       imageBuilder: (context,
                                                               imageProvider) =>

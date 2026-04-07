@@ -42,6 +42,8 @@ class CastStreamServer {
   /// Persistent client for proxying segment requests.
   HttpClient? _proxyClient;
 
+  final Map<String, String> _globalHeaders = {};
+
   bool get isRunning => _server != null;
   String? get baseUrl =>
       _localIp != null && _port != null ? 'http://$_localIp:$_port' : null;
@@ -62,6 +64,22 @@ class CastStreamServer {
   }
 
   Future<String?> prepare(String masterUrl) async {
+    _globalHeaders.clear();
+    try {
+      final uri = Uri.tryParse(masterUrl);
+      if (uri != null && uri.queryParameters.containsKey('headers')) {
+        final hStr = uri.queryParameters['headers'];
+        if (hStr != null && hStr.isNotEmpty) {
+          final parsed = jsonDecode(hStr) as Map<String, dynamic>;
+          for (final entry in parsed.entries) {
+            _globalHeaders[entry.key] = entry.value.toString();
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint('[CastStream] Error parsing headers: $e');
+    }
+
     final client = HttpClient();
     client.connectionTimeout = const Duration(seconds: 10);
 
@@ -323,12 +341,13 @@ class CastStreamServer {
 
   // ── networking helpers ───────────────────────────────────────────────────
 
-  static Future<String> _followRedirects(HttpClient client, String url,
+  Future<String> _followRedirects(HttpClient client, String url,
       {int maxHops = 5}) async {
     var current = url;
     for (var i = 0; i < maxHops; i++) {
       final req = await client.getUrl(Uri.parse(current));
       req.headers.set('User-Agent', _ua);
+      _globalHeaders.forEach((k, v) { req.headers.set(k, v); });
       req.followRedirects = false;
       final res = await req.close();
       await res.drain();
@@ -344,9 +363,10 @@ class CastStreamServer {
     return current;
   }
 
-  static Future<String?> _fetchPlaylist(HttpClient client, String url) async {
+  Future<String?> _fetchPlaylist(HttpClient client, String url) async {
     final req = await client.getUrl(Uri.parse(url));
     req.headers.set('User-Agent', _ua);
+    _globalHeaders.forEach((k, v) { req.headers.set(k, v); });
     final res = await req.close();
     if (res.statusCode != 200) {
       debugPrint('[CastStream] HTTP ${res.statusCode} fetching $url');
@@ -357,11 +377,11 @@ class CastStreamServer {
   }
 
   /// Fetches raw bytes (encryption keys, init segments, etc.).
-  static Future<List<int>?> _fetchRaw(HttpClient client, String url) async {
+  Future<List<int>?> _fetchRaw(HttpClient client, String url) async {
     try {
       final req = await client.getUrl(Uri.parse(url));
       req.headers.set('User-Agent', _ua);
-      req.headers.set('Referer', 'https://vixsrc.to/');
+      _globalHeaders.forEach((k, v) { req.headers.set(k, v); });
       final res = await req.close();
       if (res.statusCode != 200) {
         debugPrint('[CastStream] HTTP ${res.statusCode} fetching raw $url');
@@ -380,10 +400,11 @@ class CastStreamServer {
   }
 
   /// HEAD / small-range GET to check if a URL is reachable without auth.
-  static Future<bool> _probe(HttpClient client, String url) async {
+  Future<bool> _probe(HttpClient client, String url) async {
     try {
       final req = await client.getUrl(Uri.parse(url));
       req.headers.set('User-Agent', 'Mozilla/5.0');
+      _globalHeaders.forEach((k, v) { req.headers.set(k, v); });
       final res = await req.close();
       await res.drain();
       return res.statusCode == 200 || res.statusCode == 206;
@@ -430,8 +451,7 @@ class CastStreamServer {
           try {
             final upstream = await _proxyClient!.getUrl(Uri.parse(remoteUrl));
             upstream.headers.set('User-Agent', _ua);
-            upstream.headers.set('Referer', 'https://vixsrc.to/');
-            upstream.headers.set('Origin', 'https://vixsrc.to');
+            _globalHeaders.forEach((k, v) { upstream.headers.set(k, v); });
 
             // Forward Range header from Chromecast if present.
             final range = req.headers.value('range');
