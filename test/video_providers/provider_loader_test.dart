@@ -1,6 +1,7 @@
 import 'package:caffiene/models/provider_video_source.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/video_providers/provider_loader.dart';
+import 'package:caffiene/utils/globals.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

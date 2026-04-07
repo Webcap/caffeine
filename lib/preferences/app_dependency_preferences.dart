@@ -1,4 +1,5 @@
 // ignore_for_file: constant_identifier_names
+import 'package:caffiene/utils/globals.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/utils/constant.dart';
 import 'dart:math' as math;

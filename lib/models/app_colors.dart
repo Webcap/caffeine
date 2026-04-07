@@ -1,4 +1,5 @@
 import 'package:caffiene/utils/config.dart';
+import 'package:caffiene/utils/globals.dart';
 import 'package:flutter/material.dart';
 
 class AppColor {
@@ -54,28 +55,3 @@ class AppColorsList {
     return appColors;
   }
 }
-
-/*
-
-
-List<AppColor> appColors = [
-      AppColor(
-          cs: AppColor.colorGetter(const Color(0xFFF57C00), isDark), index: -1),
-      AppColor(
-          cs: AppColor.colorGetter(const Color(0xFF32a852), isDark), index: 0),
-      AppColor(
-          cs: AppColor.colorGetter(const Color(0xFF8e44ad), isDark), index: 1),
-      AppColor(
-          cs: AppColor.colorGetter(const Color(0xFF2c3e50), isDark), index: 2),
-      AppColor(
-          cs: AppColor.colorGetter(const Color(0xFFd35400), isDark), index: 3),
-      AppColor(
-          cs: AppColor.colorGetter(const Color(0xFF16a085), isDark), index: 4),
-      AppColor(
-          cs: AppColor.colorGetter(const Color(0xFFc0392b), isDark), index: 5),
-      AppColor(
-          cs: AppColor.colorGetter(const Color(0xFFc09b2b), isDark), index: 6),
-    ];
-
-
-*/

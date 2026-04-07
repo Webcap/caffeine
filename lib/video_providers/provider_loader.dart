@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:caffiene/functions/network.dart';
 import 'package:caffiene/models/provider_video_source.dart';
 import 'package:caffiene/utils/config.dart';
+import 'package:caffiene/utils/globals.dart';
 import 'package:caffiene/video_providers/regularVideoLinks.dart';
 
 class ProviderLoader {

@@ -2,6 +2,7 @@
 import 'dart:io';
 import 'package:caffiene/models/update.dart';
 import 'package:caffiene/provider/app_dependency_provider.dart';
+import 'package:caffiene/utils/globals.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/utils/version_utils.dart';
 import 'package:caffiene/utils/config_api.dart';
@@ -772,36 +773,11 @@ class UpdateBottom extends StatefulWidget {
 class _UpdateBottomState extends State<UpdateBottom> {
   static const bool _updateBannerEnabled = true;
 
-  String? appVersion;
-  bool visible = false;
-  bool disableCheck = false;
-
   String? ignoreVersion;
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    appVersion ??= Provider.of<AppDependencyProvider>(context, listen: false)
-        .latestVersion;
-  }
-
-  Future getData() async {
-    if (!_updateBannerEnabled) return;
-    final version = Provider.of<AppDependencyProvider>(context, listen: false)
-        .latestVersion;
-    if (!mounted) return;
-    setState(() {
-      appVersion = version;
-      ignoreVersion = sharedPrefsSingleton.getString("ignore_version") ?? "";
-      visible = ignoreVersion != version &&
-          version.isNotEmpty &&
-          isUpdateAvailable(currentAppVersion, version);
-    });
-  }
-
-  Future checkAction(bool value) async {
+  Future<void> checkAction(bool value, String? appVersion) async {
     if (value && appVersion != null) {
-      sharedPrefsSingleton.setString("ignore_version", appVersion!);
+      sharedPrefsSingleton.setString("ignore_version", appVersion);
     } else {
       sharedPrefsSingleton.setString("ignore_version", "");
     }
@@ -810,73 +786,86 @@ class _UpdateBottomState extends State<UpdateBottom> {
   @override
   void initState() {
     super.initState();
-    getData();
+    // Read cached ignore_version preference once
+    ignoreVersion = sharedPrefsSingleton.getString("ignore_version") ?? "";
   }
 
   @override
   Widget build(BuildContext context) {
     if (!_updateBannerEnabled) return const SizedBox.shrink();
-    return Visibility(
-      visible: visible,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-        child: Container(
-          decoration: BoxDecoration(
-            color: _UpdateDesign.bgSurfaceDark,
-            borderRadius: BorderRadius.circular(_UpdateDesign.radiusCard),
-            border: Border.all(color: _UpdateDesign.borderSubtle),
-            boxShadow: _UpdateDesign.shadowCard,
-          ),
-          width: double.infinity,
-          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                tr("update_available"),
-                style: const TextStyle(
-                  color: _UpdateDesign.textPrimary,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                ),
-                maxLines: 2,
-                textAlign: TextAlign.center,
+
+    // Listen to AppDependencyProvider so we react when latestVersion arrives
+    // from the remote config API (which loads asynchronously after initState).
+    return Consumer<AppDependencyProvider>(
+      builder: (context, dep, _) {
+        final version = dep.latestVersion;
+        final visible = (ignoreVersion != version) &&
+            version.isNotEmpty &&
+            isUpdateAvailable(currentAppVersion, version);
+
+        return Visibility(
+          visible: visible,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+            child: Container(
+              decoration: BoxDecoration(
+                color: _UpdateDesign.bgSurfaceDark,
+                borderRadius: BorderRadius.circular(_UpdateDesign.radiusCard),
+                border: Border.all(color: _UpdateDesign.borderSubtle),
+                boxShadow: _UpdateDesign.shadowCard,
               ),
-              const SizedBox(height: 8),
-              VersionDisplay(
-                version: appVersion ?? "",
-                style: const TextStyle(
-                    color: _UpdateDesign.textSecondary, fontSize: 14),
-              ),
-              const SizedBox(height: 16),
-              SizedBox(
-                height: _UpdateDesign.ctaHeight,
-                child: FilledButton(
-                  style: FilledButton.styleFrom(
-                    backgroundColor: _UpdateDesign.primaryCta,
-                    foregroundColor: _UpdateDesign.textPrimary,
-                    shape: RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.circular(_UpdateDesign.radiusPill)),
-                    elevation: 0,
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    tr("update_available"),
+                    style: const TextStyle(
+                      color: _UpdateDesign.textPrimary,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    maxLines: 2,
+                    textAlign: TextAlign.center,
                   ),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => const UpdateScreen(isForced: false),
+                  const SizedBox(height: 8),
+                  VersionDisplay(
+                    version: version,
+                    style: const TextStyle(
+                        color: _UpdateDesign.textSecondary, fontSize: 14),
+                  ),
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    height: _UpdateDesign.ctaHeight,
+                    child: FilledButton(
+                      style: FilledButton.styleFrom(
+                        backgroundColor: _UpdateDesign.primaryCta,
+                        foregroundColor: _UpdateDesign.textPrimary,
+                        shape: RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.circular(_UpdateDesign.radiusPill)),
+                        elevation: 0,
                       ),
-                    );
-                  },
-                  child: Text(tr("goto_update"),
-                      style: const TextStyle(
-                          fontWeight: FontWeight.w600, fontSize: 15)),
-                ),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const UpdateScreen(isForced: false),
+                          ),
+                        );
+                      },
+                      child: Text(tr("goto_update"),
+                          style: const TextStyle(
+                              fontWeight: FontWeight.w600, fontSize: 15)),
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

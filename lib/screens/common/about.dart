@@ -2,6 +2,7 @@ import 'package:caffiene/provider/settings_provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/utils/config.dart';
+import 'package:caffiene/utils/globals.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:caffiene/utils/version_helper.dart';

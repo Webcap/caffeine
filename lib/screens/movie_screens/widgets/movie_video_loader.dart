@@ -1,4 +1,5 @@
 // ignore_for_file: use_build_context_synchronously
+import 'package:caffiene/utils/globals.dart';
 import 'package:caffiene/controller/recently_watched_database_controller.dart';
 import 'package:caffiene/functions/network.dart';
 import 'package:caffiene/models/movie_stream_metadata.dart';

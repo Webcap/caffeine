@@ -46,11 +46,11 @@ class Endpoints {
         '&include_adult=$includeAdult&language=$l';
   }
 
-  static String upcomingMoviesUrl(String l) {
-    return '$TMDB_API_BASE_URL'
-        '/movie/upcoming?api_key='
-        '$TMDB_API_KEY'
-        '&language=$l';
+  static String upcomingMoviesUrl(String l, [String region = 'US']) {
+    final today = DateTime.now().toIso8601String().split('T')[0];
+    return '$TMDB_API_BASE_URL/discover/movie?api_key=$TMDB_API_KEY'
+        '&language=$l&region=$region&sort_by=primary_release_date.asc'
+        '&primary_release_date.gte=$today&include_adult=false';
   }
 
   static String movieDetailsUrl(int movieId, String l) {

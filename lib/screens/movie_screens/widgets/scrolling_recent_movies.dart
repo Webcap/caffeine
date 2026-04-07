@@ -3,6 +3,7 @@ import 'package:caffiene/functions/functions.dart';
 import 'package:caffiene/models/movie_stream_metadata.dart';
 import 'package:caffiene/models/recently_watched.dart';
 import 'package:caffiene/provider/app_dependency_provider.dart';
+import 'package:caffiene/utils/globals.dart';
 import 'package:caffiene/provider/recently_watched_provider.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/screens/movie_screens/widgets/movie_video_loader.dart';

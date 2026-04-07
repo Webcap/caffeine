@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:caffiene/utils/config.dart';
+import 'package:caffiene/utils/globals.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 String episodeSeasonFormatter(int episodeNumber, int seasonNumber) {
@@ -96,12 +97,12 @@ Future<bool> clearCache() async {
   }
 }
 
-void fileDelete() async {
-  for (int i = 0; i < appNames.length; i++) {
-    File file =
-        File("${(await getApplicationSupportDirectory()).path}${appNames[i]}");
+Future<void> fileDelete() async {
+  final directory = await getApplicationSupportDirectory();
+  for (var name in appNames.values) {
+    File file = File("${directory.path}/$name");
     if (file.existsSync()) {
-      file.delete();
+      await file.delete();
     }
   }
 }

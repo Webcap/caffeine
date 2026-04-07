@@ -1,3 +1,4 @@
+import 'package:caffiene/utils/globals.dart';
 import 'package:caffiene/models/provider_load_state.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:easy_localization/easy_localization.dart';

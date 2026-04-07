@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:io';
+import 'package:caffiene/utils/globals.dart';
 import 'package:caffiene/controller/recently_watched_database_controller.dart';
 import 'package:caffiene/models/sub_languages.dart';
 import 'package:caffiene/models/external_subtitles.dart';

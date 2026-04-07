@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:caffiene/caffiene_main.dart';
 import 'package:caffiene/utils/flavor_config.dart';
+import 'package:caffiene/utils/globals.dart';
 import 'package:caffiene/functions/functions.dart';
 import 'package:caffiene/models/live_tv.dart';
 import 'package:caffiene/models/translation.dart';
@@ -21,6 +22,15 @@ import 'package:caffiene/services/analytics_service.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:caffiene/utils/constant.dart';
+
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
+  }
+}
 
 bool isTablet(BuildContext context) {
   double screenWidth = MediaQuery.of(context).size.width;

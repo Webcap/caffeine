@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:caffiene/utils/config.dart';
+import 'package:caffiene/utils/globals.dart';
 
 ThemeData darkThemeData() {
   return ThemeData(

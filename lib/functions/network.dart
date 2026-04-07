@@ -7,7 +7,8 @@ import 'package:flutter/foundation.dart';
 
 import 'package:caffiene/api/endpoints.dart';
 import 'package:caffiene/models/custom_exceptions.dart';
-import 'package:caffiene/utils/constant.dart';
+import 'package:caffiene/utils/constant.dart' hide BROWSER_USER_AGENT;
+import 'package:caffiene/utils/network_utils.dart';
 import 'package:caffiene/video_providers/caffeine_api_source.dart';
 import 'package:caffiene/video_providers/dcva.dart';
 import 'package:caffiene/video_providers/flixhq.dart';
@@ -44,7 +45,7 @@ Future<List<Movie>> fetchMovies(
     var decodeRes = jsonDecode(res.body);
     movieList = MovieList.fromJson(decodeRes);
   } finally {
-    client.close();
+    // No-op: Do not close the global client
   }
 
   return movieList.movies ?? [];

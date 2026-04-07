@@ -12,6 +12,10 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:caffiene/provider/recently_watched_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:caffiene/functions/network.dart';
+import 'package:caffiene/screens/tv_screens/episode_detail_page.dart';
+import 'package:caffiene/screens/tv_screens/widgets/tv_seasons_list.dart';
+import 'package:caffiene/models/recently_watched.dart';
 import 'package:share_plus/share_plus.dart';
 
 // ── Design tokens (design.json) ─────────────────────────────────────────────
@@ -254,7 +258,7 @@ class TVDetailQuickInfo extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 6, vertical: 2),
                         decoration: BoxDecoration(
-                          color: Colors.green.withOpacity(0.2),
+                          color: Colors.green.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(4),
                           border: Border.all(color: Colors.green, width: 1),
                         ),
@@ -281,6 +285,14 @@ class TVDetailQuickInfo extends StatelessWidget {
               ),
             ),
           ),
+
+          // ── Watch Now / Continue Button (Bottom center of hero) ──────────
+          Positioned(
+            left: 16,
+            right: 16,
+            bottom: 80,
+            child: _WatchNowButton(tvSeries: tvSeries),
+          ),
         ],
       ),
     );
@@ -292,6 +304,155 @@ class TVDetailQuickInfo extends StatelessWidget {
       'rating': (tvSeries.voteAverage ?? 0).toString(),
       'id': '${tvSeries.id}',
     }));
+  }
+}
+
+class _WatchNowButton extends StatelessWidget {
+  final TV tvSeries;
+  const _WatchNowButton({required this.tvSeries});
+
+  @override
+  Widget build(BuildContext context) {
+    final recentProvider = Provider.of<RecentProvider>(context);
+    
+    // Find if we have an "Up Next" or "In Progress" episode for this show
+    RecentEpisode? target;
+    
+    // 1. Check Up Next
+    for (var e in recentProvider.upNextEpisodes) {
+      if (e.seriesId == tvSeries.id) {
+        target = e;
+        break;
+      }
+    }
+    
+    // 2. Check In Progress (In progress takes priority for "Resume")
+    for (var e in recentProvider.continueWatchingEpisodes) {
+      if (e.seriesId == tvSeries.id) {
+        target = e;
+        break;
+      }
+    }
+
+    final String label = target == null 
+        ? tr('watch_now') 
+        : (target.elapsed! > 0 ? tr('resume') : tr('watch_next'));
+    
+    final String subtitle = target == null 
+        ? 'S1 | E1' 
+        : 'S${target.seasonNum} | E${target.episodeNum}';
+
+    return GestureDetector(
+      onTap: () async {
+        final settings = Provider.of<SettingsProvider>(context, listen: false);
+        final isProxy = settings.enableProxy;
+        final proxyUrl = Provider.of<AppDependencyProvider>(context, listen: false).tmdbProxy;
+        final lang = settings.appLanguage;
+        
+        try {
+          if (target == null) {
+            // Fetch season 1 details
+            final s1 = await fetchTVDetails(
+              Endpoints.getSeasonDetails(tvSeries.id!, 1, lang),
+              isProxy,
+              proxyUrl
+            );
+            
+            if (s1.episodes != null && s1.episodes!.isNotEmpty && context.mounted) {
+              final ep = s1.episodes!.first;
+               Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => EpisodeDetailPage(
+                    seriesName: tvSeries.name,
+                    posterPath: tvSeries.posterPath,
+                    tvId: tvSeries.id,
+                    episodes: s1.episodes,
+                    episodeList: ep,
+                  )
+                )
+              );
+            }
+          } else {
+             final seasonDetails = await fetchTVDetails(
+              Endpoints.getSeasonDetails(tvSeries.id!, target.seasonNum!, lang),
+              isProxy,
+              proxyUrl
+            );
+            
+            final epMeta = seasonDetails.episodes?.firstWhere(
+              (e) => e.episodeNumber == target!.episodeNum,
+              orElse: () => EpisodeList()
+            );
+
+            if (epMeta != null && epMeta.episodeId != null && context.mounted) {
+               Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => EpisodeDetailPage(
+                    seriesName: tvSeries.name,
+                    posterPath: tvSeries.posterPath,
+                    tvId: tvSeries.id,
+                    episodes: seasonDetails.episodes,
+                    episodeList: epMeta,
+                  )
+                )
+              );
+            }
+          }
+        } catch (e) {
+           if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(tr('error_loading_episode')))
+              );
+           }
+        }
+      },
+      child: Container(
+        height: 48,
+        decoration: BoxDecoration(
+          color: _C.primary,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: _C.primary.withValues(alpha: 0.3),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.play_arrow_rounded, color: Colors.white, size: 28),
+            const SizedBox(width: 8),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label.toUpperCase(),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+                Text(
+                  subtitle,
+                  style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.7),
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 

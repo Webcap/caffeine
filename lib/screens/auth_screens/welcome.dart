@@ -1,4 +1,5 @@
 import 'package:caffiene/functions/functions.dart';
+import 'package:caffiene/utils/globals.dart';
 import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/provider/sign_in_provider.dart';

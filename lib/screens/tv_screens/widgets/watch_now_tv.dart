@@ -1,3 +1,4 @@
+import 'package:caffiene/utils/globals.dart';
 import 'dart:async';
 import 'dart:math';
 import 'package:caffiene/functions/functions.dart';

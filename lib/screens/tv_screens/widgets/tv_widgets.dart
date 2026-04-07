@@ -1,3 +1,4 @@
+import 'package:caffiene/utils/globals.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:caffiene/functions/functions.dart';
 import 'package:caffiene/functions/network.dart';

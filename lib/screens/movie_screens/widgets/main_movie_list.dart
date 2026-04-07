@@ -70,19 +70,7 @@ class MainMoviesListState extends State<MainMoviesList> {
             if (mounted) {
               setState(() {
                 final existingIds = moviesList!.map((m) => m.id).toSet();
-                var filteredValue = value;
-                if (widget.discoverType == 'upcoming') {
-                  filteredValue = value.where((m) {
-                    if (m.releaseDate == null || m.releaseDate!.isEmpty) {
-                      return true;
-                    }
-                    return DateTime.tryParse(m.releaseDate!)
-                            ?.isAfter(DateTime.now()) ??
-                        true;
-                  }).toList();
-                }
-
-                final newMovies = filteredValue
+                final newMovies = value
                     .where((m) => !existingIds.contains(m.id))
                     .toList();
                 moviesList!.addAll(newMovies);
@@ -108,18 +96,11 @@ class MainMoviesListState extends State<MainMoviesList> {
         .then((value) {
       if (mounted) {
         setState(() {
-          if (widget.discoverType == 'upcoming') {
-            moviesList = value.where((m) {
-              if (m.releaseDate == null || m.releaseDate!.isEmpty) return true;
-              return DateTime.tryParse(m.releaseDate!)
-                      ?.isAfter(DateTime.now()) ??
-                  true;
-            }).toList();
-          } else {
-            moviesList = value;
-          }
+          moviesList = value;
         });
       }
+    }).catchError((_) {
+      if (mounted) setState(() => moviesList = []);
     });
     getMoreData();
   }

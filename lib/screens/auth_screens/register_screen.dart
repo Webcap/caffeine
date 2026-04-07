@@ -1,5 +1,6 @@
 import 'package:caffiene/functions/functions.dart';
 import 'package:caffiene/utils/theme/textStyle.dart';
+import 'package:caffiene/utils/globals.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

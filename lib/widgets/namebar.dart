@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:caffiene/utils/config.dart';
+import 'package:caffiene/utils/globals.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class Namebar extends StatelessWidget {
   const Namebar({super.key, required this.namebar, required this.navigate});
@@ -19,7 +21,7 @@ class Namebar extends StatelessWidget {
             style: TextStyle(
               fontSize: 25,
               fontWeight: FontWeight.w500,
-              color: uppermodecolor,
+              color: maincolor,
             ),
           ),
         ),

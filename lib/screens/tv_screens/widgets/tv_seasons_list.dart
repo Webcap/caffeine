@@ -9,6 +9,9 @@ import 'package:caffiene/models/tv.dart';
 import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/screens/tv_screens/widgets/season_details.dart';
 import 'package:caffiene/utils/config.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:http/http.dart' as http;
+import 'package:http/io_client.dart';
 import 'package:caffiene/widgets/shimmer_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:caffiene/utils/constant.dart';
@@ -94,9 +97,13 @@ class SeasonsListState extends State<SeasonsList> {
                           child: ListView.builder(
                             itemCount: tvDetails!.seasons!.length,
                             scrollDirection: Axis.horizontal,
-                            itemBuilder: (BuildContext context, int index) {
+                            itemBuilder: (context, index) {
+                              // Reverse the list logic to show latest season first
+                              final reversedIndex =
+                                  tvDetails!.seasons!.length - 1 - index;
                               return Padding(
-                                padding: const EdgeInsets.all(8.0),
+                                padding:
+                                    const EdgeInsets.only(left: 10, right: 10),
                                 child: GestureDetector(
                                   onTap: () {
                                     Navigator.push(
@@ -106,10 +113,10 @@ class SeasonsListState extends State<SeasonsList> {
                                                 tvId: widget.tvId,
                                                 seriesName: widget.seriesName,
                                                 tvDetails: tvDetails!,
-                                                seasons:
-                                                    tvDetails!.seasons![index],
+                                                seasons: tvDetails!
+                                                    .seasons![reversedIndex],
                                                 heroId:
-                                                    '${tvDetails!.seasons![index].seasonNumber}')));
+                                                    '${tvDetails!.seasons![reversedIndex].seasonNumber}')));
                                   },
                                   child: SizedBox(
                                     width: 105,
@@ -119,11 +126,12 @@ class SeasonsListState extends State<SeasonsList> {
                                           flex: 6,
                                           child: Hero(
                                             tag:
-                                                '${tvDetails!.seasons![index].seasonNumber}',
+                                                '${tvDetails!.seasons![reversedIndex].seasonNumber}',
                                             child: ClipRRect(
                                               borderRadius:
                                                   BorderRadius.circular(8.0),
-                                              child: tvDetails!.seasons![index]
+                                              child: tvDetails!
+                                                          .seasons![reversedIndex]
                                                           .posterPath ==
                                                       null
                                                   ? Image.asset(
@@ -151,7 +159,8 @@ class SeasonsListState extends State<SeasonsList> {
                                                               context) +
                                                           imageQuality +
                                                           tvDetails!
-                                                              .seasons![index]
+                                                              .seasons![
+                                                                  reversedIndex]
                                                               .posterPath!,
                                                       imageBuilder: (context,
                                                               imageProvider) =>
