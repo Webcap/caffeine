@@ -1,6 +1,7 @@
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'dart:io';
 
 class AnalyticsService {
@@ -12,6 +13,7 @@ class AnalyticsService {
   Mixpanel? _mixpanel;
   bool _initialized = false;
   final _supabase = Supabase.instance.client;
+  String? _appVersion;
 
   Future<void> initialize(String token) async {
     if (token.isEmpty) {
@@ -22,6 +24,9 @@ class AnalyticsService {
     if (_initialized) return;
 
     try {
+      final info = await PackageInfo.fromPlatform();
+      _appVersion = '${info.version}+${info.buildNumber}';
+
       _mixpanel = await Mixpanel.init(token, trackAutomaticEvents: true);
       _initialized = true;
       debugPrint('Mixpanel initialized successfully');
@@ -65,10 +70,11 @@ class AnalyticsService {
             : Platform.isIOS
                 ? 'ios'
                 : 'other',
+        'sub_platform': 'mobile',
         'user_id': userId,
         'is_qos': isQoS,
         'properties': properties ?? {},
-        'app_version': '1.0.0', // TODO: Get from PackageInfo
+        'app_version': _appVersion ?? '1.0.0',
       };
 
       // Fire and forget to avoid blocking UI
