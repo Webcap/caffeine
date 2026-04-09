@@ -90,6 +90,9 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
   int _retryProviderIndex = 0;
   bool _isRetrying = false;
 
+  DateTime? _loadStartTime;
+  DateTime? _bufferingStartTime;
+
   @override
   void initState() {
     settings = Provider.of<SettingsProvider>(context, listen: false);
@@ -239,6 +242,17 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
           () => _selectPreferredAudioTrack());
     });
     _betterPlayerController.setBetterPlayerGlobalKey(_betterPlayerKey);
+    _loadStartTime = DateTime.now();
+    AnalyticsService.instance.trackQoSEvent('Playback Attempt', {
+      'type': widget.mediaType == MediaType.movie ? 'movie' : 'tv_show',
+      'id': widget.mediaType == MediaType.movie
+          ? widget.movieMetadata?.movieId
+          : widget.tvMetadata?.tvId,
+      'name': widget.mediaType == MediaType.movie
+          ? widget.movieMetadata?.movieName
+          : widget.tvMetadata?.seriesName,
+    });
+
     _betterPlayerController.addEventsListener((BetterPlayerEvent event) {
       if (event.betterPlayerEventType == BetterPlayerEventType.exception) {
         if (widget.availableProviders != null &&
@@ -288,6 +302,52 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
             ),
             context,
           );
+        }
+        AnalyticsService.instance.trackQoSEvent('Playback Error', {
+          'type': widget.mediaType == MediaType.movie ? 'movie' : 'tv_show',
+          'id': widget.mediaType == MediaType.movie
+              ? widget.movieMetadata?.movieId
+              : widget.tvMetadata?.tvId,
+          'error': event.parameters?['exception']?.toString(),
+          'provider': widget.currentProviderCode,
+        });
+      } else if (event.betterPlayerEventType ==
+          BetterPlayerEventType.initialized) {
+        if (_loadStartTime != null) {
+          final loadTime =
+              DateTime.now().difference(_loadStartTime!).inMilliseconds;
+          AnalyticsService.instance.trackQoSEvent('Playback Loaded', {
+            'type': widget.mediaType == MediaType.movie ? 'movie' : 'tv_show',
+            'id': widget.mediaType == MediaType.movie
+                ? widget.movieMetadata?.movieId
+                : widget.tvMetadata?.tvId,
+            'load_time_ms': loadTime,
+            'provider': widget.currentProviderCode,
+          });
+          _loadStartTime = null;
+        }
+      } else if (event.betterPlayerEventType ==
+          BetterPlayerEventType.bufferingStart) {
+        _bufferingStartTime = DateTime.now();
+        AnalyticsService.instance.trackQoSEvent('Buffering Start', {
+          'type': widget.mediaType == MediaType.movie ? 'movie' : 'tv_show',
+          'id': widget.mediaType == MediaType.movie
+              ? widget.movieMetadata?.movieId
+              : widget.tvMetadata?.tvId,
+        });
+      } else if (event.betterPlayerEventType ==
+          BetterPlayerEventType.bufferingEnd) {
+        if (_bufferingStartTime != null) {
+          final bufferTime =
+              DateTime.now().difference(_bufferingStartTime!).inMilliseconds;
+          AnalyticsService.instance.trackQoSEvent('Buffering End', {
+            'type': widget.mediaType == MediaType.movie ? 'movie' : 'tv_show',
+            'id': widget.mediaType == MediaType.movie
+                ? widget.movieMetadata?.movieId
+                : widget.tvMetadata?.tvId,
+            'buffer_time_ms': bufferTime,
+          });
+          _bufferingStartTime = null;
         }
       } else if (event.betterPlayerEventType ==
           BetterPlayerEventType.finished) {

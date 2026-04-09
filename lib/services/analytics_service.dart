@@ -1,5 +1,7 @@
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:flutter/foundation.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'dart:io';
 
 class AnalyticsService {
   static final AnalyticsService _instance = AnalyticsService._internal();
@@ -9,13 +11,14 @@ class AnalyticsService {
 
   Mixpanel? _mixpanel;
   bool _initialized = false;
+  final _supabase = Supabase.instance.client;
 
   Future<void> initialize(String token) async {
     if (token.isEmpty) {
       debugPrint('Mixpanel token is empty, skipping initialization');
       return;
     }
-    
+
     if (_initialized) return;
 
     try {
@@ -28,17 +31,54 @@ class AnalyticsService {
     }
   }
 
+  /// Track a general user engagement event (Mixpanel + Supabase)
   void trackEvent(String eventName, [Map<String, dynamic>? properties]) {
-    if (!_initialized || _mixpanel == null) {
-      debugPrint('Mixpanel not initialized, skipping event: $eventName');
-      return;
+    // 1. Log to Mixpanel for product analytics
+    if (_initialized && _mixpanel != null) {
+      try {
+        _mixpanel!.track(eventName, properties: properties);
+      } catch (e) {
+        debugPrint('Failed to track Mixpanel event: $eventName: $e');
+      }
     }
 
+    // 2. Log to Supabase for detailed internal technical tracking
+    _logToSupabase(eventName, properties);
+  }
+
+  /// Track a technical Quality of Service (QoS) event (Supabase only to save Mixpanel quota)
+  void trackQoSEvent(String eventName, [Map<String, dynamic>? properties]) {
+    debugPrint('Analytics [QoS]: $eventName ${properties ?? ""}');
+    _logToSupabase(eventName, properties, isQoS: true);
+  }
+
+  Future<void> _logToSupabase(String eventName, Map<String, dynamic>? properties,
+      {bool isQoS = false}) async {
     try {
-      debugPrint('Mixpanel track: $eventName ${properties ?? ""}');
-      _mixpanel!.track(eventName, properties: properties);
+      final session = _supabase.auth.currentSession;
+      final userId = session?.user.id;
+
+      final payload = {
+        'event_name': eventName,
+        'platform': Platform.isAndroid
+            ? 'android'
+            : Platform.isIOS
+                ? 'ios'
+                : 'other',
+        'user_id': userId,
+        'is_qos': isQoS,
+        'properties': properties ?? {},
+        'app_version': '1.0.0', // TODO: Get from PackageInfo
+      };
+
+      // Fire and forget to avoid blocking UI
+      _supabase.from('detailed_events').insert(payload).then((_) {
+        // Success
+      }).catchError((e) {
+        debugPrint('Failed to log event to Supabase: $e');
+      });
     } catch (e) {
-      debugPrint('Failed to track Mixpanel event: $eventName: $e');
+      // Ignore errors in analytics logging to prevent app crashes
     }
   }
 
@@ -60,3 +100,4 @@ class AnalyticsService {
     _mixpanel!.reset();
   }
 }
+

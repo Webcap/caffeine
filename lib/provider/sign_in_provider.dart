@@ -61,14 +61,20 @@ class SignInProvider extends ChangeNotifier {
 
   void _init() {
     // Seed state from any session that is already present in memory (fast path).
+    // Note: Supabase.initialize in main.dart should have already awaited storage loading.
     final existing = _auth.currentSession;
     if (existing != null) {
+      debugPrint('[Auth] ⚡ Initial session found in memory: ${existing.user.email}');
       _applySession(existing);
+    } else {
+       debugPrint('[Auth] ℹ️ No initial session found in memory');
     }
 
     // Listen reactively to all future auth events.
     _authSubscription = _authStream.listen(
-      (data) => _onAuthEvent(data.event, data.session),
+      (data) {
+         _onAuthEvent(data.event, data.session);
+      },
       onError: (e) {
         // Network-level errors (AuthRetryableFetchException) are emitted here.
         // They do NOT mean the user signed out — just that we couldn't reach
@@ -101,6 +107,8 @@ class SignInProvider extends ChangeNotifier {
           AnalyticsService.instance.trackEvent('Signed In', {
             'method': session.user.appMetadata['provider'] ?? 'unknown',
           });
+        } else if (event == AuthChangeEvent.initialSession) {
+           debugPrint('[Auth] ℹ️ Initial session was null');
         }
         break;
 
@@ -109,11 +117,12 @@ class SignInProvider extends ChangeNotifier {
         // session left. When a token-refresh fails due to no network,
         // Supabase fires signedOut but the old session is still valid
         // locally. In that case, do nothing.
+        // Also added check for _isSignedIn to avoid redundant logouts on startup.
         if (_auth.currentSession == null && _isSignedIn) {
           debugPrint('[Auth] 🔑 Real sign-out detected');
           _handleSignOut();
         } else {
-          debugPrint('[Auth] ℹ️ signedOut event ignored — session still present locally (network error?)');
+          debugPrint('[Auth] ℹ️ signedOut event ignored — session still present locally or already signed out');
         }
         break;
 
@@ -138,7 +147,6 @@ class SignInProvider extends ChangeNotifier {
     notifyListeners();
 
     // Fetch extended profile in background (username, etc.)
-    // We don't await here to avoid blocking, but we guard it.
     getUserDataFromFirestore(user.id).catchError((e) {
       debugPrint('[Auth] ⚠️ Could not fetch profile in background: $e');
     });

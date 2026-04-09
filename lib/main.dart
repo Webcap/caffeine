@@ -20,6 +20,7 @@ import 'package:caffiene/provider/settings_provider.dart';
 import 'package:caffiene/services/ad_service.dart';
 import 'package:caffiene/services/analytics_service.dart';
 import 'package:caffiene/utils/config.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:caffiene/utils/constant.dart';
 
@@ -88,11 +89,19 @@ Future<void> appInitialize() async {
 
     // Verify session recovery
     final session = Supabase.instance.client.auth.currentSession;
+    final prefs = await SharedPreferences.getInstance();
+    final hasUid = prefs.getString('uid') != null;
+
     if (session != null) {
       debugPrint(
           '[Main] 👤 Session recovered on startup for: ${session.user.email}');
     } else {
-      debugPrint('[Main] 👤 No session found on startup');
+      if (hasUid) {
+        debugPrint(
+            '[Main] ⚠️ No Supabase session found, but legacy UID exists. Session persistence failure?');
+      } else {
+        debugPrint('[Main] 👤 No session found on startup (Clean start)');
+      }
     }
   } catch (e) {
     throw StateError(
@@ -139,7 +148,8 @@ Future<void> appInitialize() async {
   await appDependencyProvider.loadFromPrefs();
   // Fetch early config (inc RevenueCat keys)
   await fetchConfigFromApi(appDependencyProvider);
-  await AnalyticsService.instance.initialize(appDependencyProvider.mixpanelToken);
+  await AnalyticsService.instance
+      .initialize(appDependencyProvider.mixpanelToken);
 
   // Async cleanup of update files (non-blocking)
   unawaited(cleanupUpdateFiles());
@@ -205,7 +215,8 @@ void runAppWithFlavor() {
     // Supabase token refresh failed due to network unavailability.
     // This is an expected transient error — do NOT treat as a crash or sign-out.
     if (error is AuthRetryableFetchException) {
-      debugPrint('[Auth] ⚠️ Token refresh network error (ignored): ${error.message}');
+      debugPrint(
+          '[Auth] ⚠️ Token refresh network error (ignored): ${error.message}');
       return;
     }
 

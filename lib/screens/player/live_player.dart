@@ -1,5 +1,6 @@
 import 'package:better_player/better_player.dart';
 import 'package:caffiene/functions/video_utils.dart';
+import 'package:caffiene/services/analytics_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -29,15 +30,25 @@ class _LivePlayerState extends State<LivePlayer> {
   late BetterPlayerBufferingConfiguration betterPlayerBufferingConfiguration;
 
   final GlobalKey _betterPlayerKey = GlobalKey();
+  DateTime? _loadStartTime;
+  DateTime? _bufferingStartTime;
 
   @override
   void initState() {
     super.initState();
+    _loadStartTime = DateTime.now();
+
+    AnalyticsService.instance.trackQoSEvent('Live Playback Attempt', {
+      'channel': widget.channelName,
+      'url_host': Uri.tryParse(widget.videoUrl)?.host,
+    });
 
     betterPlayerBufferingConfiguration =
         const BetterPlayerBufferingConfiguration(
+      minBufferMs: 50000,
       maxBufferMs: 120000,
-      minBufferMs: 15000,
+      bufferForPlaybackMs: 8000,
+      bufferForPlaybackAfterRebufferMs: 12000,
     );
     betterPlayerControlsConfiguration = BetterPlayerControlsConfiguration(
       name: widget.channelName,
@@ -105,6 +116,39 @@ class _LivePlayerState extends State<LivePlayer> {
         }
       }
     });
+
+    _betterPlayerController.addEventsListener((event) {
+      if (event.betterPlayerEventType == BetterPlayerEventType.initialized) {
+        if (_loadStartTime != null) {
+          final loadTime = DateTime.now().difference(_loadStartTime!).inMilliseconds;
+          AnalyticsService.instance.trackQoSEvent('Live Playback Loaded', {
+            'channel': widget.channelName,
+            'load_time_ms': loadTime,
+          });
+          _loadStartTime = null;
+        }
+      } else if (event.betterPlayerEventType == BetterPlayerEventType.bufferingStart) {
+        _bufferingStartTime = DateTime.now();
+        AnalyticsService.instance.trackQoSEvent('Live Buffering Start', {
+          'channel': widget.channelName,
+        });
+      } else if (event.betterPlayerEventType == BetterPlayerEventType.bufferingEnd) {
+        if (_bufferingStartTime != null) {
+          final bufferTime = DateTime.now().difference(_bufferingStartTime!).inMilliseconds;
+          AnalyticsService.instance.trackQoSEvent('Live Buffering End', {
+            'channel': widget.channelName,
+            'buffer_time_ms': bufferTime,
+          });
+          _bufferingStartTime = null;
+        }
+      } else if (event.betterPlayerEventType == BetterPlayerEventType.exception) {
+        AnalyticsService.instance.trackQoSEvent('Live Playback Error', {
+          'channel': widget.channelName,
+          'error': event.parameters?['exception']?.toString(),
+        });
+      }
+    });
+
     _betterPlayerController.setBetterPlayerGlobalKey(_betterPlayerKey);
   }
 
@@ -138,3 +182,4 @@ class _LivePlayerState extends State<LivePlayer> {
     );
   }
 }
+
