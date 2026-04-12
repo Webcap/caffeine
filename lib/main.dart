@@ -23,6 +23,7 @@ import 'package:caffiene/utils/config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:caffiene/utils/constant.dart';
+import 'package:caffiene/utils/secure_local_storage.dart';
 
 class MyHttpOverrides extends HttpOverrides {
   @override
@@ -85,6 +86,9 @@ Future<void> appInitialize() async {
       url: supabaseUrl,
       anonKey: supabaseAnonKey,
       debug: false,
+      authOptions: FlutterAuthClientOptions(
+        localStorage: SecureLocalStorage(),
+      ),
     );
 
     // Verify session recovery

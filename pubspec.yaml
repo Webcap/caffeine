@@ -58,6 +58,7 @@ dependencies:
   webview_flutter: ^4.13.0
   purchases_flutter: ^9.15.1
   mixpanel_flutter: ^2.4.5
+  flutter_secure_storage: ^10.0.0
 
 dev_dependencies:
   flutter_lints: ^6.0.0
