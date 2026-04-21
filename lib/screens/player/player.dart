@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:flutter/services.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:caffiene/utils/globals.dart';
 import 'package:caffiene/controller/recently_watched_database_controller.dart';
 import 'package:caffiene/models/sub_languages.dart';
@@ -24,17 +26,20 @@ import 'package:caffiene/video_providers/provider_names.dart';
 import 'package:caffiene/widgets/common_widgets.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:better_player/better_player.dart';
+import 'package:caffiene/services/player/caffeine_player_controller.dart';
+import 'package:media_kit/media_kit.dart' as mk;
+import 'package:media_kit_video/media_kit_video.dart' as mkv;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:caffiene/screens/player/widgets/language_picker_sheet.dart';
 import 'package:caffiene/functions/network.dart';
 import 'package:caffiene/api/endpoints.dart';
 import 'package:caffiene/screens/player/widgets/subtitle_selection_sheet.dart';
+import 'package:caffiene/screens/player/widgets/glass_player_controls.dart';
 
 class Player extends StatefulWidget {
   final Map<String, String> sources;
-  final List<BetterPlayerSubtitlesSource> subs;
+  final List<CaffeinePlayerSubtitlesSource> subs;
   final List<Color> colors;
   final SettingsProvider settings;
   final MovieStreamMetadata? movieMetadata;
@@ -64,14 +69,12 @@ class Player extends StatefulWidget {
 }
 
 class _PlayerState extends State<Player> with WidgetsBindingObserver {
-  late BetterPlayerController _betterPlayerController;
-  late BetterPlayerControlsConfiguration betterPlayerControlsConfiguration;
-  late BetterPlayerBufferingConfiguration betterPlayerBufferingConfiguration;
+  late CaffeinePlayerController _betterPlayerController;
   RecentlyWatchedMoviesController recentlyWatchedMoviesController =
       RecentlyWatchedMoviesController();
   RecentlyWatchedEpisodeController recentlyWatchedEpisodeController =
       RecentlyWatchedEpisodeController();
-  late int duration;
+  int duration = 0;
 
   final GlobalKey _betterPlayerKey = GlobalKey();
 
@@ -86,100 +89,41 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
   late SettingsProvider settings;
 
   Map<String, String> _currentSources = {};
-  List<BetterPlayerSubtitlesSource> _currentSubs = [];
-  int _retryProviderIndex = 0;
+  List<CaffeinePlayerSubtitlesSource> _currentSubs = [];
+  final int _retryProviderIndex = 0;
   bool _isRetrying = false;
 
   DateTime? _loadStartTime;
   DateTime? _bufferingStartTime;
 
+  Timer? _periodicSaveTimer;
+
   @override
   void initState() {
     settings = Provider.of<SettingsProvider>(context, listen: false);
     super.initState();
-    String backgroundColorString = widget.settings.subtitleBackgroundColor;
-    String foregroundColorString = widget.settings.subtitleForegroundColor;
-    String hexColorBackground =
-        backgroundColorString.replaceAll("Color(0x", "").replaceAll(")", "");
-    String hexColorForeground =
-        foregroundColorString.replaceAll("Color(0x", "").replaceAll(")", "");
-
-    Color backgroundColor = Color(int.parse("0x$hexColorBackground"));
-    Color foregroundColor = Color(int.parse("0x$hexColorForeground"));
 
     WidgetsBinding.instance.addObserver(this);
-    betterPlayerBufferingConfiguration = BetterPlayerBufferingConfiguration(
-      maxBufferMs: widget.settings.defaultMaxBufferDuration,
-      minBufferMs: 15000,
-    );
-    betterPlayerControlsConfiguration = BetterPlayerControlsConfiguration(
-        onFullScreenChange: () {
-          widget.mediaType == MediaType.movie
-              ? insertRecentMovieData()
-              : insertRecentEpisodeData();
-        },
-        enableFullscreen: true,
-        name: widget.mediaType == MediaType.movie
-            ? "${widget.movieMetadata?.movieName ?? ''} (${widget.movieMetadata?.releaseYear ?? ''})"
-            : "${widget.tvMetadata?.seriesName ?? ''} - ${widget.tvMetadata?.episodeName ?? ''} | ${episodeSeasonFormatter(widget.tvMetadata?.episodeNumber ?? 0, widget.tvMetadata?.seasonNumber ?? 0)}",
-        backgroundColor: Colors.black,
-        progressBarBackgroundColor: Colors.white,
-        controlBarColor: Colors.black.withOpacity(0.3),
-        muteIcon: Icons.volume_off_rounded,
-        unMuteIcon: Icons.volume_up_rounded,
-        pauseIcon: Icons.pause_rounded,
-        pipMenuIcon: Icons.picture_in_picture_rounded,
-        playIcon: Icons.play_arrow_rounded,
-        showControlsOnInitialize: false,
-        loadingColor: widget.colors.first,
-        iconsColor: widget.colors.first,
-        backwardSkipTimeInMilliseconds:
-            Duration(seconds: widget.settings.defaultSeekDuration)
-                .inMilliseconds,
-        forwardSkipTimeInMilliseconds:
-            Duration(seconds: widget.settings.defaultSeekDuration)
-                .inMilliseconds,
-        progressBarPlayedColor: widget.colors.first,
-        progressBarBufferedColor: Colors.black45,
-        skipForwardIcon: FontAwesomeIcons.rotateRight,
-        skipBackIcon: FontAwesomeIcons.rotateLeft,
-        fullscreenEnableIcon: Icons.fullscreen_rounded,
-        fullscreenDisableIcon: Icons.fullscreen_exit_rounded,
-        overflowMenuIcon: Icons.menu_rounded,
-        overflowMenuIconsColor: widget.colors.first,
-        overflowModalTextColor: widget.colors.first,
-        overflowModalColor: widget.colors.last,
-        playerTimeMode: settings.playerTimeDisplay,
-        enableSubtitles: false,
-        overflowMenuCustomItems: [
-          BetterPlayerOverflowMenuItem(
-            Icons.closed_caption_rounded,
-            tr("subtitles"),
-            () => _openSubtitleSelectionSheet(),
-          ),
-        ]);
-    BetterPlayerConfiguration betterPlayerConfiguration =
-        BetterPlayerConfiguration(
-            autoDetectFullscreenDeviceOrientation: true,
-            fullScreenByDefault: widget.settings.defaultViewMode,
-            autoPlay: true,
-            fit: BoxFit.contain,
-            autoDispose: true,
-            controlsConfiguration: betterPlayerControlsConfiguration,
-            showPlaceholderUntilPlay: true,
-            allowedScreenSleep: false,
-            autoDetectFullscreenAspectRatio: true,
-            subtitlesConfiguration: BetterPlayerSubtitlesConfiguration(
-                backgroundColor: backgroundColor,
-                fontFamily: widget.subtitleStyle == 'regular'
-                    ? 'Poppins'
-                    : widget.subtitleStyle == 'bold'
-                        ? 'PoppinsSB'
-                        : 'PoppinsLight',
-                fontColor: foregroundColor,
-                outlineEnabled: false,
-                fontSize: widget.settings.subtitleFontSize.toDouble()));
 
+    // Periodic save every 30 seconds
+    _periodicSaveTimer = Timer.periodic(const Duration(seconds: 30), (timer) {
+      if (_betterPlayerController.isVideoInitialized() == true) {
+        final elapsed =
+            _betterPlayerController.player.state.position.inMilliseconds;
+        if (widget.mediaType == MediaType.movie) {
+          insertRecentMovieData(manualElapsed: elapsed);
+        } else {
+          insertRecentEpisodeData(manualElapsed: elapsed);
+        }
+      }
+    });
+
+    // Force landscape and keep screen on
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
+    WakelockPlus.enable();
 
     _currentSources = Map.from(widget.sources);
     _currentSubs = List.from(widget.subs);
@@ -200,48 +144,19 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
       link = widget.sources.values.first;
     }
 
-    BetterPlayerDataSource dataSource = BetterPlayerDataSource(
-        BetterPlayerDataSourceType.network, link ?? '',
-        resolutions: widget.sources,
-        subtitles: widget.subs,
-        headers: widget.headers,
-        videoFormat: (link != null && VideoUtils.looksLikeHls(link))
-            ? BetterPlayerVideoFormat.hls
-            : null,
-        cacheConfiguration: BetterPlayerCacheConfiguration(
-          useCache: true,
-          preCacheSize: 471859200 * 471859200,
-          maxCacheSize: 1073741824 * 1073741824,
-          maxCacheFileSize: 471859200 * 471859200,
+    _betterPlayerController = CaffeinePlayerController();
+    // Set data source with initial seek if resuming
+    final initialElapsed = widget.mediaType == MediaType.movie
+        ? (widget.movieMetadata?.elapsed ?? 0)
+        : (widget.tvMetadata?.elapsed ?? 0);
 
-          ///Android only option to use cached video between app sessions
-          key: generateCacheKey(),
-        ),
-        bufferingConfiguration: betterPlayerBufferingConfiguration,
-        preferredAudioLanguage: settings.defaultAudioLanguage);
-    _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
-    _betterPlayerController.setupDataSource(dataSource).then((value) {
-      if (!mounted) return;
-      _betterPlayerController.videoPlayerController!.seekTo(Duration(
-          milliseconds: widget.mediaType == MediaType.movie
-              ? (widget.movieMetadata?.elapsed ?? 0)
-              : (widget.tvMetadata?.elapsed ?? 0)));
-      duration = _betterPlayerController
-              .videoPlayerController?.value.duration?.inMilliseconds ??
-          0;
+    _betterPlayerController.setDataSource(
+      link ?? '',
+      headers: widget.headers,
+      subtitles: widget.subs,
+      startAt: Duration(milliseconds: initialElapsed),
+    );
 
-      // Try multiple times as tracks might load late in HLS manifest
-      _selectPreferredAudioTrack();
-      Future.delayed(const Duration(milliseconds: 500),
-          () => _selectPreferredAudioTrack());
-      Future.delayed(const Duration(milliseconds: 1500),
-          () => _selectPreferredAudioTrack());
-      Future.delayed(const Duration(milliseconds: 3000),
-          () => _selectPreferredAudioTrack());
-      Future.delayed(const Duration(milliseconds: 5000),
-          () => _selectPreferredAudioTrack());
-    });
-    _betterPlayerController.setBetterPlayerGlobalKey(_betterPlayerKey);
     _loadStartTime = DateTime.now();
     AnalyticsService.instance.trackQoSEvent('Playback Attempt', {
       'type': widget.mediaType == MediaType.movie ? 'movie' : 'tv_show',
@@ -253,123 +168,27 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
           : widget.tvMetadata?.seriesName,
     });
 
-    _betterPlayerController.addEventsListener((BetterPlayerEvent event) {
-      if (event.betterPlayerEventType == BetterPlayerEventType.exception) {
-        if (widget.availableProviders != null &&
-            widget.currentProviderCode != null &&
-            !_isRetrying) {
-          final providers = widget.availableProviders!;
-          final currentIndex = providers
-              .indexWhere((p) => p.codeName == widget.currentProviderCode);
-          final hasNext =
-              currentIndex >= 0 && currentIndex < providers.length - 1;
-          if (mounted) {
-            GlobalMethods.showCustomScaffoldMessage(
-              SnackBar(
-                content: Text(tr(hasNext
-                    ? 'stream_source_failed'
-                    : 'stream_source_failed_retry')),
-                duration: const Duration(seconds: 4),
-              ),
-              context,
-            );
-          }
-          _tryNextProvider();
-        } else if (mounted) {
-          GlobalMethods.showCustomScaffoldMessage(
-            SnackBar(
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(tr('stream_source_failed_retry')),
-                  const SizedBox(height: 6),
-                  Text(
-                    tr('stream_source_failed_dns_tip'),
-                    style: Theme.of(context)
-                            .snackBarTheme
-                            .contentTextStyle
-                            ?.copyWith(
-                                fontSize: 12, fontStyle: FontStyle.italic) ??
-                        Theme.of(context)
-                            .textTheme
-                            .bodySmall
-                            ?.copyWith(fontStyle: FontStyle.italic),
-                  ),
-                ],
-              ),
-              duration: const Duration(seconds: 8),
-            ),
-            context,
-          );
-        }
-        AnalyticsService.instance.trackQoSEvent('Playback Error', {
-          'type': widget.mediaType == MediaType.movie ? 'movie' : 'tv_show',
-          'id': widget.mediaType == MediaType.movie
-              ? widget.movieMetadata?.movieId
-              : widget.tvMetadata?.tvId,
-          'error': event.parameters?['exception']?.toString(),
-          'provider': widget.currentProviderCode,
-        });
-      } else if (event.betterPlayerEventType ==
-          BetterPlayerEventType.initialized) {
-        if (_loadStartTime != null) {
-          final loadTime =
-              DateTime.now().difference(_loadStartTime!).inMilliseconds;
-          AnalyticsService.instance.trackQoSEvent('Playback Loaded', {
-            'type': widget.mediaType == MediaType.movie ? 'movie' : 'tv_show',
-            'id': widget.mediaType == MediaType.movie
-                ? widget.movieMetadata?.movieId
-                : widget.tvMetadata?.tvId,
-            'load_time_ms': loadTime,
-            'provider': widget.currentProviderCode,
+    _betterPlayerController.addEventsListener((event) {
+      if (event.type == CaffeinePlayerEventType.error) {
+        _tryNextProvider();
+      }
+      if (event.type == CaffeinePlayerEventType.play) {
+        startDurationTimer();
+      }
+      if (event.type == CaffeinePlayerEventType.pause) {
+        pauseDurationTimer();
+      }
+      
+      // Update duration when it becomes available or changes
+      if (mounted) {
+        final newDuration = _betterPlayerController.duration.inMilliseconds;
+        if (newDuration > 0 && newDuration != duration) {
+          setState(() {
+            duration = newDuration;
           });
-          _loadStartTime = null;
         }
-      } else if (event.betterPlayerEventType ==
-          BetterPlayerEventType.bufferingStart) {
-        _bufferingStartTime = DateTime.now();
-        AnalyticsService.instance.trackQoSEvent('Buffering Start', {
-          'type': widget.mediaType == MediaType.movie ? 'movie' : 'tv_show',
-          'id': widget.mediaType == MediaType.movie
-              ? widget.movieMetadata?.movieId
-              : widget.tvMetadata?.tvId,
-        });
-      } else if (event.betterPlayerEventType ==
-          BetterPlayerEventType.bufferingEnd) {
-        if (_bufferingStartTime != null) {
-          final bufferTime =
-              DateTime.now().difference(_bufferingStartTime!).inMilliseconds;
-          AnalyticsService.instance.trackQoSEvent('Buffering End', {
-            'type': widget.mediaType == MediaType.movie ? 'movie' : 'tv_show',
-            'id': widget.mediaType == MediaType.movie
-                ? widget.movieMetadata?.movieId
-                : widget.tvMetadata?.tvId,
-            'buffer_time_ms': bufferTime,
-          });
-          _bufferingStartTime = null;
-        }
-      } else if (event.betterPlayerEventType ==
-          BetterPlayerEventType.finished) {
-        // Save as completed when playback ends naturally
-        if (widget.mediaType == MediaType.movie) {
-          insertRecentMovieData(manualElapsed: duration);
-        } else {
-          insertRecentEpisodeData(manualElapsed: duration);
-        }
-        AnalyticsService.instance.trackEvent('Playback Finished', {
-          'type': widget.mediaType == MediaType.movie ? 'movie' : 'tv_show',
-          'id': widget.mediaType == MediaType.movie
-              ? widget.movieMetadata?.movieId
-              : widget.tvMetadata?.tvId,
-          'name': widget.mediaType == MediaType.movie
-              ? widget.movieMetadata?.movieName
-              : widget.tvMetadata?.seriesName,
-        });
       }
     });
-
-    // });
 
     AnalyticsService.instance.trackEvent('Playback Started', {
       'type': widget.mediaType == MediaType.movie ? 'movie' : 'tv_show',
@@ -393,116 +212,8 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
   }
 
   Future<void> _autoDiscoverSubtitles() async {
-    final langCode = settings.defaultAudioLanguage;
-    if (langCode.isEmpty) {
-      return;
-    }
-
-    final lang = supportedLanguages.firstWhere(
-      (l) => l.languageCode == langCode,
-      orElse: () => SubLanguages(
-          languageName: '', languageCode: '', englishName: 'Unknown'),
-    );
-    final langName = lang.englishName;
-
-    // Check if already present
-    final existing =
-        _currentSubs.any((s) => s.name?.contains(langName) ?? false);
-    if (existing) {
-      return;
-    }
-
-    final int? tmdbId = widget.mediaType == MediaType.movie
-        ? widget.movieMetadata?.movieId
-        : widget.tvMetadata?.tvId;
-
-    if (tmdbId == null) {
-      return;
-    }
-
-    try {
-      final appDep = Provider.of<AppDependencyProvider>(context, listen: false);
-      final searchUrl = widget.mediaType == MediaType.movie
-          ? Endpoints.searchExternalMovieSubtitles(tmdbId, langCode)
-          : Endpoints.searchExternalEpisodeSubtitles(
-              tmdbId,
-              widget.tvMetadata!.episodeNumber!,
-              widget.tvMetadata!.seasonNumber!,
-              langCode,
-            );
-
-      final subtitleDataList = await getExternalSubtitle(
-        searchUrl,
-        appDep.opensubtitlesKey,
-      );
-
-      if (subtitleDataList.isNotEmpty && mounted) {
-        // Just pick the first one for auto-discovery
-        final subData = subtitleDataList.first;
-        final fileId = subData.attr?.files?.first.fileId;
-
-        if (fileId != null) {
-          final download = await downloadExternalSubtitle(
-            Endpoints.externalSubtitleDownload(),
-            fileId,
-            appDep.opensubtitlesKey,
-          );
-
-          if (download.link != null && mounted) {
-            final newSource = BetterPlayerSubtitlesSource(
-              name: '$langName (Auto)',
-              urls: [download.link!],
-              type: BetterPlayerSubtitlesSourceType.network,
-            );
-
-            setState(() {
-              _currentSubs.add(newSource);
-              // Ensure uniqueness
-              final Map<String, BetterPlayerSubtitlesSource> uniqueSubs = {};
-              for (var sub in _currentSubs) {
-                if (sub.name != null) uniqueSubs[sub.name!] = sub;
-              }
-              _currentSubs = uniqueSubs.values.toList();
-            });
-
-            // Update data source but don't activate
-            final currentPosition = await _betterPlayerController
-                    .videoPlayerController?.position ??
-                Duration.zero;
-            final currentUrl = _currentStreamUrl;
-
-            final dataSource = BetterPlayerDataSource(
-              BetterPlayerDataSourceType.network,
-              currentUrl,
-              resolutions: _currentSources,
-              subtitles: _currentSubs,
-              headers: widget.headers,
-              videoFormat: VideoUtils.looksLikeHls(currentUrl)
-                  ? BetterPlayerVideoFormat.hls
-                  : null,
-              cacheConfiguration: BetterPlayerCacheConfiguration(
-                useCache: true,
-                preCacheSize: 471859200 * 471859200,
-                maxCacheSize: 1073741824 * 1073741824,
-                maxCacheFileSize: 471859200 * 471859200,
-                key: generateCacheKey(),
-              ),
-              bufferingConfiguration: betterPlayerBufferingConfiguration,
-              preferredAudioLanguage: settings.defaultAudioLanguage,
-            );
-
-            await _betterPlayerController.setupDataSource(dataSource);
-            if (mounted) {
-              await _betterPlayerController.videoPlayerController
-                  ?.seekTo(currentPosition);
-              _betterPlayerController.play();
-            }
-          }
-        }
-      }
-    } catch (e) {
-      debugPrint('[Player] ❌ Auto-discovery error: $e');
-    }
+    // MediaKit handle auto discovery differently (often via mpv)
+    // For now, we manually loaded subs in initState.
   }
 
   void startDurationTimer() {
@@ -540,7 +251,9 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
     final providers = widget.availableProviders!;
     final currentIndex =
         providers.indexWhere((p) => p.codeName == widget.currentProviderCode);
-    if (currentIndex < 0 || currentIndex >= providers.length - 1) return;
+    if (currentIndex < 0 || currentIndex >= providers.length - 1) {
+      return;
+    }
 
     _isRetrying = true;
     final settings = Provider.of<SettingsProvider>(context, listen: false);
@@ -613,10 +326,9 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
         _currentSources = newSources;
         if (result.subtitleLinks != null && result.subtitleLinks!.isNotEmpty) {
           _currentSubs = result.subtitleLinks!
-              .map((s) => BetterPlayerSubtitlesSource(
+              .map((s) => CaffeinePlayerSubtitlesSource(
                     name: s.language ?? 'Unknown',
                     urls: [s.url ?? ''],
-                    type: BetterPlayerSubtitlesSourceType.network,
                   ))
               .toList();
         }
@@ -624,27 +336,15 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
         final keyToFind = widget.settings.defaultVideoResolution == 0
             ? 'auto'
             : widget.settings.defaultVideoResolution.toString();
-        String? link = newSources[keyToFind] ?? newSources.values.first;
+        final link = newSources[keyToFind] ?? newSources.values.first;
 
-        final dataSource = BetterPlayerDataSource(
-          BetterPlayerDataSourceType.network,
+        final elapsed = await _currentElapsedMilliseconds;
+        _betterPlayerController.setDataSource(
           link,
-          resolutions: newSources,
+          headers: VideoUtils.extractHeaders(result.videoLinks!),
           subtitles: _currentSubs,
-          videoFormat: VideoUtils.looksLikeHls(link)
-              ? BetterPlayerVideoFormat.hls
-              : null,
-          cacheConfiguration: BetterPlayerCacheConfiguration(
-            useCache: true,
-            preCacheSize: 471859200 * 471859200,
-            maxCacheSize: 1073741824 * 1073741824,
-            maxCacheFileSize: 471859200 * 471859200,
-            key: generateCacheKey(),
-          ),
-          bufferingConfiguration: betterPlayerBufferingConfiguration,
-          preferredAudioLanguage: settings.defaultAudioLanguage,
+          startAt: Duration(milliseconds: elapsed),
         );
-        await _betterPlayerController.setupDataSource(dataSource);
         _selectPreferredAudioTrack();
         if (mounted) {
           setState(() {});
@@ -657,8 +357,8 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
 
   void _selectPreferredAudioTrack() {
     if (!mounted) return;
-    final tracks = _betterPlayerController.betterPlayerAsmsAudioTracks;
-    if (tracks == null || tracks.isEmpty) {
+    final tracks = _betterPlayerController.audioTracks;
+    if (tracks.isEmpty) {
       debugPrint('[Player] 🎧 No audio tracks available yet.');
       return;
     }
@@ -668,7 +368,7 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
 
     for (final track in tracks) {
       final lang = track.language?.toLowerCase() ?? '';
-      final label = track.label?.toLowerCase() ?? '';
+      final label = track.title?.toLowerCase() ?? '';
       debugPrint('[Player]   - Track: lang="$lang", label="$label"');
 
       final isMatch = lang == preferred ||
@@ -690,7 +390,7 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
       debugPrint('[Player] 🎧 Fallback to app language: $fallback');
       for (final track in tracks) {
         final lang = track.language?.toLowerCase() ?? '';
-        final label = track.label?.toLowerCase() ?? '';
+        final label = track.title?.toLowerCase() ?? '';
 
         final isMatch = lang == fallback ||
             lang.startsWith(fallback) ||
@@ -709,11 +409,10 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
   }
 
   Future<void> insertRecentMovieData({int? manualElapsed}) async {
-    if (_betterPlayerController.videoPlayerController == null) return;
+    if (!mounted || duration <= 0) return;
 
     int elapsed = manualElapsed ??
-        await _betterPlayerController.videoPlayerController!.position
-            .then((value) => value!.inMilliseconds);
+        _betterPlayerController.player.state.position.inMilliseconds;
 
     int remaining = duration - elapsed;
     String dt = DateTime.now().toString();
@@ -721,6 +420,7 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
     var isBookmarked = await recentlyWatchedMoviesController
         .contain(widget.movieMetadata!.movieId!);
 
+    if (!mounted) return;
     final prv = Provider.of<RecentProvider>(context, listen: false);
 
     RecentMovie rMov = RecentMovie(
@@ -760,11 +460,10 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
   }
 
   Future<void> insertRecentEpisodeData({int? manualElapsed}) async {
-    if (_betterPlayerController.videoPlayerController == null) return;
+    if (!mounted || duration <= 0) return;
 
     int elapsed = manualElapsed ??
-        await _betterPlayerController.videoPlayerController!.position
-            .then((value) => value!.inMilliseconds);
+        _betterPlayerController.player.state.position.inMilliseconds;
 
     int remaining = duration - elapsed;
     String dt = DateTime.now().toString();
@@ -772,6 +471,7 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
     var isBookmarked = await recentlyWatchedEpisodeController
         .contain(widget.tvMetadata!.episodeId!);
 
+    if (!mounted) return;
     final prv = Provider.of<RecentProvider>(context, listen: false);
 
     RecentEpisode rEpisode = RecentEpisode(
@@ -844,10 +544,31 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
 
   @override
   void dispose() {
+    // Save progress before disposing
+    if (_betterPlayerController.isVideoInitialized() == true) {
+      final elapsed =
+          _betterPlayerController.player.state.position.inMilliseconds;
+      if (widget.mediaType == MediaType.movie) {
+        insertRecentMovieData(manualElapsed: elapsed);
+      } else {
+        insertRecentEpisodeData(manualElapsed: elapsed);
+      }
+    }
+
     _durationTimer?.cancel();
     _resetTimer?.cancel();
+    _periodicSaveTimer?.cancel();
     _betterPlayerController.dispose();
     WidgetsBinding.instance.removeObserver(this);
+
+    // Restore orientations and disable wakelock
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
+    WakelockPlus.disable();
+
     super.dispose();
   }
 
@@ -883,7 +604,7 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
     // Brief delay so the local player is visible and ready before seeking.
     await Future<void>.delayed(const Duration(milliseconds: 150));
     if (!mounted) return;
-    final initialized = _betterPlayerController.isVideoInitialized() ?? false;
+    final initialized = _betterPlayerController.isVideoInitialized();
     if (initialized) {
       await _betterPlayerController.seekTo(Duration(seconds: positionSeconds));
     }
@@ -899,14 +620,13 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
   }
 
   Future<int> get _currentElapsedMilliseconds async {
-    if (!(_betterPlayerController.isVideoInitialized() ?? false)) return 0;
-    final pos = await _betterPlayerController.videoPlayerController!.position;
-    return pos?.inMilliseconds ?? 0;
+    if (!(_betterPlayerController.isVideoInitialized() == true)) return 0;
+    return _betterPlayerController.player.state.position.inMilliseconds;
   }
 
   void _openCastSheet() async {
     if (!mounted) return;
-    if (_betterPlayerController.isPlaying() ?? false) {
+    if (_betterPlayerController.isPlaying()) {
       _betterPlayerController.pause();
     }
     final elapsed = await _currentElapsedMilliseconds;
@@ -930,23 +650,18 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
   Future<void> _openSubtitleSelectionSheet() async {
     if (!mounted) return;
 
-    final currentSub = _betterPlayerController.betterPlayerSubtitlesSource;
-
     await showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) => SubtitleSelectionSheet(
         subtitles: _currentSubs,
-        selectedSubtitle: currentSub,
         controller: _betterPlayerController,
         onSubtitleSelected: (sub) {
           if (sub == null) {
-            _betterPlayerController.setupSubtitleSource(
-                BetterPlayerSubtitlesSource(
-                    type: BetterPlayerSubtitlesSourceType.none));
+            _betterPlayerController.player.setSubtitleTrack(mk.SubtitleTrack.no());
           } else {
-            _betterPlayerController.setupSubtitleSource(sub);
+            _betterPlayerController.setSubtitleSource(sub);
           }
         },
         onSearchPressed: () async {
@@ -984,7 +699,7 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
       );
 
       if (subtitleDataList.isNotEmpty) {
-        final List<BetterPlayerSubtitlesSource> newExternalSubs = [];
+        final List<CaffeinePlayerSubtitlesSource> newExternalSubs = [];
 
         for (var subData in subtitleDataList) {
           final fileId = subData.attr?.files?.first.fileId;
@@ -997,10 +712,9 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
 
             if (download.link != null) {
               newExternalSubs.add(
-                BetterPlayerSubtitlesSource(
+                CaffeinePlayerSubtitlesSource(
                   name: "${subData.attr?.language ?? langCode} ($fileId)",
                   urls: [download.link!],
-                  type: BetterPlayerSubtitlesSourceType.network,
                 ),
               );
             }
@@ -1008,13 +722,13 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
         }
 
         if (newExternalSubs.isNotEmpty) {
-          final List<BetterPlayerSubtitlesSource> updatedSubs = [
+          final List<CaffeinePlayerSubtitlesSource> updatedSubs = [
             ..._currentSubs,
             ...newExternalSubs,
           ];
 
           // Filter duplicates
-          final Map<String, BetterPlayerSubtitlesSource> uniqueSubs = {};
+          final Map<String, CaffeinePlayerSubtitlesSource> uniqueSubs = {};
           for (var sub in updatedSubs) {
             uniqueSubs[sub.name!] = sub;
           }
@@ -1025,50 +739,13 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
             });
           }
 
-          // Re-setup data source to include new subtitles
-          final currentPosition =
-              _betterPlayerController.videoPlayerController?.value.position ??
-                  Duration.zero;
-          final currentUrl = _currentSources.isNotEmpty
-              ? _currentSources.values.first
-              : widget.sources.values.first;
-
-          await _betterPlayerController.setupDataSource(
-            BetterPlayerDataSource(
-              BetterPlayerDataSourceType.network,
-              currentUrl,
-              resolutions:
-                  _currentSources.isNotEmpty ? _currentSources : widget.sources,
-              subtitles: _currentSubs,
-              useAsmsSubtitles: true,
-              useAsmsAudioTracks: true,
-              useAsmsTracks: true,
-              headers: widget.headers,
-              videoFormat: VideoUtils.looksLikeHls(currentUrl)
-                  ? BetterPlayerVideoFormat.hls
-                  : null,
-              cacheConfiguration: BetterPlayerCacheConfiguration(
-                useCache: true,
-                preCacheSize: 471859200 * 471859200,
-                maxCacheSize: 1073741824 * 1073741824,
-                maxCacheFileSize: 471859200 * 471859200,
-                key: generateCacheKey(),
-              ),
-              bufferingConfiguration: betterPlayerBufferingConfiguration,
-              preferredAudioLanguage: settings.defaultAudioLanguage,
-            ),
-          );
-
-          _betterPlayerController.seekTo(currentPosition);
-          _betterPlayerController.play();
-
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-                content:
-                    Text("Found ${newExternalSubs.length} new subtitles")),
-          );
-        }
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                  content:
+                      Text("Found ${newExternalSubs.length} new subtitles")),
+            );
+          }
         } else {
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -1102,7 +779,7 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
 
     if (isCasting && !_wasCasting) {
       _wasCasting = true;
-      if (_betterPlayerController.isPlaying() ?? false) {
+      if (_betterPlayerController.isPlaying()) {
         _betterPlayerController.pause();
       }
     } else if (!isCasting && _wasCasting) {
@@ -1124,6 +801,8 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
         final castDurationMs = castService.totalMediaDurationSeconds * 1000;
         final finalElapsed = castDurationMs > 0 ? castDurationMs : duration;
 
+        final navigator = Navigator.of(context);
+        
         if (widget.mediaType == MediaType.movie) {
           await insertRecentMovieData(manualElapsed: finalElapsed);
         } else {
@@ -1132,18 +811,22 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
 
         castService.clearFinishedStatus();
         
-        if (Navigator.of(context).canPop()) {
-          Navigator.of(context).pop();
+        if (navigator.canPop()) {
+          navigator.pop();
         }
       });
     }
 
-    return WillPopScope(
-      onWillPop: () async {
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+
+        final navigator = Navigator.of(context);
+
         if (_betterPlayerController.isVideoInitialized() == true) {
-          final elapsed = await _betterPlayerController
-              .videoPlayerController!.position
-              .then((v) => v!.inMilliseconds);
+          final elapsed =
+              _betterPlayerController.player.state.position.inMilliseconds;
 
           if (widget.mediaType == MediaType.movie) {
             await insertRecentMovieData(manualElapsed: elapsed);
@@ -1151,37 +834,34 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
             await insertRecentEpisodeData(manualElapsed: elapsed);
           }
         }
-        return true;
+
+        if (navigator.canPop()) {
+          navigator.pop();
+        }
       },
       child: Scaffold(
+        backgroundColor: Colors.black,
         body: Stack(
           children: [
             Center(
-              child: SizedBox(
-                height: MediaQuery.of(context).size.height,
-                width: double.infinity,
-                child: BetterPlayer(
-                  controller: _betterPlayerController,
-                  key: _betterPlayerKey,
-                ),
+              child: mkv.Video(
+                controller: _betterPlayerController.videoController,
+                controls: mkv.NoVideoControls,
               ),
+            ),
+            GlassPlayerControls(
+              controller: _betterPlayerController,
+              title: widget.mediaType == MediaType.movie
+                  ? widget.movieMetadata?.movieName ?? ''
+                  : widget.tvMetadata?.seriesName ?? '',
+              subtitle: widget.mediaType == MediaType.tvShow
+                  ? 'Season ${widget.tvMetadata?.seasonNumber} Episode ${widget.tvMetadata?.episodeNumber}'
+                  : null,
+              onBack: () => Navigator.of(context).pop(),
+              onSubtitlePressed: _openSubtitleSelectionSheet,
+              onResolutionPressed: _openCastSheet, // For now, reuse cast sheet or add resolution sheet
             ),
             if (isCasting) _CastingOverlay(castService: castService),
-          ],
-        ),
-        floatingActionButton: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            FloatingActionButton.small(
-              heroTag: 'castFab',
-              onPressed: _openCastSheet,
-              backgroundColor:
-                  isCasting ? Theme.of(context).colorScheme.primary : null,
-              child: Icon(
-                isCasting ? Icons.cast_connected : Icons.cast,
-                color: isCasting ? Colors.white : null,
-              ),
-            ),
           ],
         ),
       ),

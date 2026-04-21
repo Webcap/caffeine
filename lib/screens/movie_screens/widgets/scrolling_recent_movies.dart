@@ -6,7 +6,7 @@ import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:caffiene/utils/globals.dart';
 import 'package:caffiene/provider/recently_watched_provider.dart';
 import 'package:caffiene/provider/settings_provider.dart';
-import 'package:caffiene/screens/movie_screens/widgets/movie_video_loader.dart';
+import 'package:caffiene/widgets/unified_video_loader.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/utils/globlal_methods.dart';
 import 'package:caffiene/utils/theme/textStyle.dart';
@@ -134,36 +134,41 @@ class _ScrollingRecentMoviesState extends State<ScrollingRecentMovies> {
                         },
                         onTap: () async {
                           if (_lockTap) return;
-                          await checkConnection().then((value) {
-                            value
-                                ? Navigator.push(
+                              final connected = await checkConnection();
+                              if (!mounted) return;
+                              if (connected) {
+                                Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => MovieVideoLoader(
-                                            download: false,
-                                            /* return to fetchRoute instead of hard text*/ route:
-                                                fetchRoute == "flixHQ"
-                                                    ? StreamRoute.flixHQ
-                                                    : StreamRoute.tmDB,
-                                            metadata: MovieStreamMetadata(
-                                                backdropPath: widget
-                                                    .moviesList[index]
-                                                    .backdropPath,
-                                                elapsed: widget
-                                                    .moviesList[index].elapsed,
-                                                isAdult: null,
-                                                movieId:
-                                                    widget.moviesList[index].id,
-                                                movieName: widget
-                                                    .moviesList[index].title,
-                                                posterPath: widget
-                                                    .moviesList[index]
-                                                    .posterPath,
-                                                releaseYear: widget
-                                                    .moviesList[index]
-                                                    .releaseYear,
-                                                releaseDate: null))))
-                                : GlobalMethods.showCustomScaffoldMessage(
+                                        builder: (context) =>
+                                            UnifiedVideoLoader(
+                                                mediaType: MediaType.movie,
+                                                download: false,
+                                                /* return to fetchRoute instead of hard text*/ route:
+                                                    fetchRoute == "flixHQ"
+                                                        ? StreamRoute.flixHQ
+                                                        : StreamRoute.tmDB,
+                                                movieMetadata: MovieStreamMetadata(
+                                                    backdropPath: widget
+                                                        .moviesList[index]
+                                                        .backdropPath,
+                                                    elapsed: widget
+                                                        .moviesList[index]
+                                                        .elapsed,
+                                                    isAdult: null,
+                                                    movieId: widget
+                                                        .moviesList[index].id,
+                                                    movieName: widget
+                                                        .moviesList[index].title,
+                                                    posterPath: widget
+                                                        .moviesList[index]
+                                                        .posterPath,
+                                                    releaseYear: widget
+                                                        .moviesList[index]
+                                                        .releaseYear,
+                                                    releaseDate: null))));
+                              } else {
+                                GlobalMethods.showCustomScaffoldMessage(
                                     SnackBar(
                                       content: Text(
                                         tr("check_connection"),
@@ -173,7 +178,7 @@ class _ScrollingRecentMoviesState extends State<ScrollingRecentMovies> {
                                       duration: const Duration(seconds: 3),
                                     ),
                                     context);
-                          });
+                              }
                         },
                         child: SizedBox(
                           width: 100,

@@ -5,7 +5,7 @@ import 'package:caffiene/functions/functions.dart';
 import 'package:caffiene/models/tv.dart';
 import 'package:caffiene/models/tv_stream_metadata.dart';
 import 'package:caffiene/provider/app_dependency_provider.dart';
-import 'package:caffiene/screens/tv_screens/tv_video_loader.dart';
+import 'package:caffiene/widgets/unified_video_loader.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/utils/globlal_methods.dart';
 import 'package:caffiene/utils/theme/textStyle.dart';
@@ -144,17 +144,18 @@ class _WatchNowButtonTVState extends State<WatchNowButtonTV> {
               );
 
               if (continueWatching == null) return;
-              elapsedToPass = continueWatching ? elapsedValue : null;
+              elapsedToPass = continueWatching ? elapsedValue : 0;
             }
 
             if (!mounted) return;
             Navigator.push(context, MaterialPageRoute(builder: ((context) {
-              return TVVideoLoader(
+              return UnifiedVideoLoader(
+                mediaType: MediaType.tvShow,
                 download: false,
                 route: fetchRoute == "flixHQ"
                     ? StreamRoute.flixHQ
                     : StreamRoute.tmDB,
-                metadata: TVStreamMetadata(
+                tvMetadata: TVStreamMetadata(
                     elapsed: elapsedToPass,
                     episodeId: widget.episode.episodeId,
                     episodeName: widget.episode.name,

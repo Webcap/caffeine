@@ -6,7 +6,7 @@ import 'package:caffiene/provider/app_dependency_provider.dart';
 import 'package:caffiene/utils/globals.dart';
 import 'package:caffiene/provider/recently_watched_provider.dart';
 import 'package:caffiene/provider/settings_provider.dart';
-import 'package:caffiene/screens/tv_screens/tv_video_loader.dart';
+import 'package:caffiene/widgets/unified_video_loader.dart';
 import 'package:caffiene/utils/config.dart';
 import 'package:caffiene/utils/globlal_methods.dart';
 import 'package:caffiene/utils/theme/textStyle.dart';
@@ -145,17 +145,20 @@ class _ScrollingRecentEpisodesState extends State<ScrollingRecentEpisodes> {
                             },
                             onTap: () async {
                               if (_lockTap) return;
-                              await checkConnection().then((value) {
-                                value
-                                    ? Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => TVVideoLoader(
+                              final connected = await checkConnection();
+                              if (!mounted) return;
+                              if (connected) {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            UnifiedVideoLoader(
+                                                mediaType: MediaType.tvShow,
                                                 download: false,
                                                 route: fetchRoute == "flixHQ"
                                                     ? StreamRoute.flixHQ
                                                     : StreamRoute.tmDB,
-                                                metadata: TVStreamMetadata(
+                                                tvMetadata: TVStreamMetadata(
                                                   elapsed: widget
                                                       .episodesList[index]
                                                       .elapsed,
@@ -180,18 +183,19 @@ class _ScrollingRecentEpisodesState extends State<ScrollingRecentEpisodes> {
                                                       .episodesList[index]
                                                       .seriesId,
                                                   airDate: null,
-                                                ))))
-                                    : GlobalMethods.showCustomScaffoldMessage(
-                                        SnackBar(
-                                          content: Text(
-                                            tr("check_connection"),
-                                            maxLines: 3,
-                                            style: kTextSmallBodyStyle,
-                                          ),
-                                          duration: const Duration(seconds: 3),
-                                        ),
-                                        context);
-                              });
+                                                ))));
+                              } else {
+                                GlobalMethods.showCustomScaffoldMessage(
+                                    SnackBar(
+                                      content: Text(
+                                        tr("check_connection"),
+                                        maxLines: 3,
+                                        style: kTextSmallBodyStyle,
+                                      ),
+                                      duration: const Duration(seconds: 3),
+                                    ),
+                                    context);
+                              }
                             },
                             child: SizedBox(
                               width: cardWidth,
@@ -277,7 +281,7 @@ class _ScrollingRecentEpisodesState extends State<ScrollingRecentEpisodes> {
                                                       BorderRadius.circular(8),
                                                   color: Theme.of(context)
                                                       .primaryColor
-                                                      .withOpacity(0.85)),
+                                                      .withValues(alpha: 0.85)),
                                               child: Padding(
                                                 padding:
                                                     const EdgeInsets.symmetric(
@@ -293,8 +297,7 @@ class _ScrollingRecentEpisodesState extends State<ScrollingRecentEpisodes> {
                                                                     context)
                                                                 .colorScheme
                                                                 .onPrimary
-                                                                .withOpacity(
-                                                                    0.85)))
+                                                                .withValues(alpha: 0.85)))
                                                   ],
                                                 ),
                                               ),

@@ -1,5 +1,5 @@
 import 'package:caffiene/video_providers/regularVideoLinks.dart';
-import 'package:better_player/better_player.dart';
+import 'package:caffiene/services/player/caffeine_player_controller.dart';
 
 class VideoUtils {
   /// Returns true if the URL likely points to an HLS stream (m3u8/playlist).
@@ -63,14 +63,14 @@ class VideoUtils {
     return processedLines.join('\n');
   }
 
-  /// Parse and create BetterPlayer subtitle sources from subtitle links
-  static Future<List<BetterPlayerSubtitlesSource>> parseSubtitles({
+  /// Parse and create subtitle tracks from subtitle links
+  static Future<List<CaffeinePlayerSubtitlesSource>> parseSubtitles({
     required List<RegularSubtitleLinks> subtitles,
     required String defaultLanguage,
     required bool fetchAllLanguages,
     required Future<String> Function(String) getVttContent,
   }) async {
-    final List<BetterPlayerSubtitlesSource> subs = [];
+    final List<CaffeinePlayerSubtitlesSource> subs = [];
 
     if (subtitles.isEmpty) {
       return subs;
@@ -125,13 +125,12 @@ class VideoUtils {
         final isDefault = i == bestPreferredIndex;
 
         subs.add(
-          BetterPlayerSubtitlesSource(
+          CaffeinePlayerSubtitlesSource(
             name: subtitles[i].language ?? 'Unknown',
-            selectedByDefault: isDefault,
-            content: url.toLowerCase().endsWith('srt')
+            data: url.toLowerCase().endsWith('srt')
                 ? content
                 : processVttFileTimestamps(content),
-            type: BetterPlayerSubtitlesSourceType.memory,
+            isDefault: isDefault,
           ),
         );
       } catch (e) {

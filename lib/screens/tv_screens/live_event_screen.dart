@@ -1,4 +1,6 @@
-import 'package:better_player/better_player.dart';
+import 'package:caffiene/services/player/caffeine_player_controller.dart';
+import 'package:media_kit/media_kit.dart' as mk;
+import 'package:media_kit_video/media_kit_video.dart' as mkv;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:caffiene/functions/video_utils.dart';
 import 'package:caffiene/functions/network.dart';
@@ -97,7 +99,7 @@ class LiveEventScreen extends StatefulWidget {
 }
 
 class _LiveEventScreenState extends State<LiveEventScreen> {
-  BetterPlayerController? _controller;
+  CaffeinePlayerController? _controller;
   final GlobalKey _playerKey = GlobalKey();
   EspnScoreboardGame? _scoreGame;
   String? _currentUrl;
@@ -138,77 +140,19 @@ class _LiveEventScreenState extends State<LiveEventScreen> {
   void _initPlayerWithUrl(String url) {
     _controller?.dispose();
     _controller = null;
-    final buffering = const BetterPlayerBufferingConfiguration(
-      maxBufferMs: 120000,
-      minBufferMs: 15000,
-    );
-    final controls = BetterPlayerControlsConfiguration(
-      name: formatLiveEventTitle(widget.event.title),
-      enableFullscreen: true,
-      enableSubtitles: false,
-      enablePip: true,
-      backgroundColor: Colors.black.withValues(alpha: 0.6),
-      controlBarColor: Colors.black.withValues(alpha: 0.3),
-      progressBarBackgroundColor: Colors.white,
-      muteIcon: Icons.volume_off_rounded,
-      unMuteIcon: Icons.volume_up_rounded,
-      pauseIcon: Icons.pause_rounded,
-      pipMenuIcon: Icons.picture_in_picture_rounded,
-      playIcon: Icons.play_arrow_rounded,
-      showControlsOnInitialize: false,
-      loadingColor: _Design.primaryCta,
-      iconsColor: _Design.primaryCta,
-      progressBarPlayedColor: _Design.primaryCta,
-      progressBarBufferedColor: Colors.black45,
-      skipForwardIcon: Icons.forward_10_rounded,
-      skipBackIcon: Icons.replay_10_rounded,
-      fullscreenEnableIcon: Icons.fullscreen_rounded,
-      fullscreenDisableIcon: Icons.fullscreen_exit_rounded,
-      overflowMenuIcon: Icons.menu_rounded,
-      subtitlesIcon: Icons.closed_caption_rounded,
-      qualitiesIcon: Icons.hd_rounded,
-      enableAudioTracks: false,
-    );
-    final config = BetterPlayerConfiguration(
-      autoDetectFullscreenDeviceOrientation: true,
-      looping: true,
-      autoPlay: true,
-      allowedScreenSleep: false,
-      fit: BoxFit.contain,
-      autoDispose: true,
-      controlsConfiguration: controls,
-      showPlaceholderUntilPlay: true,
-      subtitlesConfiguration: const BetterPlayerSubtitlesConfiguration(
-        backgroundColor: Colors.black45,
-        fontFamily: 'Poppins',
-        fontColor: Colors.white,
-        outlineEnabled: false,
-        fontSize: 17,
-      ),
-    );
-    debugPrint('Initializing BetterPlayer with URL: $url');
-    debugPrint('Using effective referrer: $_effectiveReferrer');
-    debugPrint('Using user agent: ${widget.userAgent}');
-
-    final dataSource = BetterPlayerDataSource(
-      BetterPlayerDataSourceType.network,
+    
+    final c = CaffeinePlayerController();
+    c.setDataSource(
       url,
       liveStream: true,
-      videoFormat:
-          VideoUtils.looksLikeHls(url) ? BetterPlayerVideoFormat.hls : null,
-      bufferingConfiguration: buffering,
       headers: {
         'User-Agent': widget.userAgent,
         'Referer': _effectiveReferrer,
-        'Referrer': _effectiveReferrer,
         'Origin': _getOrigin(_effectiveReferrer),
         'Accept': '*/*',
         'Connection': 'keep-alive',
       },
     );
-    final c = BetterPlayerController(config);
-    c.setupDataSource(dataSource);
-    c.setBetterPlayerGlobalKey(_playerKey);
     _controller = c;
   }
   
@@ -279,9 +223,9 @@ class _LiveEventScreenState extends State<LiveEventScreen> {
             child: _hasStream && _controller != null
                 ? Container(
                     color: Colors.black,
-                    child: BetterPlayer(
-                      key: _playerKey,
-                      controller: _controller!,
+                    child: mkv.Video(
+                      controller: _controller!.videoController,
+                      controls: mkv.MaterialVideoControls,
                     ),
                   )
                 : _NoStreamPlaceholder(eventPageUrl: widget.event.url),

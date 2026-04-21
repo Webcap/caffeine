@@ -1,8 +1,12 @@
-import 'package:better_player/better_player.dart';
+import 'package:caffiene/services/player/caffeine_player_controller.dart';
+import 'package:media_kit/media_kit.dart' as mk;
+import 'package:media_kit_video/media_kit_video.dart' as mkv;
 import 'package:caffiene/functions/video_utils.dart';
 import 'package:caffiene/services/analytics_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
+import 'package:caffiene/screens/player/widgets/glass_player_controls.dart';
 
 class LivePlayer extends StatefulWidget {
   const LivePlayer(
@@ -25,9 +29,7 @@ class LivePlayer extends StatefulWidget {
 }
 
 class _LivePlayerState extends State<LivePlayer> {
-  late BetterPlayerController _betterPlayerController;
-  late BetterPlayerControlsConfiguration betterPlayerControlsConfiguration;
-  late BetterPlayerBufferingConfiguration betterPlayerBufferingConfiguration;
+  late CaffeinePlayerController _betterPlayerController;
 
   final GlobalKey _betterPlayerKey = GlobalKey();
   DateTime? _loadStartTime;
@@ -43,120 +45,36 @@ class _LivePlayerState extends State<LivePlayer> {
       'url_host': Uri.tryParse(widget.videoUrl)?.host,
     });
 
-    betterPlayerBufferingConfiguration =
-        const BetterPlayerBufferingConfiguration(
-      minBufferMs: 50000,
-      maxBufferMs: 120000,
-      bufferForPlaybackMs: 8000,
-      bufferForPlaybackAfterRebufferMs: 12000,
-    );
-    betterPlayerControlsConfiguration = BetterPlayerControlsConfiguration(
-      name: widget.channelName,
-      enableFullscreen: true,
-      enableSubtitles: false,
-      enablePip: true,
-      backgroundColor: widget.colors.elementAt(1).withOpacity(0.6),
-      controlBarColor: Colors.black.withOpacity(0.3),
-      progressBarBackgroundColor: Colors.white,
-      muteIcon: Icons.volume_off_rounded,
-      unMuteIcon: Icons.volume_up_rounded,
-      pauseIcon: Icons.pause_rounded,
-      pipMenuIcon: Icons.picture_in_picture_rounded,
-      playIcon: Icons.play_arrow_rounded,
-      showControlsOnInitialize: false,
-      loadingColor: widget.colors.first,
-      iconsColor: widget.colors.first,
-      progressBarPlayedColor: widget.colors.first,
-      progressBarBufferedColor: Colors.black45,
-      skipForwardIcon: Icons.forward_10_rounded,
-      skipBackIcon: Icons.replay_10_rounded,
-      fullscreenEnableIcon: Icons.fullscreen_rounded,
-      fullscreenDisableIcon: Icons.fullscreen_exit_rounded,
-      overflowMenuIcon: Icons.menu_rounded,
-      subtitlesIcon: Icons.closed_caption_rounded,
-      qualitiesIcon: Icons.hd_rounded,
-      enableAudioTracks: false,
+    _betterPlayerController = CaffeinePlayerController();
+    _betterPlayerController.setDataSource(
+      widget.videoUrl,
+      liveStream: true,
+      headers: {
+        'User-Agent': widget.userAgent,
+        'Referer': widget.referrer,
+      },
     );
 
-    BetterPlayerConfiguration betterPlayerConfiguration =
-        BetterPlayerConfiguration(
-            autoDetectFullscreenDeviceOrientation: true,
-            //  fullScreenByDefault: true,
-            looping: true,
-            autoPlay: true,
-            allowedScreenSleep: false,
-            fit: BoxFit.contain,
-            autoDispose: true,
-            controlsConfiguration: betterPlayerControlsConfiguration,
-            showPlaceholderUntilPlay: true,
-            subtitlesConfiguration: const BetterPlayerSubtitlesConfiguration(
-                backgroundColor: Colors.black45,
-                fontFamily: 'Poppins',
-                fontColor: Colors.white,
-                outlineEnabled: false,
-                fontSize: 17));
-
-    BetterPlayerDataSource dataSource = BetterPlayerDataSource(
-        BetterPlayerDataSourceType.network, widget.videoUrl,
-        liveStream: true,
-        videoFormat: VideoUtils.looksLikeHls(widget.videoUrl)
-            ? BetterPlayerVideoFormat.hls
-            : null,
-        bufferingConfiguration: betterPlayerBufferingConfiguration,
-        headers: {
-          'User-Agent': widget.userAgent,
-          'Referer': widget.referrer,
-        });
-    _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
-    _betterPlayerController.setupDataSource(dataSource).then((value) {
-      if (_betterPlayerController.videoPlayerController!.value.aspectRatio >
-          1.0) {
-        if (widget.autoFullScreen) {
-          _betterPlayerController.enterFullScreen();
-        }
-      }
-    });
-
-    _betterPlayerController.addEventsListener((event) {
-      if (event.betterPlayerEventType == BetterPlayerEventType.initialized) {
-        if (_loadStartTime != null) {
-          final loadTime = DateTime.now().difference(_loadStartTime!).inMilliseconds;
-          AnalyticsService.instance.trackQoSEvent('Live Playback Loaded', {
-            'channel': widget.channelName,
-            'load_time_ms': loadTime,
-          });
-          _loadStartTime = null;
-        }
-      } else if (event.betterPlayerEventType == BetterPlayerEventType.bufferingStart) {
-        _bufferingStartTime = DateTime.now();
-        AnalyticsService.instance.trackQoSEvent('Live Buffering Start', {
-          'channel': widget.channelName,
-        });
-      } else if (event.betterPlayerEventType == BetterPlayerEventType.bufferingEnd) {
-        if (_bufferingStartTime != null) {
-          final bufferTime = DateTime.now().difference(_bufferingStartTime!).inMilliseconds;
-          AnalyticsService.instance.trackQoSEvent('Live Buffering End', {
-            'channel': widget.channelName,
-            'buffer_time_ms': bufferTime,
-          });
-          _bufferingStartTime = null;
-        }
-      } else if (event.betterPlayerEventType == BetterPlayerEventType.exception) {
-        AnalyticsService.instance.trackQoSEvent('Live Playback Error', {
-          'channel': widget.channelName,
-          'error': event.parameters?['exception']?.toString(),
-        });
-      }
-    });
-
-    _betterPlayerController.setBetterPlayerGlobalKey(_betterPlayerKey);
+    // Force landscape and keep screen on
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
+    WakelockPlus.enable();
   }
 
   @override
   void dispose() {
+    _betterPlayerController.dispose();
+    
+    // Restore orientations and disable wakelock
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
     ]);
+    WakelockPlus.disable();
+
     super.dispose();
   }
 
@@ -169,15 +87,23 @@ class _LivePlayerState extends State<LivePlayer> {
         leading: null,
         automaticallyImplyLeading: false,
       ),
-      body: Center(
-        child: SizedBox(
-          height: MediaQuery.of(context).size.height,
-          width: double.infinity,
-          child: BetterPlayer(
-            key: _betterPlayerKey,
-            controller: _betterPlayerController,
+      body: Stack(
+        children: [
+          Center(
+            child: mkv.Video(
+              controller: _betterPlayerController.videoController,
+              controls: mkv.NoVideoControls,
+            ),
           ),
-        ),
+          GlassPlayerControls(
+            controller: _betterPlayerController,
+            title: widget.channelName,
+            isLive: true,
+            onBack: () => Navigator.of(context).pop(),
+            onSubtitlePressed: () {}, // Subtitles usually not available for live
+            onResolutionPressed: () {}, // Handle resolution switcher if needed
+          ),
+        ],
       ),
     );
   }

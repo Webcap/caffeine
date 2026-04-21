@@ -10,7 +10,7 @@ import 'package:caffiene/utils/globlal_methods.dart';
 import 'package:caffiene/utils/theme/textStyle.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:caffiene/screens/movie_screens/widgets/movie_video_loader.dart';
+import 'package:caffiene/widgets/unified_video_loader.dart';
 import 'package:provider/provider.dart';
 import 'package:caffiene/provider/recently_watched_provider.dart';
 
@@ -147,17 +147,18 @@ class WatchNowButtonState extends State<WatchNowButton> {
               );
 
               if (continueWatching == null) return;
-              elapsedToPass = continueWatching ? elapsedValue : null;
+              elapsedToPass = continueWatching ? elapsedValue : 0;
             }
 
             if (!mounted) return;
             Navigator.push(context, MaterialPageRoute(builder: ((context) {
-              return MovieVideoLoader(
+              return UnifiedVideoLoader(
+                mediaType: MediaType.movie,
                 route: fetchRoute == "flixHQ"
                     ? StreamRoute.flixHQ
                     : StreamRoute.tmDB,
                 download: false,
-                metadata: MovieStreamMetadata(
+                movieMetadata: MovieStreamMetadata(
                     backdropPath: widget.backdropPath,
                     elapsed: elapsedToPass,
                     isAdult: widget.adult,

@@ -1,13 +1,13 @@
-import 'package:better_player/better_player.dart';
+import 'package:caffiene/services/player/caffeine_player_controller.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 class SubtitleSelectionSheet extends StatefulWidget {
-  final List<BetterPlayerSubtitlesSource> subtitles;
-  final BetterPlayerSubtitlesSource? selectedSubtitle;
-  final BetterPlayerController controller;
+  final List<CaffeinePlayerSubtitlesSource> subtitles;
+  final CaffeinePlayerSubtitlesSource? selectedSubtitle;
+  final CaffeinePlayerController controller;
   final VoidCallback onSearchPressed;
-  final Function(BetterPlayerSubtitlesSource?) onSubtitleSelected;
+  final Function(CaffeinePlayerSubtitlesSource?) onSubtitleSelected;
 
   const SubtitleSelectionSheet({
     super.key,
@@ -25,7 +25,8 @@ class SubtitleSelectionSheet extends StatefulWidget {
 class _SubtitleSelectionSheetState extends State<SubtitleSelectionSheet> {
   @override
   Widget build(BuildContext context) {
-    final currentOffset = (widget.controller.betterPlayerSubtitlesSource?.offset ?? 0) / 1000;
+    // final currentOffset = (widget.controller.betterPlayerSubtitlesSource?.offset ?? 0) / 1000;
+    const currentOffset = 0.0;
 
     return Container(
       decoration: BoxDecoration(
@@ -134,40 +135,31 @@ class _SubtitleSelectionSheetState extends State<SubtitleSelectionSheet> {
                     _SyncButton(
                       label: "-1s",
                       onPressed: () {
-                        final off = widget.controller.betterPlayerSubtitlesSource?.offset ?? 0;
-                        widget.controller.setSubtitleOffset(off - 1000);
-                        setState(() {});
+                        // Not implemented yet in MediaKit bridge
                       },
                     ),
                     _SyncButton(
                       label: "-0.1s",
                       onPressed: () {
-                        final off = widget.controller.betterPlayerSubtitlesSource?.offset ?? 0;
-                        widget.controller.setSubtitleOffset(off - 100);
-                        setState(() {});
+                        // Not implemented yet in MediaKit bridge
                       },
                     ),
                     _SyncButton(
                       label: "Reset",
                       onPressed: () {
-                        widget.controller.setSubtitleOffset(0);
-                        setState(() {});
+                        // Not implemented yet in MediaKit bridge
                       },
                     ),
                     _SyncButton(
                       label: "+0.1s",
                       onPressed: () {
-                        final off = widget.controller.betterPlayerSubtitlesSource?.offset ?? 0;
-                        widget.controller.setSubtitleOffset(off + 100);
-                        setState(() {});
+                        // Not implemented yet in MediaKit bridge
                       },
                     ),
                     _SyncButton(
                       label: "+1s",
                       onPressed: () {
-                        final off = widget.controller.betterPlayerSubtitlesSource?.offset ?? 0;
-                        widget.controller.setSubtitleOffset(off + 1000);
-                        setState(() {});
+                        // Not implemented yet in MediaKit bridge
                       },
                     ),
                   ],

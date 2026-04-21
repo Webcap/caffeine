@@ -1,4 +1,3 @@
-import 'package:better_player/better_player.dart';
 import 'package:caffiene/functions/functions.dart';
 import 'package:caffiene/widgets/cached_image.dart';
 import 'package:caffiene/functions/network.dart';

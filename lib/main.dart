@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:media_kit/media_kit.dart';
 
 import 'package:caffiene/caffiene_main.dart';
 import 'package:caffiene/utils/flavor_config.dart';
@@ -70,6 +71,7 @@ late AppDependencyProvider appDependencyProvider;
 
 Future<void> appInitialize() async {
   WidgetsFlutterBinding.ensureInitialized();
+  MediaKit.ensureInitialized();
   await dotenv.load(fileName: ".env");
 
   // Supabase MUST be initialized before RecentProvider - its controllers
