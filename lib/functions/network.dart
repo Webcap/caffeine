@@ -812,7 +812,7 @@ Future<CaffeineAPIStreamSources> getCaffeineAPILinks(String api) async {
     dynamic res;
     while (tries > 0) {
       res = await retryOptionsStream.retry(
-        (() => http.get(Uri.parse(api), headers: {'User-Agent': BROWSER_USER_AGENT}).timeout(timeOutStream)),
+        (() => http.get(Uri.parse(api), headers: caffeineApiHeaders).timeout(timeOutStream)),
         retryIf: (e) => e is SocketException || e is TimeoutException,
       );
       decodeRes = jsonDecode(res.body);
@@ -846,7 +846,7 @@ Future<FlixAPIMultiResponse> getStreamLinksFlixAPIMulti(String api) async {
     dynamic res;
     while (tries > 0) {
       res = await retryOptionsStream.retry(
-        (() => http.get(Uri.parse(api), headers: {'User-Agent': BROWSER_USER_AGENT}).timeout(timeOutStream)),
+        (() => http.get(Uri.parse(api), headers: caffeineApiHeaders).timeout(timeOutStream)),
         retryIf: (e) => e is SocketException || e is TimeoutException,
       );
       decodeRes = jsonDecode(res.body);

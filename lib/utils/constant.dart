@@ -41,6 +41,23 @@ String get CONSUMET_API => dotenv.env['CONSUMET_URL'] ?? '';
 String get CONSUMET_INFO_API => dotenv.env['CONSUMET_URL'] ?? '';
 String get caffeineApiUrl =>
     dotenv.env['CAFFEINE_API_URL'] ?? DEFAULT_CAFFEINE_API_URL;
+
+/// API key for authenticating with the Caffeine API.
+String get caffeineApiKey => dotenv.env['CAFFEINE_API_KEY'] ?? '';
+
+/// Headers to attach to every Caffeine API request.
+/// Includes the Authorization bearer token when a key is configured.
+Map<String, String> get caffeineApiHeaders {
+  final headers = <String, String>{
+    'User-Agent': BROWSER_USER_AGENT,
+  };
+  final key = caffeineApiKey;
+  if (key.isNotEmpty) {
+    headers['Authorization'] = 'Bearer $key';
+  }
+  return headers;
+}
+
 String get vidSrcApi => dotenv.env['VIDSRC_API'] ?? '';
 
 // RevenueCat (Keys now provided via API config)
