@@ -5,13 +5,13 @@ import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 
-import 'package:caffiene/api/endpoints.dart';
-import 'package:caffiene/models/custom_exceptions.dart';
-import 'package:caffiene/utils/constant.dart' hide BROWSER_USER_AGENT;
-import 'package:caffiene/utils/network_utils.dart';
-import 'package:caffiene/video_providers/caffeine_api_source.dart';
-import 'package:caffiene/video_providers/dcva.dart';
-import 'package:caffiene/video_providers/flixhq.dart';
+import 'package:reelriot/api/endpoints.dart';
+import 'package:reelriot/models/custom_exceptions.dart';
+import 'package:reelriot/utils/constant.dart' hide BROWSER_USER_AGENT;
+import 'package:reelriot/utils/network_utils.dart';
+import 'package:reelriot/video_providers/caffeine_api_source.dart';
+import 'package:reelriot/video_providers/dcva.dart';
+import 'package:reelriot/video_providers/flixhq.dart';
 
 import '../models/external_subtitles.dart';
 import '../models/movie_models.dart';

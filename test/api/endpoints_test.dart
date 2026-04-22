@@ -1,4 +1,4 @@
-import 'package:caffiene/api/endpoints.dart';
+import 'package:reelriot/api/endpoints.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

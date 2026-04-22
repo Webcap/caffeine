@@ -1,7 +1,7 @@
-import 'package:caffiene/provider/sign_in_provider.dart';
-import 'package:caffiene/screens/auth_screens/welcome.dart';
-import 'package:caffiene/utils/globlal_methods.dart';
-import 'package:caffiene/utils/theme/textStyle.dart';
+import 'package:reelriot/provider/sign_in_provider.dart';
+import 'package:reelriot/screens/auth_screens/welcome.dart';
+import 'package:reelriot/utils/globlal_methods.dart';
+import 'package:reelriot/utils/theme/textStyle.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';

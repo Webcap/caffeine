@@ -1,8 +1,8 @@
 // ignore_for_file: unused_import
 
-import 'package:caffiene/provider/app_dependency_provider.dart';
-import 'package:caffiene/services/ad_service.dart';
-import 'package:caffiene/widgets/banner_ad_widget.dart';
+import 'package:reelriot/provider/app_dependency_provider.dart';
+import 'package:reelriot/services/ad_service.dart';
+import 'package:reelriot/widgets/banner_ad_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';

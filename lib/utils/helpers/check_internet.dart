@@ -1,5 +1,5 @@
-import 'package:caffiene/utils/helpers/no_connection_screen.dart';
-import 'package:caffiene/utils/routes/app_pages.dart';
+import 'package:reelriot/utils/helpers/no_connection_screen.dart';
+import 'package:reelriot/utils/routes/app_pages.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';

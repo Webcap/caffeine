@@ -1,8 +1,8 @@
-import 'package:caffiene/widgets/common_widgets.dart';
+import 'package:reelriot/widgets/common_widgets.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:caffiene/provider/settings_provider.dart';
-import 'package:caffiene/screens/movie_screens/streaming_service_screen.dart';
+import 'package:reelriot/provider/settings_provider.dart';
+import 'package:reelriot/screens/movie_screens/streaming_service_screen.dart';
 import 'package:provider/provider.dart';
 
 // ─── Design tokens (design.json) ─────────────────────────────────────────────

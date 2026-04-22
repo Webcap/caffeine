@@ -1,12 +1,12 @@
-import 'package:caffiene/functions/network.dart';
-import 'package:caffiene/models/genre_movies.dart';
-import 'package:caffiene/models/genres.dart';
-import 'package:caffiene/provider/app_dependency_provider.dart';
-import 'package:caffiene/provider/settings_provider.dart';
-import 'package:caffiene/widgets/common_widgets.dart';
+import 'package:reelriot/functions/network.dart';
+import 'package:reelriot/models/genre_movies.dart';
+import 'package:reelriot/models/genres.dart';
+import 'package:reelriot/provider/app_dependency_provider.dart';
+import 'package:reelriot/provider/settings_provider.dart';
+import 'package:reelriot/widgets/common_widgets.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:caffiene/widgets/shimmer_widget.dart';
+import 'package:reelriot/widgets/shimmer_widget.dart';
 import 'package:provider/provider.dart';
 
 // ─── Design tokens (design.json) ─────────────────────────────────────────────

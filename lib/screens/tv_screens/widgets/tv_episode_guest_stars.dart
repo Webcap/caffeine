@@ -1,17 +1,17 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:caffiene/functions/functions.dart';
-import 'package:caffiene/functions/network.dart';
-import 'package:caffiene/provider/app_dependency_provider.dart';
-import 'package:caffiene/widgets/common_widgets.dart';
+import 'package:reelriot/functions/functions.dart';
+import 'package:reelriot/functions/network.dart';
+import 'package:reelriot/provider/app_dependency_provider.dart';
+import 'package:reelriot/widgets/common_widgets.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:caffiene/models/credits.dart';
-import 'package:caffiene/provider/settings_provider.dart';
-import 'package:caffiene/screens/person/guest_star_details.dart';
-import 'package:caffiene/utils/config.dart';
-import 'package:caffiene/widgets/shimmer_widget.dart';
+import 'package:reelriot/models/credits.dart';
+import 'package:reelriot/provider/settings_provider.dart';
+import 'package:reelriot/screens/person/guest_star_details.dart';
+import 'package:reelriot/utils/config.dart';
+import 'package:reelriot/widgets/shimmer_widget.dart';
 import 'package:provider/provider.dart';
-import 'package:caffiene/utils/constant.dart';
+import 'package:reelriot/utils/constant.dart';
 
 class TVEpisodeGuestStarsTab extends StatefulWidget {
   final String? api;

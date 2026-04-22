@@ -1,6 +1,6 @@
-import 'package:caffiene/provider/settings_provider.dart';
-import 'package:caffiene/utils/theme/app_colors.dart';
-import 'package:caffiene/widgets/size_configuration.dart';
+import 'package:reelriot/provider/settings_provider.dart';
+import 'package:reelriot/utils/theme/app_colors.dart';
+import 'package:reelriot/widgets/size_configuration.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';

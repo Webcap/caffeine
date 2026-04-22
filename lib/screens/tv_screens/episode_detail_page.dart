@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:caffiene/models/tv.dart';
-import 'package:caffiene/screens/tv_screens/widgets/episode_about.dart';
-import 'package:caffiene/screens/tv_screens/widgets/tv_episode_option.dart';
-import 'package:caffiene/screens/tv_screens/widgets/tv_episode_quick_info.dart';
+import 'package:reelriot/models/tv.dart';
+import 'package:reelriot/screens/tv_screens/widgets/episode_about.dart';
+import 'package:reelriot/screens/tv_screens/widgets/tv_episode_option.dart';
+import 'package:reelriot/screens/tv_screens/widgets/tv_episode_quick_info.dart';
 
 // ── Design tokens (design.json) ─────────────────────────────────────────────
 class _C {

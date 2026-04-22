@@ -1,6 +1,6 @@
 import 'dart:io';
-import 'package:caffiene/models/update.dart';
-import 'package:caffiene/screens/common/update_screen.dart';
+import 'package:reelriot/models/update.dart';
+import 'package:reelriot/screens/common/update_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';

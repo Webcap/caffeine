@@ -1,14 +1,14 @@
 // ignore_for_file: unused_local_variable
 
-import 'package:caffiene/preferences/profile_tab_preference.dart';
-import 'package:caffiene/provider/app_dependency_provider.dart';
-import 'package:caffiene/provider/recently_watched_provider.dart';
-import 'package:caffiene/provider/settings_provider.dart';
-import 'package:caffiene/provider/sign_in_provider.dart';
-import 'package:caffiene/screens/auth_screens/welcome.dart';
-import 'package:caffiene/utils/app_images.dart';
-import 'package:caffiene/utils/config_api.dart';
-import 'package:caffiene/utils/routes/app_pages.dart';
+import 'package:reelriot/preferences/profile_tab_preference.dart';
+import 'package:reelriot/provider/app_dependency_provider.dart';
+import 'package:reelriot/provider/recently_watched_provider.dart';
+import 'package:reelriot/provider/settings_provider.dart';
+import 'package:reelriot/provider/sign_in_provider.dart';
+import 'package:reelriot/screens/auth_screens/welcome.dart';
+import 'package:reelriot/utils/app_images.dart';
+import 'package:reelriot/utils/config_api.dart';
+import 'package:reelriot/utils/routes/app_pages.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';

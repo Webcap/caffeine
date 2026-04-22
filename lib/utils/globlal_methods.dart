@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:caffiene/models/custom_exceptions.dart';
+import 'package:reelriot/models/custom_exceptions.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 

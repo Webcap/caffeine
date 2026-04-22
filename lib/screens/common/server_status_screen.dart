@@ -2,9 +2,9 @@
 
 import 'dart:convert';
 
-import 'package:caffiene/provider/app_dependency_provider.dart';
-import 'package:caffiene/provider/settings_provider.dart';
-import 'package:caffiene/video_providers/provider_names.dart';
+import 'package:reelriot/provider/app_dependency_provider.dart';
+import 'package:reelriot/provider/settings_provider.dart';
+import 'package:reelriot/video_providers/provider_names.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;

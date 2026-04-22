@@ -1,4 +1,4 @@
-import 'package:caffiene/video_providers/provider_names.dart';
+import 'package:reelriot/video_providers/provider_names.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

@@ -1,9 +1,9 @@
 // ignore_for_file: unused_field
 
-import 'package:caffiene/api/endpoints.dart';
-import 'package:caffiene/models/genres.dart';
-import 'package:caffiene/provider/settings_provider.dart';
-import 'package:caffiene/screens/movie_screens/widgets/particular_genre_movies.dart';
+import 'package:reelriot/api/endpoints.dart';
+import 'package:reelriot/models/genres.dart';
+import 'package:reelriot/provider/settings_provider.dart';
+import 'package:reelriot/screens/movie_screens/widgets/particular_genre_movies.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

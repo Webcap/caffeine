@@ -1,4 +1,4 @@
-import 'package:caffiene/services/player/caffeine_player_controller.dart';
+import 'package:reelriot/services/player/caffeine_player_controller.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 

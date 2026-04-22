@@ -4,15 +4,15 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
-import 'package:caffiene/video_providers/provider_names.dart';
+import 'package:reelriot/video_providers/provider_names.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:caffiene/models/live_tv.dart';
+import 'package:reelriot/models/live_tv.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-import 'package:caffiene/utils/config.dart';
-import 'package:caffiene/utils/globals.dart';
+import 'package:reelriot/utils/config.dart';
+import 'package:reelriot/utils/globals.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 String episodeSeasonFormatter(int episodeNumber, int seasonNumber) {

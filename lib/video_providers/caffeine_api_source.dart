@@ -1,4 +1,4 @@
-import 'package:caffiene/video_providers/regularVideoLinks.dart';
+import 'package:reelriot/video_providers/regularVideoLinks.dart';
 
 /// Currently available providers from the caffeine API: vidsrc, showbox
 

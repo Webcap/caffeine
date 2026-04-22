@@ -1,4 +1,4 @@
-import 'package:caffiene/models/genres.dart';
+import 'package:reelriot/models/genres.dart';
 
 class PersonMoviesList {
   List<Movie>? movies;

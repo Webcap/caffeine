@@ -1,9 +1,9 @@
-import 'package:caffiene/provider/app_dependency_provider.dart';
-import 'package:caffiene/provider/recently_watched_provider.dart';
-import 'package:caffiene/provider/settings_provider.dart';
-import 'package:caffiene/services/ad_service.dart';
-import 'package:caffiene/services/file_opener_service.dart';
-import 'package:caffiene/services/update_api_service.dart';
+import 'package:reelriot/provider/app_dependency_provider.dart';
+import 'package:reelriot/provider/recently_watched_provider.dart';
+import 'package:reelriot/provider/settings_provider.dart';
+import 'package:reelriot/services/ad_service.dart';
+import 'package:reelriot/services/file_opener_service.dart';
+import 'package:reelriot/services/update_api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:mocktail/mocktail.dart';

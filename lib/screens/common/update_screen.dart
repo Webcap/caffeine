@@ -1,13 +1,13 @@
 // ignore_for_file: must_be_immutable
 import 'dart:io';
-import 'package:caffiene/models/update.dart';
-import 'package:caffiene/provider/app_dependency_provider.dart';
-import 'package:caffiene/utils/globals.dart';
-import 'package:caffiene/utils/config.dart';
-import 'package:caffiene/utils/version_utils.dart';
-import 'package:caffiene/utils/config_api.dart';
-import 'package:caffiene/services/file_opener_service.dart';
-import 'package:caffiene/services/update_api_service.dart';
+import 'package:reelriot/models/update.dart';
+import 'package:reelriot/provider/app_dependency_provider.dart';
+import 'package:reelriot/utils/globals.dart';
+import 'package:reelriot/utils/config.dart';
+import 'package:reelriot/utils/version_utils.dart';
+import 'package:reelriot/utils/config_api.dart';
+import 'package:reelriot/services/file_opener_service.dart';
+import 'package:reelriot/services/update_api_service.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_download_manager/flutter_download_manager.dart';
 import 'package:flutter/material.dart';
@@ -17,9 +17,9 @@ import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:caffiene/utils/version_helper.dart';
+import 'package:reelriot/utils/version_helper.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:caffiene/translations/locale_keys.g.dart';
+import 'package:reelriot/translations/locale_keys.g.dart';
 
 // Design tokens from design.json (cinematic, dark-first, primary red CTA)
 abstract class _UpdateDesign {

@@ -34,7 +34,7 @@ if (flutterMinSdkVersion == null) {
 }
 
 android {
-    namespace "media.webcap.caffeine"
+    namespace "media.webcap.reelriot"
     compileSdk 36
     ndkVersion flutter.ndkVersion
 
@@ -53,7 +53,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "media.webcap.caffeine"
+        applicationId "media.webcap.reelriot"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-build-configuration.
         minSdkVersion flutterMinSdkVersion.toInteger()
@@ -71,13 +71,13 @@ android {
             applicationIdSuffix ".dev"
             versionNameSuffix "-dev"
             manifestPlaceholders = [
-                appLabel: "Caffeine (dev)"
+                appLabel: "Reelriot (dev)"
             ]
         }
         prod {
             dimension "default"
             manifestPlaceholders = [
-                appLabel: "Caffeine"
+                appLabel: "Reelriot"
             ]
         }
     }

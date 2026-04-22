@@ -1,16 +1,16 @@
-import 'package:caffiene/functions/network.dart';
-import 'package:caffiene/provider/app_dependency_provider.dart';
-import 'package:caffiene/provider/settings_provider.dart';
-import 'package:caffiene/utils/theme/textStyle.dart';
+import 'package:reelriot/functions/network.dart';
+import 'package:reelriot/provider/app_dependency_provider.dart';
+import 'package:reelriot/provider/settings_provider.dart';
+import 'package:reelriot/utils/theme/textStyle.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:caffiene/models/movie_models.dart';
-import 'package:caffiene/models/social_icons_icons.dart';
-import 'package:caffiene/utils/config.dart';
-import 'package:caffiene/widgets/shimmer_widget.dart';
+import 'package:reelriot/models/movie_models.dart';
+import 'package:reelriot/models/social_icons_icons.dart';
+import 'package:reelriot/utils/config.dart';
+import 'package:reelriot/widgets/shimmer_widget.dart';
 import 'package:provider/provider.dart';
-import 'package:caffiene/utils/constant.dart';
+import 'package:reelriot/utils/constant.dart';
 import '../../../widgets/common_widgets.dart';
 
 class PersonSocialLinks extends StatefulWidget {

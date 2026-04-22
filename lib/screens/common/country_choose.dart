@@ -1,8 +1,8 @@
 import 'dart:ui';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:caffiene/models/watchprovider_countries.dart';
-import 'package:caffiene/provider/settings_provider.dart';
+import 'package:reelriot/models/watchprovider_countries.dart';
+import 'package:reelriot/provider/settings_provider.dart';
 import 'package:provider/provider.dart';
 
 // ─── Design tokens (design.json) ─────────────────────────────────────────────

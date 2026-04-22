@@ -1,9 +1,9 @@
 // ignore_for_file: unused_local_variable, unused_import
 
-import 'package:caffiene/functions/functions.dart';
-import 'package:caffiene/provider/app_dependency_provider.dart';
-import 'package:caffiene/widgets/unified_video_loader.dart';
-import 'package:caffiene/utils/config.dart';
+import 'package:reelriot/functions/functions.dart';
+import 'package:reelriot/provider/app_dependency_provider.dart';
+import 'package:reelriot/widgets/unified_video_loader.dart';
+import 'package:reelriot/utils/config.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

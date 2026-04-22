@@ -1,5 +1,5 @@
-import 'package:caffiene/models/provider_video_source.dart';
-import 'package:caffiene/video_providers/regularVideoLinks.dart';
+import 'package:reelriot/models/provider_video_source.dart';
+import 'package:reelriot/video_providers/regularVideoLinks.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

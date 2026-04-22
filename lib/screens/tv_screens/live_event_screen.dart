@@ -1,12 +1,12 @@
-import 'package:caffiene/services/player/caffeine_player_controller.dart';
+import 'package:reelriot/services/player/caffeine_player_controller.dart';
 import 'package:media_kit/media_kit.dart' as mk;
 import 'package:media_kit_video/media_kit_video.dart' as mkv;
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:caffiene/functions/video_utils.dart';
-import 'package:caffiene/functions/network.dart';
-import 'package:caffiene/models/espn_scoreboard.dart';
-import 'package:caffiene/models/live_tv.dart';
-import 'package:caffiene/screens/tv_screens/live_tv_screen.dart';
+import 'package:reelriot/functions/video_utils.dart';
+import 'package:reelriot/functions/network.dart';
+import 'package:reelriot/models/espn_scoreboard.dart';
+import 'package:reelriot/models/live_tv.dart';
+import 'package:reelriot/screens/tv_screens/live_tv_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';

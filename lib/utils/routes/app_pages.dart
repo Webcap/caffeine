@@ -1,15 +1,15 @@
-import 'package:caffiene/screens/auth_screens/register_screen.dart';
-import 'package:caffiene/screens/auth_screens/welcome.dart';
-import 'package:caffiene/screens/auth_screens/splash_screen.dart';
-import 'package:caffiene/screens/settings/settings.dart';
-import 'package:caffiene/screens/profile/edit_profile.dart';
-import 'package:caffiene/screens/profile/password_change.dart';
-import 'package:caffiene/screens/home_screen/dash_screen.dart';
-import 'package:caffiene/screens/profile/profile_page.dart';
-import 'package:caffiene/screens/watch_history/watch_history_v2.dart';
-import 'package:caffiene/screens/pair_tv_screen.dart';
-import 'package:caffiene/screens/premium/premium_subscription_screen.dart';
-import 'package:caffiene/utils/helpers/no_connection_screen.dart';
+import 'package:reelriot/screens/auth_screens/register_screen.dart';
+import 'package:reelriot/screens/auth_screens/welcome.dart';
+import 'package:reelriot/screens/auth_screens/splash_screen.dart';
+import 'package:reelriot/screens/settings/settings.dart';
+import 'package:reelriot/screens/profile/edit_profile.dart';
+import 'package:reelriot/screens/profile/password_change.dart';
+import 'package:reelriot/screens/home_screen/dash_screen.dart';
+import 'package:reelriot/screens/profile/profile_page.dart';
+import 'package:reelriot/screens/watch_history/watch_history_v2.dart';
+import 'package:reelriot/screens/pair_tv_screen.dart';
+import 'package:reelriot/screens/premium/premium_subscription_screen.dart';
+import 'package:reelriot/utils/helpers/no_connection_screen.dart';
 import 'package:get/get.dart';
 
 part "app_routes.dart";

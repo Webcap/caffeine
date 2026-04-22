@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:caffiene/utils/config.dart';
-import 'package:caffiene/utils/globals.dart';
+import 'package:reelriot/utils/config.dart';
+import 'package:reelriot/utils/globals.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class Namebar extends StatelessWidget {

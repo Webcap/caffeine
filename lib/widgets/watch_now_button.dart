@@ -1,18 +1,18 @@
 // ignore_for_file: use_build_context_synchronously
 import 'dart:async';
 import 'dart:math';
-import 'package:caffiene/functions/functions.dart';
-import 'package:caffiene/utils/globals.dart';
-import 'package:caffiene/models/movie_stream_metadata.dart';
-import 'package:caffiene/provider/app_dependency_provider.dart';
-import 'package:caffiene/utils/config.dart';
-import 'package:caffiene/utils/globlal_methods.dart';
-import 'package:caffiene/utils/theme/textStyle.dart';
+import 'package:reelriot/functions/functions.dart';
+import 'package:reelriot/utils/globals.dart';
+import 'package:reelriot/models/movie_stream_metadata.dart';
+import 'package:reelriot/provider/app_dependency_provider.dart';
+import 'package:reelriot/utils/config.dart';
+import 'package:reelriot/utils/globlal_methods.dart';
+import 'package:reelriot/utils/theme/textStyle.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:caffiene/widgets/unified_video_loader.dart';
+import 'package:reelriot/widgets/unified_video_loader.dart';
 import 'package:provider/provider.dart';
-import 'package:caffiene/provider/recently_watched_provider.dart';
+import 'package:reelriot/provider/recently_watched_provider.dart';
 
 class WatchNowButton extends StatefulWidget {
   const WatchNowButton({

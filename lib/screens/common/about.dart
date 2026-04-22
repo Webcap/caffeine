@@ -1,12 +1,12 @@
-import 'package:caffiene/provider/settings_provider.dart';
+import 'package:reelriot/provider/settings_provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:caffiene/utils/config.dart';
-import 'package:caffiene/utils/globals.dart';
+import 'package:reelriot/utils/config.dart';
+import 'package:reelriot/utils/globals.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:caffiene/utils/version_helper.dart';
-import 'package:caffiene/utils/flavor_config.dart';
+import 'package:reelriot/utils/version_helper.dart';
+import 'package:reelriot/utils/flavor_config.dart';
 
 // ─── Design tokens (design.json) ─────────────────────────────────────────────
 class _Design {

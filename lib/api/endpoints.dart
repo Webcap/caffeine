@@ -1,4 +1,4 @@
-import 'package:caffiene/utils/constant.dart';
+import 'package:reelriot/utils/constant.dart';
 
 class Endpoints {
   /// Ensures base URL has a trailing slash so path concatenation is correct

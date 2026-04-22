@@ -1,6 +1,6 @@
-import 'package:caffiene/utils/globals.dart';
-import 'package:caffiene/models/provider_load_state.dart';
-import 'package:caffiene/utils/config.dart';
+import 'package:reelriot/utils/globals.dart';
+import 'package:reelriot/models/provider_load_state.dart';
+import 'package:reelriot/utils/config.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 

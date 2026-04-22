@@ -1,4 +1,4 @@
-package media.webcap.caffeine
+package media.webcap.reelriot
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -69,7 +69,7 @@ class CastProxyService : Service() {
             val pm = getSystemService(Context.POWER_SERVICE) as PowerManager
             wakeLock = pm.newWakeLock(
                 PowerManager.PARTIAL_WAKE_LOCK,
-                "caffeine:cast_proxy"
+                "reelriot:cast_proxy"
             ).apply { acquire() }
         }
         if (wifiLock == null) {
@@ -77,7 +77,7 @@ class CastProxyService : Service() {
             @Suppress("DEPRECATION")
             wifiLock = wm.createWifiLock(
                 WifiManager.WIFI_MODE_FULL_HIGH_PERF,
-                "caffeine:cast_proxy"
+                "reelriot:cast_proxy"
             ).apply { acquire() }
         }
     }

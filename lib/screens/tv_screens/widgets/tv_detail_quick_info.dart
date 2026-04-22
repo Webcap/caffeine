@@ -1,21 +1,21 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:caffiene/api/endpoints.dart';
-import 'package:caffiene/functions/functions.dart';
-import 'package:caffiene/models/tv.dart';
-import 'package:caffiene/provider/app_dependency_provider.dart';
-import 'package:caffiene/provider/settings_provider.dart';
-import 'package:caffiene/screens/common/watch_providers_dets.dart';
-import 'package:caffiene/screens/movie_screens/widgets/watch_provider_button.dart';
-import 'package:caffiene/utils/config.dart';
-import 'package:caffiene/utils/constant.dart';
+import 'package:reelriot/api/endpoints.dart';
+import 'package:reelriot/functions/functions.dart';
+import 'package:reelriot/models/tv.dart';
+import 'package:reelriot/provider/app_dependency_provider.dart';
+import 'package:reelriot/provider/settings_provider.dart';
+import 'package:reelriot/screens/common/watch_providers_dets.dart';
+import 'package:reelriot/screens/movie_screens/widgets/watch_provider_button.dart';
+import 'package:reelriot/utils/config.dart';
+import 'package:reelriot/utils/constant.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:caffiene/provider/recently_watched_provider.dart';
+import 'package:reelriot/provider/recently_watched_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:caffiene/functions/network.dart';
-import 'package:caffiene/screens/tv_screens/episode_detail_page.dart';
-import 'package:caffiene/screens/tv_screens/widgets/tv_seasons_list.dart';
-import 'package:caffiene/models/recently_watched.dart';
+import 'package:reelriot/functions/network.dart';
+import 'package:reelriot/screens/tv_screens/episode_detail_page.dart';
+import 'package:reelriot/screens/tv_screens/widgets/tv_seasons_list.dart';
+import 'package:reelriot/models/recently_watched.dart';
 import 'package:share_plus/share_plus.dart';
 
 // ── Design tokens (design.json) ─────────────────────────────────────────────

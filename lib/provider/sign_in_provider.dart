@@ -1,13 +1,13 @@
-import 'package:caffiene/services/analytics_service.dart';
-import 'package:caffiene/controller/bookmark_database_controller.dart';
-import 'package:caffiene/controller/recently_watched_database_controller.dart';
-import 'package:caffiene/provider/app_dependency_provider.dart';
-import 'package:caffiene/services/purchase_service.dart';
+import 'package:reelriot/services/analytics_service.dart';
+import 'package:reelriot/controller/bookmark_database_controller.dart';
+import 'package:reelriot/controller/recently_watched_database_controller.dart';
+import 'package:reelriot/provider/app_dependency_provider.dart';
+import 'package:reelriot/services/purchase_service.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:username_generator/username_generator.dart';
-import 'package:caffiene/utils/routes/app_pages.dart';
+import 'package:reelriot/utils/routes/app_pages.dart';
 import 'package:get/get.dart';
 import 'dart:async';
 

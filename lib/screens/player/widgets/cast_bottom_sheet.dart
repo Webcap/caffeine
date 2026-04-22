@@ -1,6 +1,6 @@
 import 'dart:math' as math;
 
-import 'package:caffiene/services/cast_service.dart';
+import 'package:reelriot/services/cast_service.dart';
 import 'package:cast_plus/cast.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';

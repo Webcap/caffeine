@@ -3,9 +3,9 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
-import 'package:caffiene/api/endpoints.dart';
-import 'package:caffiene/models/live_tv.dart';
-import 'package:caffiene/utils/constant.dart';
+import 'package:reelriot/api/endpoints.dart';
+import 'package:reelriot/models/live_tv.dart';
+import 'package:reelriot/utils/constant.dart';
 
 /// Maps ESPN sport labels to Daddylive channel name keywords (prefer first match).
 const Map<String, List<String>> _sportToChannelKeywords = {

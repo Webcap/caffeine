@@ -1,6 +1,6 @@
 import 'dart:io';
-import 'package:caffiene/models/movie_models.dart';
-import 'package:caffiene/models/tv.dart';
+import 'package:reelriot/models/movie_models.dart';
+import 'package:reelriot/models/tv.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 

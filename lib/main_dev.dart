@@ -1,5 +1,5 @@
-import 'package:caffiene/main.dart';
-import 'package:caffiene/utils/flavor_config.dart';
+import 'package:reelriot/main.dart';
+import 'package:reelriot/utils/flavor_config.dart';
 
 void main() {
   FlavorConfig.initialize(

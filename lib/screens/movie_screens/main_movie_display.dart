@@ -1,17 +1,17 @@
-import 'package:caffiene/models/recently_watched.dart';
-import 'package:caffiene/provider/app_dependency_provider.dart';
-import 'package:caffiene/provider/recently_watched_provider.dart';
-import 'package:caffiene/screens/common/update_screen.dart';
-import 'package:caffiene/screens/movie_screens/widgets/scrolling_recent_movies.dart';
+import 'package:reelriot/models/recently_watched.dart';
+import 'package:reelriot/provider/app_dependency_provider.dart';
+import 'package:reelriot/provider/recently_watched_provider.dart';
+import 'package:reelriot/screens/common/update_screen.dart';
+import 'package:reelriot/screens/movie_screens/widgets/scrolling_recent_movies.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:caffiene/api/endpoints.dart';
-import 'package:caffiene/provider/settings_provider.dart';
-import 'package:caffiene/screens/discover_screens/widgets/discover_movies_widget.dart';
-import 'package:caffiene/screens/movie_screens/widgets/genre_list_grid.dart';
-import 'package:caffiene/screens/movie_screens/widgets/movies_from_watch_providers.dart';
-import 'package:caffiene/screens/movie_screens/widgets/scrolling_movie_list.dart';
-import 'package:caffiene/widgets/banner_ad_widget.dart';
+import 'package:reelriot/api/endpoints.dart';
+import 'package:reelriot/provider/settings_provider.dart';
+import 'package:reelriot/screens/discover_screens/widgets/discover_movies_widget.dart';
+import 'package:reelriot/screens/movie_screens/widgets/genre_list_grid.dart';
+import 'package:reelriot/screens/movie_screens/widgets/movies_from_watch_providers.dart';
+import 'package:reelriot/screens/movie_screens/widgets/scrolling_movie_list.dart';
+import 'package:reelriot/widgets/banner_ad_widget.dart';
 import 'package:provider/provider.dart';
 
 class MainMoviesDisplay extends StatefulWidget {

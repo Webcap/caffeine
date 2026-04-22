@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:caffiene/utils/config.dart';
-import 'package:caffiene/utils/globals.dart';
+import 'package:reelriot/utils/config.dart';
+import 'package:reelriot/utils/globals.dart';
 
 ThemeData darkThemeData() {
   return ThemeData(

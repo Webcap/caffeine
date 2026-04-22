@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:caffiene/models/tv.dart';
-import 'package:caffiene/provider/bookmarks_provider.dart';
+import 'package:reelriot/models/tv.dart';
+import 'package:reelriot/provider/bookmarks_provider.dart';
 import 'package:provider/provider.dart';
 
 // ── Design tokens (design.json) ─────────────────────────────────────────────

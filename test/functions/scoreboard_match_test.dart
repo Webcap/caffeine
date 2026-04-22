@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:caffiene/screens/tv_screens/live_tv_screen.dart';
-import 'package:caffiene/screens/tv_screens/live_event_screen.dart';
-import 'package:caffiene/models/espn_scoreboard.dart';
+import 'package:reelriot/screens/tv_screens/live_tv_screen.dart';
+import 'package:reelriot/screens/tv_screens/live_event_screen.dart';
+import 'package:reelriot/models/espn_scoreboard.dart';
 
 void main() {
   group('formatLiveEventTitle Tests', () {

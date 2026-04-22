@@ -1,14 +1,14 @@
 // ignore_for_file: unused_import
 
-import 'package:caffiene/screens/common/about.dart';
-import 'package:caffiene/screens/common/helpcenter.dart';
-import 'package:caffiene/screens/common/server_status_screen.dart';
-import 'package:caffiene/screens/settings/settings.dart';
-import 'package:caffiene/screens/profile/edit_profile.dart';
-import 'package:caffiene/screens/watch_history/watch_history_v2.dart';
-import 'package:caffiene/utils/app_images.dart';
-import 'package:caffiene/utils/helpers/web_page.dart';
-import 'package:caffiene/utils/routes/app_pages.dart';
+import 'package:reelriot/screens/common/about.dart';
+import 'package:reelriot/screens/common/helpcenter.dart';
+import 'package:reelriot/screens/common/server_status_screen.dart';
+import 'package:reelriot/screens/settings/settings.dart';
+import 'package:reelriot/screens/profile/edit_profile.dart';
+import 'package:reelriot/screens/watch_history/watch_history_v2.dart';
+import 'package:reelriot/utils/app_images.dart';
+import 'package:reelriot/utils/helpers/web_page.dart';
+import 'package:reelriot/utils/routes/app_pages.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

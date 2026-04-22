@@ -1,4 +1,4 @@
-import 'package:caffiene/models/movie_models.dart';
+import 'package:reelriot/models/movie_models.dart';
 
 class MovieStreamMetadata {
   int? movieId;

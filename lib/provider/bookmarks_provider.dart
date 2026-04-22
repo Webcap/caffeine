@@ -1,7 +1,7 @@
-import 'package:caffiene/controller/bookmark_database_controller.dart';
-import 'package:caffiene/functions/functions.dart';
-import 'package:caffiene/models/movie_models.dart';
-import 'package:caffiene/models/tv.dart';
+import 'package:reelriot/controller/bookmark_database_controller.dart';
+import 'package:reelriot/functions/functions.dart';
+import 'package:reelriot/models/movie_models.dart';
+import 'package:reelriot/models/tv.dart';
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 

@@ -1,8 +1,8 @@
-import 'package:caffiene/models/update.dart';
-import 'package:caffiene/screens/common/update_screen.dart';
-import 'package:caffiene/services/file_opener_service.dart';
-import 'package:caffiene/services/update_api_service.dart';
-import 'package:caffiene/provider/app_dependency_provider.dart';
+import 'package:reelriot/models/update.dart';
+import 'package:reelriot/screens/common/update_screen.dart';
+import 'package:reelriot/services/file_opener_service.dart';
+import 'package:reelriot/services/update_api_service.dart';
+import 'package:reelriot/provider/app_dependency_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';

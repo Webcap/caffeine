@@ -1,13 +1,13 @@
-import 'package:caffiene/services/player/caffeine_player_controller.dart';
+import 'package:reelriot/services/player/caffeine_player_controller.dart';
 import 'package:media_kit/media_kit.dart' as mk;
 import 'package:media_kit_video/media_kit_video.dart' as mkv;
-import 'package:caffiene/functions/video_utils.dart';
-import 'package:caffiene/services/analytics_service.dart';
+import 'package:reelriot/functions/video_utils.dart';
+import 'package:reelriot/services/analytics_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
-import 'package:caffiene/screens/player/widgets/glass_player_controls.dart';
-import 'package:caffiene/screens/player/widgets/cast_bottom_sheet.dart';
+import 'package:reelriot/screens/player/widgets/glass_player_controls.dart';
+import 'package:reelriot/screens/player/widgets/cast_bottom_sheet.dart';
 
 class LivePlayer extends StatefulWidget {
   const LivePlayer(

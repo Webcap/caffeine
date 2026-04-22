@@ -1,18 +1,18 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:caffiene/functions/functions.dart';
-import 'package:caffiene/functions/network.dart';
-import 'package:caffiene/models/images.dart';
-import 'package:caffiene/provider/app_dependency_provider.dart';
-import 'package:caffiene/provider/settings_provider.dart';
-import 'package:caffiene/screens/common/photoview.dart';
-import 'package:caffiene/utils/config.dart';
-import 'package:caffiene/widgets/common_widgets.dart';
-import 'package:caffiene/widgets/shimmer_widget.dart';
+import 'package:reelriot/functions/functions.dart';
+import 'package:reelriot/functions/network.dart';
+import 'package:reelriot/models/images.dart';
+import 'package:reelriot/provider/app_dependency_provider.dart';
+import 'package:reelriot/provider/settings_provider.dart';
+import 'package:reelriot/screens/common/photoview.dart';
+import 'package:reelriot/utils/config.dart';
+import 'package:reelriot/widgets/common_widgets.dart';
+import 'package:reelriot/widgets/shimmer_widget.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:caffiene/utils/constant.dart';
+import 'package:reelriot/utils/constant.dart';
 
 class TVEpisodeImagesDisplay extends StatefulWidget {
   final String? api, title, name;

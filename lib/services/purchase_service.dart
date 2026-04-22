@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
-import 'package:caffiene/utils/constant.dart';
+import 'package:reelriot/utils/constant.dart';
 
 class PurchaseService {
   static bool _disabled = false;

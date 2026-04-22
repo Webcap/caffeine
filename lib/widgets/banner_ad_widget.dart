@@ -1,6 +1,6 @@
-import 'package:caffiene/services/ad_service.dart';
+import 'package:reelriot/services/ad_service.dart';
 import 'package:flutter/material.dart';
-import 'package:caffiene/provider/app_dependency_provider.dart';
+import 'package:reelriot/provider/app_dependency_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:startapp_sdk/startapp.dart';
 

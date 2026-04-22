@@ -1,4 +1,4 @@
-import 'package:caffiene/provider/settings_provider.dart';
+import 'package:reelriot/provider/settings_provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

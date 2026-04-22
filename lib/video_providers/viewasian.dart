@@ -1,5 +1,5 @@
 // ViewAsian Movie classes
-import 'package:caffiene/video_providers/regularVideoLinks.dart';
+import 'package:reelriot/video_providers/regularVideoLinks.dart';
 
 class ViewasianMovieSearch {
   int? currentPage;

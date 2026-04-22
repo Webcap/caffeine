@@ -1,11 +1,11 @@
-import 'package:caffiene/api/endpoints.dart';
-import 'package:caffiene/functions/functions.dart';
+import 'package:reelriot/api/endpoints.dart';
+import 'package:reelriot/functions/functions.dart';
 import 'package:flutter/foundation.dart';
-import 'package:caffiene/functions/network.dart';
-import 'package:caffiene/models/provider_video_source.dart';
-import 'package:caffiene/utils/config.dart';
-import 'package:caffiene/utils/globals.dart';
-import 'package:caffiene/video_providers/regularVideoLinks.dart';
+import 'package:reelriot/functions/network.dart';
+import 'package:reelriot/models/provider_video_source.dart';
+import 'package:reelriot/utils/config.dart';
+import 'package:reelriot/utils/globals.dart';
+import 'package:reelriot/video_providers/regularVideoLinks.dart';
 
 class ProviderLoader {
   /// Load movie from a specific provider

@@ -1,8 +1,8 @@
 // ignore_for_file: constant_identifier_names
-import 'package:caffiene/utils/config.dart';
-import 'package:caffiene/utils/globals.dart';
-import 'package:caffiene/utils/constant.dart';
-import 'package:caffiene/video_providers/provider_names.dart';
+import 'package:reelriot/utils/config.dart';
+import 'package:reelriot/utils/globals.dart';
+import 'package:reelriot/utils/constant.dart';
+import 'package:reelriot/video_providers/provider_names.dart';
 
 class SettingsPreferences {
   static const ADULT_MODE_STATUS = "adultStatus-v2";

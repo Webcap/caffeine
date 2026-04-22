@@ -1,8 +1,8 @@
-import 'package:caffiene/models/profile_image_list.dart';
-import 'package:caffiene/provider/settings_provider.dart';
-import 'package:caffiene/screens/profile/delete_account.dart';
-import 'package:caffiene/screens/profile/password_change.dart';
-import 'package:caffiene/utils/globlal_methods.dart';
+import 'package:reelriot/models/profile_image_list.dart';
+import 'package:reelriot/provider/settings_provider.dart';
+import 'package:reelriot/screens/profile/delete_account.dart';
+import 'package:reelriot/screens/profile/password_change.dart';
+import 'package:reelriot/utils/globlal_methods.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

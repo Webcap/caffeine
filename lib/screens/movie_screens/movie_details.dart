@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:caffiene/api/endpoints.dart';
-import 'package:caffiene/models/movie_models.dart';
-import 'package:caffiene/provider/app_dependency_provider.dart';
-import 'package:caffiene/provider/settings_provider.dart';
-import 'package:caffiene/screens/movie_screens/widgets/movie_about.dart';
-import 'package:caffiene/screens/movie_screens/widgets/movie_detail_quick_info.dart';
-import 'package:caffiene/screens/movie_screens/widgets/movie_details_options.dart';
-import 'package:caffiene/widgets/watch_now_button.dart';
+import 'package:reelriot/api/endpoints.dart';
+import 'package:reelriot/models/movie_models.dart';
+import 'package:reelriot/provider/app_dependency_provider.dart';
+import 'package:reelriot/provider/settings_provider.dart';
+import 'package:reelriot/screens/movie_screens/widgets/movie_about.dart';
+import 'package:reelriot/screens/movie_screens/widgets/movie_detail_quick_info.dart';
+import 'package:reelriot/screens/movie_screens/widgets/movie_details_options.dart';
+import 'package:reelriot/widgets/watch_now_button.dart';
 import 'package:provider/provider.dart';
 
 // ── Design tokens (design.json) ─────────────────────────────────────────────

@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:caffiene/provider/app_dependency_provider.dart';
-import 'package:caffiene/utils/routes/app_pages.dart';
+import 'package:reelriot/provider/app_dependency_provider.dart';
+import 'package:reelriot/utils/routes/app_pages.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';

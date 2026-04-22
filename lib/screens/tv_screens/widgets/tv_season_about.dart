@@ -1,13 +1,13 @@
-import 'package:caffiene/provider/settings_provider.dart';
-import 'package:caffiene/screens/tv_screens/widgets/episode_list_widget.dart';
-import 'package:caffiene/screens/tv_screens/widgets/tv_season_images.dart';
-import 'package:caffiene/widgets/common_widgets.dart';
+import 'package:reelriot/provider/settings_provider.dart';
+import 'package:reelriot/screens/tv_screens/widgets/episode_list_widget.dart';
+import 'package:reelriot/screens/tv_screens/widgets/tv_season_images.dart';
+import 'package:reelriot/widgets/common_widgets.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:caffiene/api/endpoints.dart';
-import 'package:caffiene/models/tv.dart';
-import 'package:caffiene/screens/tv_screens/widgets/scrolling_tv_widget.dart';
-import 'package:caffiene/utils/config.dart';
+import 'package:reelriot/api/endpoints.dart';
+import 'package:reelriot/models/tv.dart';
+import 'package:reelriot/screens/tv_screens/widgets/scrolling_tv_widget.dart';
+import 'package:reelriot/utils/config.dart';
 import 'package:provider/provider.dart';
 import 'package:readmore/readmore.dart';
 

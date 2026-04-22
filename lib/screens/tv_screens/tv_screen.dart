@@ -1,17 +1,17 @@
-import 'package:caffiene/models/recently_watched.dart';
-import 'package:caffiene/provider/recently_watched_provider.dart';
-import 'package:caffiene/screens/tv_screens/widgets/scrolling_recent_tv_episode.dart';
+import 'package:reelriot/models/recently_watched.dart';
+import 'package:reelriot/provider/recently_watched_provider.dart';
+import 'package:reelriot/screens/tv_screens/widgets/scrolling_recent_tv_episode.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:caffiene/api/endpoints.dart';
-import 'package:caffiene/provider/settings_provider.dart';
-import 'package:caffiene/screens/tv_screens/widgets/discover_tv.dart';
-import 'package:caffiene/screens/tv_screens/widgets/scrolling_tv_widget.dart';
-import 'package:caffiene/screens/tv_screens/widgets/tv_genre_widgets.dart';
-import 'package:caffiene/screens/tv_screens/widgets/tv_widgets.dart';
-import 'package:caffiene/provider/app_dependency_provider.dart';
-import 'package:caffiene/widgets/banner_ad_widget.dart';
-import 'package:caffiene/widgets/featured_match_card.dart';
+import 'package:reelriot/api/endpoints.dart';
+import 'package:reelriot/provider/settings_provider.dart';
+import 'package:reelriot/screens/tv_screens/widgets/discover_tv.dart';
+import 'package:reelriot/screens/tv_screens/widgets/scrolling_tv_widget.dart';
+import 'package:reelriot/screens/tv_screens/widgets/tv_genre_widgets.dart';
+import 'package:reelriot/screens/tv_screens/widgets/tv_widgets.dart';
+import 'package:reelriot/provider/app_dependency_provider.dart';
+import 'package:reelriot/widgets/banner_ad_widget.dart';
+import 'package:reelriot/widgets/featured_match_card.dart';
 import 'package:provider/provider.dart';
 
 class MainTVDisplay extends StatefulWidget {

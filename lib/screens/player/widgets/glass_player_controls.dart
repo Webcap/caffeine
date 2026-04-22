@@ -2,11 +2,11 @@ import 'dart:ui';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:media_kit/media_kit.dart';
-import 'package:caffiene/services/player/caffeine_player_controller.dart';
+import 'package:reelriot/services/player/caffeine_player_controller.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:provider/provider.dart';
-import 'package:caffiene/services/cast_service.dart';
-import 'package:caffiene/utils/globlal_methods.dart';
+import 'package:reelriot/services/cast_service.dart';
+import 'package:reelriot/utils/globlal_methods.dart';
 
 class GlassPlayerControls extends StatefulWidget {
   final CaffeinePlayerController controller;

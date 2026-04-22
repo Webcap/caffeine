@@ -1,5 +1,5 @@
-import 'package:caffiene/video_providers/regularVideoLinks.dart';
-import 'package:caffiene/services/player/caffeine_player_controller.dart';
+import 'package:reelriot/video_providers/regularVideoLinks.dart';
+import 'package:reelriot/services/player/caffeine_player_controller.dart';
 
 class VideoUtils {
   /// Returns true if the URL likely points to an HLS stream (m3u8/playlist).

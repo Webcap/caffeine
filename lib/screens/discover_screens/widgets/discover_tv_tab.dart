@@ -1,10 +1,10 @@
-import 'package:caffiene/models/choice_chip.dart';
-import 'package:caffiene/models/dropdown_select.dart';
-import 'package:caffiene/models/filter_chip.dart';
-import 'package:caffiene/provider/settings_provider.dart';
-import 'package:caffiene/screens/discover_screens/discover_tv_result.dart';
-import 'package:caffiene/utils/constant.dart';
-import 'package:caffiene/widgets/common_widgets.dart';
+import 'package:reelriot/models/choice_chip.dart';
+import 'package:reelriot/models/dropdown_select.dart';
+import 'package:reelriot/models/filter_chip.dart';
+import 'package:reelriot/provider/settings_provider.dart';
+import 'package:reelriot/screens/discover_screens/discover_tv_result.dart';
+import 'package:reelriot/utils/constant.dart';
+import 'package:reelriot/widgets/common_widgets.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';

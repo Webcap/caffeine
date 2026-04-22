@@ -1,5 +1,5 @@
-import 'package:caffiene/utils/config.dart';
-import 'package:caffiene/utils/globals.dart';
+import 'package:reelriot/utils/config.dart';
+import 'package:reelriot/utils/globals.dart';
 import 'package:flutter/material.dart';
 
 class AppColor {

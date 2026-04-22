@@ -1,13 +1,13 @@
 // ignore_for_file: unused_field, unused_local_variable
 
-import 'package:caffiene/controller/bookmark_database_controller.dart';
-import 'package:caffiene/models/movie_models.dart';
-import 'package:caffiene/models/recently_watched.dart';
-import 'package:caffiene/models/tv.dart';
-import 'package:caffiene/provider/settings_provider.dart';
-import 'package:caffiene/screens/watch_history/widgets/movie_watch_history_widget.dart';
-import 'package:caffiene/screens/watch_history/widgets/tv_watch_history_tab.dart';
-import 'package:caffiene/utils/helpers/snackbar.dart';
+import 'package:reelriot/controller/bookmark_database_controller.dart';
+import 'package:reelriot/models/movie_models.dart';
+import 'package:reelriot/models/recently_watched.dart';
+import 'package:reelriot/models/tv.dart';
+import 'package:reelriot/provider/settings_provider.dart';
+import 'package:reelriot/screens/watch_history/widgets/movie_watch_history_widget.dart';
+import 'package:reelriot/screens/watch_history/widgets/tv_watch_history_tab.dart';
+import 'package:reelriot/utils/helpers/snackbar.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';

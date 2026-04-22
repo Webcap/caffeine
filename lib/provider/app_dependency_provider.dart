@@ -1,7 +1,7 @@
-import 'package:caffiene/utils/constant.dart';
-import 'package:caffiene/utils/constant.dart' as constants;
+import 'package:reelriot/utils/constant.dart';
+import 'package:reelriot/utils/constant.dart' as constants;
 import 'package:flutter/foundation.dart';
-import 'package:caffiene/models/live_tv.dart';
+import 'package:reelriot/models/live_tv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../preferences/app_dependency_preferences.dart';
 import '../services/ad_service.dart';

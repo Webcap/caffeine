@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:caffiene/models/tv.dart';
+import 'package:reelriot/models/tv.dart';
 
 // ── Design tokens (design.json) ─────────────────────────────────────────────
 class _C {

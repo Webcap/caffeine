@@ -3,9 +3,9 @@
 import 'dart:io';
 import 'dart:isolate';
 import 'dart:ui';
-import 'package:caffiene/functions/functions.dart';
-import 'package:caffiene/provider/settings_provider.dart';
-import 'package:caffiene/utils/globlal_methods.dart';
+import 'package:reelriot/functions/functions.dart';
+import 'package:reelriot/provider/settings_provider.dart';
+import 'package:reelriot/utils/globlal_methods.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';

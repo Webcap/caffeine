@@ -1,13 +1,13 @@
-import 'package:caffiene/models/sub_languages.dart';
-import 'package:caffiene/widgets/common_widgets.dart';
+import 'package:reelriot/models/sub_languages.dart';
+import 'package:reelriot/widgets/common_widgets.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 
-import 'package:caffiene/widgets/styled_dropdown.dart';
-import 'package:caffiene/widgets/styled_switch.dart';
+import 'package:reelriot/widgets/styled_dropdown.dart';
+import 'package:reelriot/widgets/styled_switch.dart';
 import '/provider/settings_provider.dart';
 
 // ─── Design tokens (design.json) ─────────────────────────────────────────────

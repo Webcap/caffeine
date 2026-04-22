@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:caffiene/models/live_tv.dart';
-import 'package:caffiene/screens/tv_screens/live_event_screen.dart';
+import 'package:reelriot/models/live_tv.dart';
+import 'package:reelriot/screens/tv_screens/live_event_screen.dart';
 import 'package:flutter/material.dart';
 
 class FeaturedMatchCard extends StatelessWidget {

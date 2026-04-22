@@ -1,9 +1,9 @@
-import 'package:caffiene/screens/tv_screens/widgets/tv_season_about.dart';
-import 'package:caffiene/screens/tv_screens/widgets/tv_season_details_quickinfo.dart';
+import 'package:reelriot/screens/tv_screens/widgets/tv_season_about.dart';
+import 'package:reelriot/screens/tv_screens/widgets/tv_season_details_quickinfo.dart';
 import 'package:flutter/material.dart';
-import 'package:caffiene/models/tv.dart';
-import 'package:caffiene/provider/settings_provider.dart';
-import 'package:caffiene/screens/common/sabth.dart';
+import 'package:reelriot/models/tv.dart';
+import 'package:reelriot/provider/settings_provider.dart';
+import 'package:reelriot/screens/common/sabth.dart';
 import 'package:provider/provider.dart';
 
 class SeasonsDetail extends StatefulWidget {

@@ -7,11 +7,11 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:caffiene/provider/app_dependency_provider.dart';
-import 'package:caffiene/provider/sign_in_provider.dart';
-import 'package:caffiene/screens/auth_screens/splash_screen.dart';
-import 'package:caffiene/utils/constant.dart';
-import 'package:caffiene/utils/routes/app_pages.dart';
+import 'package:reelriot/provider/app_dependency_provider.dart';
+import 'package:reelriot/provider/sign_in_provider.dart';
+import 'package:reelriot/screens/auth_screens/splash_screen.dart';
+import 'package:reelriot/utils/constant.dart';
+import 'package:reelriot/utils/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_test/flutter_test.dart';

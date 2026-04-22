@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:caffiene/services/stream_proxy.dart';
+import 'package:reelriot/services/stream_proxy.dart';
 import 'package:cast_plus/cast.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';

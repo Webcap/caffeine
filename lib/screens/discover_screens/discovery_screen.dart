@@ -1,5 +1,5 @@
-import 'package:caffiene/screens/discover_screens/widgets/discover_movies_tab.dart';
-import 'package:caffiene/screens/discover_screens/widgets/discover_tv_tab.dart';
+import 'package:reelriot/screens/discover_screens/widgets/discover_movies_tab.dart';
+import 'package:reelriot/screens/discover_screens/widgets/discover_tv_tab.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';

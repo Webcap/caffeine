@@ -2,29 +2,29 @@ import 'dart:async';
 import 'dart:io';
 import 'package:media_kit/media_kit.dart';
 
-import 'package:caffiene/caffiene_main.dart';
-import 'package:caffiene/utils/flavor_config.dart';
-import 'package:caffiene/utils/globals.dart';
-import 'package:caffiene/functions/functions.dart';
-import 'package:caffiene/models/live_tv.dart';
-import 'package:caffiene/models/translation.dart';
-import 'package:caffiene/provider/app_dependency_provider.dart';
-import 'package:caffiene/provider/recently_watched_provider.dart';
-import 'package:caffiene/singleton/sharedpreferences_singleton.dart';
-import 'package:caffiene/utils/config_api.dart';
+import 'package:reelriot/caffiene_main.dart';
+import 'package:reelriot/utils/flavor_config.dart';
+import 'package:reelriot/utils/globals.dart';
+import 'package:reelriot/functions/functions.dart';
+import 'package:reelriot/models/live_tv.dart';
+import 'package:reelriot/models/translation.dart';
+import 'package:reelriot/provider/app_dependency_provider.dart';
+import 'package:reelriot/provider/recently_watched_provider.dart';
+import 'package:reelriot/singleton/sharedpreferences_singleton.dart';
+import 'package:reelriot/utils/config_api.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
-import 'package:caffiene/provider/settings_provider.dart';
-import 'package:caffiene/services/ad_service.dart';
-import 'package:caffiene/services/analytics_service.dart';
-import 'package:caffiene/utils/config.dart';
+import 'package:reelriot/provider/settings_provider.dart';
+import 'package:reelriot/services/ad_service.dart';
+import 'package:reelriot/services/analytics_service.dart';
+import 'package:reelriot/utils/config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:caffiene/utils/constant.dart';
-import 'package:caffiene/utils/secure_local_storage.dart';
+import 'package:reelriot/utils/constant.dart';
+import 'package:reelriot/utils/secure_local_storage.dart';
 
 class MyHttpOverrides extends HttpOverrides {
   @override

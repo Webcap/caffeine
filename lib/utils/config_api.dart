@@ -1,9 +1,9 @@
 import 'dart:convert';
 
-import 'package:caffiene/models/update.dart';
-import 'package:caffiene/provider/app_dependency_provider.dart';
-import 'package:caffiene/utils/constant.dart';
-import 'package:caffiene/utils/flavor_config.dart';
+import 'package:reelriot/models/update.dart';
+import 'package:reelriot/provider/app_dependency_provider.dart';
+import 'package:reelriot/utils/constant.dart';
+import 'package:reelriot/utils/flavor_config.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:supabase_flutter/supabase_flutter.dart';

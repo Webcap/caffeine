@@ -1,7 +1,7 @@
-import 'package:caffiene/provider/settings_provider.dart';
-import 'package:caffiene/screens/common/sabth.dart';
-import 'package:caffiene/screens/person/widgets/guest_star_detail_about.dart';
-import 'package:caffiene/screens/person/widgets/guest_star_detail_quick.dart';
+import 'package:reelriot/provider/settings_provider.dart';
+import 'package:reelriot/screens/common/sabth.dart';
+import 'package:reelriot/screens/person/widgets/guest_star_detail_about.dart';
+import 'package:reelriot/screens/person/widgets/guest_star_detail_quick.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import '/models/credits.dart';

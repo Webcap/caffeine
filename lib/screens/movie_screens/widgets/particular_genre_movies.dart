@@ -1,12 +1,12 @@
-import 'package:caffiene/functions/network.dart';
-import 'package:caffiene/provider/app_dependency_provider.dart';
+import 'package:reelriot/functions/network.dart';
+import 'package:reelriot/provider/app_dependency_provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:caffiene/models/movie_models.dart';
-import 'package:caffiene/provider/settings_provider.dart';
-import 'package:caffiene/screens/movie_screens/widgets/movie_grid_view.dart';
-import 'package:caffiene/screens/movie_screens/widgets/movie_list_view.dart';
-import 'package:caffiene/widgets/shimmer_widget.dart';
+import 'package:reelriot/models/movie_models.dart';
+import 'package:reelriot/provider/settings_provider.dart';
+import 'package:reelriot/screens/movie_screens/widgets/movie_grid_view.dart';
+import 'package:reelriot/screens/movie_screens/widgets/movie_list_view.dart';
+import 'package:reelriot/widgets/shimmer_widget.dart';
 import 'package:provider/provider.dart';
 
 class ParticularGenreMovies extends StatefulWidget {

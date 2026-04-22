@@ -1,14 +1,14 @@
-import 'package:caffiene/provider/app_dependency_provider.dart';
-import 'package:caffiene/screens/common/server_status_screen.dart';
-import 'package:caffiene/screens/tv_screens/live_tv_screen.dart';
+import 'package:reelriot/provider/app_dependency_provider.dart';
+import 'package:reelriot/screens/common/server_status_screen.dart';
+import 'package:reelriot/screens/tv_screens/live_tv_screen.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:caffiene/screens/bookmarks/bookmark_screen.dart';
-import 'package:caffiene/screens/common/update_screen.dart';
-import 'package:caffiene/utils/app_images.dart';
-import 'package:caffiene/utils/helpers/next_screen.dart';
+import 'package:reelriot/screens/bookmarks/bookmark_screen.dart';
+import 'package:reelriot/screens/common/update_screen.dart';
+import 'package:reelriot/utils/app_images.dart';
+import 'package:reelriot/utils/helpers/next_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 

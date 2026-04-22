@@ -3,15 +3,15 @@
 import 'dart:async';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:caffiene/functions/network.dart';
-import 'package:caffiene/models/custom_exceptions.dart';
-import 'package:caffiene/models/espn_scoreboard.dart';
-import 'package:caffiene/models/live_tv.dart';
-import 'package:caffiene/screens/tv_screens/live_event_screen.dart';
-import 'package:caffiene/widgets/featured_match_card.dart';
+import 'package:reelriot/functions/network.dart';
+import 'package:reelriot/models/custom_exceptions.dart';
+import 'package:reelriot/models/espn_scoreboard.dart';
+import 'package:reelriot/models/live_tv.dart';
+import 'package:reelriot/screens/tv_screens/live_event_screen.dart';
+import 'package:reelriot/widgets/featured_match_card.dart';
 import 'package:provider/provider.dart';
-import 'package:caffiene/provider/app_dependency_provider.dart';
-import 'package:caffiene/services/ad_service.dart';
+import 'package:reelriot/provider/app_dependency_provider.dart';
+import 'package:reelriot/services/ad_service.dart';
 import 'package:startapp_sdk/startapp.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';

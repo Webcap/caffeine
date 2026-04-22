@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:caffiene/models/person.dart';
-import 'package:caffiene/provider/settings_provider.dart';
-import 'package:caffiene/screens/common/sabth.dart';
-import 'package:caffiene/screens/search/widgets/searched_person_about.dart';
-import 'package:caffiene/screens/search/widgets/searched_person_quick_info.dart';
+import 'package:reelriot/models/person.dart';
+import 'package:reelriot/provider/settings_provider.dart';
+import 'package:reelriot/screens/common/sabth.dart';
+import 'package:reelriot/screens/search/widgets/searched_person_about.dart';
+import 'package:reelriot/screens/search/widgets/searched_person_quick_info.dart';
 import 'package:provider/provider.dart';
 
 class SearchedPersonDetailPage extends StatefulWidget {

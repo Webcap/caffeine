@@ -1,13 +1,13 @@
-import 'package:caffiene/functions/functions.dart';
-import 'package:caffiene/utils/theme/textStyle.dart';
-import 'package:caffiene/utils/globals.dart';
+import 'package:reelriot/functions/functions.dart';
+import 'package:reelriot/utils/theme/textStyle.dart';
+import 'package:reelriot/utils/globals.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:caffiene/models/profile_image_list.dart';
-import 'package:caffiene/screens/home_screen/dash_screen.dart';
-import 'package:caffiene/utils/config.dart';
-import 'package:caffiene/utils/globlal_methods.dart';
+import 'package:reelriot/models/profile_image_list.dart';
+import 'package:reelriot/screens/home_screen/dash_screen.dart';
+import 'package:reelriot/utils/config.dart';
+import 'package:reelriot/utils/globlal_methods.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SignupScreen extends StatefulWidget {

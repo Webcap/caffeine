@@ -1,7 +1,7 @@
-import 'package:caffiene/video_providers/caffeine_api_source.dart';
-import 'package:caffiene/video_providers/flixhq.dart';
-import 'package:caffiene/video_providers/flixapi_multi.dart';
-import 'package:caffiene/video_providers/dcva.dart';
+import 'package:reelriot/video_providers/caffeine_api_source.dart';
+import 'package:reelriot/video_providers/flixhq.dart';
+import 'package:reelriot/video_providers/flixapi_multi.dart';
+import 'package:reelriot/video_providers/dcva.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

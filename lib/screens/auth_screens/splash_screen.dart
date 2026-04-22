@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:caffiene/utils/app_images.dart';
-import 'package:caffiene/utils/helpers/injection.dart';
-import 'package:caffiene/utils/routes/app_pages.dart';
+import 'package:reelriot/utils/app_images.dart';
+import 'package:reelriot/utils/helpers/injection.dart';
+import 'package:reelriot/utils/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/svg.dart';

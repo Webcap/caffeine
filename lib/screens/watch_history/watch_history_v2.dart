@@ -1,4 +1,4 @@
-import 'package:caffiene/widgets/size_configuration.dart';
+import 'package:reelriot/widgets/size_configuration.dart';
 import 'package:flutter/material.dart';
 
 class WatchHistoryV2 extends StatefulWidget {

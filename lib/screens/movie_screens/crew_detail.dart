@@ -1,9 +1,9 @@
-import 'package:caffiene/screens/common/sabth.dart';
-import 'package:caffiene/screens/movie_screens/widgets/crew_about_details.dart';
-import 'package:caffiene/screens/movie_screens/widgets/crew_detail_quick_info.dart';
+import 'package:reelriot/screens/common/sabth.dart';
+import 'package:reelriot/screens/movie_screens/widgets/crew_about_details.dart';
+import 'package:reelriot/screens/movie_screens/widgets/crew_detail_quick_info.dart';
 import 'package:flutter/material.dart';
-import 'package:caffiene/models/credits.dart';
-import 'package:caffiene/provider/settings_provider.dart';
+import 'package:reelriot/models/credits.dart';
+import 'package:reelriot/provider/settings_provider.dart';
 import 'package:provider/provider.dart';
 
 class CrewDetailPage extends StatefulWidget {

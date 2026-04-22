@@ -1,9 +1,9 @@
-import 'package:caffiene/models/credits.dart';
-import 'package:caffiene/provider/settings_provider.dart';
-import 'package:caffiene/screens/movie_screens/cast_details.dart';
-import 'package:caffiene/screens/movie_screens/crew_detail.dart';
-import 'package:caffiene/widgets/cast_crew_shared.dart';
-import 'package:caffiene/widgets/common_widgets.dart';
+import 'package:reelriot/models/credits.dart';
+import 'package:reelriot/provider/settings_provider.dart';
+import 'package:reelriot/screens/movie_screens/cast_details.dart';
+import 'package:reelriot/screens/movie_screens/crew_detail.dart';
+import 'package:reelriot/widgets/cast_crew_shared.dart';
+import 'package:reelriot/widgets/common_widgets.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

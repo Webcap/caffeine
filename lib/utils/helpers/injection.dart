@@ -1,4 +1,4 @@
-import 'package:caffiene/utils/helpers/check_internet.dart';
+import 'package:reelriot/utils/helpers/check_internet.dart';
 import 'package:get/get.dart';
 
 class DependencyInjection {

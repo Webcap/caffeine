@@ -1,6 +1,6 @@
-import 'package:caffiene/preferences/setting_preferences.dart';
-import 'package:caffiene/utils/constant.dart';
-import 'package:caffiene/video_providers/provider_names.dart';
+import 'package:reelriot/preferences/setting_preferences.dart';
+import 'package:reelriot/utils/constant.dart';
+import 'package:reelriot/video_providers/provider_names.dart';
 import 'package:flutter/material.dart';
 
 class SettingsProvider with ChangeNotifier {

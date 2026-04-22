@@ -1,7 +1,7 @@
-import 'package:caffiene/models/movie_models.dart';
-import 'package:caffiene/models/recently_watched.dart';
-import 'package:caffiene/provider/bookmarks_provider.dart';
-import 'package:caffiene/provider/recently_watched_provider.dart';
+import 'package:reelriot/models/movie_models.dart';
+import 'package:reelriot/models/recently_watched.dart';
+import 'package:reelriot/provider/bookmarks_provider.dart';
+import 'package:reelriot/provider/recently_watched_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
