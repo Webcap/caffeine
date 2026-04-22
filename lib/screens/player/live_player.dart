@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:caffiene/screens/player/widgets/glass_player_controls.dart';
+import 'package:caffiene/screens/player/widgets/cast_bottom_sheet.dart';
 
 class LivePlayer extends StatefulWidget {
   const LivePlayer(
@@ -78,6 +79,30 @@ class _LivePlayerState extends State<LivePlayer> {
     super.dispose();
   }
 
+  void _openCastSheet() {
+    if (!mounted) return;
+    if (_betterPlayerController.isPlaying()) {
+      _betterPlayerController.pause();
+    }
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => CastBottomSheet(
+        streamUrl: widget.videoUrl,
+        title: widget.channelName,
+        headers: {
+          'User-Agent': widget.userAgent,
+          'Referer': widget.referrer,
+        },
+      ),
+    ).then((_) {
+      if (mounted) {
+        _betterPlayerController.play();
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -102,6 +127,7 @@ class _LivePlayerState extends State<LivePlayer> {
             onBack: () => Navigator.of(context).pop(),
             onSubtitlePressed: () {}, // Subtitles usually not available for live
             onResolutionPressed: () {}, // Handle resolution switcher if needed
+            onCastPressed: _openCastSheet,
           ),
         ],
       ),

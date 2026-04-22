@@ -71,22 +71,32 @@ class _CastBottomSheetState extends State<CastBottomSheet> {
                   const SizedBox(height: 12),
                   _DragHandle(),
                   const SizedBox(height: 4),
-                  AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 300),
-                    switchInCurve: Curves.easeOut,
-                    switchOutCurve: Curves.easeIn,
-                    child: cast.isConnected
-                        ? _ConnectedView(
-                            key: const ValueKey('connected'),
-                            cast: cast,
-                            posterUrl: widget.posterUrl,
-                          )
-                        : _ScanView(
-                            key: const ValueKey('scan'),
-                            cast: cast,
-                            onScan: () => cast.scanForDevices(),
-                            onConnect: (d) => _connectToDevice(cast, d),
-                          ),
+                  ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxHeight: MediaQuery.of(context).size.height * 0.8,
+                    ),
+                    child: SingleChildScrollView(
+                      padding: EdgeInsets.only(
+                        bottom: MediaQuery.of(context).viewInsets.bottom,
+                      ),
+                      child: AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 300),
+                        switchInCurve: Curves.easeOut,
+                        switchOutCurve: Curves.easeIn,
+                        child: cast.isConnected
+                            ? _ConnectedView(
+                                key: const ValueKey('connected'),
+                                cast: cast,
+                                posterUrl: widget.posterUrl,
+                              )
+                            : _ScanView(
+                                key: const ValueKey('scan'),
+                                cast: cast,
+                                onScan: () => cast.scanForDevices(),
+                                onConnect: (d) => _connectToDevice(cast, d),
+                              ),
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 8),
                 ],

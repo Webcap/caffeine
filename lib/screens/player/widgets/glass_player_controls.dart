@@ -3,6 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:caffiene/services/player/caffeine_player_controller.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:provider/provider.dart';
+import 'package:caffiene/services/cast_service.dart';
 import 'package:caffiene/utils/globlal_methods.dart';
 
 class GlassPlayerControls extends StatefulWidget {
@@ -12,6 +15,7 @@ class GlassPlayerControls extends StatefulWidget {
   final VoidCallback onBack;
   final VoidCallback onSubtitlePressed;
   final VoidCallback onResolutionPressed;
+  final VoidCallback onCastPressed;
   final bool isLive;
 
   const GlassPlayerControls({
@@ -22,6 +26,7 @@ class GlassPlayerControls extends StatefulWidget {
     required this.onBack,
     required this.onSubtitlePressed,
     required this.onResolutionPressed,
+    required this.onCastPressed,
     this.isLive = false,
   });
 
@@ -32,6 +37,8 @@ class GlassPlayerControls extends StatefulWidget {
 class _GlassPlayerControlsState extends State<GlassPlayerControls> {
   bool _isVisible = true;
   Timer? _hideTimer;
+  bool _isWifiConnected = false;
+  StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
 
   String formatDuration(int milliseconds) {
     final duration = Duration(milliseconds: milliseconds);
@@ -50,6 +57,24 @@ class _GlassPlayerControlsState extends State<GlassPlayerControls> {
   void initState() {
     super.initState();
     _startHideTimer();
+    _checkConnectivity();
+    _connectivitySubscription =
+        Connectivity().onConnectivityChanged.listen((results) {
+      if (mounted) {
+        setState(() {
+          _isWifiConnected = results.contains(ConnectivityResult.wifi);
+        });
+      }
+    });
+  }
+
+  Future<void> _checkConnectivity() async {
+    final results = await Connectivity().checkConnectivity();
+    if (mounted) {
+      setState(() {
+        _isWifiConnected = results.contains(ConnectivityResult.wifi);
+      });
+    }
   }
 
   void _startHideTimer() {
@@ -75,6 +100,7 @@ class _GlassPlayerControlsState extends State<GlassPlayerControls> {
   @override
   void dispose() {
     _hideTimer?.cancel();
+    _connectivitySubscription?.cancel();
     super.dispose();
   }
 
@@ -164,6 +190,19 @@ class _GlassPlayerControlsState extends State<GlassPlayerControls> {
               ],
             ),
           ),
+          if (_isWifiConnected) ...[
+            const SizedBox(width: 16),
+            Consumer<CastService>(
+              builder: (context, castService, _) {
+                return _GlassIconButton(
+                  icon: castService.isConnected
+                      ? Icons.cast_connected_rounded
+                      : Icons.cast_rounded,
+                  onPressed: widget.onCastPressed,
+                );
+              },
+            ),
+          ],
         ],
       ),
     );

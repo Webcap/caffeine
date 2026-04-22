@@ -859,7 +859,8 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
                   : null,
               onBack: () => Navigator.of(context).pop(),
               onSubtitlePressed: _openSubtitleSelectionSheet,
-              onResolutionPressed: _openCastSheet, // For now, reuse cast sheet or add resolution sheet
+              onResolutionPressed: () {}, // Resolution sheet not implemented yet
+              onCastPressed: _openCastSheet,
             ),
             if (isCasting) _CastingOverlay(castService: castService),
           ],
