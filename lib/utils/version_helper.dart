@@ -21,7 +21,7 @@ class VersionDisplay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (!version.contains('+')) {
-      return Text(version, style: style);
+      return Text('v$version', style: style);
     }
 
     final parts = version.split('+');
@@ -36,7 +36,7 @@ class VersionDisplay extends StatelessWidget {
         mainAxisAlignment: mainAxisAlignment,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(baseVersion, style: defaultStyle),
+          Text('v$baseVersion', style: defaultStyle),
           const SizedBox(height: 8),
           _buildChip(context, buildNumber, defaultStyle),
         ],
@@ -49,7 +49,7 @@ class VersionDisplay extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.baseline,
       textBaseline: TextBaseline.alphabetic,
       children: [
-        Text(baseVersion, style: defaultStyle),
+        Text('v$baseVersion', style: defaultStyle),
         const SizedBox(width: 8),
         _buildChip(context, buildNumber, defaultStyle),
       ],
