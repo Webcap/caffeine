@@ -19,7 +19,7 @@ Future<void> fetchConfigFromApi(
     final baseUrl =
         base.endsWith('/') ? base.substring(0, base.length - 1) : base;
     final url = Uri.parse('$baseUrl/config');
-    final response = await http.get(url).timeout(
+    final response = await http.get(url, headers: caffeineApiHeaders).timeout(
           const Duration(seconds: 10),
           onTimeout: () => throw Exception('Config fetch timeout'),
         );
@@ -144,7 +144,7 @@ Future<void> fetchFeatureFlagsFromApi(AppDependencyProvider provider) async {
       if (anonymousId.isNotEmpty) 'anonymousId': anonymousId,
     });
 
-    final response = await http.get(uri).timeout(const Duration(seconds: 5));
+    final response = await http.get(uri, headers: caffeineApiHeaders).timeout(const Duration(seconds: 5));
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body) as Map<String, dynamic>;
@@ -184,7 +184,7 @@ Future<AppUpdateInfo> fetchUpdateInfoFromApi(
       'environment': env,
     });
 
-    final response = await http.get(uri).timeout(const Duration(seconds: 5));
+    final response = await http.get(uri, headers: caffeineApiHeaders).timeout(const Duration(seconds: 5));
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body) as Map<String, dynamic>;

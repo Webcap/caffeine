@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:purchases_flutter/purchases_flutter.dart';
 import '../models/premium_plan.dart';
 import 'app_dependency_provider.dart';
+import '../utils/constant.dart';
 import '../services/purchase_service.dart';
 
 class PremiumProvider extends ChangeNotifier {
@@ -53,9 +54,9 @@ class PremiumProvider extends ChangeNotifier {
         baseUrl = baseUrl.substring(0, baseUrl.length - 1);
       }
 
-      final plansResponse = await http.get(Uri.parse('$baseUrl/plans'));
+      final plansResponse = await http.get(Uri.parse('$baseUrl/plans'), headers: caffeineApiHeaders);
       final featuresResponse =
-          await http.get(Uri.parse('$baseUrl/premium-features'));
+          await http.get(Uri.parse('$baseUrl/premium-features'), headers: caffeineApiHeaders);
 
       if (plansResponse.statusCode == 200 &&
           featuresResponse.statusCode == 200) {

@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:reelriot/utils/constant.dart';
 
 void _pairTvLog(String message, [Object? detail]) {
   if (kDebugMode) {
@@ -80,7 +81,10 @@ class _PairTvScreenState extends State<PairTvScreen> {
       final res = await http
           .post(
             Uri.parse(url),
-            headers: {'Content-Type': 'application/json'},
+            headers: {
+              'Content-Type': 'application/json',
+              ...caffeineApiHeaders,
+            },
             body: body,
           )
           .timeout(const Duration(seconds: 15));

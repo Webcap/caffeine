@@ -77,7 +77,7 @@ Future<DaddyliveLiveResponse?> fetchDaddyliveChannels() async {
     final url = Endpoints.getIPTVEndpoint(caffeineApiUrl);
     debugPrint('[Daddylive] GET $url');
     final res =
-        await http.get(Uri.parse(url)).timeout(const Duration(seconds: 15));
+        await http.get(Uri.parse(url), headers: caffeineApiHeaders).timeout(const Duration(seconds: 15));
     if (res.statusCode != 200) return _cachedLive;
     final decoded = jsonDecode(res.body);
     if (decoded is! Map<String, dynamic>) return null;
@@ -152,7 +152,7 @@ Future<String?> extractHlsFromDaddyliveEmbed(String embedUrl) async {
     final url = Endpoints.getDaddyliveExtractHls(caffeineApiUrl, embedUrl);
     debugPrint('[Daddylive] Extracting HLS from embed via API');
     final res =
-        await http.get(Uri.parse(url)).timeout(const Duration(seconds: 20));
+        await http.get(Uri.parse(url), headers: caffeineApiHeaders).timeout(const Duration(seconds: 20));
     if (res.statusCode != 200) return null;
     final decoded = jsonDecode(res.body);
     if (decoded is! Map<String, dynamic>) return null;

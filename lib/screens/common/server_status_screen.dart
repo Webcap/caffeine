@@ -9,6 +9,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
+import '../../utils/constant.dart';
 
 /// Response from GET /status on caffeine-api.
 class _StatusResponse {
@@ -173,7 +174,7 @@ class _ServerStatusScreenState extends State<ServerStatusScreen> {
     final stopwatch = Stopwatch()..start();
     try {
       final uri = Uri.parse(checkUrl);
-      final response = await http.get(uri).timeout(
+      final response = await http.get(uri, headers: caffeineApiHeaders).timeout(
             _Design._checkTimeout,
             onTimeout: () => throw Exception('Timeout'),
           );
@@ -230,7 +231,7 @@ class _ServerStatusScreenState extends State<ServerStatusScreen> {
   Future<void> _fetchScraperProviders(String baseUrl) async {
     final uri = Uri.parse('$baseUrl/providers/status');
     try {
-      final response = await http.get(uri).timeout(
+      final response = await http.get(uri, headers: caffeineApiHeaders).timeout(
             const Duration(seconds: 25),
             onTimeout: () => throw Exception('Timeout'),
           );
