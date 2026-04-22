@@ -13,7 +13,7 @@ void main() {
   for (final line in pubspec.readAsLinesSync()) {
     final m = versionMatch.firstMatch(line);
     if (m != null) {
-      version = m.group(1);
+      version = m.group(1)?.trim();
       break;
     }
   }

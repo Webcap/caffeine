@@ -1,5 +1,23 @@
 # Changelog
 
+## [2026.04.21] - 2026-04-21
+
+### Added
+- **API Key Authorization**: All requests to the Caffeine API now authenticate with a secure Bearer token.
+- **Chromecast Button**: The cast button now appears in the player automatically when connected to Wi-Fi.
+
+### Fixed
+- **Player Resume**: The player now correctly resumes from the last saved cloud position when returning to a title.
+- **Home Screen Recommendation Crash**: Fixed an exception where live sports events were misidentified as TV shows, causing invalid TMDB requests.
+- **Player State `LateInitializationError`**: Resolved a crash caused by accessing `duration` before it was initialized.
+- **Resume Watching Stability**: Improved seek timing and provider retry logic to prevent loss of playback position during source switches.
+
+### Changed
+- **Video Player Upgrade**: Migrated to a new media player engine (media_kit) for improved playback stability, better hardware decoding support, and reduced crashes during long sessions.
+- **GitHub Sign-In Removed**: Removed GitHub as a sign-in option from the login screen.
+
+---
+
 ## [2.0.1+20260406] - 2026-04-06
 
 ### Fixed
