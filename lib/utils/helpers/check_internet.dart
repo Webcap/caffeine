@@ -7,6 +7,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 /// Check InterNet Connectivity ///
 class NetworkStatusService extends GetxService {
+  bool _wasOffline = false;
+
   NetworkStatusService() {
     Connectivity().onConnectivityChanged.listen((result) {
       _getNetworkStatus(result);
@@ -14,33 +16,28 @@ class NetworkStatusService extends GetxService {
   }
 
   Future<void> _getNetworkStatus(List<ConnectivityResult> result) async {
-    final auth = Supabase.instance.client.auth;
     final isOffline =
         result.length == 1 && result.first == ConnectivityResult.none;
-    if (auth.currentUser != null) {
-      if (isOffline) {
+
+    if (isOffline) {
+      if (!_wasOffline) {
+        _wasOffline = true;
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          Get.offAll(
-            () => const NetworkErrorItem(),
-          );
-        });
-      } else {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          Get.offAllNamed(Routes.dash);
+          Get.offAll(() => const NetworkErrorItem());
         });
       }
     } else {
-      if (isOffline) {
+      if (_wasOffline) {
+        _wasOffline = false;
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          Get.offAll(
-            () => const NetworkErrorItem(),
-          );
+          final auth = Supabase.instance.client.auth;
+          if (auth.currentSession != null) {
+            Get.offAllNamed(Routes.dash);
+          } else {
+            Get.offAllNamed(Routes.login);
+          }
         });
-      } else {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          Get.offAllNamed(Routes.login);
-        });
-      } // If internet loss then it will show the NetworkErrorItem widget
+      }
     }
   }
 }

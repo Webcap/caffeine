@@ -522,14 +522,14 @@ class _UpdateScreenState extends State<UpdateScreen> {
         );
 
         if (openSettings == true) {
-          await openAppSettings();
+          await Permission.requestInstallPackages.request();
         }
         return;
       }
     }
 
     debugPrint('[Update] Proceeding with file open');
-    _fileOpener.open(file.path).then((result) {
+    _fileOpener.open(file.path, type: 'application/vnd.android.package-archive').then((result) {
       debugPrint('[Update] OpenFile result: ${result.type} - ${result.message}');
     });
   }
