@@ -8,7 +8,8 @@ begin
   new.updated_at = now();
   return new;
 end;
-$$ language plpgsql;
+$$ language plpgsql 
+SET search_path = '';
 
 -- Table: premium_users
 create table if not exists public.premium_users (

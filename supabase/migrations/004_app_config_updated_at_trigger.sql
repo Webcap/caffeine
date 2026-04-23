@@ -5,7 +5,8 @@ begin
   new.updated_at = now();
   return new;
 end;
-$$ language plpgsql;
+$$ language plpgsql 
+SET search_path = '';
 
 drop trigger if exists app_config_updated_at on public.app_config;
 create trigger app_config_updated_at
