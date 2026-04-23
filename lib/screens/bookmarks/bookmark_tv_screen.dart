@@ -326,7 +326,7 @@ class _TVBookmarkState extends State<TVBookmark> {
                                 children: [
                                   tv.posterPath == null
                                       ? Image.asset(
-                                          'assets/images/na_rect.png',
+                                          'assets/images/na_logo.png',
                                           fit: BoxFit.cover,
                                           width: double.infinity,
                                         )
@@ -362,7 +362,7 @@ class _TVBookmarkState extends State<TVBookmark> {
                                           ),
                                           errorWidget: (context, url, error) =>
                                               Image.asset(
-                                            'assets/images/na_rect.png',
+                                            'assets/images/na_logo.png',
                                             fit: BoxFit.cover,
                                             width: double.infinity,
                                           ),

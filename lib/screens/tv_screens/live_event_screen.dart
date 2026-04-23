@@ -206,7 +206,7 @@ class _LiveEventScreenState extends State<LiveEventScreen> {
         ),
         centerTitle: true,
         title: Text(
-          'Caffeine Live',
+          'Reelriot Live',
           style: TextStyle(
             color: _Design.textPrimary,
             fontSize: 18,

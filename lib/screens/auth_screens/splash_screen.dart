@@ -173,16 +173,18 @@ class _SplashScreenState extends State<SplashScreen> {
                   Container(
                     width: 132,
                     height: 132,
-                    padding: const EdgeInsets.all(22),
-                    child: SvgPicture.asset(
-                      MovixIcon.appLogo,
-                      height: 100,
-                      fit: BoxFit.contain,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(24),
+                      child: Image.asset(
+                        MovixIcon.appLogo,
+                        height: 100,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 28),
                   const Text(
-                    'Caffeine',
+                    'Reelriot',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: _textPrimary,

@@ -6,11 +6,14 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../preferences/app_dependency_preferences.dart';
 import '../services/ad_service.dart';
 
+import '../services/analytics_service.dart';
+
 /// Holds app config from .env, SharedPreferences, and GET /config.
 /// Prefer [loadFromPrefs] once at startup, then [fetchConfigFromApi] to overlay API config.
 class AppDependencyProvider extends ChangeNotifier {
   final AppDependencies _prefs = AppDependencies();
   Map<String, dynamic> _featureFlags = {};
+  final Set<String> _trackedFlags = {};
 
   /// Current evaluated feature flags for the user's platform/environment.
   Map<String, dynamic> get featureFlags => _featureFlags;
@@ -31,15 +34,45 @@ class AppDependencyProvider extends ChangeNotifier {
   /// Returns the value of a feature flag, or a default value if not found.
   T getFlag<T>(String key, T defaultValue) {
     if (_featureFlags.containsKey(key)) {
-      final val = _featureFlags[key];
-      if (val is T) return val;
-      // Handle numeric to double/int conversion from JSON if needed.
-      if (T == double && val is num) return val.toDouble() as T;
-      if (T == int && val is num) return val.toInt() as T;
-      if (T == bool && val is String) return (val.toLowerCase() == 'true') as T;
+      final raw = _featureFlags[key];
+      
+      // Check if it's the detailed format
+      if (raw is Map<String, dynamic> && raw.containsKey('value')) {
+        final val = raw['value'];
+        
+        // Track exposure for analytics if not already tracked in this session
+        if (!_trackedFlags.contains(key)) {
+          AnalyticsService.instance.trackEvent('Feature Flag Exposure', {
+            'flag_key': key,
+            'value': val,
+            'variant': raw['variant'],
+            'bucket': raw['bucket'],
+            'reason': raw['reason'],
+          });
+          _trackedFlags.add(key);
+        }
+
+        if (val is T) return val;
+        // Handle numeric to double/int conversion from JSON if needed.
+        if (T == double && val is num) return val.toDouble() as T;
+        if (T == int && val is num) return val.toInt() as T;
+        if (T == bool && val is String) return (val.toLowerCase() == 'true') as T;
+        
+        try {
+          return val as T;
+        } catch (e) {
+          return defaultValue;
+        }
+      }
+
+      // Fallback for legacy simple format
+      if (raw is T) return raw;
+      if (T == double && raw is num) return raw.toDouble() as T;
+      if (T == int && raw is num) return raw.toInt() as T;
     }
     return defaultValue;
   }
+
 
   /// Quick check for boolean feature flags.
   bool isFeatureEnabled(String key, {bool defaultValue = false}) {

@@ -149,7 +149,7 @@ class _ServerStatusScreenState extends State<ServerStatusScreen> {
 
   Future<void> _checkCaffeineApi() async {
     final baseUrl = _apiBaseUrl;
-    debugPrint('[ServerStatus] Checking Caffeine API...');
+    debugPrint('[ServerStatus] Checking Reelriot API...');
     if (baseUrl.isEmpty) {
       debugPrint('[ServerStatus] API URL not set — skipping check');
       if (mounted) {
@@ -187,14 +187,14 @@ class _ServerStatusScreenState extends State<ServerStatusScreen> {
           final json = jsonDecode(response.body) as Map<String, dynamic>?;
           statusResponse = _StatusResponse.fromJson(json);
           debugPrint(
-              '[ServerStatus] Caffeine API /status OK — ${statusResponse?.status} — ${ms}ms');
+              '[ServerStatus] Reelriot API /status OK — ${statusResponse?.status} — ${ms}ms');
         } catch (_) {
           debugPrint(
-              '[ServerStatus] Caffeine API OK but invalid JSON — ${ms}ms');
+              '[ServerStatus] Reelriot API OK but invalid JSON — ${ms}ms');
         }
       } else {
         debugPrint(
-            '[ServerStatus] Caffeine API failed HTTP ${response.statusCode} — ${ms}ms');
+            '[ServerStatus] Reelriot API failed HTTP ${response.statusCode} — ${ms}ms');
       }
 
       if (mounted) {
@@ -215,7 +215,7 @@ class _ServerStatusScreenState extends State<ServerStatusScreen> {
     } catch (e) {
       stopwatch.stop();
       final ms = stopwatch.elapsedMilliseconds;
-      debugPrint('[ServerStatus] Caffeine API error: $e — ${ms}ms');
+      debugPrint('[ServerStatus] Reelriot API error: $e — ${ms}ms');
       if (mounted) {
         setState(() {
           _status = _ApiStatus.unavailable;
@@ -358,7 +358,7 @@ class _ServerStatusScreenState extends State<ServerStatusScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Caffeine API',
+                              'Reelriot API',
                               style: TextStyle(
                                 color: textPrim,
                                 fontSize: 18,

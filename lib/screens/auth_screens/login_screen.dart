@@ -236,7 +236,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                               ],
                             ),
-                            child: SvgPicture.asset(MovixIcon.appLogo),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(18),
+                              child: Image.asset(MovixIcon.appLogo, fit: BoxFit.cover),
+                            ),
                           ),
                         ),
                       ),

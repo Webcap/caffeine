@@ -81,7 +81,7 @@ class CastTabState extends State<CastTab>
                                                     .profilePath ==
                                                 null
                                             ? Image.asset(
-                                                'assets/images/na_rect.png',
+                                                'assets/images/na_logo.png',
                                                 fit: BoxFit.cover,
                                               )
                                             : CachedNetworkImage(
@@ -116,7 +116,7 @@ class CastTabState extends State<CastTab>
                                                 errorWidget:
                                                     (context, url, error) =>
                                                         Image.asset(
-                                                  'assets/images/na_rect.png',
+                                                  'assets/images/na_logo.png',
                                                   fit: BoxFit.cover,
                                                 ),
                                               ),
@@ -273,7 +273,7 @@ class CrewTabState extends State<CrewTab>
                                                     .profilePath ==
                                                 null
                                             ? Image.asset(
-                                                'assets/images/na_rect.png',
+                                                'assets/images/na_logo.png',
                                                 fit: BoxFit.cover,
                                               )
                                             : CachedNetworkImage(
@@ -308,7 +308,7 @@ class CrewTabState extends State<CrewTab>
                                                 errorWidget:
                                                     (context, url, error) =>
                                                         Image.asset(
-                                                  'assets/images/na_rect.png',
+                                                  'assets/images/na_logo.png',
                                                   fit: BoxFit.cover,
                                                 ),
                                               ),

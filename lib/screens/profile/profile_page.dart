@@ -629,7 +629,7 @@ class _PremiumBanner extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    'Get Caffeine Premium',
+                    'Get Reelriot Premium',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,

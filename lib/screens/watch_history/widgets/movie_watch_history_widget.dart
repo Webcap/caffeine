@@ -112,7 +112,7 @@ class _MovieWatchHistoryState extends State<MovieWatchHistory> {
                                                                         null
                                                                     ? Image
                                                                         .asset(
-                                                                        'assets/images/na_rect.png',
+                                                                        'assets/images/na_logo.png',
                                                                         fit: BoxFit
                                                                             .cover,
                                                                       )
@@ -149,7 +149,7 @@ class _MovieWatchHistoryState extends State<MovieWatchHistory> {
                                                                                 url,
                                                                                 error) =>
                                                                             Image.asset(
-                                                                          'assets/images/na_rect.png',
+                                                                          'assets/images/na_logo.png',
                                                                           fit: BoxFit
                                                                               .cover,
                                                                         ),

@@ -200,9 +200,13 @@ class _DrawerHeader extends StatelessWidget {
           Container(
             width: 60,
             height: 60,
-            padding: const EdgeInsets.all(10),
-            decoration: const BoxDecoration(),
-            child: SvgPicture.asset(MovixIcon.appLogo),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              image: DecorationImage(
+                image: AssetImage(MovixIcon.appLogo),
+                fit: BoxFit.cover,
+              ),
+            ),
           ),
           const SizedBox(height: 14),
           // Gradient wordmark
@@ -214,7 +218,7 @@ class _DrawerHeader extends StatelessWidget {
               end: Alignment.centerRight,
             ).createShader(bounds),
             child: const Text(
-              'Caffeine',
+              'Reelriot',
               style: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.w700,

@@ -187,7 +187,7 @@ class CastCrewTile extends StatelessWidget {
                     borderRadius: BorderRadius.circular(999),
                     child: profilePath == null || profilePath!.isEmpty
                         ? Image.asset(
-                            'assets/images/na_rect.png',
+                            'assets/images/na_logo.png',
                             fit: BoxFit.cover,
                             width: 56,
                             height: 56,
@@ -206,7 +206,7 @@ class CastCrewTile extends StatelessWidget {
                             placeholder: (_, __) =>
                                 castAndCrewTabImageShimmer(themeMode),
                             errorWidget: (_, __, ___) => Image.asset(
-                              'assets/images/na_rect.png',
+                              'assets/images/na_logo.png',
                               fit: BoxFit.cover,
                               width: 56,
                               height: 56,

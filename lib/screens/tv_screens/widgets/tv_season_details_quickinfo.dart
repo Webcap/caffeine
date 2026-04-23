@@ -80,7 +80,7 @@ class TVSeasonDetailQuickInfo extends StatelessWidget {
                                       fit: BoxFit.cover,
                                       placeholder: (context, url) =>
                                           Image.asset(
-                                        'assets/images/loading_5.gif',
+                                        'assets/images/na_logo.png',
                                         fit: BoxFit.cover,
                                       ),
                                       imageUrl:

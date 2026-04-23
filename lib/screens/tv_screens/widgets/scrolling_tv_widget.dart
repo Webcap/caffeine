@@ -496,7 +496,7 @@ class ScrollingTVArtistsState extends State<ScrollingTVArtists>
                                                       .profilePath ==
                                                   null
                                               ? Image.asset(
-                                                  'assets/images/na_rect.png',
+                                                  'assets/images/na_logo.png',
                                                   fit: BoxFit.cover,
                                                 )
                                               : CachedNetworkImage(
@@ -533,7 +533,7 @@ class ScrollingTVArtistsState extends State<ScrollingTVArtists>
                                                   errorWidget:
                                                       (context, url, error) =>
                                                           Image.asset(
-                                                    'assets/images/na_rect.png',
+                                                    'assets/images/na_logo.png',
                                                     fit: BoxFit.cover,
                                                   ),
                                                 ),
@@ -678,7 +678,7 @@ class ScrollingTVCreatorsState extends State<ScrollingTVCreators>
                                                       .profilePath ==
                                                   null
                                               ? Image.asset(
-                                                  'assets/images/na_rect.png',
+                                                  'assets/images/na_logo.png',
                                                   fit: BoxFit.cover,
                                                 )
                                               : CachedNetworkImage(
@@ -716,7 +716,7 @@ class ScrollingTVCreatorsState extends State<ScrollingTVCreators>
                                                   errorWidget:
                                                       (context, url, error) =>
                                                           Image.asset(
-                                                    'assets/images/na_rect.png',
+                                                    'assets/images/na_logo.png',
                                                     fit: BoxFit.cover,
                                                   ),
                                                 ),
@@ -929,7 +929,7 @@ class ScrollingTVEpisodeCastsState extends State<ScrollingTVEpisodeCasts>
                                                   .cast![index].profilePath ==
                                               null
                                           ? Image.asset(
-                                              'assets/images/na_rect.png',
+                                              'assets/images/na_logo.png',
                                               fit: BoxFit.cover,
                                             )
                                           : CachedNetworkImage(
@@ -964,7 +964,7 @@ class ScrollingTVEpisodeCastsState extends State<ScrollingTVEpisodeCasts>
                                               errorWidget:
                                                   (context, url, error) =>
                                                       Image.asset(
-                                                'assets/images/na_rect.png',
+                                                'assets/images/na_logo.png',
                                                 fit: BoxFit.cover,
                                               ),
                                             ),
@@ -1115,7 +1115,7 @@ class ScrollingTVEpisodeGuestStarsState
                                                   .profilePath ==
                                               null
                                           ? Image.asset(
-                                              'assets/images/na_rect.png',
+                                              'assets/images/na_logo.png',
                                               fit: BoxFit.cover,
                                             )
                                           : CachedNetworkImage(
@@ -1151,7 +1151,7 @@ class ScrollingTVEpisodeGuestStarsState
                                               errorWidget:
                                                   (context, url, error) =>
                                                       Image.asset(
-                                                'assets/images/na_rect.png',
+                                                'assets/images/na_logo.png',
                                                 fit: BoxFit.cover,
                                               ),
                                             ),

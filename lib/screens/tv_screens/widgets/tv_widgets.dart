@@ -587,7 +587,7 @@ class TVEpisodeCastTabState extends State<TVEpisodeCastTab>
                                                         .profilePath ==
                                                     null
                                                 ? Image.asset(
-                                                    'assets/images/na_rect.png',
+                                                    'assets/images/na_logo.png',
                                                     fit: BoxFit.cover,
                                                   )
                                                 : CachedNetworkImage(
@@ -626,7 +626,7 @@ class TVEpisodeCastTabState extends State<TVEpisodeCastTab>
                                                     errorWidget:
                                                         (context, url, error) =>
                                                             Image.asset(
-                                                      'assets/images/na_rect.png',
+                                                      'assets/images/na_logo.png',
                                                       fit: BoxFit.cover,
                                                     ),
                                                   ),
@@ -1550,7 +1550,7 @@ class TVCastTabState extends State<TVCastTab>
                                                         .profilePath ==
                                                     null
                                                 ? Image.asset(
-                                                    'assets/images/na_rect.png',
+                                                    'assets/images/na_logo.png',
                                                     fit: BoxFit.cover,
                                                   )
                                                 : CachedNetworkImage(
@@ -1589,7 +1589,7 @@ class TVCastTabState extends State<TVCastTab>
                                                     errorWidget:
                                                         (context, url, error) =>
                                                             Image.asset(
-                                                      'assets/images/na_rect.png',
+                                                      'assets/images/na_logo.png',
                                                       fit: BoxFit.cover,
                                                     ),
                                                   ),
@@ -1758,7 +1758,7 @@ class TVCrewTabState extends State<TVCrewTab>
                                                         .profilePath ==
                                                     null
                                                 ? Image.asset(
-                                                    'assets/images/na_rect.png',
+                                                    'assets/images/na_logo.png',
                                                     fit: BoxFit.cover,
                                                   )
                                                 : CachedNetworkImage(
@@ -1797,7 +1797,7 @@ class TVCrewTabState extends State<TVCrewTab>
                                                     errorWidget:
                                                         (context, url, error) =>
                                                             Image.asset(
-                                                      'assets/images/na_rect.png',
+                                                      'assets/images/na_logo.png',
                                                       fit: BoxFit.cover,
                                                     ),
                                                   ),
@@ -2009,10 +2009,10 @@ class _TVWatchProvidersDetailsState extends State<TVWatchProvidersDetails>
                                             BorderRadius.circular(8.0),
                                         child: const FadeInImage(
                                           image: AssetImage(
-                                              'assets/images/logo.png'),
+                                              'assets/images/app_icon.jpg'),
                                           fit: BoxFit.cover,
                                           placeholder: AssetImage(
-                                              'assets/images/loading_5.gif'),
+                                              'assets/images/na_logo.png'),
                                         ),
                                       ),
                                     ),

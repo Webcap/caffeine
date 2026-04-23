@@ -9,8 +9,8 @@ const Color maincolor = Color(0xFFDC2626);
 
 /// Application name variants
 const Map<String, String> appNames = {
-  'default': 'Caffeine',
-  'full': 'Caffeine Premium',
+  'default': 'Reelriot',
+  'full': 'Reelriot Premium',
 };
 
 class _AppConfig {

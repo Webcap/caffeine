@@ -140,7 +140,7 @@ class _PremiumSubscriptionScreenState extends State<PremiumSubscriptionScreen> {
                         const SizedBox(height: 10),
                         // ── Title & Intro ─────────────────────────────────────
                         const Text(
-                          'Experience Caffeine\nWithout Limits',
+                          'Experience Reelriot\nWithout Limits',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 32,

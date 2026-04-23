@@ -146,7 +146,10 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                               ),
                             ],
                           ),
-                          child: SvgPicture.asset(MovixIcon.appLogo),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(20),
+                            child: Image.asset(MovixIcon.appLogo, fit: BoxFit.cover),
+                          ),
                         ),
                       ),
                       const SizedBox(height: 28),

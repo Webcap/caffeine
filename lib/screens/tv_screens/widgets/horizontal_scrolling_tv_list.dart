@@ -115,7 +115,7 @@ class HorizontalTVListItem extends StatelessWidget {
                                       scrollingImageShimmer(themeMode),
                                   errorWidget: (context, url, error) =>
                                       Image.asset(
-                                    'assets/images/na_rect.png',
+                                    'assets/images/na_logo.png',
                                     fit: BoxFit.cover,
                                   ),
                                 ),

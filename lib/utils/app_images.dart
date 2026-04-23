@@ -3,7 +3,9 @@
 // ignore_for_file: constant_identifier_names
 
 abstract class AssetValues {
-  static const String appLogo = 'assets/images/appLogo.svg';
+  static const String appLogo = 'assets/images/app_icon.jpg'; // Changed from SVG
+  static const String appLogoOld = 'assets/images/appLogo.svg.old'; // Marked for removal
+
   static const String Razorpay = 'assets/images/Razorpay.png';
   static const String paypal = 'assets/images/paypal.png';
   static const String lodeImage = 'assets/images/lodeImage.png';
@@ -149,7 +151,9 @@ abstract class MovixIcon {
   static const createPasswordImage_Dark = "assets/Bold/Lock.svg"; // Fallback
   static const forgetPasswordImage = "assets/Bold/Lock.svg"; // Fallback
   static const forgetPasswordImage_Dark = "assets/Bold/Lock.svg"; // Fallback
-  static const String appLogo = 'assets/images/appLogo.svg';
+  static const String appLogo = 'assets/images/app_icon.jpg'; // Changed from SVG
+  static const String appLogoOld = 'assets/images/appLogo.svg.old'; // Marked for removal
+
   static const String moreCircle = 'assets/Bold/More Circle.svg';
   static const String filter = 'assets/Bold/Filter.svg';
   static const String boldFilter = 'assets/Bold/Filter.svg';

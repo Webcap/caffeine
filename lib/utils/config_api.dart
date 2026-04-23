@@ -140,6 +140,7 @@ Future<void> fetchFeatureFlagsFromApi(AppDependencyProvider provider) async {
     final uri = Uri.parse('$baseUrl/v1/feature-flags').replace(queryParameters: {
       'platform': platform,
       'env': env,
+      'detailed': 'true',
       if (userId != null) 'userId': userId,
       if (anonymousId.isNotEmpty) 'anonymousId': anonymousId,
     });
@@ -150,6 +151,7 @@ Future<void> fetchFeatureFlagsFromApi(AppDependencyProvider provider) async {
       final data = jsonDecode(response.body) as Map<String, dynamic>;
       provider.featureFlags = data;
     }
+
   } catch (e) {
     debugPrint('Error fetching feature flags: $e');
   }
@@ -179,16 +181,31 @@ Future<AppUpdateInfo> fetchUpdateInfoFromApi(
     final platform = getPlatformString();
     final env = FlavorConfig.instance.flavor.name;
 
+    final userId = Supabase.instance.client.auth.currentSession?.user.id;
+    final anonymousId = appDependencyProvider.anonymousId;
+
     final uri = Uri.parse('$baseUrl/v1/updates').replace(queryParameters: {
       'platform': platform,
       'environment': env,
+      if (userId != null) 'userId': userId,
+      if (anonymousId.isNotEmpty) 'anonymousId': anonymousId,
     });
+
 
     final response = await http.get(uri, headers: caffeineApiHeaders).timeout(const Duration(seconds: 5));
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body) as Map<String, dynamic>;
-      return AppUpdateInfo.fromJson(data);
+      final info = AppUpdateInfo.fromJson(data);
+      
+      // Update provider so listeners (like the update card) react immediately
+      appDependencyProvider.latestVersion = info.latestVersion;
+      appDependencyProvider.isForcedUpdate = info.forcedUpdate;
+      appDependencyProvider.updateDownloadUrl = info.updateDownloadUrl ?? '';
+      appDependencyProvider.updateStoreUrl = info.updateStoreUrl ?? '';
+      appDependencyProvider.updateChangelog = info.updateChangelog ?? '';
+      
+      return info;
     }
   } catch (e) {
     debugPrint('Error fetching updates from new API: $e. Falling back to /config fields.');

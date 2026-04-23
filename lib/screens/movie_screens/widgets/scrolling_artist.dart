@@ -181,7 +181,7 @@ class ScrollingArtistsState extends State<ScrollingArtists> {
                                                   .cast![index].profilePath ==
                                               null
                                           ? Image.asset(
-                                              'assets/images/na_rect.png',
+                                              'assets/images/na_logo.png',
                                               fit: BoxFit.cover,
                                             )
                                           : CachedNetworkImage(
@@ -216,7 +216,7 @@ class ScrollingArtistsState extends State<ScrollingArtists> {
                                               errorWidget:
                                                   (context, url, error) =>
                                                       Image.asset(
-                                                'assets/images/na_rect.png',
+                                                'assets/images/na_logo.png',
                                                 fit: BoxFit.cover,
                                               ),
                                             ),

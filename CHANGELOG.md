@@ -1,5 +1,18 @@
 # Changelog
 
+## [2026.04.23] - 2026-04-23
+
+### Changed
+- **Complete Rebranding**: Fully transitioned the application identity from "Caffeine" to **Reelriot**.
+- **Visual Identity Update**: Integrated new monochrome branding assets and updated the application icon for a premium look.
+- **UI Localization**: Updated all user-facing strings and the share text to use the new "Reelriot" name and "reelriot.app" domain.
+- **Asset Hygiene**: Removed legacy Caffeine image assets and optimized the internal registry for the new identity.
+
+### Fixed
+- **Initialization Crash**: Resolved a startup exception caused by missing legacy asset references.
+- **Hardcoded Text Sweep**: Fixed multiple instances of hardcoded "Caffeine" labels in the Dashboard, Profile, and Subscription screens.
+
+
 ## [2026.04.21] - 2026-04-21
 
 ### Added

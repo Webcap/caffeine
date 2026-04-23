@@ -129,7 +129,7 @@ class BelongsToCollectionWidgetState extends State<BelongsToCollectionWidget> {
                                     color: _ColDesign.bgSurfaceDark,
                                     child: Center(
                                       child: Image.asset(
-                                        'assets/images/loading_5.gif',
+                                        'assets/images/na_logo.png',
                                         width: 40,
                                         height: 40,
                                       ),

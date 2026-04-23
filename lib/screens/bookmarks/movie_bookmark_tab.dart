@@ -335,7 +335,7 @@ class _MovieBookmarkState extends State<MovieBookmark> {
                                 children: [
                                   movie.posterPath == null
                                       ? Image.asset(
-                                          'assets/images/na_rect.png',
+                                          'assets/images/na_logo.png',
                                           fit: BoxFit.cover,
                                           width: double.infinity,
                                         )
@@ -371,7 +371,7 @@ class _MovieBookmarkState extends State<MovieBookmark> {
                                           ),
                                           errorWidget: (context, url, error) =>
                                               Image.asset(
-                                            'assets/images/na_rect.png',
+                                            'assets/images/na_logo.png',
                                             fit: BoxFit.cover,
                                           ),
                                         ),

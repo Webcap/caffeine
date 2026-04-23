@@ -172,7 +172,7 @@ class MovieVideosState extends State<MovieVideosDisplay> {
                                                     errorWidget:
                                                         (context, url, error) =>
                                                             Image.asset(
-                                                      'assets/images/na_rect.png',
+                                                      'assets/images/na_logo.png',
                                                       fit: BoxFit.cover,
                                                     ),
                                                   ),

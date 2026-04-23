@@ -107,7 +107,7 @@ class _tvWatchHistoryState extends State<tvWatchHistory> {
                                                                         null
                                                                     ? Image
                                                                         .asset(
-                                                                        'assets/images/na_rect.png',
+                                                                        'assets/images/na_logo.png',
                                                                         fit: BoxFit
                                                                             .cover,
                                                                       )
@@ -144,7 +144,7 @@ class _tvWatchHistoryState extends State<tvWatchHistory> {
                                                                                 url,
                                                                                 error) =>
                                                                             Image.asset(
-                                                                          'assets/images/na_rect.png',
+                                                                          'assets/images/na_logo.png',
                                                                           fit: BoxFit
                                                                               .cover,
                                                                         ),

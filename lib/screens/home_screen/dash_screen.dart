@@ -189,7 +189,7 @@ class _GradientWordmark extends StatelessWidget {
         end: Alignment.centerRight,
       ).createShader(bounds),
       child: const Text(
-        'Caffeine',
+        'Reelriot',
         style: TextStyle(
           fontSize: 20,
           fontWeight: FontWeight.w700,
