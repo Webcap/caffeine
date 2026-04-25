@@ -74,7 +74,7 @@ class _ProfilePageState extends State<ProfilePage> {
       if (!mounted || !context.mounted) return;
       final appDep = Provider.of<AppDependencyProvider>(context, listen: false);
       await refreshConfig(appDep);
-      if (!context.mounted) return;
+      if (!mounted) return;
       await Provider.of<RecentProvider>(context, listen: false).syncFromCloud();
     });
   }

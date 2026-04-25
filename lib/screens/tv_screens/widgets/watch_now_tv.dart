@@ -105,6 +105,7 @@ class _WatchNowButtonTVState extends State<WatchNowButtonTV> {
           try {
             if (!context.mounted) return;
             final connected = await checkConnection();
+            if (!context.mounted) return;
             if (!connected) {
               GlobalMethods.showCustomScaffoldMessage(
                   SnackBar(

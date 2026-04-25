@@ -2,7 +2,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:retry/retry.dart';
 
 const String tmdbApiBaseUrl = "https://api.themoviedb.org/3";
-String get tmdbApiKey => dotenv.env['tmdbApiKey'] ?? '';
+String get tmdbApiKey => dotenv.env['TMDB_API_KEY'] ?? '';
 const tmdbBaseImageUrl = "https://image.tmdb.org/t/p/";
 const String embedBaseMovieUrl =
     "https://www.2embed.to/embed/tmdb/movie?id=";
