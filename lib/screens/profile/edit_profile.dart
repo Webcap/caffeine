@@ -128,6 +128,12 @@ class _ProfileEditState extends State<ProfileEdit> {
           _isLoading = true;
         });
 
+        // 1. Dual-Source Sync: Update Auth Metadata first (bypasses RLS block and syncs to Web)
+        await _auth.updateUser(UserAttributes(
+          data: {'avatar': profileId ?? 0},
+        ));
+
+        // 2. Update Profiles Table
         if (username == _userName) {
           await _supabase.from('profiles').update({
             'name': _fullName,

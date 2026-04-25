@@ -43,6 +43,9 @@ class SignInProvider extends ChangeNotifier {
   String? _username;
   String? get username => _username;
 
+  int? _profileId;
+  int? get profileId => _profileId;
+
   bool? _firstRun;
   bool? get firstRun => _firstRun;
 
@@ -93,20 +96,27 @@ class SignInProvider extends ChangeNotifier {
       case AuthChangeEvent.tokenRefreshed:
       case AuthChangeEvent.userUpdated:
         if (session != null) {
-          _applySession(session);
+          // Fetch fresh user to bypass stale session metadata
+          try {
+            final freshUser = await _auth.getUser();
+            if (freshUser.user != null) {
+              _applyUser(freshUser.user!);
+            } else {
+              _applySession(session);
+            }
+          } catch (e) {
+            debugPrint('[Auth] ⚠️ Could not fetch fresh user (session expired?): $e');
+            _applySession(session);
+          }
+          
           // Fetch fresh profile data (this will also update UID/provider/etc.)
           try {
             await getUserDataFromFirestore(session.user.id);
           } catch (e) {
-            // If profile fetch fails (e.g. offline or new user not yet in DB), 
-            // we still have the session, so stay signed in.
             debugPrint('[Auth] ⚠️ Could not fetch profile (offline?): $e');
           }
           _initRevenueCat(session.user.id);
           AnalyticsService.instance.identify(session.user.id);
-          AnalyticsService.instance.trackEvent('Signed In', {
-            'method': session.user.appMetadata['provider'] ?? 'unknown',
-          });
         } else if (event == AuthChangeEvent.initialSession) {
            debugPrint('[Auth] ℹ️ Initial session was null');
         }
@@ -137,12 +147,16 @@ class SignInProvider extends ChangeNotifier {
   }
 
   void _applySession(Session session) {
-    final user = session.user;
+    _applyUser(session.user);
+  }
+
+  void _applyUser(User user) {
     _uid = user.id;
     _email = user.email;
     _name = user.userMetadata?['full_name'] as String? ??
         user.userMetadata?['name'] as String?;
     _imageUrl = user.userMetadata?['avatar_url'] as String?;
+    _profileId = int.tryParse(user.userMetadata?['avatar']?.toString() ?? '');
     _isSignedIn = true;
     notifyListeners();
 
@@ -169,6 +183,7 @@ class SignInProvider extends ChangeNotifier {
     _email = null;
     _name = null;
     _imageUrl = null;
+    _profileId = null;
     _username = null;
     notifyListeners();
     await clearStoredData();
@@ -258,6 +273,10 @@ class SignInProvider extends ChangeNotifier {
         _name = data['name'] as String?;
         _email = data['email'] as String?;
         _imageUrl = data['image_url'] as String?;
+        final dbProfileId = int.tryParse(data['profile_id']?.toString() ?? '');
+        if (dbProfileId != null && dbProfileId != 0) {
+          _profileId = dbProfileId;
+        }
         _provider = data['provider'] as String?;
         _firstRun = data['first_run'] as bool?;
         _username = data['username'] as String?;

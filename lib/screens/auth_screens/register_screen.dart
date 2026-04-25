@@ -232,6 +232,7 @@ class _SignupScreenState extends State<SignupScreen> {
           'full_name': _fullName,
           'username': _userName.trim().toLowerCase(),
           'profile_id': selectedProfile,
+          'avatar': selectedProfile, // Added for Dual-Source Sync
           'verified': _isUserVerified,
         },
       );

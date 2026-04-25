@@ -1,4 +1,5 @@
 // ignore_for_file: unused_local_variable
+import 'dart:async';
 
 import 'package:reelriot/preferences/profile_tab_preference.dart';
 import 'package:reelriot/provider/app_dependency_provider.dart';
@@ -53,11 +54,22 @@ class _ProfilePageState extends State<ProfilePage> {
   Map<String, dynamic>? profileData;
   String? month;
   int? year;
+  Stream<Map<String, dynamic>?>? _profileStream;
+  StreamSubscription<AuthState>? _authSubscription;
 
   @override
   void initState() {
     super.initState();
-    getData();
+    _initProfileStream();
+    
+    // Auth listener for basic state (login/logout)
+    _authSubscription = _auth.onAuthStateChange.listen((data) {
+      if (data.event == AuthChangeEvent.signedIn || 
+          data.event == AuthChangeEvent.signedOut) {
+        _initProfileStream();
+      }
+    });
+
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted || !context.mounted) return;
       final appDep = Provider.of<AppDependencyProvider>(context, listen: false);
@@ -67,28 +79,47 @@ class _ProfilePageState extends State<ProfilePage> {
     });
   }
 
-  Future<void> getData() async {
+  void _initProfileStream() {
     final user = _auth.currentUser;
-    uid = user?.id;
-
-    if (user == null) {
-      if (mounted) setState(() => userAnonymous = null);
+    if (user == null || user.isAnonymous) {
+      setState(() {
+        _profileStream = null;
+        userAnonymous = user?.isAnonymous ?? true;
+      });
       return;
     }
 
-    if (user.isAnonymous) {
-      if (mounted) setState(() => userAnonymous = true);
-    } else {
-      final res =
-          await _supabase.from('profiles').select().eq('id', uid!).limit(1);
-      final data = res.isNotEmpty ? res[0] : null;
-      if (mounted) {
+    setState(() {
+      userAnonymous = false;
+      uid = user.id;
+      // Real-time stream from Supabase - the "Gold Standard" for sync
+      _profileStream = _supabase
+          .from('profiles')
+          .stream(primaryKey: ['id'])
+          .eq('id', user.id)
+          .limit(1)
+          .map((data) {
+            if (data.isNotEmpty) {
+              debugPrint('[Avatar Sync] 🟢 Received real-time update: profile_id=${data.first['profile_id']}');
+              return data.first;
+            }
+            debugPrint('[Avatar Sync] ⚠️ Received empty profile update');
+            return null;
+          });
+    });
+  }
+
+  // Legacy method kept for non-avatar metadata if needed
+  Future<void> getData() async {
+    final user = _auth.currentUser;
+    if (user != null && !user.isAnonymous) {
+      final res = await _supabase.from('profiles').select().eq('id', user.id).limit(1);
+      if (res.isNotEmpty && mounted) {
+        final data = res[0];
         setState(() {
-          userAnonymous = false;
-          profileData = data;
-          if (data?['joined_at'] != null) {
+          if (data['joined_at'] != null) {
             try {
-              final dt = DateTime.parse(data!['joined_at'].toString());
+              final dt = DateTime.parse(data['joined_at'].toString());
               month = DateFormat('MMMM').format(DateTime(0, dt.month));
               year = dt.year;
             } catch (_) {}
@@ -96,6 +127,12 @@ class _ProfilePageState extends State<ProfilePage> {
         });
       }
     }
+  }
+
+  @override
+  void dispose() {
+    _authSubscription?.cancel();
+    super.dispose();
   }
 
   @override
@@ -185,15 +222,10 @@ class _ProfilePageState extends State<ProfilePage> {
       );
     }
 
-    return FutureBuilder<Map<String, dynamic>?>(
-      future: _supabase
-          .from('profiles')
-          .select()
-          .eq('id', uid!)
-          .limit(1)
-          .then((res) => res.isNotEmpty ? res[0] : null),
+    return StreamBuilder<Map<String, dynamic>?>(
+      stream: _profileStream,
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
+        if (snapshot.connectionState == ConnectionState.waiting && snapshot.data == null) {
           return Scaffold(
             backgroundColor: bg,
             body: Center(
@@ -225,31 +257,52 @@ class _ProfilePageState extends State<ProfilePage> {
                 child: Column(
                   children: [
                     // ── Avatar & name ─────────────────────────────────────
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(48),
-                      child: (data['image_url'] ?? '').toString().isNotEmpty
-                          ? CachedNetworkImage(
-                              imageUrl: data['image_url'] ?? '',
-                              width: 96,
-                              height: 96,
-                              fit: BoxFit.cover,
-                              memCacheWidth: 192,
-                              memCacheHeight: 192,
-                              placeholder: (_, __) => const SizedBox(
-                                width: 96,
-                                height: 96,
-                              ),
-                              errorWidget: (_, __, ___) => const Icon(
-                                Icons.person,
-                                size: 48,
-                              ),
-                            )
-                          : Image.asset(
-                              'assets/images/profiles/${data['profile_id'] ?? 0}.png',
-                              width: 96,
-                              height: 96,
-                              fit: BoxFit.cover,
-                            ),
+                    // Smart resolution: Prioritize DB stream, fallback to Provider metadata
+                    Builder(
+                      builder: (context) {
+                        final authProvider = Provider.of<SignInProvider>(context, listen: false);
+                        final dbProfileId = data['profile_id']?.toString();
+                        final dbImageUrl = data['image_url']?.toString();
+                        
+                        // The "Fry" avatar is ID 5. If DB says 0 but Auth says 5, use 5.
+                        final metadataId = authProvider.profileId?.toString();
+                        final avatarId = (dbProfileId != null && dbProfileId != '0') 
+                            ? dbProfileId 
+                            : (metadataId ?? '0');
+                        
+                        debugPrint('[Avatar Sync] 🎯 Final decision: db=$dbProfileId, metadata=$metadataId -> choosing=$avatarId');
+                        
+                        final imageUrl = (dbImageUrl != null && dbImageUrl.isNotEmpty)
+                            ? dbImageUrl
+                            : (authProvider.imageUrl ?? '');
+
+                        return ClipRRect(
+                          borderRadius: BorderRadius.circular(48),
+                          child: imageUrl.isNotEmpty
+                              ? CachedNetworkImage(
+                                  imageUrl: imageUrl,
+                                  width: 96,
+                                  height: 96,
+                                  fit: BoxFit.cover,
+                                  memCacheWidth: 192,
+                                  memCacheHeight: 192,
+                                  placeholder: (_, __) => const SizedBox(
+                                    width: 96,
+                                    height: 96,
+                                  ),
+                                  errorWidget: (_, __, ___) => const Icon(
+                                    Icons.person,
+                                    size: 48,
+                                  ),
+                                )
+                              : Image.asset(
+                                  'assets/images/profiles/$avatarId.png',
+                                  width: 96,
+                                  height: 96,
+                                  fit: BoxFit.cover,
+                                ),
+                        );
+                      }
                     ),
                     const SizedBox(height: 16),
                     Text(
