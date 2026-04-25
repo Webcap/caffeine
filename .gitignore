@@ -49,3 +49,4 @@ app.*.map.json
 android/app/google-services.json
 RELEASE_NOTES.md
 .openclaude-profile.json
+.openclaude/settings.local.json
