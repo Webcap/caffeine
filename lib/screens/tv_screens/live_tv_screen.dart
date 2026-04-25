@@ -15,7 +15,6 @@ import 'package:reelriot/services/ad_service.dart';
 import 'package:startapp_sdk/startapp.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
@@ -500,10 +499,12 @@ class ChannelListState extends State<ChannelList> {
                 const SizedBox(height: 16),
                 TextButton(
                   onPressed: () {
-                    if (!cancelRequested.isCompleted)
+                    if (!cancelRequested.isCompleted) {
                       cancelRequested.complete();
-                    if (dialogContext.mounted)
+                    }
+                    if (dialogContext.mounted) {
                       Navigator.of(dialogContext).pop();
+                    }
                   },
                   child: const Text('Cancel'),
                 ),
@@ -821,7 +822,7 @@ class _EspnEventTile extends StatelessWidget {
                     .toUpperCase(),
                 style: TextStyle(
                   color: isDark
-                      ? _LiveTvDesign.textSecondary.withOpacity(0.5)
+                      ? _LiveTvDesign.textSecondary.withValues(alpha: 0.5)
                       : Colors.grey.shade400,
                   fontSize: 10,
                   fontWeight: FontWeight.w600,

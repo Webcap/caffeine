@@ -77,7 +77,7 @@ class MovieDetailQuickInfo extends StatelessWidget {
     final heroHeight = MediaQuery.of(context).size.height * 0.50;
     final imageUrl = movie.backdropPath ?? movie.posterPath;
     final baseUrl =
-        buildImageUrl(TMDB_BASE_IMAGE_URL, proxyUrl, isProxy, context);
+        buildImageUrl(tmdbBaseImageUrl, proxyUrl, isProxy, context);
 
     return SizedBox(
       height: heroHeight,

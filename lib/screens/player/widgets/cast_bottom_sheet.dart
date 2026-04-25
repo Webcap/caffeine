@@ -225,7 +225,7 @@ class _ConnectedView extends StatelessWidget {
           // ── now-casting card ────────────────────────────────────────────────
           Container(
             decoration: BoxDecoration(
-              color: cs.surfaceVariant,
+              color: cs.surfaceContainerHighest,
               borderRadius: BorderRadius.circular(20),
             ),
             clipBehavior: Clip.antiAlias,
@@ -251,8 +251,8 @@ class _ConnectedView extends StatelessWidget {
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
                           colors: [
-                            Colors.black.withOpacity(0.45),
-                            Colors.black.withOpacity(0.82),
+                            Colors.black.withValues(alpha: 0.45),
+                            Colors.black.withValues(alpha: 0.82),
                           ],
                         ),
                       ),
@@ -402,7 +402,7 @@ class _DeviceCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: Material(
-        color: cs.surfaceVariant.withOpacity(0.5),
+        color: cs.surfaceContainerHighest.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(16),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
@@ -497,7 +497,7 @@ class _EmptyState extends StatelessWidget {
             width: 72,
             height: 72,
             decoration: BoxDecoration(
-              color: cs.surfaceVariant,
+              color: cs.surfaceContainerHighest,
               shape: BoxShape.circle,
             ),
             child: Icon(Icons.cast, size: 36, color: cs.onSurfaceVariant),
@@ -753,7 +753,7 @@ class _RippleIconState extends State<_RippleIcon>
       child: CustomPaint(
         painter: _RingPainter(
           radius: radius,
-          color: color.withOpacity(opacity * 0.4),
+          color: color.withValues(alpha: opacity * 0.4),
         ),
       ),
     );

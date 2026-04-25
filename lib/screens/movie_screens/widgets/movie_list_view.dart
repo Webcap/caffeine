@@ -80,7 +80,7 @@ class MovieListView extends StatelessWidget {
                                             const Duration(milliseconds: 700),
                                         fadeInCurve: Curves.easeIn,
                                         imageUrl: buildImageUrl(
-                                                TMDB_BASE_IMAGE_URL,
+                                                tmdbBaseImageUrl,
                                                 proxyUrl,
                                                 isProxyEnabled,
                                                 context) +

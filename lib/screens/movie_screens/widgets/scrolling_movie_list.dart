@@ -230,7 +230,7 @@ class ScrollingMoviesState extends State<ScrollingMovies>
                                                                 null
                                                             ? ''
                                                             : buildImageUrl(
-                                                                    TMDB_BASE_IMAGE_URL,
+                                                                    tmdbBaseImageUrl,
                                                                     proxyUrl,
                                                                     isProxyEnabled,
                                                                     context) +

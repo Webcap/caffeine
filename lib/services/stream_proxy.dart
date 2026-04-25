@@ -579,7 +579,7 @@ class CastStreamServer {
     _files.clear();
     _rawFiles.clear();
     _proxyMap.clear();
-    debugPrint('[CastStream] Stopped' + (reason != null ? ': $reason' : ''));
+    debugPrint('[CastStream] Stopped${reason != null ? ': $reason' : ''}');
     if (kDebugMode) {
       debugPrint(StackTrace.current.toString());
     }

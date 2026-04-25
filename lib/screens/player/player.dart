@@ -246,7 +246,9 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
   Future<void> _tryNextProvider() async {
     if (_isRetrying ||
         widget.availableProviders == null ||
-        widget.currentProviderCode == null) return;
+        widget.currentProviderCode == null) {
+      return;
+    }
 
     final providers = widget.availableProviders!;
     final currentIndex =
@@ -616,7 +618,7 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
         ? widget.movieMetadata?.posterPath
         : widget.tvMetadata?.posterPath;
     if (posterPath == null || posterPath.isEmpty) return null;
-    return '$TMDB_BASE_IMAGE_URL/w500$posterPath';
+    return '$tmdbBaseImageUrl/w500$posterPath';
   }
 
   Future<int> get _currentElapsedMilliseconds async {

@@ -216,7 +216,7 @@ class _ScrollingRecentMoviesState extends State<ScrollingRecentMovies> {
                                                         null
                                                     ? ''
                                                     : buildImageUrl(
-                                                            TMDB_BASE_IMAGE_URL,
+                                                            tmdbBaseImageUrl,
                                                             proxyUrl,
                                                             isProxyEnabled,
                                                             context) +

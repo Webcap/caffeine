@@ -127,7 +127,7 @@ class MovieImagesState extends State<MovieImagesDisplay> {
                                                         fadeInCurve:
                                                             Curves.easeIn,
                                                         imageUrl: buildImageUrl(
-                                                                TMDB_BASE_IMAGE_URL,
+                                                                tmdbBaseImageUrl,
                                                                 proxyUrl,
                                                                 isProxyEnabled,
                                                                 context) +
@@ -157,7 +157,7 @@ class MovieImagesState extends State<MovieImagesDisplay> {
                                                           },
                                                           child: Hero(
                                                             tag: buildImageUrl(
-                                                                    TMDB_BASE_IMAGE_URL,
+                                                                    tmdbBaseImageUrl,
                                                                     proxyUrl,
                                                                     isProxyEnabled,
                                                                     context) +
@@ -262,7 +262,7 @@ class MovieImagesState extends State<MovieImagesDisplay> {
                                                       fadeInCurve:
                                                           Curves.easeIn,
                                                       imageUrl: buildImageUrl(
-                                                              TMDB_BASE_IMAGE_URL,
+                                                              tmdbBaseImageUrl,
                                                               proxyUrl,
                                                               isProxyEnabled,
                                                               context) +
@@ -291,7 +291,7 @@ class MovieImagesState extends State<MovieImagesDisplay> {
                                                         },
                                                         child: Hero(
                                                           tag: buildImageUrl(
-                                                                  TMDB_BASE_IMAGE_URL,
+                                                                  tmdbBaseImageUrl,
                                                                   proxyUrl,
                                                                   isProxyEnabled,
                                                                   context) +

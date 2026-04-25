@@ -411,7 +411,7 @@ class _UnifiedVideoLoaderState extends State<UnifiedVideoLoader> {
         : widget.tvMetadata?.posterPath;
 
     final posterUrl = posterPath != null && posterPath.isNotEmpty
-        ? '${buildImageUrl(TMDB_BASE_IMAGE_URL, appDep.tmdbProxy, settings.enableProxy, context)}w780$posterPath'
+        ? '${buildImageUrl(tmdbBaseImageUrl, appDep.tmdbProxy, settings.enableProxy, context)}w780$posterPath'
         : null;
 
     return Scaffold(

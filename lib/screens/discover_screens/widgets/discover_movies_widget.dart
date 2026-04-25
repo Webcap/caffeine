@@ -75,7 +75,7 @@ class DiscoverMoviesState extends State<DiscoverMovies>
     final region =
         Provider.of<SettingsProvider>(context, listen: false).defaultCountry;
     fetchMovies(
-            '$TMDB_API_BASE_URL/discover/movie?api_key=$TMDB_API_KEY&language=$lang&sort_by=popularity.desc&watch_region=$region&include_adult=${widget.includeAdult}&primary_release_year=${years.first}&with_genres=${genres.first.genreValue}',
+            '$tmdbApiBaseUrl/discover/movie?api_key=$tmdbApiKey&language=$lang&sort_by=popularity.desc&watch_region=$region&include_adult=${widget.includeAdult}&primary_release_year=${years.first}&with_genres=${genres.first.genreValue}',
             isProxyEnabled,
             proxyUrl)
         .then((value) async {
@@ -163,7 +163,7 @@ class DiscoverMoviesState extends State<DiscoverMovies>
                                       moviesList![index].posterPath == null
                                           ? ''
                                           : buildImageUrl(
-                                                  TMDB_BASE_IMAGE_URL,
+                                                  tmdbBaseImageUrl,
                                                   proxyUrl,
                                                   isProxyEnabled,
                                                   context) +

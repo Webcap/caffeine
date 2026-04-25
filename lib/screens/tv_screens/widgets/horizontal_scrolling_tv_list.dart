@@ -104,7 +104,7 @@ class HorizontalTVListItem extends StatelessWidget {
                                   imageUrl: tv.posterPath == null
                                       ? ''
                                       : buildImageUrl(
-                                              TMDB_BASE_IMAGE_URL,
+                                              tmdbBaseImageUrl,
                                               proxyUrl,
                                               isProxyEnabled,
                                               context) +

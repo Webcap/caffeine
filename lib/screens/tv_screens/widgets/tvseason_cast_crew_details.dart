@@ -50,17 +50,19 @@ class _TVSeasonCastAndCrewState extends State<TVSeasonCastAndCrew> {
         widget.id, widget.seasonNumber, lang);
     try {
       final c = await fetchCredits(api, isProxyEnabled, proxyUrl);
-      if (mounted)
+      if (mounted) {
         setState(() {
           credits = c;
           _loading = false;
         });
+      }
     } catch (e) {
-      if (mounted)
+      if (mounted) {
         setState(() {
           _error = e.toString();
           _loading = false;
         });
+      }
     }
   }
 

@@ -84,7 +84,7 @@ class TVSeasonDetailQuickInfo extends StatelessWidget {
                                         fit: BoxFit.cover,
                                       ),
                                       imageUrl:
-                                          '${buildImageUrl(TMDB_BASE_IMAGE_URL, proxyUrl, isProxyEnabled, context)}original/${tvSeries.backdropPath!}',
+                                          '${buildImageUrl(tmdbBaseImageUrl, proxyUrl, isProxyEnabled, context)}original/${tvSeries.backdropPath!}',
                                       errorWidget: (context, url, error) =>
                                           Image.asset(
                                         'assets/images/na_logo.png',
@@ -154,7 +154,7 @@ class TVSeasonDetailQuickInfo extends StatelessWidget {
                                         fit: BoxFit.cover,
                                       ),
                                       imageUrl: buildImageUrl(
-                                              TMDB_BASE_IMAGE_URL,
+                                              tmdbBaseImageUrl,
                                               proxyUrl,
                                               isProxyEnabled,
                                               context) +

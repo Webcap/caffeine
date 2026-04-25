@@ -74,7 +74,7 @@ class _ProfilePageState extends State<ProfilePage> {
       if (!mounted || !context.mounted) return;
       final appDep = Provider.of<AppDependencyProvider>(context, listen: false);
       await refreshConfig(appDep);
-      if (!mounted) return;
+      if (!context.mounted) return;
       await Provider.of<RecentProvider>(context, listen: false).syncFromCloud();
     });
   }
@@ -114,7 +114,7 @@ class _ProfilePageState extends State<ProfilePage> {
     final user = _auth.currentUser;
     if (user != null && !user.isAnonymous) {
       final res = await _supabase.from('profiles').select().eq('id', user.id).limit(1);
-      if (res.isNotEmpty && mounted) {
+      if (res.isNotEmpty && context.mounted) {
         final data = res[0];
         setState(() {
           if (data['joined_at'] != null) {
@@ -195,7 +195,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       final sp =
                           Provider.of<SignInProvider>(context, listen: false);
                       await sp.userSignOut();
-                      if (mounted) {
+                      if (context.mounted) {
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
@@ -662,7 +662,7 @@ class _PremiumBanner extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.2),
+              color: Colors.black.withValues(alpha: 0.2),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -673,7 +673,7 @@ class _PremiumBanner extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.15),
+                color: Colors.white.withValues(alpha: 0.15),
                 shape: BoxShape.circle,
               ),
               child: const Icon(
@@ -701,7 +701,7 @@ class _PremiumBanner extends StatelessWidget {
                     'Ad-free, Live Sports & 24/7 Support',
                     style: TextStyle(
                       fontSize: 13,
-                      color: Colors.white.withOpacity(0.8),
+                      color: Colors.white.withValues(alpha: 0.8),
                     ),
                   ),
                 ],

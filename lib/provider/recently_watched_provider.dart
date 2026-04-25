@@ -160,11 +160,15 @@ class RecentProvider extends ChangeNotifier {
     for (final e in local) {
       if ((e.id == null && e.seriesId == null) ||
           e.seasonNum == null ||
-          e.episodeNum == null) continue;
+          e.episodeNum == null) {
+        continue;
+      }
       byKey[key(e)] = e;
     }
     for (final e in cloud) {
-      if (e.id == null || e.seasonNum == null || e.episodeNum == null) continue;
+      if (e.id == null || e.seasonNum == null || e.episodeNum == null) {
+        continue;
+      }
       final k = key(e);
       final existing = byKey[k];
       if (existing != null) {

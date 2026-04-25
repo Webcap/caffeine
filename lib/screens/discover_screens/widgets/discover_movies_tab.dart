@@ -340,7 +340,7 @@ class _DiscoverMoviesTabState extends State<DiscoverMoviesTab> {
                     MaterialPageRoute(
                         builder: (context) => DiscoverMovieResult(
                               api:
-                                  '$TMDB_API_BASE_URL/discover/movie?api_key=$TMDB_API_KEY&language=$lang&sort_by=$moviesSort&watch_region=$region&include_adult=$includeAdult&primary_release_year=$defaultMovieReleaseYear&vote_count.gte=${movieTotalRatingSlider.toInt()}&with_genres=$joinedIds&with_watch_providers=$joinedProviderIds',
+                                  '$tmdbApiBaseUrl/discover/movie?api_key=$tmdbApiKey&language=$lang&sort_by=$moviesSort&watch_region=$region&include_adult=$includeAdult&primary_release_year=$defaultMovieReleaseYear&vote_count.gte=${movieTotalRatingSlider.toInt()}&with_genres=$joinedIds&with_watch_providers=$joinedProviderIds',
                               page: 1,
                               includeAdult: includeAdult,
                             )));

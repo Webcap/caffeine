@@ -8,7 +8,7 @@ class SABTN extends StatefulWidget {
   const SABTN({super.key, this.onBack});
 
   @override
-  _SABTNState createState() => _SABTNState();
+  State<SABTN> createState() => _SABTNState();
 }
 
 class _SABTNState extends State<SABTN> {
@@ -89,7 +89,7 @@ class SABT extends StatefulWidget {
   });
 
   @override
-  _SABTState createState() => _SABTState();
+  State<SABT> createState() => _SABTState();
 }
 
 class _SABTState extends State<SABT> {

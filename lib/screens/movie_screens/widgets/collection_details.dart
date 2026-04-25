@@ -144,7 +144,7 @@ class CollectionDetailsWidgetState extends State<CollectionDetailsWidget>
                           ),
                         ),
                         imageUrl:
-                            '${buildImageUrl(TMDB_BASE_IMAGE_URL, proxyUrl, isProxyEnabled, context)}original/${widget.belongsToCollection!.backdropPath!}',
+                            '${buildImageUrl(tmdbBaseImageUrl, proxyUrl, isProxyEnabled, context)}original/${widget.belongsToCollection!.backdropPath!}',
                         errorWidget: (context, url, error) => Container(
                           color: surface,
                           child: Icon(Icons.movie_rounded,
@@ -188,7 +188,7 @@ class CollectionDetailsWidgetState extends State<CollectionDetailsWidget>
                                             fit: BoxFit.cover,
                                           ),
                                           imageUrl: buildImageUrl(
-                                                TMDB_BASE_IMAGE_URL,
+                                                tmdbBaseImageUrl,
                                                 proxyUrl,
                                                 isProxyEnabled,
                                                 context,

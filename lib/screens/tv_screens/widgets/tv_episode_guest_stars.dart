@@ -124,7 +124,7 @@ class TVEpisodeGuestStarsTabState extends State<TVEpisodeGuestStarsTab>
                                                         fadeInCurve:
                                                             Curves.easeIn,
                                                         imageUrl: buildImageUrl(
-                                                                TMDB_BASE_IMAGE_URL,
+                                                                tmdbBaseImageUrl,
                                                                 proxyUrl,
                                                                 isProxyEnabled,
                                                                 context) +

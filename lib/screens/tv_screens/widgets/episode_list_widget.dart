@@ -367,7 +367,7 @@ class EpisodeListWidgetState extends State<EpisodeListWidget>
                                                                       milliseconds:
                                                                           700),
                                                               imageUrl: buildImageUrl(
-                                                                      TMDB_BASE_IMAGE_URL,
+                                                                      tmdbBaseImageUrl,
                                                                       proxyUrl,
                                                                       isProxyEnabled,
                                                                       context) +

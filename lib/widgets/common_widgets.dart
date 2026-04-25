@@ -71,7 +71,7 @@ Widget watchProvidersTabData(
               final option = watchOptions[index];
               final imageUrl = option.logoPath == null
                   ? null
-                  : buildImageUrl(TMDB_BASE_IMAGE_URL, proxyUrl, isProxyEnabled,
+                  : buildImageUrl(tmdbBaseImageUrl, proxyUrl, isProxyEnabled,
                           context) +
                       imageQuality +
                       option.logoPath!;

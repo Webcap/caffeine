@@ -1,33 +1,33 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:retry/retry.dart';
 
-const String TMDB_API_BASE_URL = "https://api.themoviedb.org/3";
-String get TMDB_API_KEY => dotenv.env['TMDB_API_KEY'] ?? '';
-const TMDB_BASE_IMAGE_URL = "https://image.tmdb.org/t/p/";
-const String EMBED_BASE_MOVIE_URL =
+const String tmdbApiBaseUrl = "https://api.themoviedb.org/3";
+String get tmdbApiKey => dotenv.env['tmdbApiKey'] ?? '';
+const tmdbBaseImageUrl = "https://image.tmdb.org/t/p/";
+const String embedBaseMovieUrl =
     "https://www.2embed.to/embed/tmdb/movie?id=";
-const String EMBED_BASE_TV_URL = "https://www.2embed.to/embed/tmdb/tv?id=";
-const String YOUTUBE_THUMBNAIL_URL = "https://i3.ytimg.com/vi/";
-const String YOUTUBE_BASE_URL = "https://youtube.com/watch?v=";
-const String FACEBOOK_BASE_URL = "https://facebook.com/";
-const String INSTAGRAM_BASE_URL = "https://instagram.com/";
-const String TWITTER_BASE_URL = "https://twitter.com/";
-const String IMDB_BASE_URL = "https://imdb.com/title/";
-const String TWOEMBED_BASE_URL = "https://2embed.biz";
+const String embedBaseTvUrl = "https://www.2embed.to/embed/tmdb/tv?id=";
+const String youtubeThumbnailUrl = "https://i3.ytimg.com/vi/";
+const String youtubeBaseUrl = "https://youtube.com/watch?v=";
+const String facebookBaseUrl = "https://facebook.com/";
+const String instagramBaseUrl = "https://instagram.com/";
+const String twitterBaseUrl = "https://twitter.com/";
+const String imdbBaseUrl = "https://imdb.com/title/";
+const String twoEmbedBaseUrl = "https://2embed.biz";
 const String opensubtitlesBaseUrl = "https://api.opensubtitles.com/api/v1";
 
 /// Deprecated: Update flow is API-driven via GET /config (fetchUpdateInfoFromApi). Kept for optional fallback only.
 @Deprecated(
     'Use API config (update_download_url, update_store_url, latest_version) via fetchUpdateInfoFromApi')
-const String CAFFEINE_UPDATE_URL =
+const String caffeineUpdateUrl =
     "https://webcap.github.io/caffiene/res/update.json";
-const String ERROROCCURRED = "an error has occurred";
+const String errorOccurred = "an error has occurred";
 
 /// Default production Caffeine API URL. Used when .env is unset or stored URL is a Vercel preview.
-const String DEFAULT_CAFFEINE_API_URL = 'https://caffeine.synqholdings.com/';
+const String defaultCaffeineApiUrl = 'https://caffeine.synqholdings.com/';
 
 /// Standard desktop browser User-Agent for scraper compatibility.
-const String BROWSER_USER_AGENT =
+const String browserUserAgent =
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
 
 /// True if [url] is a Vercel preview deployment (e.g. caffeine-xxx-projects.vercel.app).
@@ -37,10 +37,10 @@ bool isCaffeineApiPreviewUrl(String url) {
 }
 
 //API KEYS - lazy getters so dotenv is loaded first
-String get CONSUMET_API => dotenv.env['CONSUMET_URL'] ?? '';
-String get CONSUMET_INFO_API => dotenv.env['CONSUMET_URL'] ?? '';
+String get consumetApi => dotenv.env['CONSUMET_URL'] ?? '';
+String get consumetInfoApi => dotenv.env['CONSUMET_URL'] ?? '';
 String get caffeineApiUrl =>
-    dotenv.env['CAFFEINE_API_URL'] ?? DEFAULT_CAFFEINE_API_URL;
+    dotenv.env['CAFFEINE_API_URL'] ?? defaultCaffeineApiUrl;
 
 /// API key for authenticating with the Caffeine API.
 String get caffeineApiKey => dotenv.env['CAFFEINE_API_KEY'] ?? '';
@@ -49,7 +49,7 @@ String get caffeineApiKey => dotenv.env['CAFFEINE_API_KEY'] ?? '';
 /// Includes the Authorization bearer token when a key is configured.
 Map<String, String> get caffeineApiHeaders {
   final headers = <String, String>{
-    'User-Agent': BROWSER_USER_AGENT,
+    'User-Agent': browserUserAgent,
   };
   final key = caffeineApiKey;
   if (key.isNotEmpty) {
@@ -72,13 +72,13 @@ String get revenueCatEntitlementId =>
 String get flixApiUrl => caffeineApiUrl;
 String get flixhqNewUrl => dotenv.env['FLIXHQ_NEW_URL'] ?? '';
 String get supabaseUrl => dotenv.env['SUPABASE_URL'] ?? '';
-const String STREAMING_SERVER = "vidcloud";
+const String streamingServer = "vidcloud";
 String get openSubtitlesKey => dotenv.env['OPENSUBTITLES_API_KEY'] ?? '';
 //VIDEO PROVIDERS//
-const String STREAMING_SERVER_FLIXHQ = "vidcloud";
-const String STREAMING_SERVER_DCVA = "asianload";
-const String STREAMING_SERVER_ZORO = "vidcloud";
-const String STREAMING_SERVER_NEW_FLIXHQ = "megacloud";
+const String streamingServerFlixhq = "vidcloud";
+const String streamingServerDcva = "asianload";
+const String streamingServerZoro = "vidcloud";
+const String streamingServerNewFlixhq = "megacloud";
 
 
 const retryOptionsStream = RetryOptions(

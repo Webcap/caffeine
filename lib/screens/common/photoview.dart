@@ -145,16 +145,16 @@ class _HeroPhotoViewState extends State<HeroPhotoView> {
               onPressed: () async {
                 _download(
                     widget.imageType == 'backdrop'
-                        ? buildImageUrl(TMDB_BASE_IMAGE_URL, proxyUrl,
+                        ? buildImageUrl(tmdbBaseImageUrl, proxyUrl,
                                 isProxyEnabled, context) +
                             imageQuality +
                             widget.backdrops![currentIndex].filePath!
                         : widget.imageType == 'poster'
-                            ? buildImageUrl(TMDB_BASE_IMAGE_URL, proxyUrl,
+                            ? buildImageUrl(tmdbBaseImageUrl, proxyUrl,
                                     isProxyEnabled, context) +
                                 imageQuality +
                                 widget.posters![currentIndex].posterPath!
-                            : buildImageUrl(TMDB_BASE_IMAGE_URL, proxyUrl,
+                            : buildImageUrl(tmdbBaseImageUrl, proxyUrl,
                                     isProxyEnabled, context) +
                                 imageQuality +
                                 widget.stills![currentIndex].stillPath!,
@@ -164,8 +164,7 @@ class _HeroPhotoViewState extends State<HeroPhotoView> {
               icon: const Icon(FontAwesomeIcons.download),
             )
           ]),
-      body: Container(
-          child: Stack(alignment: Alignment.bottomRight, children: [
+      body: Stack(alignment: Alignment.bottomRight, children: [
         PhotoViewGallery.builder(
           allowImplicitScrolling: true,
           gaplessPlayback: true,
@@ -176,16 +175,16 @@ class _HeroPhotoViewState extends State<HeroPhotoView> {
             return PhotoViewGalleryPageOptions(
               imageProvider: CachedNetworkImageProvider(
                 widget.imageType == 'backdrop'
-                    ? buildImageUrl(TMDB_BASE_IMAGE_URL, proxyUrl,
+                    ? buildImageUrl(tmdbBaseImageUrl, proxyUrl,
                             isProxyEnabled, context) +
                         imageQuality +
                         widget.backdrops![currentIndex].filePath!
                     : widget.imageType == 'poster'
-                        ? buildImageUrl(TMDB_BASE_IMAGE_URL, proxyUrl,
+                        ? buildImageUrl(tmdbBaseImageUrl, proxyUrl,
                                 isProxyEnabled, context) +
                             imageQuality +
                             widget.posters![currentIndex].posterPath!
-                        : buildImageUrl(TMDB_BASE_IMAGE_URL, proxyUrl,
+                        : buildImageUrl(tmdbBaseImageUrl, proxyUrl,
                                 isProxyEnabled, context) +
                             imageQuality +
                             widget.stills![currentIndex].stillPath!,
@@ -199,8 +198,7 @@ class _HeroPhotoViewState extends State<HeroPhotoView> {
                   ? widget.posters!.length
                   : widget.stills!.length,
           onPageChanged: onPageChanged,
-          loadingBuilder: (context, event) => Container(
-            child: Center(
+          loadingBuilder: (context, event) => Center(
               child: SizedBox(
                 width: 50.0,
                 height: 50.0,
@@ -211,7 +209,6 @@ class _HeroPhotoViewState extends State<HeroPhotoView> {
                 ),
               ),
             ),
-          ),
         ),
         Container(
           padding: const EdgeInsets.all(20.0),
@@ -227,7 +224,7 @@ class _HeroPhotoViewState extends State<HeroPhotoView> {
             ),
           ),
         )
-      ])),
+      ]),
     );
   }
 }

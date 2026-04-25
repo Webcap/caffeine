@@ -101,7 +101,7 @@ class TVGridItem extends StatelessWidget {
                                 height: double.infinity)
                             : CachedPosterImage(
                                 cacheManager: cacheProp(),
-                                imageUrl: buildImageUrl(TMDB_BASE_IMAGE_URL,
+                                imageUrl: buildImageUrl(tmdbBaseImageUrl,
                                         proxyUrl, isProxyEnabled, context) +
                                     imageQuality +
                                     tv.posterPath!,

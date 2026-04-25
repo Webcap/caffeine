@@ -237,58 +237,52 @@ Widget detailImageShimmer(String themeMode) => ShimmerBase(
             children: [
               Expanded(
                 flex: 1,
-                child: Container(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Stack(
-                        alignment: AlignmentDirectional.bottomStart,
-                        children: [
-                          SizedBox(
-                            height: 180,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                  color: Colors.grey.shade600),
-                            ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Stack(
+                      alignment: AlignmentDirectional.bottomStart,
+                      children: [
+                        SizedBox(
+                          height: 180,
+                          child: Container(
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8.0),
+                                color: Colors.grey.shade600),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Container(
-                              color: Colors.black38,
-                              height: 40,
-                            ),
-                          )
-                        ]),
-                  ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Container(
+                            color: Colors.black38,
+                            height: 40,
+                          ),
+                        )
+                      ]),
                 ),
               ),
               Expanded(
                 flex: 2,
-                child: Container(
-                  child: Container(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Stack(
-                          alignment: AlignmentDirectional.bottomStart,
-                          children: [
-                            SizedBox(
-                              height: 180,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(8.0),
-                                    color: Colors.white),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Container(
-                                color: Colors.black38,
-                                height: 40,
-                              ),
-                            )
-                          ]),
-                    ),
-                  ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Stack(
+                      alignment: AlignmentDirectional.bottomStart,
+                      children: [
+                        SizedBox(
+                          height: 180,
+                          child: Container(
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8.0),
+                                color: Colors.white),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Container(
+                            color: Colors.black38,
+                            height: 40,
+                          ),
+                        )
+                      ]),
                 ),
               ),
             ],
@@ -475,75 +469,70 @@ Widget personDetailInfoTableShimmer(String themeMode) =>
       ]),
     ]);
 
-Widget movieCastAndCrewTabShimmer(String themeMode) => Container(
-    child: ListView.builder(
-        itemCount: 20,
-        shrinkWrap: true,
-        scrollDirection: Axis.vertical,
-        physics: const NeverScrollableScrollPhysics(),
-        itemBuilder: (BuildContext context, int index) {
-          return Container(
-            child: ShimmerBase(
-              themeMode: themeMode,
-              child: Padding(
-                padding: const EdgeInsets.only(
-                  top: 0.0,
-                  bottom: 5.0,
-                  left: 10,
-                ),
-                child: Column(
-                  children: [
-                    Row(
+Widget movieCastAndCrewTabShimmer(String themeMode) => ListView.builder(
+    itemCount: 20,
+    shrinkWrap: true,
+    scrollDirection: Axis.vertical,
+    physics: const NeverScrollableScrollPhysics(),
+    itemBuilder: (BuildContext context, int index) {
+      return ShimmerBase(
+        themeMode: themeMode,
+        child: Padding(
+          padding: const EdgeInsets.only(
+            top: 0.0,
+            bottom: 5.0,
+            left: 10,
+          ),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(right: 20.0, left: 10),
+                    child: SizedBox(
+                      height: 80,
+                      width: 80,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(100.0),
+                          color: Colors.grey.shade600,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.only(right: 20.0, left: 10),
-                          child: SizedBox(
-                            height: 80,
-                            width: 80,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(100.0),
-                                color: Colors.grey.shade600,
-                              ),
-                            ),
+                          padding: const EdgeInsets.only(bottom: 8.0),
+                          child: Container(
+                            width: 150,
+                            height: 25,
+                            color: Colors.grey.shade600,
                           ),
                         ),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 8.0),
-                                child: Container(
-                                  width: 150,
-                                  height: 25,
-                                  color: Colors.grey.shade600,
-                                ),
-                              ),
-                              Container(
-                                width: 100,
-                                height: 20,
-                                color: Colors.grey.shade600,
-                              ),
-                            ],
-                          ),
-                        )
+                        Container(
+                          width: 100,
+                          height: 20,
+                          color: Colors.grey.shade600,
+                        ),
                       ],
                     ),
-                    Divider(
-                      color: themeMode == "light"
-                          ? Colors.black54
-                          : Colors.white54,
-                      thickness: 1,
-                      endIndent: 20,
-                      indent: 10,
-                    ),
-                  ],
-                ),
+                  )
+                ],
               ),
-            ),
-          );
-        }));
+              Divider(
+                color: themeMode == "light" ? Colors.black54 : Colors.white54,
+                thickness: 1,
+                endIndent: 20,
+                indent: 10,
+              ),
+            ],
+          ),
+        ),
+      );
+    });
 
 Widget detailsRecommendationsAndSimilarShimmer(
         String themeMode, scrollController, isLoading) =>
@@ -709,114 +698,108 @@ Widget watchProvidersImageShimmer(String themeMode) => ShimmerBase(
 
 Widget mainPageVerticalScrollShimmer(
         {required String themeMode, isLoading, scrollController}) =>
-    Container(
-      child: Column(
-        children: [
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(top: 8.0),
-              child: Column(
-                children: [
-                  Expanded(
-                    child: ListView.builder(
-                        controller: scrollController,
-                        physics: const BouncingScrollPhysics(),
-                        itemCount: 10,
-                        itemBuilder: (BuildContext context, int index) {
-                          return Container(
-                            child: ShimmerBase(
-                              themeMode: themeMode,
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                  top: 0.0,
-                                  bottom: 3.0,
-                                  left: 10,
-                                ),
-                                child: Column(
+    Column(
+      children: [
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: Column(
+              children: [
+                Expanded(
+                  child: ListView.builder(
+                      controller: scrollController,
+                      physics: const BouncingScrollPhysics(),
+                      itemCount: 10,
+                      itemBuilder: (BuildContext context, int index) {
+                        return ShimmerBase(
+                          themeMode: themeMode,
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                              top: 0.0,
+                              bottom: 3.0,
+                              left: 10,
+                            ),
+                            child: Column(
+                              children: [
+                                Row(
                                   children: [
-                                    Row(
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              right: 10.0),
-                                          child: SizedBox(
-                                            width: 85,
-                                            height: 130,
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                color: Colors.grey.shade600,
-                                                borderRadius:
-                                                    BorderRadius.circular(10.0),
-                                              ),
-                                            ),
+                                    Padding(
+                                      padding:
+                                          const EdgeInsets.only(right: 10.0),
+                                      child: SizedBox(
+                                        width: 85,
+                                        height: 130,
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            color: Colors.grey.shade600,
+                                            borderRadius:
+                                                BorderRadius.circular(10.0),
                                           ),
                                         ),
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                bottom: 8.0),
+                                            child: Container(
+                                              width: 150,
+                                              height: 20,
+                                              color: Colors.grey.shade600,
+                                            ),
+                                          ),
+                                          Row(
+                                            children: <Widget>[
                                               Padding(
                                                 padding: const EdgeInsets.only(
-                                                    bottom: 8.0),
+                                                    right: 1.0),
                                                 child: Container(
-                                                  width: 150,
                                                   height: 20,
+                                                  width: 20,
                                                   color: Colors.grey.shade600,
                                                 ),
                                               ),
-                                              Row(
-                                                children: <Widget>[
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            right: 1.0),
-                                                    child: Container(
-                                                      height: 20,
-                                                      width: 20,
-                                                      color:
-                                                          Colors.grey.shade600,
-                                                    ),
-                                                  ),
-                                                  Container(
-                                                    width: 30,
-                                                    height: 20,
-                                                    color: Colors.grey.shade600,
-                                                  )
-                                                ],
-                                              ),
+                                              Container(
+                                                width: 30,
+                                                height: 20,
+                                                color: Colors.grey.shade600,
+                                              )
                                             ],
                                           ),
-                                        )
-                                      ],
-                                    ),
-                                    Divider(
-                                      color: themeMode == "light"
-                                          ? Colors.black54
-                                          : Colors.white54,
-                                      thickness: 1,
-                                      endIndent: 20,
-                                      indent: 10,
-                                    ),
+                                        ],
+                                      ),
+                                    )
                                   ],
                                 ),
-                              ),
+                                Divider(
+                                  color: themeMode == "light"
+                                      ? Colors.black54
+                                      : Colors.white54,
+                                  thickness: 1,
+                                  endIndent: 20,
+                                  indent: 10,
+                                ),
+                              ],
                             ),
-                          );
-                        }),
-                  ),
-                ],
-              ),
+                          ),
+                        );
+                      }),
+                ),
+              ],
             ),
           ),
-          Visibility(
-              visible: isLoading,
-              child: const Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Center(child: LinearProgressIndicator()),
-              )),
-        ],
-      ),
+        ),
+        Visibility(
+            visible: isLoading,
+            child: const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Center(child: LinearProgressIndicator()),
+            )),
+      ],
     );
 
 Widget mainPageVerticalScrollImageShimmer(String themeMode) => ShimmerBase(
@@ -829,7 +812,7 @@ Widget mainPageVerticalScrollImageShimmer(String themeMode) => ShimmerBase(
           color: Colors.grey.shade600),
     ));
 
-Widget horizontalScrollingSeasonsList(themeMode) => Column(
+Widget horizontalScrollingSeasonsList(String themeMode) => Column(
       mainAxisSize: MainAxisSize.max,
       children: <Widget>[
         Expanded(
@@ -890,53 +873,51 @@ Widget tvDetailsSeasonsTabShimmer(String themeMode) => Column(
           child: ListView.builder(
               itemCount: 5,
               itemBuilder: (BuildContext context, int index) {
-                return Container(
-                  child: ShimmerBase(
-                    themeMode: themeMode,
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                        top: 0.0,
-                        bottom: 5.0,
-                        left: 15,
-                      ),
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(right: 30.0),
-                                child: SizedBox(
-                                  width: 85,
-                                  height: 130,
-                                  child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(10.0),
-                                      child: Container(
-                                          color: Colors.grey.shade600)),
-                                ),
+                return ShimmerBase(
+                  themeMode: themeMode,
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                      top: 0.0,
+                      bottom: 5.0,
+                      left: 15,
+                    ),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(right: 30.0),
+                              child: SizedBox(
+                                width: 85,
+                                height: 130,
+                                child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                    child: Container(
+                                        color: Colors.grey.shade600)),
                               ),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                        color: Colors.grey.shade600,
-                                        height: 20,
-                                        width: 115)
-                                  ],
-                                ),
-                              )
-                            ],
-                          ),
-                          Divider(
-                            color: themeMode == "light"
-                                ? Colors.black54
-                                : Colors.white54,
-                            thickness: 1,
-                            endIndent: 20,
-                            indent: 10,
-                          ),
-                        ],
-                      ),
+                            ),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                      color: Colors.grey.shade600,
+                                      height: 20,
+                                      width: 115)
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
+                        Divider(
+                          color: themeMode == "light"
+                              ? Colors.black54
+                              : Colors.white54,
+                          thickness: 1,
+                          endIndent: 20,
+                          indent: 10,
+                        ),
+                      ],
                     ),
                   ),
                 );
@@ -945,81 +926,76 @@ Widget tvDetailsSeasonsTabShimmer(String themeMode) => Column(
       ],
     );
 
-Widget tvCastAndCrewTabShimmer(String themeMode) => Container(
-    child: ListView.builder(
-        itemCount: 10,
-        scrollDirection: Axis.vertical,
-        itemBuilder: (BuildContext context, int index) {
-          return Container(
-            child: ShimmerBase(
-              themeMode: themeMode,
-              child: Padding(
-                padding: const EdgeInsets.only(
-                  top: 8.0,
-                  bottom: 5.0,
-                  left: 10,
-                ),
-                child: Column(
-                  children: [
-                    Row(
+Widget tvCastAndCrewTabShimmer(String themeMode) => ListView.builder(
+    itemCount: 10,
+    scrollDirection: Axis.vertical,
+    itemBuilder: (BuildContext context, int index) {
+      return ShimmerBase(
+        themeMode: themeMode,
+        child: Padding(
+          padding: const EdgeInsets.only(
+            top: 8.0,
+            bottom: 5.0,
+            left: 10,
+          ),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(right: 20.0, left: 10),
+                    child: SizedBox(
+                      height: 80,
+                      width: 80,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(100.0),
+                          color: Colors.grey.shade600,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.only(right: 20.0, left: 10),
-                          child: SizedBox(
-                            height: 80,
-                            width: 80,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(100.0),
-                                color: Colors.grey.shade600,
-                              ),
-                            ),
+                          padding: const EdgeInsets.only(bottom: 4.0),
+                          child: Container(
+                            width: 150,
+                            height: 25,
+                            color: Colors.grey.shade600,
                           ),
                         ),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 4.0),
-                                child: Container(
-                                  width: 150,
-                                  height: 25,
-                                  color: Colors.grey.shade600,
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 4.0),
-                                child: Container(
-                                  width: 130,
-                                  height: 20,
-                                  color: Colors.grey.shade600,
-                                ),
-                              ),
-                              Container(
-                                width: 100,
-                                height: 20,
-                                color: Colors.grey.shade600,
-                              ),
-                            ],
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 4.0),
+                          child: Container(
+                            width: 130,
+                            height: 20,
+                            color: Colors.grey.shade600,
                           ),
-                        )
+                        ),
+                        Container(
+                          width: 100,
+                          height: 20,
+                          color: Colors.grey.shade600,
+                        ),
                       ],
                     ),
-                    Divider(
-                      color: themeMode == "light"
-                          ? Colors.black54
-                          : Colors.white54,
-                      thickness: 1,
-                      endIndent: 20,
-                      indent: 10,
-                    ),
-                  ],
-                ),
+                  )
+                ],
               ),
-            ),
-          );
-        }));
+              Divider(
+                color: themeMode == "light" ? Colors.black54 : Colors.white54,
+                thickness: 1,
+                endIndent: 20,
+                indent: 10,
+              ),
+            ],
+          ),
+        ),
+      );
+    });
 
 Widget personMoviesAndTVShowShimmer(String themeMode) => Column(
       children: [
@@ -1186,7 +1162,7 @@ Widget personImageShimmer(String themeMode) => Row(
       ],
     );
 
-Widget personAboutSimmer(themeMode) => Column(
+Widget personAboutSimmer(String themeMode) => Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1247,107 +1223,103 @@ Widget personAboutSimmer(themeMode) => Column(
     );
 
 Widget newsShimmer(String themeMode, scrollController, isLoading) {
-  return Container(
-    child: Column(
-      children: [
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.only(top: 8.0),
-            child: Column(
-              children: [
-                Expanded(
-                  child: ListView.builder(
-                      controller: scrollController,
-                      physics: const BouncingScrollPhysics(),
-                      itemCount: 10,
-                      itemBuilder: (BuildContext context, int index) {
-                        return Container(
-                          child: ShimmerBase(
-                            themeMode: themeMode,
-                            child: Padding(
-                              padding: const EdgeInsets.only(
-                                top: 0.0,
-                                bottom: 3.0,
-                                // left: 10,
-                              ),
-                              child: Column(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Row(
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              right: 10.0),
-                                          child: SizedBox(
-                                            width: 100,
-                                            height: 150,
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                color: Colors.grey.shade600,
-                                              ),
-                                            ),
+  return Column(
+    children: [
+      Expanded(
+        child: Padding(
+          padding: const EdgeInsets.only(top: 8.0),
+          child: Column(
+            children: [
+              Expanded(
+                child: ListView.builder(
+                    controller: scrollController,
+                    physics: const BouncingScrollPhysics(),
+                    itemCount: 10,
+                    itemBuilder: (BuildContext context, int index) {
+                      return ShimmerBase(
+                        themeMode: themeMode,
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                            top: 0.0,
+                            bottom: 3.0,
+                            // left: 10,
+                          ),
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(
+                                  children: [
+                                    Padding(
+                                      padding:
+                                          const EdgeInsets.only(right: 10.0),
+                                      child: SizedBox(
+                                        width: 100,
+                                        height: 150,
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            color: Colors.grey.shade600,
                                           ),
                                         ),
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    bottom: 8.0),
-                                                child: Container(
-                                                  width: 260,
-                                                  height: 20,
-                                                  color: Colors.grey.shade600,
-                                                ),
-                                              ),
-                                              Container(
-                                                width: 250,
-                                                height: 20,
-                                                color: Colors.grey.shade600,
-                                              ),
-                                              const SizedBox(
-                                                height: 30,
-                                              ),
-                                              Container(
-                                                width: 80,
-                                                height: 20,
-                                                color: Colors.grey.shade600,
-                                              ),
-                                            ],
-                                          ),
-                                        )
-                                      ],
+                                      ),
                                     ),
-                                  ),
-                                  Divider(
-                                    color: themeMode == "light"
-                                        ? Colors.black54
-                                        : Colors.white54,
-                                    thickness: 1,
-                                    endIndent: 20,
-                                    indent: 10,
-                                  ),
-                                ],
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                bottom: 8.0),
+                                            child: Container(
+                                              width: 260,
+                                              height: 20,
+                                              color: Colors.grey.shade600,
+                                            ),
+                                          ),
+                                          Container(
+                                            width: 250,
+                                            height: 20,
+                                            color: Colors.grey.shade600,
+                                          ),
+                                          const SizedBox(
+                                            height: 30,
+                                          ),
+                                          Container(
+                                            width: 80,
+                                            height: 20,
+                                            color: Colors.grey.shade600,
+                                          ),
+                                        ],
+                                      ),
+                                    )
+                                  ],
+                                ),
                               ),
-                            ),
+                              Divider(
+                                color: themeMode == "light"
+                                    ? Colors.black54
+                                    : Colors.white54,
+                                thickness: 1,
+                                endIndent: 20,
+                                indent: 10,
+                              ),
+                            ],
                           ),
-                        );
-                      }),
-                ),
-              ],
-            ),
+                        ),
+                      );
+                    }),
+              ),
+            ],
           ),
         ),
-        Visibility(
-            visible: isLoading,
-            child: const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Center(child: LinearProgressIndicator()),
-            )),
-      ],
-    ),
+      ),
+      Visibility(
+          visible: isLoading,
+          child: const Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Center(child: LinearProgressIndicator()),
+          )),
+    ],
   );
 }

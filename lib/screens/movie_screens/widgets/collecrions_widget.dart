@@ -136,7 +136,7 @@ class BelongsToCollectionWidgetState extends State<BelongsToCollectionWidget> {
                                     ),
                                   ),
                                   imageUrl:
-                                      '${buildImageUrl(TMDB_BASE_IMAGE_URL, proxyUrl, isProxyEnabled, context)}w500/${belongsToCollection!.backdropPath!}',
+                                      '${buildImageUrl(tmdbBaseImageUrl, proxyUrl, isProxyEnabled, context)}w500/${belongsToCollection!.backdropPath!}',
                                   errorWidget: (context, url, error) =>
                                       Container(
                                     color: _ColDesign.bgSurfaceDark,
@@ -476,7 +476,7 @@ class PartsListState extends State<PartsList> {
                                                           milliseconds: 700),
                                                   fadeInCurve: Curves.easeIn,
                                                   imageUrl: buildImageUrl(
-                                                          TMDB_BASE_IMAGE_URL,
+                                                          tmdbBaseImageUrl,
                                                           proxyUrl,
                                                           isProxyEnabled,
                                                           context) +
@@ -666,7 +666,7 @@ class CollectionMoviesState extends State<CollectionMovies> {
                                                           milliseconds: 700),
                                                   fadeInCurve: Curves.easeIn,
                                                   imageUrl: buildImageUrl(
-                                                          TMDB_BASE_IMAGE_URL,
+                                                          tmdbBaseImageUrl,
                                                           proxyUrl,
                                                           isProxyEnabled,
                                                           context) +

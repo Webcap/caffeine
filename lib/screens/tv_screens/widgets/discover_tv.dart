@@ -72,7 +72,7 @@ class DiscoverTVState extends State<DiscoverTV>
     List<TVGenreFilterChipWidget> genres = tvGenreList;
     years.shuffle();
     genres.shuffle();
-    fetchTV('$TMDB_API_BASE_URL/discover/tv?api_key=$TMDB_API_KEY&sort_by=popularity.desc&watch_region=US&first_air_date_year=${years.first}&with_genres=${genres.first.genreValue}',
+    fetchTV('$tmdbApiBaseUrl/discover/tv?api_key=$tmdbApiKey&sort_by=popularity.desc&watch_region=US&first_air_date_year=${years.first}&with_genres=${genres.first.genreValue}',
             isProxyEnabled, proxyUrl)
         .then((value) {
       if (mounted) {
@@ -157,7 +157,7 @@ class DiscoverTVState extends State<DiscoverTV>
                                   imageUrl: tvList![index].posterPath == null
                                       ? ''
                                       : buildImageUrl(
-                                              TMDB_BASE_IMAGE_URL,
+                                              tmdbBaseImageUrl,
                                               proxyUrl,
                                               isProxyEnabled,
                                               context) +

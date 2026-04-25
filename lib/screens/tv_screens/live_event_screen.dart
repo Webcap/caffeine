@@ -10,7 +10,6 @@ import 'package:reelriot/screens/tv_screens/live_tv_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 // design.json tokens: cinematic, dark-first, primary red
 abstract class _Design {

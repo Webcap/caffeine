@@ -45,7 +45,7 @@ Future<void> fetchConfigFromApi(
       setString('vidscr_api', (v) => appDependencyProvider.vidsrcapi = v);
       setString('opensubtitles_key',
           (v) => appDependencyProvider.opensubtitlesKey = v);
-      setString('streaming_server_dcva',
+      setString('streamingServerDcva',
           (v) => appDependencyProvider.streamingServerDCVA = v);
       setBool('ads_enabled', (v) => appDependencyProvider.enableADS = v);
       setString('route', (v) => appDependencyProvider.fetchRoute = v);
@@ -67,11 +67,12 @@ Future<void> fetchConfigFromApi(
       setString('caffeine_api_url', (v) {
         if (isCaffeineApiPreviewUrl(v)) return;
         // In debug, don't overwrite with localhost (API default); keep .env URL.
-        if (kDebugMode && (v.contains('localhost') || v.contains('127.0.0.1')))
+        if (kDebugMode && (v.contains('localhost') || v.contains('127.0.0.1'))) {
           return;
+        }
         appDependencyProvider.caffeineAPIURL = v;
       });
-      setString('streaming_server_zoro',
+      setString('streamingServerZoro',
           (v) => appDependencyProvider.streamingServerZoro = v);
       setBool('forced_update', (v) => appDependencyProvider.isForcedUpdate = v);
       setString(

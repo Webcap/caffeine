@@ -45,17 +45,19 @@ class _TVDetailCastAndCrewState extends State<TVDetailCastAndCrew> {
     final api = Endpoints.getFullTVCreditsUrl(widget.id, lang);
     try {
       final c = await fetchCredits(api, isProxyEnabled, proxyUrl);
-      if (mounted)
+      if (mounted) {
         setState(() {
           credits = c;
           _loading = false;
         });
+      }
     } catch (e) {
-      if (mounted)
+      if (mounted) {
         setState(() {
           _error = e.toString();
           _loading = false;
         });
+      }
     }
   }
 

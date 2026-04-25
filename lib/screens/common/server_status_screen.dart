@@ -163,13 +163,14 @@ class _ServerStatusScreenState extends State<ServerStatusScreen> {
     final checkUrl = '$baseUrl/status';
     debugPrint('[ServerStatus] URL: $checkUrl');
 
-    if (mounted)
+    if (mounted) {
       setState(() {
         _status = _ApiStatus.checking;
         _responseMs = null;
         _errorMessage = null;
         _statusResponse = null;
       });
+    }
 
     final stopwatch = Stopwatch()..start();
     try {

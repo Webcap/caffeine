@@ -227,7 +227,7 @@ class ScrollingTVState extends State<ScrollingTV>
                                                                 null
                                                             ? ''
                                                             : buildImageUrl(
-                                                                    TMDB_BASE_IMAGE_URL,
+                                                                    tmdbBaseImageUrl,
                                                                     proxyUrl,
                                                                     isProxyEnabled,
                                                                     context) +
@@ -510,7 +510,7 @@ class ScrollingTVArtistsState extends State<ScrollingTVArtists>
                                                           milliseconds: 700),
                                                   fadeInCurve: Curves.easeIn,
                                                   imageUrl: buildImageUrl(
-                                                          TMDB_BASE_IMAGE_URL,
+                                                          tmdbBaseImageUrl,
                                                           proxyUrl,
                                                           isProxyEnabled,
                                                           context) +
@@ -692,7 +692,7 @@ class ScrollingTVCreatorsState extends State<ScrollingTVCreators>
                                                           milliseconds: 700),
                                                   fadeInCurve: Curves.easeIn,
                                                   imageUrl: buildImageUrl(
-                                                          TMDB_BASE_IMAGE_URL,
+                                                          tmdbBaseImageUrl,
                                                           proxyUrl,
                                                           isProxyEnabled,
                                                           context) +
@@ -941,7 +941,7 @@ class ScrollingTVEpisodeCastsState extends State<ScrollingTVEpisodeCasts>
                                                   milliseconds: 700),
                                               fadeInCurve: Curves.easeIn,
                                               imageUrl: buildImageUrl(
-                                                      TMDB_BASE_IMAGE_URL,
+                                                      tmdbBaseImageUrl,
                                                       proxyUrl,
                                                       isProxyEnabled,
                                                       context) +
@@ -1127,7 +1127,7 @@ class ScrollingTVEpisodeGuestStarsState
                                                   milliseconds: 700),
                                               fadeInCurve: Curves.easeIn,
                                               imageUrl: buildImageUrl(
-                                                      TMDB_BASE_IMAGE_URL,
+                                                      tmdbBaseImageUrl,
                                                       proxyUrl,
                                                       isProxyEnabled,
                                                       context) +

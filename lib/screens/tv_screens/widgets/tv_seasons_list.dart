@@ -149,7 +149,7 @@ class SeasonsListState extends State<SeasonsList> {
                                                       fadeInCurve:
                                                           Curves.easeIn,
                                                       imageUrl: buildImageUrl(
-                                                              TMDB_BASE_IMAGE_URL,
+                                                              tmdbBaseImageUrl,
                                                               proxyUrl,
                                                               isProxyEnabled,
                                                               context) +

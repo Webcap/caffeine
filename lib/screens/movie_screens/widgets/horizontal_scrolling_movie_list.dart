@@ -104,7 +104,7 @@ class HorizontalMovieListItem extends StatelessWidget {
                                   imageUrl: movie.posterPath == null
                                       ? ''
                                       : buildImageUrl(
-                                              TMDB_BASE_IMAGE_URL,
+                                              tmdbBaseImageUrl,
                                               proxyUrl,
                                               isProxyEnabled,
                                               context) +

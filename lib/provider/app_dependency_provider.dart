@@ -100,7 +100,7 @@ class AppDependencyProvider extends ChangeNotifier {
   /// FlixAPI is merged into Caffeine API; same base URL.
   String get flixApiUrl => caffeineAPIURL;
 
-  String _consumetUrl = CONSUMET_API;
+  String _consumetUrl = consumetApi;
   String get consumetUrl {
     final v = _consumetUrl.trim();
     return v.isEmpty ? _consumetUrl : (v.endsWith('/') ? v : '$v/');
@@ -130,7 +130,7 @@ class AppDependencyProvider extends ChangeNotifier {
   }
 
   // --- Streaming server options (Consumet / provider-specific) ---
-  String _streamingServerFlixHQ = STREAMING_SERVER_FLIXHQ;
+  String _streamingServerFlixHQ = streamingServerFlixhq;
   String get streamingServerFlixHQ => _streamingServerFlixHQ;
   set streamingServerFlixHQ(String value) {
     _streamingServerFlixHQ = value;
@@ -138,7 +138,7 @@ class AppDependencyProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  String _streamingServerDCVA = STREAMING_SERVER_DCVA;
+  String _streamingServerDCVA = streamingServerDcva;
   String get streamingServerDCVA => _streamingServerDCVA;
   set streamingServerDCVA(String value) {
     _streamingServerDCVA = value;
@@ -146,7 +146,7 @@ class AppDependencyProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  String _streamingServerZoro = STREAMING_SERVER_ZORO;
+  String _streamingServerZoro = constants.streamingServerZoro;
   String get streamingServerZoro => _streamingServerZoro;
   set streamingServerZoro(String value) {
     _streamingServerZoro = value;
@@ -154,7 +154,7 @@ class AppDependencyProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  String _newFlixhqServer = STREAMING_SERVER_NEW_FLIXHQ;
+  String _newFlixhqServer = streamingServerNewFlixhq;
   String get newFlixhqServer => _newFlixhqServer;
   set newFlixhqServer(String value) {
     _newFlixhqServer = value;

@@ -103,7 +103,7 @@ class _WatchNowButtonTVState extends State<WatchNowButtonTV> {
           if (_isProcessing) return;
           setState(() => _isProcessing = true);
           try {
-            if (!mounted) return;
+            if (!context.mounted) return;
             final connected = await checkConnection();
             if (!connected) {
               GlobalMethods.showCustomScaffoldMessage(
@@ -121,7 +121,7 @@ class _WatchNowButtonTVState extends State<WatchNowButtonTV> {
 
             int? elapsedToPass;
             if (elapsedValue != null) {
-              if (!mounted) return;
+              if (!context.mounted) return;
               final bool? continueWatching = await showDialog<bool>(
                 context: context,
                 builder: (context) => AlertDialog(
@@ -147,7 +147,7 @@ class _WatchNowButtonTVState extends State<WatchNowButtonTV> {
               elapsedToPass = continueWatching ? elapsedValue : 0;
             }
 
-            if (!mounted) return;
+            if (!context.mounted) return;
             Navigator.push(context, MaterialPageRoute(builder: ((context) {
               return UnifiedVideoLoader(
                 mediaType: MediaType.tvShow,

@@ -71,9 +71,9 @@ class _ProviderLoadingWidgetState extends State<ProviderLoadingWidget>
               shape: BoxShape.circle,
               gradient: RadialGradient(
                 colors: [
-                  Theme.of(context).colorScheme.primary.withOpacity(0.18),
-                  Theme.of(context).colorScheme.primary.withOpacity(0.08),
-                  Theme.of(context).colorScheme.primary.withOpacity(0.02),
+                  Theme.of(context).colorScheme.primary.withValues(alpha: 0.18),
+                  Theme.of(context).colorScheme.primary.withValues(alpha: 0.08),
+                  Theme.of(context).colorScheme.primary.withValues(alpha: 0.02),
                 ],
               ),
             ),
@@ -98,7 +98,7 @@ class _ProviderLoadingWidgetState extends State<ProviderLoadingWidget>
           Text(
             tr('provider_precedence_help').split('.')[0],
             style: TextStyle(
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
               fontSize: 13,
               fontWeight: FontWeight.w400,
               letterSpacing: 0.1,
@@ -115,7 +115,7 @@ class _ProviderLoadingWidgetState extends State<ProviderLoadingWidget>
               child: LinearProgressIndicator(
                 minHeight: 5,
                 backgroundColor:
-                    Theme.of(context).colorScheme.primary.withOpacity(0.12),
+                    Theme.of(context).colorScheme.primary.withValues(alpha: 0.12),
                 valueColor: AlwaysStoppedAnimation<Color>(
                   Theme.of(context).colorScheme.primary,
                 ),
@@ -135,7 +135,7 @@ class _ProviderLoadingWidgetState extends State<ProviderLoadingWidget>
                 color: Theme.of(context)
                     .colorScheme
                     .primaryContainer
-                    .withOpacity(0.3),
+                    .withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
@@ -159,7 +159,7 @@ class _ProviderLoadingWidgetState extends State<ProviderLoadingWidget>
                         color: Theme.of(context)
                             .colorScheme
                             .onSurface
-                            .withOpacity(0.8),
+                            .withValues(alpha: 0.8),
                         fontSize: 13,
                       ),
                       textAlign: TextAlign.center,
@@ -227,13 +227,13 @@ class _ProviderLoadingWidgetState extends State<ProviderLoadingWidget>
           ),
           decoration: BoxDecoration(
             color: isHighlighted
-                ? Theme.of(context).colorScheme.primary.withOpacity(0.1)
+                ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.1)
                 : Colors.transparent,
             borderRadius: BorderRadius.circular(12),
             border: isHighlighted
                 ? Border.all(
                     color:
-                        Theme.of(context).colorScheme.primary.withOpacity(0.25),
+                        Theme.of(context).colorScheme.primary.withValues(alpha: 0.25),
                     width: 1.2,
                   )
                 : null,
@@ -268,7 +268,7 @@ class _ProviderLoadingWidgetState extends State<ProviderLoadingWidget>
         return Icon(
           Icons.hourglass_empty,
           size: iconSize,
-          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.35),
+          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.35),
         );
       case ProviderStatus.loading:
         return SizedBox(

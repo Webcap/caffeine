@@ -545,8 +545,7 @@ class TVEpisodeCastTabState extends State<TVEpisodeCastTab>
                   maxLines: 4,
                 ),
               )
-            : Container(
-                child: ListView.builder(
+            : ListView.builder(
                     itemCount: credits!.cast!.length,
                     itemBuilder: (BuildContext context, int index) {
                       return GestureDetector(
@@ -602,7 +601,7 @@ class TVEpisodeCastTabState extends State<TVEpisodeCastTab>
                                                             milliseconds: 700),
                                                     fadeInCurve: Curves.easeIn,
                                                     imageUrl: buildImageUrl(
-                                                            TMDB_BASE_IMAGE_URL,
+                                                            tmdbBaseImageUrl,
                                                             proxyUrl,
                                                             isProxyEnabled,
                                                             context) +
@@ -684,7 +683,7 @@ class TVEpisodeCastTabState extends State<TVEpisodeCastTab>
                           ),
                         ),
                       );
-                    }));
+                    });
   }
 
   @override
@@ -801,8 +800,7 @@ class TVImagesDisplayState extends State<TVImagesDisplay> {
                           children: [
                             Expanded(
                               flex: 1,
-                              child: Container(
-                                child: Padding(
+                              child: Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Stack(
                                       alignment:
@@ -830,7 +828,7 @@ class TVImagesDisplayState extends State<TVImagesDisplay> {
                                                             milliseconds: 700),
                                                     fadeInCurve: Curves.easeIn,
                                                     imageUrl: buildImageUrl(
-                                                            TMDB_BASE_IMAGE_URL,
+                                                            tmdbBaseImageUrl,
                                                             proxyUrl,
                                                             isProxyEnabled,
                                                             context) +
@@ -855,7 +853,7 @@ class TVImagesDisplayState extends State<TVImagesDisplay> {
                                                       },
                                                       child: Hero(
                                                         tag: buildImageUrl(
-                                                                TMDB_BASE_IMAGE_URL,
+                                                                tmdbBaseImageUrl,
                                                                 proxyUrl,
                                                                 isProxyEnabled,
                                                                 context) +
@@ -910,12 +908,10 @@ class TVImagesDisplayState extends State<TVImagesDisplay> {
                                         )
                                       ]),
                                 ),
-                              ),
                             ),
                             Expanded(
                               flex: 2,
-                              child: Container(
-                                child: Padding(
+                              child: Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Stack(
                                       alignment:
@@ -943,7 +939,7 @@ class TVImagesDisplayState extends State<TVImagesDisplay> {
                                                             milliseconds: 700),
                                                     fadeInCurve: Curves.easeIn,
                                                     imageUrl: buildImageUrl(
-                                                            TMDB_BASE_IMAGE_URL,
+                                                            tmdbBaseImageUrl,
                                                             proxyUrl,
                                                             isProxyEnabled,
                                                             context) +
@@ -969,7 +965,7 @@ class TVImagesDisplayState extends State<TVImagesDisplay> {
                                                       },
                                                       child: Hero(
                                                         tag: buildImageUrl(
-                                                                TMDB_BASE_IMAGE_URL,
+                                                                tmdbBaseImageUrl,
                                                                 proxyUrl,
                                                                 isProxyEnabled,
                                                                 context) +
@@ -1030,7 +1026,6 @@ class TVImagesDisplayState extends State<TVImagesDisplay> {
                                       ]),
                                 ),
                               ),
-                            ),
                           ],
                         ),
                       ],
@@ -1118,8 +1113,7 @@ class TVVideosDisplayState extends State<TVVideosDisplay> {
                   ),
                 ],
               ),
-        Container(
-          child: SizedBox(
+        SizedBox(
             width: double.infinity,
             height: 230,
             child: tvVideos == null
@@ -1152,7 +1146,7 @@ class TVVideosDisplayState extends State<TVVideosDisplay> {
                               child: GestureDetector(
                                 onTap: () {
                                   launchUrl(
-                                      Uri.parse(YOUTUBE_BASE_URL +
+                                      Uri.parse(youtubeBaseUrl +
                                           tvVideos!.result![index].videoLink!),
                                       mode: LaunchMode.externalApplication);
                                 },
@@ -1184,7 +1178,7 @@ class TVVideosDisplayState extends State<TVVideosDisplay> {
                                                             milliseconds: 700),
                                                     fadeInCurve: Curves.easeIn,
                                                     imageUrl:
-                                                        '$YOUTUBE_THUMBNAIL_URL${tvVideos!.result![index].videoLink!}/hqdefault.jpg',
+                                                        '$youtubeThumbnailUrl${tvVideos!.result![index].videoLink!}/hqdefault.jpg',
                                                     imageBuilder: (context,
                                                             imageProvider) =>
                                                         Container(
@@ -1242,7 +1236,6 @@ class TVVideosDisplayState extends State<TVVideosDisplay> {
                         ),
                       ),
           ),
-        ),
       ],
     );
   }
@@ -1294,8 +1287,7 @@ class TVInfoTableState extends State<TVInfoTable> {
               ),
             ],
           ),
-          Container(
-            child: SingleChildScrollView(
+          SingleChildScrollView(
               scrollDirection: Axis.vertical,
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
@@ -1453,7 +1445,6 @@ class TVInfoTableState extends State<TVInfoTable> {
                       ]),
               ),
             ),
-          ),
         ],
       ),
     );
@@ -1508,8 +1499,7 @@ class TVCastTabState extends State<TVCastTab>
                   textAlign: TextAlign.center,
                 ),
               )
-            : Container(
-                child: ListView.builder(
+            : ListView.builder(
                     itemCount: credits!.cast!.length,
                     itemBuilder: (BuildContext context, int index) {
                       return GestureDetector(
@@ -1565,7 +1555,7 @@ class TVCastTabState extends State<TVCastTab>
                                                             milliseconds: 700),
                                                     fadeInCurve: Curves.easeIn,
                                                     imageUrl: buildImageUrl(
-                                                            TMDB_BASE_IMAGE_URL,
+                                                            tmdbBaseImageUrl,
                                                             proxyUrl,
                                                             isProxyEnabled,
                                                             context) +
@@ -1661,7 +1651,7 @@ class TVCastTabState extends State<TVCastTab>
                           ),
                         ),
                       );
-                    }));
+                    });
   }
 
   @override
@@ -1716,8 +1706,7 @@ class TVCrewTabState extends State<TVCrewTab>
                   maxLines: 4,
                 ),
               )
-            : Container(
-                child: ListView.builder(
+            : ListView.builder(
                     itemCount: credits!.crew!.length,
                     itemBuilder: (BuildContext context, int index) {
                       return GestureDetector(
@@ -1773,7 +1762,7 @@ class TVCrewTabState extends State<TVCrewTab>
                                                             milliseconds: 700),
                                                     fadeInCurve: Curves.easeIn,
                                                     imageUrl: buildImageUrl(
-                                                            TMDB_BASE_IMAGE_URL,
+                                                            tmdbBaseImageUrl,
                                                             proxyUrl,
                                                             isProxyEnabled,
                                                             context) +
@@ -1842,7 +1831,7 @@ class TVCrewTabState extends State<TVCrewTab>
                           ),
                         ),
                       );
-                    }));
+                    });
   }
 
   @override
@@ -1887,8 +1876,7 @@ class _TVWatchProvidersDetailsState extends State<TVWatchProvidersDetails>
   Widget build(BuildContext context) {
     final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
-    return Container(
-      child: Column(
+    return Column(
         children: [
           Container(
             width: double.infinity,
@@ -2036,7 +2024,6 @@ class _TVWatchProvidersDetailsState extends State<TVWatchProvidersDetails>
             ),
           )
         ],
-      ),
-    );
+      );
   }
 }

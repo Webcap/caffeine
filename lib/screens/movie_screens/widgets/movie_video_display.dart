@@ -121,7 +121,7 @@ class MovieVideosState extends State<MovieVideosDisplay> {
                               child: GestureDetector(
                                 onTap: () {
                                   launchUrl(
-                                      Uri.parse(YOUTUBE_BASE_URL +
+                                      Uri.parse(youtubeBaseUrl +
                                           movieVideos!
                                               .result![index].videoLink!),
                                       mode: LaunchMode.externalApplication);
@@ -154,7 +154,7 @@ class MovieVideosState extends State<MovieVideosDisplay> {
                                                             milliseconds: 700),
                                                     fadeInCurve: Curves.easeIn,
                                                     imageUrl:
-                                                        '$YOUTUBE_THUMBNAIL_URL${movieVideos!.result![index].videoLink!}/hqdefault.jpg',
+                                                        '$youtubeThumbnailUrl${movieVideos!.result![index].videoLink!}/hqdefault.jpg',
                                                     imageBuilder: (context,
                                                             imageProvider) =>
                                                         Container(

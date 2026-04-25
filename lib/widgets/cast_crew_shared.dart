@@ -196,7 +196,7 @@ class CastCrewTile extends StatelessWidget {
                             cacheManager: cacheProp(),
                             fadeOutDuration: const Duration(milliseconds: 300),
                             fadeInDuration: const Duration(milliseconds: 700),
-                            imageUrl: buildImageUrl(TMDB_BASE_IMAGE_URL,
+                            imageUrl: buildImageUrl(tmdbBaseImageUrl,
                                     proxyUrl, isProxyEnabled, context) +
                                 imageQuality +
                                 profilePath!,

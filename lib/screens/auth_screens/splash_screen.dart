@@ -170,7 +170,7 @@ class _SplashScreenState extends State<SplashScreen> {
               child: Column(
                 children: [
                   const Spacer(),
-                  Container(
+                  SizedBox(
                     width: 132,
                     height: 132,
                     child: ClipRRect(

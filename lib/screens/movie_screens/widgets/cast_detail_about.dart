@@ -87,8 +87,7 @@ class _CastDetailAboutState extends State<CastDetailAbout> {
                         index: widget.selectedIndex,
                         children: [
                           SingleChildScrollView(
-                            child: Container(
-                              child: Column(
+                            child: Column(
                                 children: <Widget>[
                                   Padding(
                                     padding: const EdgeInsets.only(
@@ -120,9 +119,7 @@ class _CastDetailAboutState extends State<CastDetailAbout> {
                                 ],
                               ),
                             ),
-                          ),
-                          Container(
-                            child: PersonMovieListWidget(
+                          PersonMovieListWidget(
                               isPersonAdult: widget.cast!.adult!,
                               includeAdult:
                                   Provider.of<SettingsProvider>(context)
@@ -130,16 +127,13 @@ class _CastDetailAboutState extends State<CastDetailAbout> {
                               api: Endpoints.getMovieCreditsForPerson(
                                   widget.cast!.id!, lang),
                             ),
-                          ),
-                          Container(
-                            child: PersonTVListWidget(
+                          PersonTVListWidget(
                                 isPersonAdult: widget.cast!.adult!,
                                 includeAdult:
                                     Provider.of<SettingsProvider>(context)
                                         .isAdult,
                                 api: Endpoints.getTVCreditsForPerson(
                                     widget.cast!.id!, lang)),
-                          ),
                         ],
                       ),
                     ),

@@ -94,7 +94,7 @@ class PersonSocialLinksState extends State<PersonSocialLinks> {
                                 isNull: externalLinks?.facebookUsername == null,
                                 url: externalLinks?.facebookUsername == null
                                     ? ''
-                                    : FACEBOOK_BASE_URL +
+                                    : facebookBaseUrl +
                                         externalLinks!.facebookUsername!,
                                 icon: const Icon(
                                   SocialIcons.facebook_f,
@@ -105,7 +105,7 @@ class PersonSocialLinksState extends State<PersonSocialLinks> {
                                     externalLinks?.instagramUsername == null,
                                 url: externalLinks?.instagramUsername == null
                                     ? ''
-                                    : INSTAGRAM_BASE_URL +
+                                    : instagramBaseUrl +
                                         externalLinks!.instagramUsername!,
                                 icon: const Icon(
                                   SocialIcons.instagram,
@@ -115,7 +115,7 @@ class PersonSocialLinksState extends State<PersonSocialLinks> {
                                 isNull: externalLinks?.twitterUsername == null,
                                 url: externalLinks?.twitterUsername == null
                                     ? ''
-                                    : TWITTER_BASE_URL +
+                                    : twitterBaseUrl +
                                         externalLinks!.twitterUsername!,
                                 icon: const Icon(
                                   SocialIcons.twitter,
@@ -125,7 +125,7 @@ class PersonSocialLinksState extends State<PersonSocialLinks> {
                                 isNull: externalLinks?.imdbId == null,
                                 url: externalLinks?.imdbId == null
                                     ? ''
-                                    : IMDB_BASE_URL + externalLinks!.imdbId!,
+                                    : imdbBaseUrl + externalLinks!.imdbId!,
                                 icon: const Center(
                                   child: FaIcon(
                                     FontAwesomeIcons.imdb,

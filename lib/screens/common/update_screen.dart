@@ -133,8 +133,9 @@ class _UpdateScreenState extends State<UpdateScreen> {
       setState(() {
         _errorMessage =
             e.toString().replaceFirst(RegExp(r'^Exception:?\s*'), '');
-        if (_errorMessage!.trim().isEmpty)
+        if (_errorMessage!.trim().isEmpty) {
           _errorMessage = tr("internet_problem");
+        }
       });
     }
   }
@@ -185,7 +186,8 @@ class _UpdateScreenState extends State<UpdateScreen> {
               ],
             ),
           );
-          if (exit == true && mounted) {
+          if (!context.mounted) return;
+          if (exit == true) {
             Navigator.of(context).popUntil((route) => route.isFirst);
             SystemNavigator.pop();
           }
@@ -384,7 +386,7 @@ class _UpdateScreenState extends State<UpdateScreen> {
         border: Border.all(
             color: isDark
                 ? _UpdateDesign.borderSubtle
-                : Theme.of(context).colorScheme.outline.withOpacity(0.2)),
+                : Theme.of(context).colorScheme.outline.withValues(alpha: 0.2)),
         boxShadow: isDark ? _UpdateDesign.shadowCard : null,
       ),
       child: child,
@@ -579,7 +581,7 @@ class _ListItemState extends State<ListItem> {
       padding: const EdgeInsets.only(top: 8),
       child: Container(
         decoration: BoxDecoration(
-          color: _UpdateDesign.bgSurfaceDark.withOpacity(0.6),
+          color: _UpdateDesign.bgSurfaceDark.withValues(alpha: 0.6),
           border: Border.all(color: _UpdateDesign.borderSubtle),
           borderRadius: BorderRadius.circular(16),
           boxShadow: _UpdateDesign.shadowCard,

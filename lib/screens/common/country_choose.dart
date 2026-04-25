@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:reelriot/models/watchprovider_countries.dart';
@@ -429,7 +428,7 @@ class _SettingsTile extends StatelessWidget {
               if (isSelected)
                 const Icon(Icons.check_circle_rounded, color: _Design.primary, size: 22)
               else
-                Icon(Icons.circle_outlined, color: textSec.withOpacity(0.3), size: 22),
+                Icon(Icons.circle_outlined, color: textSec.withValues(alpha: 0.3), size: 22),
             ],
           ),
         ),

@@ -149,7 +149,7 @@ class _TVBookmarkState extends State<TVBookmark> {
                                         const Duration(milliseconds: 700),
                                     fadeInCurve: Curves.easeIn,
                                     imageUrl: buildImageUrl(
-                                          TMDB_BASE_IMAGE_URL,
+                                          tmdbBaseImageUrl,
                                           proxyUrl,
                                           isProxyEnabled,
                                           context,
@@ -339,7 +339,7 @@ class _TVBookmarkState extends State<TVBookmark> {
                                               const Duration(milliseconds: 700),
                                           fadeInCurve: Curves.easeIn,
                                           imageUrl: buildImageUrl(
-                                                TMDB_BASE_IMAGE_URL,
+                                                tmdbBaseImageUrl,
                                                 proxyUrl,
                                                 isProxyEnabled,
                                                 context,

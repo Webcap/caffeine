@@ -238,7 +238,7 @@ class _ScrollingRecentEpisodesState extends State<ScrollingRecentEpisodes> {
                                                                 .posterPath ==
                                                             null
                                                         ? ''
-                                                        : TMDB_BASE_IMAGE_URL +
+                                                        : tmdbBaseImageUrl +
                                                             imageQuality +
                                                             widget
                                                                 .episodesList[

@@ -342,7 +342,7 @@ class _DiscoverTVTabState extends State<DiscoverTVTab> {
                     MaterialPageRoute(
                         builder: (context) => DiscoverTVResult(
                               api:
-                                  '$TMDB_API_BASE_URL/discover/tv?api_key=$TMDB_API_KEY&language=$lang&sort_by=$tvSort&watch_region=$region&include_adult=$includeAdult&with_status=$tvSeriesStatusValue&first_air_date_year=$defaultMovieReleaseYear&vote_count.gte=${tvTotalRatingSlider.toInt()}&with_genres=$joinedIds&with_watch_providers=$joinedProviderIds',
+                                  '$tmdbApiBaseUrl/discover/tv?api_key=$tmdbApiKey&language=$lang&sort_by=$tvSort&watch_region=$region&include_adult=$includeAdult&with_status=$tvSeriesStatusValue&first_air_date_year=$defaultMovieReleaseYear&vote_count.gte=${tvTotalRatingSlider.toInt()}&with_genres=$joinedIds&with_watch_providers=$joinedProviderIds',
                               page: 1,
                             )));
               },

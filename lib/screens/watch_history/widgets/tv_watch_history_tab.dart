@@ -122,7 +122,7 @@ class _tvWatchHistoryState extends State<tvWatchHistory> {
                                                                             const Duration(milliseconds: 700),
                                                                         fadeInCurve:
                                                                             Curves.easeIn,
-                                                                        imageUrl: TMDB_BASE_IMAGE_URL +
+                                                                        imageUrl: tmdbBaseImageUrl +
                                                                             imageQuality +
                                                                             widget.tvList![index].posterPath!,
                                                                         imageBuilder:
@@ -315,7 +315,7 @@ class _tvWatchHistoryState extends State<tvWatchHistory> {
                                                                                 fadeOutCurve: Curves.easeOut,
                                                                                 fadeInDuration: const Duration(milliseconds: 700),
                                                                                 fadeInCurve: Curves.easeIn,
-                                                                                imageUrl: TMDB_BASE_IMAGE_URL + imageQuality + widget.tvList![index].posterPath!,
+                                                                                imageUrl: tmdbBaseImageUrl + imageQuality + widget.tvList![index].posterPath!,
                                                                                 imageBuilder: (context, imageProvider) => Container(
                                                                                   decoration: BoxDecoration(
                                                                                     image: DecorationImage(

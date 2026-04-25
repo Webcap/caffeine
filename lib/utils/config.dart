@@ -17,7 +17,7 @@ CacheManager cacheProp() {
       repo: JsonCacheInfoRepository(databaseName: 'cacheProp_v2'),
       fileService: HttpFileService(
         httpClient: IOClient(
-          HttpClient()..userAgent = BROWSER_USER_AGENT,
+          HttpClient()..userAgent = browserUserAgent,
         ),
       ),
     ),

@@ -74,7 +74,7 @@ class _PremiumSubscriptionScreenState extends State<PremiumSubscriptionScreen> {
               height: 300,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: _C.secondary.withOpacity(0.15),
+                color: _C.secondary.withValues(alpha: 0.15),
               ),
             ),
           ),
@@ -86,7 +86,7 @@ class _PremiumSubscriptionScreenState extends State<PremiumSubscriptionScreen> {
               height: 400,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: _C.primary.withOpacity(0.1),
+                color: _C.primary.withValues(alpha: 0.1),
               ),
             ),
           ),
@@ -107,9 +107,9 @@ class _PremiumSubscriptionScreenState extends State<PremiumSubscriptionScreen> {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                         decoration: BoxDecoration(
-                          color: _C.accent.withOpacity(0.1),
+                          color: _C.accent.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: _C.accent.withOpacity(0.3)),
+                          border: Border.all(color: _C.accent.withValues(alpha: 0.3)),
                         ),
                         child: const Row(
                           children: [
@@ -168,9 +168,9 @@ class _PremiumSubscriptionScreenState extends State<PremiumSubscriptionScreen> {
                             margin: const EdgeInsets.only(bottom: 24),
                             padding: const EdgeInsets.all(16),
                             decoration: BoxDecoration(
-                              color: _C.primary.withOpacity(0.1),
+                              color: _C.primary.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(16),
-                              border: Border.all(color: _C.primary.withOpacity(0.3)),
+                              border: Border.all(color: _C.primary.withValues(alpha: 0.3)),
                             ),
                             child: const Row(
                               children: [
@@ -372,9 +372,9 @@ class _FeatureItem extends StatelessWidget {
           width: 48,
           height: 48,
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: color.withOpacity(0.2)),
+            border: Border.all(color: color.withValues(alpha: 0.2)),
           ),
           child: Icon(icon, color: color, size: 20),
         ),
@@ -443,7 +443,7 @@ class _PlanCard extends StatelessWidget {
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: _C.primary.withOpacity(0.1),
+                    color: _C.primary.withValues(alpha: 0.1),
                     blurRadius: 20,
                     spreadRadius: 0,
                     offset: const Offset(0, 10),
@@ -473,7 +473,7 @@ class _PlanCard extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 8, vertical: 2),
                           decoration: BoxDecoration(
-                            color: _C.primary.withOpacity(0.15),
+                            color: _C.primary.withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Text(

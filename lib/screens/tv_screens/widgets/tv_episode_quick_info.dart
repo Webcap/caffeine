@@ -92,7 +92,7 @@ class TVEpisodeQuickInfo extends StatelessWidget {
     final heroHeight = MediaQuery.of(context).size.height * 0.45;
     final imageUrl = episodeList.stillPath;
     final baseUrl =
-        buildImageUrl(TMDB_BASE_IMAGE_URL, proxyUrl, isProxy, context);
+        buildImageUrl(tmdbBaseImageUrl, proxyUrl, isProxy, context);
 
     return SizedBox(
       height: heroHeight,
@@ -113,7 +113,7 @@ class TVEpisodeQuickInfo extends StatelessWidget {
                   )
                 : CachedNetworkImage(
                     cacheManager: cacheProp(),
-                    imageUrl: baseUrl + 'original/$imageUrl',
+                    imageUrl: '${baseUrl}original/$imageUrl',
                     fit: BoxFit.cover,
                     placeholder: (_, __) => ColoredBox(
                       color: _C.bgSurfaceDark,

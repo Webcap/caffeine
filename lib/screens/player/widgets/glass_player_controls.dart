@@ -150,7 +150,7 @@ class _GlassPlayerControlsState extends State<GlassPlayerControls> {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            Colors.black.withOpacity(0.7),
+            Colors.black.withValues(alpha: 0.7),
             Colors.transparent,
           ],
         ),
@@ -181,7 +181,7 @@ class _GlassPlayerControlsState extends State<GlassPlayerControls> {
                   Text(
                     widget.subtitle!,
                     style: TextStyle(
-                      color: Colors.white.withOpacity(0.7),
+                      color: Colors.white.withValues(alpha: 0.7),
                       fontSize: 14,
                     ),
                     maxLines: 1,
@@ -266,7 +266,7 @@ class _GlassPlayerControlsState extends State<GlassPlayerControls> {
           begin: Alignment.bottomCenter,
           end: Alignment.topCenter,
           colors: [
-            Colors.black.withOpacity(0.7),
+            Colors.black.withValues(alpha: 0.7),
             Colors.transparent,
           ],
         ),
@@ -362,9 +362,9 @@ class _GlassPlayerControlsState extends State<GlassPlayerControls> {
                 thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
                 overlayShape: const RoundSliderOverlayShape(overlayRadius: 14),
                 activeTrackColor: Theme.of(context).colorScheme.primary,
-                inactiveTrackColor: Colors.white.withOpacity(0.2),
+                inactiveTrackColor: Colors.white.withValues(alpha: 0.2),
                 thumbColor: Colors.white,
-                overlayColor: Theme.of(context).colorScheme.primary.withOpacity(0.2),
+                overlayColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
               ),
               child: Slider(
                 value: value.clamp(0.0, 1.0),
@@ -401,9 +401,9 @@ class _GlassIconButton extends StatelessWidget {
         filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.1),
+            color: Colors.white.withValues(alpha: 0.1),
             shape: BoxShape.circle,
-            border: Border.all(color: Colors.white.withOpacity(0.2)),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
           ),
           child: IconButton(
             icon: Icon(icon, color: Colors.white, size: size * 0.6),

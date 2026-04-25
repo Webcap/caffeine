@@ -67,7 +67,7 @@ class CreatedByQuickInfo extends StatelessWidget {
                                         'assets/images/na_logo.png',
                                         fit: BoxFit.cover,
                                       ),
-                                      imageUrl: TMDB_BASE_IMAGE_URL +
+                                      imageUrl: tmdbBaseImageUrl +
                                           imageQuality +
                                           widget.createdBy!.profilePath!,
                                     ),

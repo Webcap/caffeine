@@ -96,10 +96,10 @@ class AppDependencies {
   Future<String> getNewFlixHQUrl() async {
     final stored = sharedPrefsSingleton.getString(NEW_FLIXHQ_URL);
     if (stored == null || stored.isEmpty) {
-      return DEFAULT_CAFFEINE_API_URL;
+      return defaultCaffeineApiUrl;
     }
     if (isCaffeineApiPreviewUrl(stored)) {
-      return DEFAULT_CAFFEINE_API_URL;
+      return defaultCaffeineApiUrl;
     }
     return stored;
   }
@@ -135,16 +135,16 @@ class AppDependencies {
   Future<String> getFQURL() async {
     final stored = sharedPrefsSingleton.getString(CAFFEINE_API_URL);
     if (stored == null || stored.isEmpty) {
-      return DEFAULT_CAFFEINE_API_URL;
+      return defaultCaffeineApiUrl;
     }
     if (isCaffeineApiPreviewUrl(stored)) {
-      return DEFAULT_CAFFEINE_API_URL;
+      return defaultCaffeineApiUrl;
     }
     final normalized = stored.endsWith('/') ? stored : '$stored/';
     if (normalized == _legacyVercelProductionUrlSlash ||
         stored == _legacyVercelProductionUrl ||
         stored == _legacyVercelProductionUrlSlash) {
-      return DEFAULT_CAFFEINE_API_URL;
+      return defaultCaffeineApiUrl;
     }
     return stored;
   }
@@ -172,7 +172,7 @@ class AppDependencies {
 
   Future<String> getStreamServerFlixHQ() async {
     return sharedPrefsSingleton.getString(STREAM_SERVER_FLIXHQ) ??
-        STREAMING_SERVER_FLIXHQ;
+        streamingServerFlixhq;
   }
 
   Future<void> setStreamServerNewFlixHQ(String value) async {
@@ -181,7 +181,7 @@ class AppDependencies {
 
   Future<String> getStreamServerNewFlixHQ() async {
     return sharedPrefsSingleton.getString(NEW_FLIXHQ_SERVER) ??
-        STREAMING_SERVER_NEW_FLIXHQ;
+        streamingServerNewFlixhq;
   }
 
   Future<void> setStreamServerDCVA(String value) async {
@@ -190,7 +190,7 @@ class AppDependencies {
 
   Future<String> getStreamServerDCVA() async {
     return sharedPrefsSingleton.getString(STREAM_SERVER_DCVA) ??
-        STREAMING_SERVER_DCVA;
+        streamingServerDcva;
   }
 
   Future<String> getShowboxUrl() async {
@@ -215,7 +215,7 @@ class AppDependencies {
 
   Future<String> getStreamServerZoro() async {
     return sharedPrefsSingleton.getString(STREAM_SERVER_ZORO) ??
-        STREAMING_SERVER_ZORO;
+        streamingServerZoro;
   }
 
   Future<void> setTmdbProxy(String value) async {

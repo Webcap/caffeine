@@ -101,10 +101,12 @@ class _HeroPhotoViewState extends State<HeroPhotoView> {
   void _download(String url, String currentIndex, String themeMode) async {
     var externalStatus = await Permission.manageExternalStorage.status;
     if (externalStatus.isPermanentlyDenied) {
+      if (!mounted) return;
       GlobalMethods.showScaffoldMessage(tr("give_file_permission"), context);
       return;
     } else if (!externalStatus.isGranted) {
       await Permission.manageExternalStorage.request().then((value) {
+        if (!mounted) return;
         if (value.isDenied) {
           GlobalMethods.showScaffoldMessage(
               tr("give_file_permission_short"), context);

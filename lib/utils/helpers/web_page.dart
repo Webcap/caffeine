@@ -101,10 +101,10 @@ class UrlWebPage extends StatefulWidget {
   });
 
   @override
-  _UrlWebPageState createState() => _UrlWebPageState();
+  UrlWebPageState createState() => UrlWebPageState();
 }
 
-class _UrlWebPageState extends State<UrlWebPage> {
+class UrlWebPageState extends State<UrlWebPage> {
   late final WebViewController controller;
 
   static const String _adBlockJs = r'''
@@ -229,14 +229,16 @@ class _UrlWebPageState extends State<UrlWebPage> {
   }
 
   void _runInterceptHls() {
-    if (!mounted || !widget.tryExtractHls || widget.onHlsExtracted == null)
+    if (!mounted || !widget.tryExtractHls || widget.onHlsExtracted == null) {
       return;
+    }
     controller.runJavaScript(_interceptHlsJs);
   }
 
   void _runExtractHls() {
-    if (!mounted || !widget.tryExtractHls || widget.onHlsExtracted == null)
+    if (!mounted || !widget.tryExtractHls || widget.onHlsExtracted == null) {
       return;
+    }
     controller.runJavaScript(_extractHlsJs);
   }
 
@@ -310,14 +312,15 @@ class _UrlWebPageState extends State<UrlWebPage> {
     if (widget.embedded) {
       return body;
     }
-    return WillPopScope(
-      onWillPop: () async {
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
         if (await controller.canGoBack()) {
           controller.goBack();
         } else {
           Get.back();
         }
-        return false;
       },
       child: Scaffold(
         appBar: AppBar(

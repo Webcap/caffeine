@@ -1160,7 +1160,7 @@ class _MediaRow extends StatelessWidget {
                           )
                         : CachedNetworkImage(
                             cacheManager: cacheProp(),
-                            imageUrl: buildImageUrl(TMDB_BASE_IMAGE_URL,
+                            imageUrl: buildImageUrl(tmdbBaseImageUrl,
                                     proxyUrl, isProxy, context) +
                                 imageQuality +
                                 posterPath!,
@@ -1301,7 +1301,7 @@ class _PersonRow extends StatelessWidget {
                                     : const Color(0x40000000)))
                         : CachedNetworkImage(
                             cacheManager: cacheProp(),
-                            imageUrl: buildImageUrl(TMDB_BASE_IMAGE_URL,
+                            imageUrl: buildImageUrl(tmdbBaseImageUrl,
                                     proxyUrl, isProxy, context) +
                                 imageQuality +
                                 profilePath!,

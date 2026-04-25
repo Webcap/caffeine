@@ -125,7 +125,7 @@ class _PersonImagesDisplayState extends State<PersonImagesDisplay>
                                                   milliseconds: 700),
                                               fadeInCurve: Curves.easeIn,
                                               imageUrl: buildImageUrl(
-                                                      TMDB_BASE_IMAGE_URL,
+                                                      tmdbBaseImageUrl,
                                                       proxyUrl,
                                                       isProxyEnabled,
                                                       context) +
@@ -144,7 +144,7 @@ class _PersonImagesDisplayState extends State<PersonImagesDisplay>
                                                           imageProvider,
                                                       currentIndex: index,
                                                       heroId: buildImageUrl(
-                                                              TMDB_BASE_IMAGE_URL,
+                                                              tmdbBaseImageUrl,
                                                               proxyUrl,
                                                               isProxyEnabled,
                                                               context) +
@@ -424,7 +424,7 @@ class PersonMovieListWidgetState extends State<PersonMovieListWidget>
                                                                       Curves
                                                                           .easeIn,
                                                                   imageUrl: buildImageUrl(
-                                                                          TMDB_BASE_IMAGE_URL,
+                                                                          tmdbBaseImageUrl,
                                                                           proxyUrl,
                                                                           isProxyEnabled,
                                                                           context) +
@@ -543,7 +543,9 @@ class PersonMovieListWidgetState extends State<PersonMovieListWidget>
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
-          color: selected ? primaryColor.withOpacity(0.2) : Colors.transparent,
+          color: selected
+              ? primaryColor.withValues(alpha: 0.2)
+              : Colors.transparent,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: selected
@@ -793,7 +795,7 @@ class PersonTVListWidgetState extends State<PersonTVListWidget>
                                                                       Curves
                                                                           .easeIn,
                                                                   imageUrl: buildImageUrl(
-                                                                          TMDB_BASE_IMAGE_URL,
+                                                                          tmdbBaseImageUrl,
                                                                           proxyUrl,
                                                                           isProxyEnabled,
                                                                           context) +
@@ -913,7 +915,7 @@ class PersonTVListWidgetState extends State<PersonTVListWidget>
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
-          color: selected ? primaryColor.withOpacity(0.2) : Colors.transparent,
+          color: selected ? primaryColor.withValues(alpha: 0.2) : Colors.transparent,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: selected
@@ -1058,8 +1060,7 @@ class _PersonDataTableState extends State<PersonDataTable> {
   @override
   Widget build(BuildContext context) {
     final themeMode = Provider.of<SettingsProvider>(context).appTheme;
-    return Container(
-      child: SingleChildScrollView(
+    return SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: SingleChildScrollView(
           scrollDirection: Axis.horizontal,
@@ -1115,7 +1116,6 @@ class _PersonDataTableState extends State<PersonDataTable> {
                   ]),
                 ]),
         ),
-      ),
-    );
+      );
   }
 }
