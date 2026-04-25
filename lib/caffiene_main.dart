@@ -17,8 +17,8 @@ import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:get/get.dart';
 
-class caffeine extends StatefulWidget {
-  const caffeine(
+class Caffeine extends StatefulWidget {
+  const Caffeine(
       {required this.settingsProvider,
       required this.recentProvider,
       required this.appDependencyProvider,
@@ -29,13 +29,13 @@ class caffeine extends StatefulWidget {
   final AppDependencyProvider appDependencyProvider;
 
   @override
-  State<caffeine> createState() => _caffeineState();
+  State<Caffeine> createState() => _CaffeineState();
 }
 
 /// Lazy getter - Supabase must be initialized in main() before first use
 SupabaseClient get supabase => Supabase.instance.client;
 
-class _caffeineState extends State<caffeine>
+class _CaffeineState extends State<Caffeine>
     with ChangeNotifier, WidgetsBindingObserver {
   bool? isFirstLaunch;
 

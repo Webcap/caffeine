@@ -214,7 +214,7 @@ Future<String?> extractHlsFromEmbedUrl(String embedUrl) async {
     final html = res.body;
     // Match m3u8 URLs in HTML/JS (common in player configs, src, loadSource, etc.)
     final m3u8Regex = RegExp(
-      r'https?://[^\s"' '<>)\]]+\.m3u8[^\s"' '<>)\]]*',
+      r'''https?://[^\s"'<>)\]]+\.m3u8[^\s"'<>)\]]*''',
       caseSensitive: false,
     );
     final matches = m3u8Regex.allMatches(html);

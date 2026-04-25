@@ -5,7 +5,7 @@ void main() {
   FlavorConfig.initialize(
     flavor: Flavor.prod,
     appName: "Reelriot",
-    baseUrl: 'http://144.62.246.54:4242',
+    baseUrl: 'https://caffeine.synqholdings.com/',
   );
   runAppWithFlavor();
 }

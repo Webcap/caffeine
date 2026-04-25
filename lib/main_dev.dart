@@ -5,7 +5,7 @@ void main() {
   FlavorConfig.initialize(
     flavor: Flavor.dev,
     appName: "Reelriot (dev)",
-    baseUrl: 'http://144.62.246.54:4242', // Same as prod for now
+    baseUrl: 'https://caffeine.synqholdings.com/', // Updated from dead IP
   );
   runAppWithFlavor();
 }

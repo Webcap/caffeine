@@ -197,7 +197,7 @@ void runAppWithFlavor() {
         path: 'assets/translations',
         fallbackLocale: Translation.all[0],
         startLocale: Locale(settingsProvider.appLanguage),
-        child: caffeine(
+        child: Caffeine(
           settingsProvider: settingsProvider,
           recentProvider: recentProvider,
           appDependencyProvider: appDependencyProvider,
@@ -207,7 +207,7 @@ void runAppWithFlavor() {
     } catch (e, st) {
       final msg = 'STARTUP CRASH: $e\n\n$st';
       debugPrint(msg);
-      print(msg); // Also to stdout for log capture
+      // Removed stdout print to comply with lint
       runApp(_ErrorScreen(error: e.toString(), stack: st.toString()));
     }
   }, (error, stack) {
@@ -243,7 +243,7 @@ void runAppWithFlavor() {
     }
     final msg = 'UNCAUGHT ERROR: $error\n\n$stack';
     debugPrint(msg);
-    print(msg);
+    // Removed stdout print to comply with lint
     // Don't call runApp here - causes zone mismatch. Error already logged.
   });
 }
@@ -252,7 +252,7 @@ void main() {
   FlavorConfig.initialize(
     flavor: Flavor.prod,
     appName: "Reelriot",
-    baseUrl: 'http://144.62.246.54:4242',
+    baseUrl: 'https://caffeine.synqholdings.com/',
   );
   runAppWithFlavor();
 }

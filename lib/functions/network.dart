@@ -644,7 +644,7 @@ Future<SubtitleDownload> downloadExternalSubtitle(
 
 Future<List<DCVASearchEntry>> fetchMovieTVForStreamDCVA(String api) async {
   DCVASearch dcvaStream;
-  print(api);
+  debugPrint(api);
   try {
     var res = await retryOptionsStream.retry(
       (() => http.get(Uri.parse(api), headers: {'User-Agent': BROWSER_USER_AGENT}).timeout(timeOutStream)),
@@ -667,7 +667,7 @@ Future<List<DCVASearchEntry>> fetchMovieTVForStreamDCVA(String api) async {
 
 Future<List<DCVAInfoEntries>> getMovieTVStreamEpisodesDCVA(String api) async {
   DCVAInfo dcvaInfo;
-  print(api);
+  debugPrint(api);
   try {
     var res = await retryOptionsStream.retry(
       (() => http.get(Uri.parse(api), headers: {'User-Agent': BROWSER_USER_AGENT}).timeout(timeOutStream)),
@@ -693,7 +693,7 @@ Future<DCVAStreamSources> getMovieTVStreamLinksAndSubsDCVA(String api) async {
   DCVAStreamSources dcvaVideoSources;
   int tries = 3;
   dynamic decodeRes;
-  print(api);
+  debugPrint(api);
   try {
     dynamic res;
     while (tries > 0) {
@@ -807,7 +807,7 @@ Future<CaffeineAPIStreamSources> getCaffeineAPILinks(String api) async {
   CaffeineAPIStreamSources fqAPIStreamSources;
   int tries = 3;
   dynamic decodeRes;
-  print(api);
+  debugPrint(api);
   try {
     dynamic res;
     while (tries > 0) {
