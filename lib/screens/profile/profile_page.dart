@@ -416,72 +416,78 @@ class _ProfilePageState extends State<ProfilePage> {
 
                     // ── Settings list ────────────────────────────────────
                     const SizedBox(height: 24),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: elevated,
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: border, width: 1),
-                      ),
-                      child: ListView.separated(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: settingdata.length,
-                        separatorBuilder: (_, __) => Divider(
-                          height: 1,
-                          color: border,
-                          indent: 56,
-                          endIndent: 16,
-                        ),
-                        itemBuilder: (context, i) {
-                          return InkWell(
-                            onTap: settingdata[i].onTap,
+                    Builder(
+                      builder: (context) {
+                        final showActivateTv = appDep.isFeatureEnabled('toggle_tv_activate_button', defaultValue: true);
+                        final filteredSettings = settingdata.where((item) => showActivateTv || item.tital != tr("pair_tv")).toList();
+                        return Container(
+                          decoration: BoxDecoration(
+                            color: elevated,
                             borderRadius: BorderRadius.circular(16),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 14),
-                              child: Row(
-                                children: [
-                                  SvgPicture.asset(
-                                    settingdata[i].iconImage,
-                                    colorFilter: ColorFilter.mode(
-                                      textPrim,
-                                      BlendMode.srcIn,
-                                    ),
-                                    height: 22,
-                                  ),
-                                  const SizedBox(width: 14),
-                                  Expanded(
-                                    child: Text(
-                                      settingdata[i].tital,
-                                      style: TextStyle(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w600,
-                                        color: textPrim,
-                                        fontFamily: 'PoppinsSB',
-                                      ),
-                                    ),
-                                  ),
-                                  if (settingdata[i].subTital != null)
-                                    Text(
-                                      '${settingdata[i].subTital}',
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w600,
-                                        color: textSec,
-                                      ),
-                                    ),
-                                  const SizedBox(width: 8),
-                                  Icon(
-                                    Icons.arrow_forward_ios_rounded,
-                                    size: 14,
-                                    color: textTert,
-                                  ),
-                                ],
-                              ),
+                            border: Border.all(color: border, width: 1),
+                          ),
+                          child: ListView.separated(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: filteredSettings.length,
+                            separatorBuilder: (_, __) => Divider(
+                              height: 1,
+                              color: border,
+                              indent: 56,
+                              endIndent: 16,
                             ),
-                          );
-                        },
-                      ),
+                            itemBuilder: (context, i) {
+                              return InkWell(
+                                onTap: filteredSettings[i].onTap,
+                                borderRadius: BorderRadius.circular(16),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 14),
+                                  child: Row(
+                                    children: [
+                                      SvgPicture.asset(
+                                        filteredSettings[i].iconImage,
+                                        colorFilter: ColorFilter.mode(
+                                          textPrim,
+                                          BlendMode.srcIn,
+                                        ),
+                                        height: 22,
+                                      ),
+                                      const SizedBox(width: 14),
+                                      Expanded(
+                                        child: Text(
+                                          filteredSettings[i].tital,
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w600,
+                                            color: textPrim,
+                                            fontFamily: 'PoppinsSB',
+                                          ),
+                                        ),
+                                      ),
+                                      if (filteredSettings[i].subTital != null)
+                                        Text(
+                                          '${filteredSettings[i].subTital}',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w600,
+                                            color: textSec,
+                                          ),
+                                        ),
+                                      const SizedBox(width: 8),
+                                      Icon(
+                                        Icons.arrow_forward_ios_rounded,
+                                        size: 14,
+                                        color: textTert,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        );
+                      }
                     ),
 
                     // ── Logout ───────────────────────────────────────────

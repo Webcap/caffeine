@@ -265,7 +265,7 @@ class AppDependencyProvider extends ChangeNotifier {
   }
 
   bool _enableADS = true;
-  bool get enableADS => getFlag<bool>(
+  bool get enableADS => getFlag<bool>('simulate_ads', false) || getFlag<bool>(
         'ads_enabled',
         getFlag<bool>('enable_ads',
             getFlag<bool>('global_ads', _enableADS)));
@@ -277,7 +277,7 @@ class AppDependencyProvider extends ChangeNotifier {
   }
 
   bool _enableOTTADS = true;
-  bool get enableOTTADS => getFlag<bool>('ott_ads_enabled', _enableOTTADS);
+  bool get enableOTTADS => enableADS && getFlag<bool>('ott_ads_enabled', _enableOTTADS);
   set enableOTTADS(bool value) {
     _enableOTTADS = value;
     notifyListeners();
