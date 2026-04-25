@@ -90,6 +90,8 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
 
   Map<String, String> _currentSources = {};
   List<CaffeinePlayerSubtitlesSource> _currentSubs = [];
+  CaffeinePlayerSubtitlesSource? _currentSubtitleSource;
+  bool _isSearchingSubtitles = false;
   final int _retryProviderIndex = 0;
   bool _isRetrying = false;
 
@@ -656,29 +658,52 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => SubtitleSelectionSheet(
-        subtitles: _currentSubs,
-        controller: _betterPlayerController,
-        onSubtitleSelected: (sub) {
-          if (sub == null) {
-            _betterPlayerController.player.setSubtitleTrack(mk.SubtitleTrack.no());
-          } else {
-            _betterPlayerController.setSubtitleSource(sub);
-          }
-        },
-        onSearchPressed: () async {
-          final langCode = await showModalBottomSheet<String>(
-            context: context,
-            isScrollControlled: true,
-            backgroundColor: Colors.transparent,
-            builder: (context) => const LanguagePickerSheet(),
-          );
+      builder: (context) => StatefulBuilder(builder: (context, setSheetState) {
+        return SubtitleSelectionSheet(
+          subtitles: _currentSubs,
+          selectedSubtitle: _currentSubtitleSource,
+          controller: _betterPlayerController,
+          isLoading: _isSearchingSubtitles,
+          onSubtitleSelected: (sub) {
+            if (mounted) {
+              setState(() {
+                _currentSubtitleSource = sub;
+              });
+            }
+            if (sub == null) {
+              _betterPlayerController.player
+                  .setSubtitleTrack(mk.SubtitleTrack.no());
+            } else {
+              _betterPlayerController.setSubtitleSource(sub);
+            }
+          },
+          onSearchPressed: () async {
+            final langCode = await showModalBottomSheet<String>(
+              context: context,
+              isScrollControlled: true,
+              backgroundColor: Colors.transparent,
+              builder: (context) => const LanguagePickerSheet(),
+            );
 
-          if (langCode != null) {
-            _searchMoreSubtitles(langCode);
-          }
-        },
-      ),
+            if (langCode != null) {
+              if (mounted) {
+                setSheetState(() {
+                  _isSearchingSubtitles = true;
+                });
+              }
+              try {
+                await _searchMoreSubtitles(langCode);
+              } finally {
+                if (mounted) {
+                  setSheetState(() {
+                    _isSearchingSubtitles = false;
+                  });
+                }
+              }
+            }
+          },
+        );
+      }),
     );
   }
 
@@ -713,9 +738,17 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
             );
 
             if (download.link != null) {
+              final langName = supportedLanguages
+                  .firstWhere((l) => l.languageCode == langCode,
+                      orElse: () => SubLanguages(
+                          languageName: langCode,
+                          languageCode: langCode,
+                          englishName: langCode))
+                  .languageName;
+
               newExternalSubs.add(
                 CaffeinePlayerSubtitlesSource(
-                  name: "${subData.attr?.language ?? langCode} ($fileId)",
+                  name: "$langName ($fileId)",
                   urls: [download.link!],
                 ),
               );

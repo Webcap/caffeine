@@ -8,6 +8,7 @@ class SubtitleSelectionSheet extends StatefulWidget {
   final CaffeinePlayerController controller;
   final VoidCallback onSearchPressed;
   final Function(CaffeinePlayerSubtitlesSource?) onSubtitleSelected;
+  final bool isLoading;
 
   const SubtitleSelectionSheet({
     super.key,
@@ -16,6 +17,7 @@ class SubtitleSelectionSheet extends StatefulWidget {
     required this.controller,
     required this.onSearchPressed,
     required this.onSubtitleSelected,
+    this.isLoading = false,
   });
 
   @override
@@ -23,6 +25,14 @@ class SubtitleSelectionSheet extends StatefulWidget {
 }
 
 class _SubtitleSelectionSheetState extends State<SubtitleSelectionSheet> {
+  CaffeinePlayerSubtitlesSource? _selectedSubtitle;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedSubtitle = widget.selectedSubtitle;
+  }
+
   @override
   Widget build(BuildContext context) {
     // final currentOffset = (widget.controller.betterPlayerSubtitlesSource?.offset ?? 0) / 1000;
@@ -71,30 +81,58 @@ class _SubtitleSelectionSheetState extends State<SubtitleSelectionSheet> {
                 _buildSubtitleTile(
                   context,
                   title: tr("off"),
-                  isSelected: widget.selectedSubtitle == null,
+                  isSelected: _selectedSubtitle == null,
                   onTap: () {
                     widget.onSubtitleSelected(null);
-                    if (mounted) Navigator.of(context).pop();
+                    setState(() {
+                      _selectedSubtitle = null;
+                    });
+                    if (mounted) Navigator.pop(context);
                   },
                 ),
-                ...widget.subtitles.map((sub) => _buildSubtitleTile(
-                      context,
-                      title: sub.name ?? tr("unknown"),
-                      isSelected: widget.selectedSubtitle == sub,
-                      onTap: () {
-                        widget.onSubtitleSelected(sub);
-                        if (mounted) Navigator.of(context).pop();
-                      },
-                    )),
+                ...widget.subtitles.map((sub) {
+                  final parts = (sub.name ?? "").split(" (");
+                  final title = parts[0];
+                  final subtitle = parts.length > 1
+                      ? parts[1].replaceAll(")", "")
+                      : null;
+
+                  return _buildSubtitleTile(
+                    context,
+                    title: title,
+                    subtitle: subtitle != null ? "ID: $subtitle" : null,
+                    isSelected: _selectedSubtitle == sub,
+                    onTap: () {
+                      widget.onSubtitleSelected(sub);
+                      setState(() {
+                        _selectedSubtitle = sub;
+                      });
+                      if (mounted) Navigator.pop(context);
+                    },
+                  );
+                }),
                 const Divider(),
                 _buildSubtitleTile(
                   context,
-                  title: tr("search_more_subtitles"),
-                  icon: Icons.search,
-                  onTap: () {
-                    if (mounted) Navigator.of(context).pop();
-                    widget.onSearchPressed();
-                  },
+                  title: widget.isLoading
+                      ? tr("searching") + "..."
+                      : tr("search_more_subtitles"),
+                  icon: widget.isLoading ? null : Icons.search,
+                  trailing: widget.isLoading
+                      ? const SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.grey,
+                          ),
+                        )
+                      : null,
+                  onTap: widget.isLoading
+                      ? () {}
+                      : () {
+                          widget.onSearchPressed();
+                        },
                 ),
               ],
             ),
@@ -176,8 +214,10 @@ class _SubtitleSelectionSheetState extends State<SubtitleSelectionSheet> {
   Widget _buildSubtitleTile(
     BuildContext context, {
     required String title,
+    String? subtitle,
     bool isSelected = false,
     IconData? icon,
+    Widget? trailing,
     required VoidCallback onTap,
   }) {
     return InkWell(
@@ -197,14 +237,35 @@ class _SubtitleSelectionSheetState extends State<SubtitleSelectionSheet> {
             ),
             const SizedBox(width: 16),
             Expanded(
-              child: Text(
-                title,
-                style: TextStyle(
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                  color: isSelected ? Theme.of(context).primaryColor : null,
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontWeight:
+                          isSelected ? FontWeight.bold : FontWeight.normal,
+                      color: isSelected ? Theme.of(context).primaryColor : null,
+                    ),
+                  ),
+                  if (subtitle != null)
+                    Text(
+                      subtitle,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: isSelected
+                            ? Theme.of(context).primaryColor.withValues(alpha: 0.7)
+                            : Colors.grey,
+                      ),
+                    ),
+                ],
               ),
             ),
+            if (trailing != null) ...[
+              const SizedBox(width: 16),
+              trailing,
+            ],
           ],
         ),
       ),
