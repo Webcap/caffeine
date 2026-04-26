@@ -87,6 +87,7 @@ Future<void> appInitialize() async {
     await Supabase.initialize(
       url: supabaseUrl,
       anonKey: supabaseAnonKey,
+      authFlowType: AuthFlowType.pkce,
       debug: false,
       authOptions: FlutterAuthClientOptions(
         localStorage: SecureLocalStorage(),
@@ -214,7 +215,8 @@ void runAppWithFlavor() {
     if (error is AuthApiException &&
         error.code == 'refresh_token_already_used') {
       debugPrint(
-          '[Auth] 🔑 Session stale (refresh token used elsewhere). User signed out.');
+          '[Auth] 🔑 Session stale (refresh token used elsewhere). User signed out naturally.');
+      // Supabase 2.x handles clearing the session automatically when this error occurs
       return;
     }
 

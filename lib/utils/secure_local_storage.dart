@@ -33,9 +33,15 @@ class SecureLocalStorage extends LocalStorage {
   @override
   Future<String?> accessToken() async {
     try {
-      return await _secureStorage.read(key: _supabaseSecureKey);
+      final session = await _secureStorage.read(key: _supabaseSecureKey);
+      if (session != null) {
+        debugPrint('[Auth] 📥 Session read successfully from Secure Storage');
+      }
+      return session;
     } catch (e) {
-      debugPrint('[Auth] ⚠️ Error reading from secure storage: $e');
+      debugPrint('[Auth] ❌ CRITICAL: Error reading from secure storage: $e');
+      // On some Android devices, encryption keys can be lost. 
+      // We return null so Supabase knows it needs to re-auth rather than hanging.
       return null;
     }
   }
@@ -44,8 +50,9 @@ class SecureLocalStorage extends LocalStorage {
   Future<void> persistSession(String persistSessionString) async {
     try {
       await _secureStorage.write(key: _supabaseSecureKey, value: persistSessionString);
+      debugPrint('[Auth] 💾 Session persisted to Secure Storage');
     } catch (e) {
-      debugPrint('[Auth] ⚠️ Error writing to secure storage: $e');
+      debugPrint('[Auth] ❌ CRITICAL: Error writing to secure storage: $e');
     }
   }
 
@@ -53,6 +60,7 @@ class SecureLocalStorage extends LocalStorage {
   Future<void> removePersistedSession() async {
     try {
       await _secureStorage.delete(key: _supabaseSecureKey);
+      debugPrint('[Auth] 🗑️ Session removed from Secure Storage');
     } catch (e) {
       debugPrint('[Auth] ⚠️ Error removing from secure storage: $e');
     }
@@ -61,7 +69,8 @@ class SecureLocalStorage extends LocalStorage {
   @override
   Future<bool> hasAccessToken() async {
     try {
-      return await _secureStorage.containsKey(key: _supabaseSecureKey);
+      final exists = await _secureStorage.containsKey(key: _supabaseSecureKey);
+      return exists;
     } catch (e) {
       debugPrint('[Auth] ⚠️ Error checking secure storage key: $e');
       return false;

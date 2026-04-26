@@ -57,20 +57,20 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void _waitForAuthThenRoute() {
-    // If no injected stream, check for an in-memory session first (fast path).
-    if (widget.authStream == null) {
-      final session = Supabase.instance.client.auth.currentSession;
-      if (session != null) {
-        debugPrint('[Splash] ⚡ Immediate session found, routing to dash');
-        _navigate(authenticated: true);
-        return;
-      }
+    // Check for an in-memory session first (fast path).
+    // This is critical for avoiding a flash of the login screen.
+    final currentSession = Supabase.instance.client.auth.currentSession;
+    if (currentSession != null) {
+      debugPrint('[Splash] ⚡ Immediate session found, routing to dash');
+      _navigate(authenticated: true);
+      return;
     }
 
     // Start a fallback timer so we never hang forever.
     _fallbackTimer = Timer(_kAuthTimeout, () {
-      debugPrint('[Splash] ⏱ Auth timeout — routing to login');
-      _navigate(authenticated: false);
+      debugPrint('[Splash] ⏱ Auth timeout — checking current session one last time');
+      final finalCheck = Supabase.instance.client.auth.currentSession;
+      _navigate(authenticated: finalCheck != null);
     });
 
     _authSub = _effectiveStream.listen(
@@ -78,18 +78,18 @@ class _SplashScreenState extends State<SplashScreen> {
         final event = data.event;
         final session = data.session;
         debugPrint('[Splash] 🔄 Auth event received: $event');
+        
+        // We only navigate on specific events that indicate a terminal state for the splash screen
         if (event == AuthChangeEvent.initialSession ||
             event == AuthChangeEvent.signedIn ||
-            event == AuthChangeEvent.signedOut) {
+            event == AuthChangeEvent.signedOut ||
+            event == AuthChangeEvent.userUpdated) {
           _navigate(authenticated: session != null);
         }
       },
       onError: (e) {
         debugPrint('[Splash] ⚠️ Auth stream error: $e');
-        final cached = widget.authStream == null
-            ? Supabase.instance.client.auth.currentSession
-            : null;
-        _navigate(authenticated: cached != null);
+        _navigate(authenticated: Supabase.instance.client.auth.currentSession != null);
       },
     );
   }
