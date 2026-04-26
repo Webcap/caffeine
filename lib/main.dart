@@ -87,9 +87,9 @@ Future<void> appInitialize() async {
     await Supabase.initialize(
       url: supabaseUrl,
       anonKey: supabaseAnonKey,
-      authFlowType: AuthFlowType.pkce,
       debug: false,
       authOptions: FlutterAuthClientOptions(
+        authFlowType: AuthFlowType.pkce,
         localStorage: SecureLocalStorage(),
       ),
     );
