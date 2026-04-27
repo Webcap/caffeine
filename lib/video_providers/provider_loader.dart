@@ -34,7 +34,7 @@ class ProviderLoader {
       switch (providerCode) {
         case 'vidlink':
         case 'vixsrc':
-        case 'vidsrc':
+        case 'vidsrcsu':
           return await _loadMovieFlixAPIMulti(
             movieId: movieId,
             flixApiUrl: flixApiUrl,
@@ -143,7 +143,7 @@ class ProviderLoader {
       switch (providerCode) {
         case 'vidlink':
         case 'vixsrc':
-        case 'vidsrc':
+        case 'vidsrcsu':
           return await _loadTVFlixAPIMulti(
             tvId: tvId,
             seasonNumber: seasonNumber,

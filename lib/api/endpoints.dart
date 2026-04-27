@@ -441,14 +441,14 @@ class Endpoints {
   /// FlixQuest Scraper API - https://github.com/BeamlakAschalew/flixquest-scraper
   /// Providers: vixsrc, vidsrc, vidzee, uhdmovies, showbox, 4khdhub
   static String getFlixQuestStreamMovie(String baseUrl, String tmdbId,
-      [String provider = 'vidsrc', String language = 'en', String country = 'US']) {
+      [String provider = 'vidsrcsu', String language = 'en', String country = 'US']) {
     final base = baseUrl.endsWith('/') ? baseUrl : '$baseUrl/';
     return '$base$provider/stream-movie?tmdbId=$tmdbId&language=$language&country=$country';
   }
 
   static String getFlixQuestStreamTV(
       String baseUrl, String tmdbId, int season, int episode,
-      [String provider = 'vidsrc', String language = 'en', String country = 'US']) {
+      [String provider = 'vidsrcsu', String language = 'en', String country = 'US']) {
     final base = baseUrl.endsWith('/') ? baseUrl : '$baseUrl/';
     return '$base$provider/stream-tv?tmdbId=$tmdbId&season=$season&episode=$episode&language=$language&country=$country';
   }
