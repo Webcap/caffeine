@@ -11,6 +11,7 @@ import 'package:reelriot/utils/config_api.dart';
 import 'package:reelriot/utils/routes/app_pages.dart';
 import 'package:reelriot/utils/theme/theme_data.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:reelriot/widgets/outage_overlay.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
@@ -94,6 +95,14 @@ class _CaffeineState extends State<Caffeine>
             theme: Styles.themeData(
                 appThemeMode: settingsProvider.appTheme,
                 context: context),
+            builder: (context, child) {
+              return Stack(
+                children: [
+                  if (child != null) child,
+                  const OutageOverlay(),
+                ],
+              );
+            },
           );
         },
       ),

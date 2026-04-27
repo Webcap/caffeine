@@ -23,6 +23,7 @@ import 'package:reelriot/services/analytics_service.dart';
 import 'package:reelriot/utils/config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:reelriot/services/outage_service.dart';
 import 'package:reelriot/utils/constant.dart';
 import 'package:reelriot/utils/secure_local_storage.dart';
 
@@ -160,6 +161,9 @@ Future<void> appInitialize() async {
 
   // Async cleanup of update files (non-blocking)
   unawaited(cleanupUpdateFiles());
+
+  // Start API health monitoring
+  OutageService.instance.start();
 }
 
 /// Non-critical fetches run after first frame to improve perceived startup.
