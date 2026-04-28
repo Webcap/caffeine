@@ -310,19 +310,6 @@ class _PlayerSettingsState extends State<PlayerSettings> {
               child: Column(
                 children: [
                   _Tile(
-                    icon: FontAwesomeIcons.expand,
-                    title: tr("auto_full_screen"),
-                    textPrim: textPrim,
-                    textSec: textSec,
-                    trailing: StyledSwitch(
-                      value: sv.defaultViewMode,
-                      onChanged: (v) => setState(() => sv.defaultViewMode = v),
-                      activeColor: _Design.primary,
-                      textSec: textSec,
-                    ),
-                  ),
-                  const _TileDivider(),
-                  _Tile(
                     icon: FontAwesomeIcons.rotateRight,
                     title: tr("seek_second"),
                     textPrim: textPrim,

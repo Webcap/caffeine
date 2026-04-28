@@ -141,7 +141,6 @@ Future<void> appInitialize() async {
   await settingsProvider.getSeekDuration();
   await settingsProvider.getMaxBufferDuration();
   await settingsProvider.getVideoResolution();
-  await settingsProvider.getViewMode();
   await settingsProvider.getSubtitleSize();
   await settingsProvider.getForegroundSubtitleColor();
   await settingsProvider.getBackgroundSubtitleColor();

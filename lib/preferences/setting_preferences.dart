@@ -103,15 +103,6 @@ class SettingsPreferences {
   }
 
 
-  static const DEFAULT_FULL_SCREEN = 'default_full_screen';
-  Future<void> setDefaultFullScreen(bool mode) async {
-    sharedPrefsSingleton.setBool(DEFAULT_FULL_SCREEN, mode);
-  }
-
-  Future<bool> autoFullScreen() async {
-    return sharedPrefsSingleton.getBool(DEFAULT_FULL_SCREEN) ?? true;
-  }
-
   static const SUBTITLE_FOREGROUND_COLOR = 'subtitle_foreground_color';
   Future<void> setSubtitleForeground(String color) async {
     sharedPrefsSingleton.setString(SUBTITLE_FOREGROUND_COLOR, color);

@@ -13,14 +13,12 @@ class LivePlayer extends StatefulWidget {
   const LivePlayer(
       {required this.videoUrl,
       required this.colors,
-      required this.autoFullScreen,
       required this.channelName,
       required this.referrer,
       required this.userAgent,
       super.key});
   final String videoUrl;
   final List<Color> colors;
-  final bool autoFullScreen;
   final String channelName;
   final String referrer;
   final String userAgent;

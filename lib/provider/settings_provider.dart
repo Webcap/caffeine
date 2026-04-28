@@ -41,10 +41,6 @@ class SettingsProvider with ChangeNotifier {
   int _defaultVideoResolution = 0;
   int get defaultVideoResolution => _defaultVideoResolution;
 
-
-  bool _defaultViewMode = true;
-  bool get defaultViewMode => _defaultViewMode;
-
   String _subtitleForegroundColor = Colors.white.toString();
   String get subtitleForegroundColor => _subtitleForegroundColor;
 
@@ -148,15 +144,7 @@ class SettingsProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> getViewMode() async {
-    defaultViewMode = await _settingsPreferences.autoFullScreen();
-  }
 
-  set defaultViewMode(bool value) {
-    _defaultViewMode = value;
-    _settingsPreferences.setDefaultFullScreen(value);
-    notifyListeners();
-  }
 
   // Future<void> getMinBufferDuration() async {
   //   defaultMinBufferDuration = await videoPlayerPreferences.getMinBuffer();
