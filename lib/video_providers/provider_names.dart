@@ -2,7 +2,6 @@ class ProviderNames {
   /// Supported providers - caffeine-api scraper (vixsrc) first, then others
   static List<VideoProvider> providers = [
     VideoProvider(fullName: 'VidLink', codeName: 'vidlink'),
-    VideoProvider(fullName: 'Vixsrc', codeName: 'vixsrc'),
     VideoProvider(fullName: 'VidSrc.su', codeName: 'vidsrcsu'),
     VideoProvider(fullName: 'Goku', codeName: 'goku'),
     VideoProvider(fullName: 'Sflix', codeName: 'sflix'),
@@ -16,14 +15,10 @@ class ProviderNames {
   /// Add new providers here and in caffeine-api scraper registry to include them in the status check.
   static const checkableCodeNames = {
     'vidlink',
-    'vixsrc',
     'vidsrcsu',
     'goku',
     'sflix',
     'himovies',
-    'animekai',
-    'animepahe',
-    'hianime',
   };
 }
 
