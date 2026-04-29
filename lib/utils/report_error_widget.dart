@@ -41,14 +41,14 @@ class ReportErrorWidget extends StatelessWidget {
                     child: ElevatedButton(
                         onPressed: () async {
                           await launchUrl(
-                              Uri.parse("mailto:solox312@gmail.com"),
+                              Uri.parse("https://discord.gg/fzq9krEa"),
                               mode: LaunchMode.externalApplication);
                         },
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            const Icon(FontAwesomeIcons.telegram),
+                            const Icon(FontAwesomeIcons.discord, color: Color(0xFF5865F2)),
                             const SizedBox(
                               width: 10,
                             ),

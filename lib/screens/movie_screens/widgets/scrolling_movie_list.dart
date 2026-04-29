@@ -13,6 +13,8 @@ import 'package:reelriot/utils/config.dart';
 import 'package:reelriot/widgets/shimmer_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:reelriot/utils/constant.dart';
+import 'package:reelriot/models/ad.dart';
+import 'package:reelriot/widgets/native_ad_poster_card.dart';
 
 class ScrollingMovies extends StatefulWidget {
   final String api, title;
@@ -169,9 +171,30 @@ class ScrollingMoviesState extends State<ScrollingMovies>
                       child: ListView.builder(
                         controller: _scrollController,
                         physics: const BouncingScrollPhysics(),
-                        itemCount: moviesList!.length,
+                        itemCount: (() {
+                          final appDep = Provider.of<AppDependencyProvider>(context, listen: false);
+                          final ads = appDep.initialAds.where((a) => a.matchesPlacement('poster')).toList();
+                          return moviesList!.length + (ads.isNotEmpty ? 1 : 0);
+                        })(),
                         scrollDirection: Axis.horizontal,
                         itemBuilder: (BuildContext context, int index) {
+                          final appDep = Provider.of<AppDependencyProvider>(context, listen: false);
+                          final posterAds = appDep.initialAds.where((a) => a.matchesPlacement('poster')).toList();
+                          
+                          // Decide ad position based on row title
+                          int adPos = 5; // Default for others
+                          if (widget.title.toLowerCase().contains('trending')) adPos = 3;
+                          if (widget.title.toLowerCase().contains('popular')) adPos = 1;
+
+                          if (posterAds.isNotEmpty && index == adPos) {
+                            return NativeAdPosterCard(ad: posterAds.first);
+                          }
+
+                          final movieIndex = (posterAds.isNotEmpty && index > adPos) ? index - 1 : index;
+                          if (movieIndex >= moviesList!.length) return const SizedBox.shrink();
+                          
+                          final movie = moviesList![movieIndex];
+
                           return Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: GestureDetector(
@@ -180,9 +203,9 @@ class ScrollingMoviesState extends State<ScrollingMovies>
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) => MovieDetailPage(
-                                            movie: moviesList![index],
+                                            movie: movie,
                                             heroId:
-                                                '${moviesList![index].id}-${widget.title}-${widget.discoverType}-$index')));
+                                                '${movie.id}-${widget.title}-${widget.discoverType}-$index')));
                               },
                               child: SizedBox(
                                 width: 100,
@@ -192,7 +215,7 @@ class ScrollingMoviesState extends State<ScrollingMovies>
                                       flex: 6,
                                       child: Hero(
                                         tag:
-                                            '${moviesList![index].id}-${widget.title}-${widget.discoverType}-$index',
+                                            '${movie.id}-${widget.title}-${widget.discoverType}-$index',
                                         child: Material(
                                           type: MaterialType.transparency,
                                           child: Stack(
@@ -201,7 +224,7 @@ class ScrollingMoviesState extends State<ScrollingMovies>
                                               ClipRRect(
                                                 borderRadius:
                                                     BorderRadius.circular(8.0),
-                                                child: moviesList![index]
+                                                child: movie
                                                             .posterPath ==
                                                         null
                                                     ? Image.asset(
@@ -224,8 +247,7 @@ class ScrollingMoviesState extends State<ScrollingMovies>
                                                                     700),
                                                         fadeInCurve:
                                                             Curves.easeIn,
-                                                        imageUrl: moviesList![
-                                                                        index]
+                                                        imageUrl: movie
                                                                     .posterPath ==
                                                                 null
                                                             ? ''
@@ -235,8 +257,7 @@ class ScrollingMoviesState extends State<ScrollingMovies>
                                                                     isProxyEnabled,
                                                                     context) +
                                                                 imageQuality +
-                                                                moviesList![
-                                                                        index]
+                                                                movie
                                                                     .posterPath!,
                                                         imageBuilder: (context,
                                                                 imageProvider) =>
@@ -291,7 +312,7 @@ class ScrollingMoviesState extends State<ScrollingMovies>
                                                       const Icon(
                                                         Icons.star_rounded,
                                                       ),
-                                                      Text(moviesList![index]
+                                                      Text(movie
                                                           .voteAverage!
                                                           .toStringAsFixed(1))
                                                     ],
@@ -308,7 +329,7 @@ class ScrollingMoviesState extends State<ScrollingMovies>
                                       child: Padding(
                                         padding: const EdgeInsets.all(8.0),
                                         child: Text(
-                                          moviesList![index].title!,
+                                          movie.title!,
                                           maxLines: 2,
                                           textAlign: TextAlign.center,
                                           overflow: TextOverflow.ellipsis,

@@ -16,6 +16,8 @@ import 'package:reelriot/screens/movie_screens/movie_details.dart';
 import 'package:reelriot/utils/config.dart';
 import 'package:reelriot/widgets/shimmer_widget.dart';
 import 'package:provider/provider.dart';
+import 'package:reelriot/models/ad.dart';
+import 'package:reelriot/widgets/native_ad_banner.dart';
 
 class DiscoverMovies extends StatefulWidget {
   const DiscoverMovies(
@@ -140,8 +142,24 @@ class DiscoverMoviesState extends State<DiscoverMovies>
                       ),
                       itemBuilder:
                           (BuildContext context, int index, int pageViewIndex) {
+                        final appDep = Provider.of<AppDependencyProvider>(context, listen: false);
+                        final heroAds = appDep.initialAds.where((a) => a.matchesPlacement('hero')).toList();
+                        final hasAd = heroAds.isNotEmpty;
+                        
+                        // Inject ad at Index 1
+                        if (hasAd && index == 1) {
+                          return NativeAdBanner(
+                            ad: heroAds.first,
+                            type: NativeAdBannerType.hero,
+                          );
+                        }
+
+                        // Shift movies if ad is present
+                        final movieIndex = (hasAd && index > 1) ? index - 1 : index;
+                        final movie = moviesList![movieIndex];
+
                         final heroTag =
-                            '${moviesList![index].id}-${widget.discoverType}-$index-$pageViewIndex';
+                            '${movie.id}-${widget.discoverType}-$index-$pageViewIndex';
                         return Container(
                           child: GestureDetector(
                             onTap: () {
@@ -149,7 +167,7 @@ class DiscoverMoviesState extends State<DiscoverMovies>
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => MovieDetailPage(
-                                          movie: moviesList![index],
+                                          movie: movie,
                                           heroId: heroTag)));
                             },
                             child: Hero(
@@ -160,7 +178,7 @@ class DiscoverMoviesState extends State<DiscoverMovies>
                                   cacheManager: cacheProp(),
                                   preset: CachePreset.posterLarge,
                                   imageUrl:
-                                      moviesList![index].posterPath == null
+                                      movie.posterPath == null
                                           ? ''
                                           : buildImageUrl(
                                                   tmdbBaseImageUrl,
@@ -168,7 +186,7 @@ class DiscoverMoviesState extends State<DiscoverMovies>
                                                   isProxyEnabled,
                                                   context) +
                                               imageQuality +
-                                              moviesList![index].posterPath!,
+                                              movie.posterPath!,
                                   themeMode: themeMode,
                                   placeholder: (context, url) =>
                                       discoverImageShimmer(themeMode),
@@ -183,7 +201,11 @@ class DiscoverMoviesState extends State<DiscoverMovies>
                           ),
                         );
                       },
-                      itemCount: moviesList!.length,
+                      itemCount: (() {
+                        final appDep = Provider.of<AppDependencyProvider>(context, listen: false);
+                        final hasAd = appDep.initialAds.any((a) => a.matchesPlacement('hero'));
+                        return moviesList!.length + (hasAd ? 1 : 0);
+                      })(),
                     ),
         ),
       ],

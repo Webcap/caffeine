@@ -95,6 +95,7 @@ flutter:
     - assets/ca/
     - assets/translations/
     - assets/images/
+    - assets/images/simulated/
     - assets/images/profiles/
     - assets/images/country_flags/
     - assets/icons/

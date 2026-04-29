@@ -5,6 +5,8 @@ import 'package:reelriot/models/live_tv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../preferences/app_dependency_preferences.dart';
 import '../services/ad_service.dart';
+import '../models/ad.dart';
+import '../utils/flavor_config.dart';
 
 import '../services/analytics_service.dart';
 
@@ -402,6 +404,34 @@ class AppDependencyProvider extends ChangeNotifier {
   List<FeaturedEvent> _featuredEvents = [];
   List<FeaturedEvent> get featuredEvents => _featuredEvents;
 
+  List<Ad> _initialAds = [];
+  List<Ad> get initialAds {
+    final simulate = getFlag<bool>('simulate_ads', false);
+    final isDev = kDebugMode || (FlavorConfig.instance.flavor == Flavor.dev);
+
+    if (simulate && isDev) {
+      return Ad.getSimulatedAds();
+    }
+    return _initialAds;
+  }
+
+  Future<void> fetchAds() async {
+    try {
+      final supabase = Supabase.instance.client;
+      final response = await supabase
+          .from('sponsorships')
+          .select()
+          .eq('is_active', true)
+          .order('priority', ascending: false);
+
+      _initialAds = (response as List).map((e) => Ad.fromJson(e)).toList();
+      debugPrint('Fetched ${_initialAds.length} native ads from Supabase');
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error fetching native ads: $e');
+    }
+  }
+
   Future<void> fetchSportsStreams() async {
     try {
       final supabase = Supabase.instance.client;
@@ -471,6 +501,10 @@ class AppDependencyProvider extends ChangeNotifier {
     _enableGoogleSignIn = await _prefs.getEnableGoogleSignIn();
     _mixpanelToken = await _prefs.getMixpanelToken();
     _displayPremiumBanner = await _prefs.getDisplayPremiumBanner();
+    
+    // Fetch native ads in background
+    fetchAds();
+    
     notifyListeners();
   }
 }

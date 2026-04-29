@@ -8,6 +8,7 @@ import 'package:reelriot/screens/movie_screens/widgets/movie_detail_quick_info.d
 import 'package:reelriot/screens/movie_screens/widgets/movie_details_options.dart';
 import 'package:reelriot/widgets/watch_now_button.dart';
 import 'package:provider/provider.dart';
+import 'package:reelriot/widgets/native_ad_banner.dart';
 
 // ── Design tokens (design.json) ─────────────────────────────────────────────
 class _C {
@@ -114,6 +115,24 @@ class MovieDetailPageState extends State<MovieDetailPage>
               videosKey: _videosKey,
             ),
           ),
+
+          // ── Native Ultra Banner Ad ──────────────────────────────────
+          if (appDep.enableADS)
+            SliverToBoxAdapter(
+              child: Builder(
+                builder: (context) {
+                  final bannerAds = appDep.initialAds.where((a) => a.matchesPlacement('banner') || a.matchesPlacement('ultra')).toList();
+                  if (bannerAds.isEmpty) return const SizedBox.shrink();
+                  
+                  return NativeAdBanner(
+                    ad: bannerAds.first,
+                    type: NativeAdBannerType.ultra,
+                  );
+                }
+              ),
+            ),
+          
+          const SliverToBoxAdapter(child: SizedBox(height: 40)),
         ],
       ),
     );

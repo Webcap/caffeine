@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:reelriot/utils/version_helper.dart';
 import 'package:reelriot/utils/flavor_config.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 // ─── Design tokens (design.json) ─────────────────────────────────────────────
 class _Design {
@@ -203,21 +204,61 @@ class AboutPage extends StatelessWidget {
 
             const SizedBox(height: 20),
 
-            // Bug notice link
-            GestureDetector(
-              onTap: () {
-                // launchUrl(Uri.parse('https://t.me/'),
-                //     mode: LaunchMode.externalApplication);
-              },
-              child: Text(
-                tr("bug_notice"),
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: _Design.primary,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  decoration: TextDecoration.underline,
-                  decorationColor: _Design.primary,
+            // Discord Card
+            _AboutCard(
+              surface: surface,
+              border: border,
+              child: InkWell(
+                onTap: () {
+                  launchUrl(
+                    Uri.parse('https://discord.gg/fzq9krEa'),
+                    mode: LaunchMode.externalApplication,
+                  );
+                },
+                borderRadius: BorderRadius.circular(_Design.radiusMd),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF5865F2).withValues(alpha: 0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        FontAwesomeIcons.discord,
+                        color: Color(0xFF5865F2),
+                        size: 24,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            tr("report_telegram"),
+                            style: TextStyle(
+                              color: textPrim,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            tr("bug_notice"),
+                            style: TextStyle(
+                              color: textSec,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Icon(
+                      Icons.chevron_right_rounded,
+                      color: textSec.withValues(alpha: 0.5),
+                    ),
+                  ],
                 ),
               ),
             ),
