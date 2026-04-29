@@ -199,7 +199,7 @@ Future<AppUpdateInfo> fetchUpdateInfoFromApi(
       final data = jsonDecode(response.body) as Map<String, dynamic>;
       final info = AppUpdateInfo.fromJson(data);
       
-      debugPrint('[UpdateAPI] Success: latestVersion=${info.latestVersion}, forced=${info.forcedUpdate}');
+      debugPrint('[UpdateAPI] Success: latestVersion=${info.latestVersion}, hash=${identityHashCode(appDependencyProvider)}');
       
       // Update provider so listeners (like the update card) react immediately
       appDependencyProvider.latestVersion = info.latestVersion;

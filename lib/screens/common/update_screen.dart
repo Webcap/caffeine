@@ -4,6 +4,7 @@ import 'package:reelriot/models/update.dart';
 import 'package:reelriot/provider/app_dependency_provider.dart';
 import 'package:reelriot/utils/globals.dart';
 import 'package:reelriot/utils/config.dart';
+import 'package:reelriot/utils/flavor_config.dart';
 import 'package:reelriot/utils/version_utils.dart';
 import 'package:reelriot/utils/config_api.dart';
 import 'package:reelriot/services/file_opener_service.dart';
@@ -123,11 +124,17 @@ class _UpdateScreenState extends State<UpdateScreen> {
       final provider =
           Provider.of<AppDependencyProvider>(context, listen: false);
       final info = await _apiService.fetchUpdateInfo(provider);
-      final dir = await getTemporaryDirectory();
+      
+      Directory? dir;
+      if (Platform.isAndroid) {
+        dir = await getExternalStorageDirectory();
+      }
+      dir ??= await getApplicationSupportDirectory();
+      
       if (!mounted) return;
       setState(() {
         _updateInfo = info;
-        savedDir = dir.path;
+        savedDir = dir!.path;
       });
     } on Exception catch (e) {
       if (!mounted) return;
@@ -442,10 +449,12 @@ class _UpdateScreenState extends State<UpdateScreen> {
     return name;
   }
 
-  void _onDownloadAction(String url) {
-    setState(() {
-      final task = downloadManager.getDownload(url);
-      if (task != null && !task.status.value.isCompleted) {
+  void _onDownloadAction(String url) async {
+    final targetPath = "$savedDir/${_getSafeApkFileName(url)}";
+    final task = downloadManager.getDownload(url);
+    
+    if (task != null && !task.status.value.isCompleted) {
+      setState(() {
         switch (task.status.value) {
           case DownloadStatus.downloading:
             downloadManager.pauseDownload(url);
@@ -456,17 +465,25 @@ class _UpdateScreenState extends State<UpdateScreen> {
           default:
             break;
         }
-      } else {
+      });
+    } else {
+      // Ensure we delete any stale or corrupted file before downloading again
+      final file = File(targetPath);
+      if (await file.exists()) {
+        await file.delete();
+      }
+      
+      setState(() {
         downloadManager
-            .addDownload(url, "$savedDir/${_getSafeApkFileName(url)}")
-            .then((task) {
-          if (task != null) {
-            task.status.addListener(_updateWakelock);
+            .addDownload(url, targetPath)
+            .then((newTask) {
+          if (newTask != null) {
+            newTask.status.addListener(_updateWakelock);
             _updateWakelock();
           }
         });
-      }
-    });
+      });
+    }
   }
 
   Future<void> _onOpenFile(String url) async {
@@ -612,7 +629,7 @@ class _ListItemState extends State<ListItem> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           const Text(
-                            'caffeine v',
+                            'Reelriot',
                             style: TextStyle(
                               color: _UpdateDesign.textPrimary,
                               fontSize: 14,
@@ -812,96 +829,160 @@ class _UpdateBottomState extends State<UpdateBottom> {
     return Consumer<AppDependencyProvider>(
       builder: (context, dep, _) {
         final version = dep.latestVersion;
-        final visible = (ignoreVersion != version) &&
-            version.isNotEmpty &&
-            isUpdateAvailable(currentAppVersion, version);
+        final isSimulated = FlavorConfig.isDev && dep.getFlag<bool>('simulate_update', false);
+        
+        final visible = version.isNotEmpty &&
+            (isSimulated || isUpdateAvailable(currentAppVersion, version)) &&
+            ignoreVersion != version;
 
         if (kDebugMode) {
-          debugPrint('[UpdateBottom] current: $currentAppVersion, latest: $version, ignore: $ignoreVersion, visible: $visible');
+          debugPrint('[UpdateBottom] Hash: ${identityHashCode(dep)}, current: $currentAppVersion, latest: $version, sim: $isSimulated, visible: $visible');
         }
 
-        return Visibility(
-          visible: visible,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-            child: Container(
-              decoration: BoxDecoration(
-                color: _UpdateDesign.bgSurfaceDark,
-                borderRadius: BorderRadius.circular(_UpdateDesign.radiusCard),
-                border: Border.all(color: _UpdateDesign.borderSubtle),
-                boxShadow: _UpdateDesign.shadowCard,
+        return AnimatedSwitcher(
+          duration: const Duration(milliseconds: 600),
+          transitionBuilder: (Widget child, Animation<double> animation) {
+            final offsetAnimation = Tween<Offset>(
+              begin: const Offset(0.0, 1.0),
+              end: Offset.zero,
+            ).animate(CurvedAnimation(
+              parent: animation,
+              curve: Curves.easeOutQuart,
+            ));
+            return FadeTransition(
+              opacity: animation,
+              child: SlideTransition(
+                position: offsetAnimation,
+                child: child,
               ),
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    tr("update_available"),
-                    style: const TextStyle(
-                      color: _UpdateDesign.textPrimary,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
+            );
+          },
+          child: !visible 
+            ? const SizedBox.shrink(key: ValueKey('hide'))
+            : Padding(
+                key: const ValueKey('show'),
+                padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                child: Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [
+                        Color(0xFF1A1A24),
+                        Color(0xFF101016),
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
                     ),
-                    maxLines: 2,
-                    textAlign: TextAlign.center,
+                    borderRadius: BorderRadius.circular(24),
+                    border: Border.all(color: Colors.white.withOpacity(0.08)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.6),
+                        blurRadius: 24,
+                        offset: const Offset(0, 12),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 8),
-                  VersionDisplay(
-                    version: version,
-                    style: const TextStyle(
-                        color: _UpdateDesign.textSecondary, fontSize: 14),
-                  ),
-                  const SizedBox(height: 16),
-                  Row(
+                  child: Stack(
                     children: [
-                      Expanded(
-                        child: SizedBox(
-                          height: _UpdateDesign.ctaHeight,
-                          child: FilledButton(
-                            style: FilledButton.styleFrom(
-                              backgroundColor: _UpdateDesign.primaryCta,
-                              foregroundColor: _UpdateDesign.textPrimary,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(
-                                      _UpdateDesign.radiusPill)),
-                              elevation: 0,
-                            ),
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) =>
-                                      const UpdateScreen(isForced: false),
-                                ),
-                              );
-                            },
-                            child: Text(tr("goto_update"),
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.w600, fontSize: 15)),
-                          ),
+                      Positioned(
+                        top: 8,
+                        right: 8,
+                        child: IconButton(
+                          icon: const Icon(Icons.close_rounded, color: Colors.white54, size: 20),
+                          onPressed: () {
+                            setState(() {
+                              ignoreVersion = version;
+                            });
+                            checkAction(true, version);
+                          },
+                          splashRadius: 20,
                         ),
                       ),
-                      const SizedBox(width: 12),
-                      TextButton(
-                        onPressed: () {
-                          setState(() {
-                            ignoreVersion = version;
-                          });
-                          checkAction(true, version);
-                        },
-                        child: Text(
-                          tr("disable_notification_version"),
-                          style: const TextStyle(
-                              color: _UpdateDesign.textSecondary, fontSize: 13),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 24, 20, 24),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: _UpdateDesign.primaryCta.withOpacity(0.15),
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(
+                                Icons.system_update_rounded,
+                                color: _UpdateDesign.primaryCta,
+                                size: 28,
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(right: 20.0),
+                                    child: Text(
+                                      tr("update_available"),
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.bold,
+                                        letterSpacing: 0.2,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 6),
+                                  VersionDisplay(
+                                    version: version,
+                                    style: TextStyle(
+                                      color: Colors.white.withOpacity(0.6), 
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 20),
+                                  SizedBox(
+                                    height: 44,
+                                    width: double.infinity,
+                                    child: FilledButton(
+                                      style: FilledButton.styleFrom(
+                                        backgroundColor: _UpdateDesign.primaryCta,
+                                        foregroundColor: Colors.white,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(14),
+                                        ),
+                                        elevation: 0,
+                                      ),
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (_) => const UpdateScreen(isForced: false),
+                                          ),
+                                        );
+                                      },
+                                      child: Text(
+                                        tr("goto_update"),
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold, 
+                                          fontSize: 14,
+                                          letterSpacing: 0.3,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
                   ),
-                ],
+                ),
               ),
-            ),
-          ),
         );
       },
     );
