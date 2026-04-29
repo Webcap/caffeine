@@ -10,6 +10,7 @@ import 'package:reelriot/services/file_opener_service.dart';
 import 'package:reelriot/services/update_api_service.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_download_manager/flutter_download_manager.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:open_file/open_file.dart';
@@ -430,6 +431,17 @@ class _UpdateScreenState extends State<UpdateScreen> {
     }
   }
 
+  String _getSafeApkFileName(String url) {
+    String name = downloadManager.getFileNameFromUrl(url);
+    if (name.contains('?')) {
+      name = name.split('?').first;
+    }
+    if (!name.toLowerCase().endsWith('.apk')) {
+      name += '.apk';
+    }
+    return name;
+  }
+
   void _onDownloadAction(String url) {
     setState(() {
       final task = downloadManager.getDownload(url);
@@ -446,8 +458,7 @@ class _UpdateScreenState extends State<UpdateScreen> {
         }
       } else {
         downloadManager
-            .addDownload(
-                url, "$savedDir/${downloadManager.getFileNameFromUrl(url)}")
+            .addDownload(url, "$savedDir/${_getSafeApkFileName(url)}")
             .then((task) {
           if (task != null) {
             task.status.addListener(_updateWakelock);
@@ -459,7 +470,7 @@ class _UpdateScreenState extends State<UpdateScreen> {
   }
 
   Future<void> _onOpenFile(String url) async {
-    final path = "$savedDir/${downloadManager.getFileNameFromUrl(url)}";
+    final path = "$savedDir/${_getSafeApkFileName(url)}";
     final file = File(path);
     debugPrint('[Update] Attempting to open file: $path');
 
@@ -538,7 +549,7 @@ class _UpdateScreenState extends State<UpdateScreen> {
 
   void _onDeleteFile(String url) {
     setState(() {
-      final path = "$savedDir/${downloadManager.getFileNameFromUrl(url)}";
+      final path = "$savedDir/${_getSafeApkFileName(url)}";
       final file = File(path);
       if (file.existsSync()) {
         try {
@@ -805,6 +816,10 @@ class _UpdateBottomState extends State<UpdateBottom> {
             version.isNotEmpty &&
             isUpdateAvailable(currentAppVersion, version);
 
+        if (kDebugMode) {
+          debugPrint('[UpdateBottom] current: $currentAppVersion, latest: $version, ignore: $ignoreVersion, visible: $visible');
+        }
+
         return Visibility(
           visible: visible,
           child: Padding(
@@ -838,29 +853,50 @@ class _UpdateBottomState extends State<UpdateBottom> {
                         color: _UpdateDesign.textSecondary, fontSize: 14),
                   ),
                   const SizedBox(height: 16),
-                  SizedBox(
-                    height: _UpdateDesign.ctaHeight,
-                    child: FilledButton(
-                      style: FilledButton.styleFrom(
-                        backgroundColor: _UpdateDesign.primaryCta,
-                        foregroundColor: _UpdateDesign.textPrimary,
-                        shape: RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.circular(_UpdateDesign.radiusPill)),
-                        elevation: 0,
-                      ),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const UpdateScreen(isForced: false),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: SizedBox(
+                          height: _UpdateDesign.ctaHeight,
+                          child: FilledButton(
+                            style: FilledButton.styleFrom(
+                              backgroundColor: _UpdateDesign.primaryCta,
+                              foregroundColor: _UpdateDesign.textPrimary,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      _UpdateDesign.radiusPill)),
+                              elevation: 0,
+                            ),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) =>
+                                      const UpdateScreen(isForced: false),
+                                ),
+                              );
+                            },
+                            child: Text(tr("goto_update"),
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.w600, fontSize: 15)),
                           ),
-                        );
-                      },
-                      child: Text(tr("goto_update"),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      TextButton(
+                        onPressed: () {
+                          setState(() {
+                            ignoreVersion = version;
+                          });
+                          checkAction(true, version);
+                        },
+                        child: Text(
+                          tr("disable_notification_version"),
                           style: const TextStyle(
-                              fontWeight: FontWeight.w600, fontSize: 15)),
-                    ),
+                              color: _UpdateDesign.textSecondary, fontSize: 13),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),

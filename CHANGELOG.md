@@ -1,6 +1,20 @@
 # Changelog
 
-## [2026.04.23] - 2026-04-23
+## [2026.04.28] - 2026-04-28
+
+### Added
+- **New Stream Provider**: Integrated **VidSrc.su** (vidsrcsu) as the primary fallback provider, significantly improving stream availability when default sources are down.
+
+### Changed
+- **Provider Failover Prioritization**: Reordered the provider precedence to prioritize `VidLink` and `VidSrc.su` as the top two sources.
+- **Provider Registry Cleanup**: Removed defunct and unreliable providers including `vixsrc`, `zoro`, `dramacool`, and `viewasian` to prevent playback hangs.
+- **Status Check Optimization**: Removed placeholder anime providers (`animekai`, `animepahe`, `hianime`) from the server status loop for a more accurate dashboard.
+
+### Optimized
+- **App Size Reduction**: Reduced the application installation footprint by approximately **5.2 MB**.
+- **Asset Hygiene**: Purged legacy `.old` backup files and removed 15 redundant Poppins font variants that were not being utilized by the application.
+- **Icon Tree-Shaking**: Improved build-time icon tree-shaking for `SocialIcons.ttf`, reducing font asset size by 55%.
+
 
 ### Changed
 - **Complete Rebranding**: Fully transitioned the application identity from "Caffeine" to **Reelriot**.

@@ -199,6 +199,8 @@ Future<AppUpdateInfo> fetchUpdateInfoFromApi(
       final data = jsonDecode(response.body) as Map<String, dynamic>;
       final info = AppUpdateInfo.fromJson(data);
       
+      debugPrint('[UpdateAPI] Success: latestVersion=${info.latestVersion}, forced=${info.forcedUpdate}');
+      
       // Update provider so listeners (like the update card) react immediately
       appDependencyProvider.latestVersion = info.latestVersion;
       appDependencyProvider.isForcedUpdate = info.forcedUpdate;
@@ -207,9 +209,11 @@ Future<AppUpdateInfo> fetchUpdateInfoFromApi(
       appDependencyProvider.updateChangelog = info.updateChangelog ?? '';
       
       return info;
+    } else {
+      debugPrint('[UpdateAPI] Error: HTTP ${response.statusCode}');
     }
   } catch (e) {
-    debugPrint('Error fetching updates from new API: $e. Falling back to /config fields.');
+    debugPrint('[UpdateAPI] Error fetching updates from new API: $e. Falling back to /config fields.');
   }
 
   // Fallback to the old /config monolithic response if the new one fails.

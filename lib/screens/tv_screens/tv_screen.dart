@@ -12,6 +12,7 @@ import 'package:reelriot/screens/tv_screens/widgets/tv_widgets.dart';
 import 'package:reelriot/provider/app_dependency_provider.dart';
 import 'package:reelriot/widgets/banner_ad_widget.dart';
 import 'package:reelriot/widgets/featured_match_card.dart';
+import 'package:reelriot/screens/common/update_screen.dart';
 import 'package:provider/provider.dart';
 
 class MainTVDisplay extends StatefulWidget {
@@ -48,6 +49,7 @@ class _MainTVDisplayState extends State<MainTVDisplay> {
             includeAdult: Provider.of<SettingsProvider>(context).isAdult,
             discoverType: 'discover',
           ),
+          const UpdateBottom(),
           if (inProgress.isNotEmpty)
             ScrollingRecentEpisodes(
               episodesList: inProgress,
