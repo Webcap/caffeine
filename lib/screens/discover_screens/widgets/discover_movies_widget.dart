@@ -160,17 +160,16 @@ class DiscoverMoviesState extends State<DiscoverMovies>
 
                         final heroTag =
                             '${movie.id}-${widget.discoverType}-$index-$pageViewIndex';
-                        return Container(
-                          child: GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => MovieDetailPage(
-                                          movie: movie,
-                                          heroId: heroTag)));
-                            },
-                            child: Hero(
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => MovieDetailPage(
+                                        movie: movie,
+                                        heroId: heroTag)));
+                          },
+                          child: Hero(
                               tag: heroTag,
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(8.0),
@@ -197,7 +196,6 @@ class DiscoverMoviesState extends State<DiscoverMovies>
                                   ),
                                 ),
                               ),
-                            ),
                           ),
                         );
                       },

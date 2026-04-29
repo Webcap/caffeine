@@ -874,10 +874,10 @@ class _UpdateBottomState extends State<UpdateBottom> {
                       end: Alignment.bottomRight,
                     ),
                     borderRadius: BorderRadius.circular(24),
-                    border: Border.all(color: Colors.white.withOpacity(0.08)),
+                    border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.6),
+                        color: Colors.black.withValues(alpha: 0.6),
                         blurRadius: 24,
                         offset: const Offset(0, 12),
                       ),
@@ -907,7 +907,7 @@ class _UpdateBottomState extends State<UpdateBottom> {
                             Container(
                               padding: const EdgeInsets.all(12),
                               decoration: BoxDecoration(
-                                color: _UpdateDesign.primaryCta.withOpacity(0.15),
+                                color: _UpdateDesign.primaryCta.withValues(alpha: 0.15),
                                 shape: BoxShape.circle,
                               ),
                               child: const Icon(
@@ -938,7 +938,7 @@ class _UpdateBottomState extends State<UpdateBottom> {
                                   VersionDisplay(
                                     version: version,
                                     style: TextStyle(
-                                      color: Colors.white.withOpacity(0.6), 
+                                      color: Colors.white.withValues(alpha: 0.6), 
                                       fontSize: 13,
                                     ),
                                   ),

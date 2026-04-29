@@ -498,24 +498,25 @@ class _SettingsState extends State<Settings> {
                     borderRadius: BorderRadius.circular(9999),
                     child: InkWell(
                       onTap: () async {
-                        await clearCache().then((v) =>
-                            GlobalMethods.showCustomScaffoldMessage(
-                                SnackBar(
-                                    duration:
-                                        const Duration(milliseconds: 1500),
-                                    content: Text(v
-                                        ? tr("cleared_cache")
-                                        : tr("cache_doesnt_exist"))),
-                                context));
-                        await clearTempCache().then((v) =>
-                            GlobalMethods.showCustomScaffoldMessage(
-                                SnackBar(
-                                    duration:
-                                        const Duration(milliseconds: 1500),
-                                    content: Text(v
-                                        ? tr("cleared_cache")
-                                        : tr("cache_doesnt_exist"))),
-                                context));
+                        final v1 = await clearCache();
+                        if (!mounted) return;
+                        GlobalMethods.showCustomScaffoldMessage(
+                            SnackBar(
+                                duration: const Duration(milliseconds: 1500),
+                                content: Text(v1
+                                    ? tr("cleared_cache")
+                                    : tr("cache_doesnt_exist"))),
+                            context);
+
+                        final v2 = await clearTempCache();
+                        if (!mounted) return;
+                        GlobalMethods.showCustomScaffoldMessage(
+                            SnackBar(
+                                duration: const Duration(milliseconds: 1500),
+                                content: Text(v2
+                                    ? tr("cleared_cache")
+                                    : tr("cache_doesnt_exist"))),
+                            context);
                       },
                       borderRadius: BorderRadius.circular(9999),
                       child: Padding(
