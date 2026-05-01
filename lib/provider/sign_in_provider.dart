@@ -37,7 +37,7 @@ class SignInProvider extends ChangeNotifier {
   String? get email => _email;
 
   String? _name;
-  String? get name => _name;
+  String? get name => _name ?? _username;
 
   String? _imageUrl;
   String? get imageUrl => _imageUrl;

@@ -306,7 +306,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      data['name'] ?? 'caffeineUser123',
+                      data['name'] ?? data['username'] ?? 'caffeineUser123',
                       style: TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.w700,
