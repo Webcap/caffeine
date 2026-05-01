@@ -8,12 +8,14 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:reelriot/services/auth_service.dart';
 
 class SplashScreen extends StatefulWidget {
   /// Override in tests to drive routing without a real Supabase connection.
   final Stream<AuthState>? authStream;
+  final AuthService? authService;
 
-  const SplashScreen({super.key, this.authStream});
+  const SplashScreen({super.key, this.authStream, this.authService});
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
@@ -35,8 +37,11 @@ class _SplashScreenState extends State<SplashScreen> {
   Timer? _fallbackTimer;
   bool _navigated = false;
 
+  AuthService get _effectiveAuthService =>
+      widget.authService ?? AuthService.instance;
+
   Stream<AuthState> get _effectiveStream =>
-      widget.authStream ?? Supabase.instance.client.auth.onAuthStateChange;
+      widget.authStream ?? _effectiveAuthService.authStateChanges;
 
   @override
   void initState() {
@@ -58,8 +63,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   void _waitForAuthThenRoute() {
     // Check for an in-memory session first (fast path).
-    // This is critical for avoiding a flash of the login screen.
-    final currentSession = Supabase.instance.client.auth.currentSession;
+    final currentSession = _effectiveAuthService.currentSession;
     if (currentSession != null) {
       debugPrint('[Splash] ⚡ Immediate session found, routing to dash');
       _navigate(authenticated: true);
@@ -69,7 +73,7 @@ class _SplashScreenState extends State<SplashScreen> {
     // Start a fallback timer so we never hang forever.
     _fallbackTimer = Timer(_kAuthTimeout, () {
       debugPrint('[Splash] ⏱ Auth timeout — checking current session one last time');
-      final finalCheck = Supabase.instance.client.auth.currentSession;
+      final finalCheck = _effectiveAuthService.currentSession;
       _navigate(authenticated: finalCheck != null);
     });
 
@@ -89,7 +93,7 @@ class _SplashScreenState extends State<SplashScreen> {
       },
       onError: (e) {
         debugPrint('[Splash] ⚠️ Auth stream error: $e');
-        _navigate(authenticated: Supabase.instance.client.auth.currentSession != null);
+        _navigate(authenticated: _effectiveAuthService.currentSession != null);
       },
     );
   }

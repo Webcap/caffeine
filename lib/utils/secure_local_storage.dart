@@ -26,7 +26,12 @@ class SecureLocalStorage extends LocalStorage {
         await prefs.remove(_supabaseSecureKey);
       }
     } catch (e) {
-      debugPrint('[Auth] ⚠️ Error migrating legacy token: $e');
+      debugPrint('[Auth] ⚠️ Error during migration or init: $e');
+      // If we can't even initialize, we might need to clear storage
+      if (e.toString().contains('KeyStore')) {
+        debugPrint('[Auth] 🚨 KeyStore corrupted, attempting to clear...');
+        await _secureStorage.deleteAll();
+      }
     }
   }
 
@@ -35,13 +40,18 @@ class SecureLocalStorage extends LocalStorage {
     try {
       final session = await _secureStorage.read(key: _supabaseSecureKey);
       if (session != null) {
-        debugPrint('[Auth] 📥 Session read successfully from Secure Storage');
+        debugPrint('[Auth] 📥 Session recovered from Secure Storage');
       }
       return session;
     } catch (e) {
       debugPrint('[Auth] ❌ CRITICAL: Error reading from secure storage: $e');
-      // On some Android devices, encryption keys can be lost. 
-      // We return null so Supabase knows it needs to re-auth rather than hanging.
+      
+      // On some Android devices, encryption keys can be lost or corrupted. 
+      // If we detect a KeyStore error, we clear it so the next login can work.
+      if (e.toString().contains('KeyStore') || e.toString().contains('BadPaddingException')) {
+        debugPrint('[Auth] 🛡️ Resetting corrupted secure storage...');
+        await _secureStorage.delete(key: _supabaseSecureKey);
+      }
       return null;
     }
   }
@@ -50,9 +60,10 @@ class SecureLocalStorage extends LocalStorage {
   Future<void> persistSession(String persistSessionString) async {
     try {
       await _secureStorage.write(key: _supabaseSecureKey, value: persistSessionString);
-      debugPrint('[Auth] 💾 Session persisted to Secure Storage');
+      debugPrint('[Auth] 💾 Session successfully persisted');
     } catch (e) {
       debugPrint('[Auth] ❌ CRITICAL: Error writing to secure storage: $e');
+      // Fallback: If secure storage is totally broken, we might want to log this to analytics
     }
   }
 
@@ -60,19 +71,18 @@ class SecureLocalStorage extends LocalStorage {
   Future<void> removePersistedSession() async {
     try {
       await _secureStorage.delete(key: _supabaseSecureKey);
-      debugPrint('[Auth] 🗑️ Session removed from Secure Storage');
+      debugPrint('[Auth] 🗑️ Session removed from persistence');
     } catch (e) {
-      debugPrint('[Auth] ⚠️ Error removing from secure storage: $e');
+      debugPrint('[Auth] ⚠️ Error removing session: $e');
     }
   }
 
   @override
   Future<bool> hasAccessToken() async {
     try {
-      final exists = await _secureStorage.containsKey(key: _supabaseSecureKey);
-      return exists;
+      return await _secureStorage.containsKey(key: _supabaseSecureKey);
     } catch (e) {
-      debugPrint('[Auth] ⚠️ Error checking secure storage key: $e');
+      debugPrint('[Auth] ⚠️ Error checking persistence: $e');
       return false;
     }
   }

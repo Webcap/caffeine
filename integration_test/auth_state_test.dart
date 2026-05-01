@@ -20,6 +20,7 @@ import 'package:integration_test/integration_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:reelriot/services/auth_service.dart';
 
 // ─── Mocks ────────────────────────────────────────────────────────────────────
 
@@ -137,6 +138,7 @@ void main() {
   tearDown(() {
     HttpOverrides.global = null;
     Get.reset();
+    AuthService.instance.reset();
   });
 
   // ── Scenario 1: Session persists across restart ───────────────────────────

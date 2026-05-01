@@ -1,3 +1,4 @@
+import 'package:reelriot/services/auth_service.dart';
 import 'package:reelriot/services/analytics_service.dart';
 import 'package:reelriot/controller/bookmark_database_controller.dart';
 import 'package:reelriot/controller/recently_watched_database_controller.dart';
@@ -13,7 +14,8 @@ import 'dart:async';
 
 class SignInProvider extends ChangeNotifier {
   final AppDependencyProvider? appDependencyProvider;
-  final _auth = Supabase.instance.client.auth;
+  final AuthService _authService;
+  final _supabaseAuth = Supabase.instance.client.auth;
   var generator = UsernameGenerator();
 
   bool _isSignedIn = false;
@@ -49,40 +51,33 @@ class SignInProvider extends ChangeNotifier {
   bool? _firstRun;
   bool? get firstRun => _firstRun;
 
-  /// The auth stream to subscribe to. Defaults to the real Supabase stream.
-  /// Override in tests to drive auth events without a real Supabase connection.
-  final Stream<AuthState> _authStream;
-
   StreamSubscription<AuthState>? _authSubscription;
 
   SignInProvider({
     this.appDependencyProvider,
+    AuthService? authService,
     Stream<AuthState>? authStream,
-  }) : _authStream = authStream ?? Supabase.instance.client.auth.onAuthStateChange {
+  }) : _authService = authService ?? AuthService.instance {
+    if (authStream != null) {
+      _authService.authStreamOverride = authStream;
+    }
     _init();
   }
 
   void _init() {
-    // Seed state from any session that is already present in memory (fast path).
-    // Note: Supabase.initialize in main.dart should have already awaited storage loading.
-    final existing = _auth.currentSession;
-    if (existing != null) {
-      debugPrint('[Auth] ⚡ Initial session found in memory: ${existing.user.email}');
-      _applySession(existing);
-    } else {
-       debugPrint('[Auth] ℹ️ No initial session found in memory');
+    // Seed initial state from existing session
+    final session = _authService.currentSession;
+    if (session != null) {
+      _applySession(session);
     }
 
     // Listen reactively to all future auth events.
-    _authSubscription = _authStream.listen(
+    _authSubscription = _authService.authStateChanges.listen(
       (data) {
-         _onAuthEvent(data.event, data.session);
+        _onAuthEvent(data.event, data.session);
       },
       onError: (e) {
-        // Network-level errors (AuthRetryableFetchException) are emitted here.
-        // They do NOT mean the user signed out — just that we couldn't reach
-        // Supabase right now. Log and ignore.
-        debugPrint('[Auth] ⚠️ Auth stream error (network?): $e');
+        debugPrint('[Auth] ⚠️ Auth stream error: $e');
       },
     );
   }
@@ -98,14 +93,14 @@ class SignInProvider extends ChangeNotifier {
         if (session != null) {
           // Fetch fresh user to bypass stale session metadata
           try {
-            final freshUser = await _auth.getUser();
+            final freshUser = await _supabaseAuth.getUser();
             if (freshUser.user != null) {
               _applyUser(freshUser.user!);
             } else {
               _applySession(session);
             }
           } catch (e) {
-            debugPrint('[Auth] ⚠️ Could not fetch fresh user (session expired?): $e');
+            debugPrint('[Auth] ⚠️ Could not fetch fresh user: $e');
             _applySession(session);
           }
           
@@ -123,16 +118,11 @@ class SignInProvider extends ChangeNotifier {
         break;
 
       case AuthChangeEvent.signedOut:
-        // Only treat this as a real sign-out if Supabase has no cached
-        // session left. When a token-refresh fails due to no network,
-        // Supabase fires signedOut but the old session is still valid
-        // locally. In that case, do nothing.
-        // Also added check for _isSignedIn to avoid redundant logouts on startup.
-        if (_auth.currentSession == null && _isSignedIn) {
+        if (_authService.currentSession == null && _isSignedIn) {
           debugPrint('[Auth] 🔑 Real sign-out detected');
           _handleSignOut();
         } else {
-          debugPrint('[Auth] ℹ️ signedOut event ignored — session still present locally or already signed out');
+          debugPrint('[Auth] ℹ️ signedOut event ignored — session still present');
         }
         break;
 
@@ -246,8 +236,7 @@ class SignInProvider extends ChangeNotifier {
     _hasError = false;
     _errorCode = null;
     try {
-      await _auth.signInWithOAuth(OAuthProvider.google);
-      // Auth state is picked up by _onAuthEvent listener — no manual update needed.
+      await _authService.signInWithGoogle();
       notifyListeners();
     } on AuthException catch (e) {
       _hasError = true;
@@ -327,9 +316,7 @@ class SignInProvider extends ChangeNotifier {
   }
 
   Future<void> userSignOut() async {
-    await _auth.signOut();
-    // _handleSignOut will be triggered by the onAuthStateChange listener.
-    // Force it locally too in case the event doesn't fire (e.g. offline).
+    await _authService.signOut();
     _handleSignOut();
   }
 

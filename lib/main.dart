@@ -26,6 +26,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:reelriot/services/outage_service.dart';
 import 'package:reelriot/utils/constant.dart';
 import 'package:reelriot/utils/secure_local_storage.dart';
+import 'package:reelriot/services/auth_service.dart';
 
 class MyHttpOverrides extends HttpOverrides {
   @override
@@ -96,7 +97,10 @@ Future<void> appInitialize() async {
     );
 
     // Verify session recovery
-    final session = Supabase.instance.client.auth.currentSession;
+    final authService = AuthService.instance;
+    await authService.initialize();
+    
+    final session = authService.currentSession;
     final prefs = await SharedPreferences.getInstance();
     final hasUid = prefs.getString('uid') != null;
 
