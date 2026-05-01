@@ -3,6 +3,7 @@ class ProviderNames {
   static List<VideoProvider> providers = [
     VideoProvider(fullName: 'VidLink', codeName: 'vidlink'),
     VideoProvider(fullName: 'VidSrc.su', codeName: 'vidsrcsu'),
+    VideoProvider(fullName: 'VidFun', codeName: 'vidfun'),
     VideoProvider(fullName: 'Goku', codeName: 'goku'),
     VideoProvider(fullName: 'Sflix', codeName: 'sflix'),
     VideoProvider(fullName: 'HiMovies', codeName: 'himovies'),
@@ -16,6 +17,7 @@ class ProviderNames {
   static const checkableCodeNames = {
     'vidlink',
     'vidsrcsu',
+    'vidfun',
     'goku',
     'sflix',
     'himovies',
