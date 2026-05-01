@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
-import 'package:meta/meta.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:reelriot/utils/secure_local_storage.dart';
 
@@ -18,14 +17,10 @@ class AuthService {
   
   /// Override for testing purposes.
   @visibleForTesting
-  Stream<AuthState>? authStreamOverride;
-
-  /// Override for testing purposes.
-  @visibleForTesting
   Session? sessionOverride;
 
   /// Stream of authentication state changes.
-  Stream<AuthState> get authStateChanges => authStreamOverride ?? _supabase.auth.onAuthStateChange;
+  Stream<AuthState> get authStateChanges => _supabase.auth.onAuthStateChange;
 
   /// The currently active session, if any.
   Session? get currentSession => sessionOverride ?? _supabase.auth.currentSession;
@@ -39,7 +34,6 @@ class AuthService {
   /// Reset the service to its initial state.
   @visibleForTesting
   void reset() {
-    authStreamOverride = null;
     sessionOverride = null;
   }
 

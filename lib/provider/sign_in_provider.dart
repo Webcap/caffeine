@@ -56,13 +56,13 @@ class SignInProvider extends ChangeNotifier {
   SignInProvider({
     this.appDependencyProvider,
     AuthService? authService,
-    Stream<AuthState>? authStream,
+    this.authStream,
   }) : _authService = authService ?? AuthService.instance {
-    if (authStream != null) {
-      _authService.authStreamOverride = authStream;
-    }
     _init();
   }
+
+  /// The auth stream to subscribe to. If null, uses the [AuthService] stream.
+  final Stream<AuthState>? authStream;
 
   void _init() {
     // Seed initial state from existing session
@@ -72,7 +72,7 @@ class SignInProvider extends ChangeNotifier {
     }
 
     // Listen reactively to all future auth events.
-    _authSubscription = _authService.authStateChanges.listen(
+    _authSubscription = (authStream ?? _authService.authStateChanges).listen(
       (data) {
         _onAuthEvent(data.event, data.session);
       },
