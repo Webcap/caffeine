@@ -41,7 +41,7 @@ class ReportErrorWidget extends StatelessWidget {
                     child: ElevatedButton(
                         onPressed: () async {
                           await launchUrl(
-                              Uri.parse("https://discord.gg/fzq9krEa"),
+                              Uri.parse("https://discord.gg/3QYKXrwtwM"),
                               mode: LaunchMode.externalApplication);
                         },
                         child: Row(
