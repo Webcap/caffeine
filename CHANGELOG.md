@@ -1,4 +1,18 @@
 # Changelog
+ 
+## [2026.04.29+501] - 2026-05-01
+ 
+### Added
+- **Auth System Overhaul**: Completely rewritten mobile authentication architecture to ensure persistent, long-term sessions.
+- **`AuthService` Integration**: Centralized all authentication logic into a robust, standalone service for improved reliability and testability.
+- **Proactive Session Health Check**: Implemented background session verification to automatically refresh tokens before they expire.
+ 
+### Fixed
+- **Persistent Session Loss**: Resolved the "daily sign-in" issue by hardening the persistence layer and token refresh logic.
+- **Android Keystore Resilience**: Added auto-repair logic to `SecureLocalStorage` to handle and recover from Android-specific encryption failures (e.g., `BadPaddingException`).
+- **Spurious Sign-Outs**: Hardened the auth stream listener to ignore transient network errors that were previously triggering accidental logouts.
+- **Initialization Race Conditions**: Optimized `SplashScreen` and `main.dart` to ensure session recovery is prioritized and verified before routing.
+ 
 
 ## [2026.04.28] - 2026-04-28
 

@@ -9,7 +9,7 @@ import 'package:http/http.dart' as http;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 Future<void> fetchConfigFromApi(
-    AppDependencyProvider appDependencyProvider) async {
+    AppDependencyProvider appDependencyProvider, {bool skipUpdateFields = false}) async {
   try {
     // Provider getter already prefers .env in debug; use it for config fetch.
     final base = appDependencyProvider.caffeineAPIURL.trim().isNotEmpty &&
@@ -74,15 +74,17 @@ Future<void> fetchConfigFromApi(
       });
       setString('streamingServerZoro',
           (v) => appDependencyProvider.streamingServerZoro = v);
-      setBool('forced_update', (v) => appDependencyProvider.isForcedUpdate = v);
-      setString(
-          'latest_version', (v) => appDependencyProvider.latestVersion = v);
-      setString('update_download_url',
-          (v) => appDependencyProvider.updateDownloadUrl = v);
-      setString(
-          'update_store_url', (v) => appDependencyProvider.updateStoreUrl = v);
-      setString(
-          'update_changelog', (v) => appDependencyProvider.updateChangelog = v);
+      if (!skipUpdateFields) {
+        setBool('forced_update', (v) => appDependencyProvider.isForcedUpdate = v);
+        setString(
+            'latest_version', (v) => appDependencyProvider.latestVersion = v);
+        setString('update_download_url',
+            (v) => appDependencyProvider.updateDownloadUrl = v);
+        setString(
+            'update_store_url', (v) => appDependencyProvider.updateStoreUrl = v);
+        setString(
+            'update_changelog', (v) => appDependencyProvider.updateChangelog = v);
+      }
       setString('vidsrc_server', (v) => appDependencyProvider.vidSrcServer = v);
       setString(
           'vidsrcto_server', (v) => appDependencyProvider.vidSrcToServer = v);
@@ -208,6 +210,10 @@ Future<AppUpdateInfo> fetchUpdateInfoFromApi(
       appDependencyProvider.updateStoreUrl = info.updateStoreUrl ?? '';
       appDependencyProvider.updateChangelog = info.updateChangelog ?? '';
       
+      // Still fetch the rest of the config (feature flags, ads, etc.) but skip update fields
+      // to avoid overwriting the fresh info we just got.
+      await fetchConfigFromApi(appDependencyProvider, skipUpdateFields: true);
+      
       return info;
     } else {
       debugPrint('[UpdateAPI] Error: HTTP ${response.statusCode}');
@@ -217,7 +223,7 @@ Future<AppUpdateInfo> fetchUpdateInfoFromApi(
   }
 
   // Fallback to the old /config monolithic response if the new one fails.
-  await fetchConfigFromApi(appDependencyProvider);
+  await fetchConfigFromApi(appDependencyProvider, skipUpdateFields: false);
   final p = appDependencyProvider;
   String? opt(String s) => s.trim().isEmpty ? null : s;
   return AppUpdateInfo(
