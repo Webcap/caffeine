@@ -23,7 +23,7 @@ class AppDependencies {
   static const HIMOVIES_SERVER = "himovies_server";
   static const ANIMEKAI_SERVER = "animekai_server";
   static const HIANIME_SERVER = "hianime_server";
-  static const ENABLE_OTT = "enable_ott";
+  static const ENABLE_LIVE_SPORTS = "enable_live_sports";
   static const DISABLE_REVENUECAT = "disableRevenueCat";
   static const String ENABLE_ANONYMOUS_SIGNIN = 'enable_anonymous_signin';
   static const String ENABLE_GOOGLE_SIGNIN = 'enable_google_signin';
@@ -82,11 +82,11 @@ class AppDependencies {
   }
 
   Future<void> setEnableOtt(bool value) async {
-    sharedPrefsSingleton.setBool(ENABLE_OTT, value);
+    sharedPrefsSingleton.setBool(ENABLE_LIVE_SPORTS, value);
   }
 
   Future<bool> getEnableOtt() async {
-    return sharedPrefsSingleton.getBool(ENABLE_OTT) ?? true;
+    return sharedPrefsSingleton.getBool(ENABLE_LIVE_SPORTS) ?? true;
   }
 
   Future<void> setNewFlixHQUrl(String value) async {

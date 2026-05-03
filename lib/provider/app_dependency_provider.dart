@@ -259,7 +259,7 @@ class AppDependencyProvider extends ChangeNotifier {
   }
 
   bool _displayOTTDrawer = true;
-  bool get displayOTTDrawer => getFlag<bool>('enable_ott', _displayOTTDrawer);
+  bool get displayOTTDrawer => getFlag<bool>('enable_live_sports', _displayOTTDrawer);
   set displayOTTDrawer(bool value) {
     _displayOTTDrawer = value;
     _prefs.setEnableOtt(value);

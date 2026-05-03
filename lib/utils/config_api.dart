@@ -54,7 +54,7 @@ Future<void> fetchConfigFromApi(
       setBool('ott_ads_enabled', (v) => appDependencyProvider.enableOTTADS = v);
       setBool('enable_stream',
           (v) => appDependencyProvider.displayWatchNowButton = v);
-      setBool('enable_ott', (v) => appDependencyProvider.displayOTTDrawer = v);
+      setBool('enable_live_sports', (v) => appDependencyProvider.displayOTTDrawer = v);
       setBool('disable_revenuecat',
           (v) => appDependencyProvider.disableRevenueCat = v);
       setBool('enable_anonymous_signin',
