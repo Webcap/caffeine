@@ -1,7 +1,7 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:retry/retry.dart';
 
-const String tmdbApiBaseUrl = "https://api.themoviedb.org/3";
+String tmdbApiBaseUrl = "https://api.themoviedb.org/3";
 String get tmdbApiKey => dotenv.env['TMDB_API_KEY'] ?? '';
 const tmdbBaseImageUrl = "https://image.tmdb.org/t/p/";
 const String embedBaseMovieUrl =
@@ -28,7 +28,7 @@ const String defaultCaffeineApiUrl = 'https://caffeine.synqholdings.com/';
 
 /// Standard desktop browser User-Agent for scraper compatibility.
 const String browserUserAgent =
-    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML like Gecko) Chrome/120.0.0.0 Safari/537.36';
 
 /// True if [url] is a Vercel preview deployment (e.g. caffeine-xxx-projects.vercel.app).
 bool isCaffeineApiPreviewUrl(String url) {

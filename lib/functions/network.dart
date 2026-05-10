@@ -35,7 +35,7 @@ Future<List<Movie>> fetchMovies(
     String api, bool isProxyEnabled, String proxyUrl) async {
   MovieList movieList;
   try {
-    if (isProxyEnabled && proxyUrl.isNotEmpty) {
+    if (isProxyEnabled && proxyUrl.isNotEmpty && !api.startsWith(proxyUrl)) {
       api = "$proxyUrl?destination=$api";
     }
     var res = await retryOptions.retry(
@@ -55,7 +55,7 @@ Future<List<Movie>> fetchCollectionMovies(
     String api, bool isProxyEnabled, String proxyUrl) async {
   CollectionMovieList collectionMovieList;
   try {
-    if (isProxyEnabled && proxyUrl.isNotEmpty) {
+    if (isProxyEnabled && proxyUrl.isNotEmpty && !api.startsWith(proxyUrl)) {
       api = "$proxyUrl?destination=$api";
     }
     var res = await retryOptions.retry(
@@ -74,7 +74,7 @@ Future fetchCollectionDetails(
     String api, bool isProxyEnabled, String proxyUrl) async {
   CollectionDetails collectionDetails;
   try {
-    if (isProxyEnabled && proxyUrl.isNotEmpty) {
+    if (isProxyEnabled && proxyUrl.isNotEmpty && !api.startsWith(proxyUrl)) {
       api = "$proxyUrl?destination=$api";
     }
     var res = await retryOptions.retry(
@@ -93,7 +93,7 @@ Future<List<Movie>> fetchPersonMovies(
     String api, bool isProxyEnabled, String proxyUrl) async {
   PersonMoviesList personMoviesList;
   try {
-    if (isProxyEnabled && proxyUrl.isNotEmpty) {
+    if (isProxyEnabled && proxyUrl.isNotEmpty && !api.startsWith(proxyUrl)) {
       api = "$proxyUrl?destination=$api";
     }
     var res = await retryOptions.retry(
@@ -112,7 +112,7 @@ Future<Images> fetchImages(
     String api, bool isProxyEnabled, String proxyUrl) async {
   Images images;
   try {
-    if (isProxyEnabled && proxyUrl.isNotEmpty) {
+    if (isProxyEnabled && proxyUrl.isNotEmpty && !api.startsWith(proxyUrl)) {
       api = "$proxyUrl?destination=$api";
     }
     var res = await retryOptions.retry(
@@ -131,7 +131,7 @@ Future<PersonImages> fetchPersonImages(
     String api, bool isProxyEnabled, String proxyUrl) async {
   PersonImages personImages;
   try {
-    if (isProxyEnabled && proxyUrl.isNotEmpty) {
+    if (isProxyEnabled && proxyUrl.isNotEmpty && !api.startsWith(proxyUrl)) {
       api = "$proxyUrl?destination=$api";
     }
     var res = await retryOptions.retry(
@@ -150,7 +150,7 @@ Future<Videos> fetchVideos(
     String api, bool isProxyEnabled, String proxyUrl) async {
   Videos videos;
   try {
-    if (isProxyEnabled && proxyUrl.isNotEmpty) {
+    if (isProxyEnabled && proxyUrl.isNotEmpty && !api.startsWith(proxyUrl)) {
       api = "$proxyUrl?destination=$api";
     }
     var res = await retryOptions.retry(
@@ -169,7 +169,7 @@ Future<Credits> fetchCredits(
     String api, bool isProxyEnabled, String proxyUrl) async {
   Credits credits;
   try {
-    if (isProxyEnabled && proxyUrl.isNotEmpty) {
+    if (isProxyEnabled && proxyUrl.isNotEmpty && !api.startsWith(proxyUrl)) {
       api = "$proxyUrl?destination=$api";
     }
     var res = await retryOptions.retry(
@@ -188,7 +188,7 @@ Future<List<Person>> fetchPerson(
     String api, bool isProxyEnabled, String proxyUrl) async {
   PersonList credits;
   try {
-    if (isProxyEnabled && proxyUrl.isNotEmpty) {
+    if (isProxyEnabled && proxyUrl.isNotEmpty && !api.startsWith(proxyUrl)) {
       api = "$proxyUrl?destination=$api";
     }
     var res = await retryOptions.retry(
@@ -207,7 +207,7 @@ Future<List<Genres>> fetchGenre(
     String api, bool isProxyEnabled, String proxyUrl) async {
   GenreList newGenreList;
   try {
-    if (isProxyEnabled && proxyUrl.isNotEmpty) {
+    if (isProxyEnabled && proxyUrl.isNotEmpty && !api.startsWith(proxyUrl)) {
       api = "$proxyUrl?destination=$api";
     }
     var res = await retryOptions.retry(
@@ -226,7 +226,7 @@ Future<ExternalLinks> fetchSocialLinks(
     String api, bool isProxyEnabled, String proxyUrl) async {
   ExternalLinks externalLinks;
   try {
-    if (isProxyEnabled && proxyUrl.isNotEmpty) {
+    if (isProxyEnabled && proxyUrl.isNotEmpty && !api.startsWith(proxyUrl)) {
       api = "$proxyUrl?destination=$api";
     }
     var res = await retryOptions.retry(
@@ -245,7 +245,7 @@ Future fetchBelongsToCollection(
     String api, bool isProxyEnabled, String proxyUrl) async {
   BelongsToCollection belongsToCollection;
   try {
-    if (isProxyEnabled && proxyUrl.isNotEmpty) {
+    if (isProxyEnabled && proxyUrl.isNotEmpty && !api.startsWith(proxyUrl)) {
       api = "$proxyUrl?destination=$api";
     }
     var res = await retryOptions.retry(
@@ -264,7 +264,7 @@ Future<Moviedetail> fetchMovieDetails(
     String api, bool isProxyEnabled, String proxyUrl) async {
   Moviedetail movieDetails;
   try {
-    if (isProxyEnabled && proxyUrl.isNotEmpty) {
+    if (isProxyEnabled && proxyUrl.isNotEmpty && !api.startsWith(proxyUrl)) {
       api = "$proxyUrl?destination=$api";
     }
     var res = await retryOptions.retry(
@@ -290,7 +290,7 @@ Future<PersonDetails> fetchPersonDetails(
     String api, bool isProxyEnabled, String proxyUrl) async {
   PersonDetails personDetails;
   try {
-    if (isProxyEnabled && proxyUrl.isNotEmpty) {
+    if (isProxyEnabled && proxyUrl.isNotEmpty && !api.startsWith(proxyUrl)) {
       api = "$proxyUrl?destination=$api";
     }
     var res = await retryOptions.retry(
@@ -309,7 +309,7 @@ Future<WatchProviders> fetchWatchProviders(
     String api, String country, bool isProxyEnabled, String proxyUrl) async {
   WatchProviders watchProviders;
   try {
-    if (isProxyEnabled && proxyUrl.isNotEmpty) {
+    if (isProxyEnabled && proxyUrl.isNotEmpty && !api.startsWith(proxyUrl)) {
       api = "$proxyUrl?destination=$api";
     }
     var res = await retryOptions.retry(
@@ -328,7 +328,7 @@ Future<List<TV>> fetchTV(
     String api, bool isProxyEnabled, String proxyUrl) async {
   TVList tvList;
   try {
-    if (isProxyEnabled && proxyUrl.isNotEmpty) {
+    if (isProxyEnabled && proxyUrl.isNotEmpty && !api.startsWith(proxyUrl)) {
       api = "$proxyUrl?destination=$api";
     }
     var res = await retryOptions.retry(
@@ -347,7 +347,7 @@ Future<TVDetails> fetchTVDetails(
     String api, bool isProxyEnabled, String proxyUrl) async {
   TVDetails tvDetails;
   try {
-    if (isProxyEnabled && proxyUrl.isNotEmpty) {
+    if (isProxyEnabled && proxyUrl.isNotEmpty && !api.startsWith(proxyUrl)) {
       api = "$proxyUrl?destination=$api";
     }
     var res = await retryOptions.retry(
@@ -366,7 +366,7 @@ Future<List<TV>> fetchPersonTV(
     String api, bool isProxyEnabled, String proxyUrl) async {
   PersonTVList personTVList;
   try {
-    if (isProxyEnabled && proxyUrl.isNotEmpty) {
+    if (isProxyEnabled && proxyUrl.isNotEmpty && !api.startsWith(proxyUrl)) {
       api = "$proxyUrl?destination=$api";
     }
     var res = await retryOptions.retry(
@@ -384,7 +384,7 @@ Future<List<TV>> fetchPersonTV(
 Future<Movie> getMovie(String api, bool isProxyEnabled, String proxyUrl) async {
   Movie movie;
   try {
-    if (isProxyEnabled && proxyUrl.isNotEmpty) {
+    if (isProxyEnabled && proxyUrl.isNotEmpty && !api.startsWith(proxyUrl)) {
       api = "$proxyUrl?destination=$api";
     }
     var res = await retryOptions.retry(
@@ -402,7 +402,7 @@ Future<Movie> getMovie(String api, bool isProxyEnabled, String proxyUrl) async {
 Future<TV> getTV(String api, bool isProxyEnabled, String proxyUrl) async {
   TV tv;
   try {
-    if (isProxyEnabled && proxyUrl.isNotEmpty) {
+    if (isProxyEnabled && proxyUrl.isNotEmpty && !api.startsWith(proxyUrl)) {
       api = "$proxyUrl?destination=$api";
     }
     var res = await retryOptions.retry(
@@ -845,12 +845,24 @@ Future<FlixAPIMultiResponse> getStreamLinksFlixAPIMulti(String api) async {
   try {
     dynamic res;
     while (tries > 0) {
-      res = await retryOptionsStream.retry(
-        (() => http.get(Uri.parse(api), headers: caffeineApiHeaders).timeout(timeOutStream)),
-        retryIf: (e) => e is SocketException || e is TimeoutException,
-      );
-      decodeRes = jsonDecode(res.body);
+      debugPrint('[Network] fetching $api');
+      debugPrint('[Network] headers: $caffeineApiHeaders');
+      try {
+        res = await retryOptionsStream.retry(
+          (() => http.get(Uri.parse(api), headers: caffeineApiHeaders).timeout(timeOutStream)),
+          retryIf: (e) => e is SocketException || e is TimeoutException,
+        );
+        debugPrint('[Network] Response status: ${res.statusCode}');
+        debugPrint('[Network] Response body: ${res.body}');
+        decodeRes = jsonDecode(res.body);
+      } catch (e) {
+        debugPrint('[Network] Request/Decode failed: $e');
+        --tries;
+        continue;
+      }
+      
       if (decodeRes.containsKey('error') || decodeRes['success'] == false) {
+        debugPrint('[Network] API returned error: ${decodeRes['error'] ?? decodeRes['message'] ?? 'Unknown error'}');
         --tries;
       } else {
         break;

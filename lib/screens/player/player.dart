@@ -246,9 +246,11 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
   }
 
   Future<void> _tryNextProvider() async {
+    debugPrint('[Player] 🔄 _tryNextProvider called. Current: ${widget.currentProviderCode}');
     if (_isRetrying ||
         widget.availableProviders == null ||
         widget.currentProviderCode == null) {
+      debugPrint('[Player] 🔄 Retry aborted: _isRetrying=$_isRetrying, availableProviders=${widget.availableProviders?.length}, currentProviderCode=${widget.currentProviderCode}');
       return;
     }
 
@@ -883,6 +885,19 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
                 controller: _betterPlayerController.videoController,
                 controls: mkv.NoVideoControls,
               ),
+            ),
+            StreamBuilder<bool>(
+              stream: _betterPlayerController.player.stream.buffering,
+              builder: (context, snapshot) {
+                if (snapshot.data == true) {
+                  return const Center(
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                  );
+                }
+                return const SizedBox.shrink();
+              },
             ),
             GlassPlayerControls(
               controller: _betterPlayerController,

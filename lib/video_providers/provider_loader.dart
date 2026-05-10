@@ -192,6 +192,7 @@ class ProviderLoader {
     debugPrint('[ProviderLoader] $provider: fetching $url');
 
     final sources = await getStreamLinksFlixAPIMulti(url);
+    debugPrint('[ProviderLoader] $provider: found ${sources.links?.length ?? 0} links');
 
     if (sources.success && sources.links != null && sources.links!.isNotEmpty) {
       final firstLink = sources.links!.first;

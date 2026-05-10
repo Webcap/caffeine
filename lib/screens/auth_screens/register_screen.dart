@@ -238,13 +238,17 @@ class _SignupScreenState extends State<SignupScreen> {
       );
 
       final uid = res.user?.id;
+      final identities = res.user?.identities;
+
       debugPrint(
-        '[Signup] signUp response – uid=$uid confirmationSentAt=${res.user?.confirmationSentAt}',
+        '[Signup] signUp response – uid=$uid identitiesCount=${identities?.length} confirmationSentAt=${res.user?.confirmationSentAt}',
       );
-      if (uid == null) {
-        debugPrint('[Signup] signUp returned null uid');
+
+      // Check if email already exists (Supabase email enumeration protection returns a fake user with empty identities)
+      if (uid == null || (identities != null && identities.isEmpty)) {
+        debugPrint('[Signup] Registration failed: UID is null or identities is empty (likely email already exists)');
         if (!mounted) return;
-        _globalMethods.authErrorHandle(tr("error_occured"), context);
+        _globalMethods.authErrorHandle(tr("email_exists"), context);
         return;
       }
 

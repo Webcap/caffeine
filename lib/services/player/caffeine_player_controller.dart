@@ -1,6 +1,7 @@
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 import 'package:flutter/material.dart';
+import 'package:reelriot/utils/constant.dart';
 import 'dart:async';
 
 enum CaffeinePlayerEventType {
@@ -69,27 +70,40 @@ class CaffeinePlayerController extends ChangeNotifier {
       _controlsVisibilityStreamController.stream;
 
   void _setupListeners() {
-    _subscriptions.add(player.stream.buffering.listen((isBuffering) {
-      _isBuffering = isBuffering;
-      _emit(
-        isBuffering
-            ? CaffeinePlayerEventType.bufferingStart
-            : CaffeinePlayerEventType.bufferingEnd,
-      );
-    }));
-
     _subscriptions.add(player.stream.completed.listen((completed) {
       if (completed) _emit(CaffeinePlayerEventType.finished);
     }));
 
     _subscriptions.add(player.stream.error.listen((error) {
+      debugPrint('[PlayerController] ❌ Error: $error');
       _emit(CaffeinePlayerEventType.error, message: error);
     }));
 
+    _subscriptions.add(player.stream.buffering.listen((buffering) {
+      debugPrint('[PlayerController] ⏳ Buffering: $buffering');
+      _isBuffering = buffering;
+      _emit(buffering
+          ? CaffeinePlayerEventType.bufferingStart
+          : CaffeinePlayerEventType.bufferingEnd);
+    }));
+
     _subscriptions.add(player.stream.playing.listen((playing) {
+      debugPrint('[PlayerController] ▶️ Playing: $playing');
       _emit(
         playing ? CaffeinePlayerEventType.play : CaffeinePlayerEventType.pause,
       );
+    }));
+
+    _subscriptions.add(player.stream.duration.listen((duration) {
+      debugPrint('[PlayerController] 🕒 Duration: $duration');
+    }));
+
+    _subscriptions.add(player.stream.width.listen((width) {
+      debugPrint('[PlayerController] 📏 Width: $width');
+    }));
+
+    _subscriptions.add(player.stream.height.listen((height) {
+      debugPrint('[PlayerController] 📏 Height: $height');
     }));
 
     _subscriptions.add(player.stream.position.listen((position) {
@@ -138,12 +152,19 @@ class CaffeinePlayerController extends ChangeNotifier {
     Duration startAt = Duration.zero,
     List<CaffeinePlayerSubtitlesSource>? subtitles,
   }) async {
-    if (headers != null && headers.isNotEmpty) {
-      final headerString = headers.entries
-          .map((e) => "${e.key}: ${e.value}")
-          .join("\r\n");
-      (player.platform as dynamic).setProperty('http-header-fields', headerString);
+    debugPrint('[PlayerController] setDataSource: $url');
+    
+    // Inject a Chrome user agent to prevent Cloudflare bot blocking on the proxy!
+    final finalHeaders = Map<String, String>.from(headers ?? {});
+    if (!finalHeaders.keys.any((k) => k.toLowerCase() == 'user-agent')) {
+      finalHeaders['User-Agent'] = browserUserAgent;
     }
+
+    // Since our normalized browserUserAgent is now comma-free, we no longer need 
+    // to escape it for libmpv. This also avoids passing backslashes to our proxy.
+    final safeHeaders = finalHeaders;
+
+    debugPrint('[PlayerController] headers: $safeHeaders');
 
     if (liveStream) {
       // Stability optimizations for live streams
@@ -183,7 +204,10 @@ class CaffeinePlayerController extends ChangeNotifier {
     }
 
     await player.open(
-      Media(url),
+      Media(
+        url,
+        httpHeaders: safeHeaders,
+      ),
       play: false,
     );
 

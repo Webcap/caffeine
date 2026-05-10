@@ -85,8 +85,8 @@ class AppDependencyProvider extends ChangeNotifier {
   String _caffeineAPIUrl = caffeineApiUrl;
   String get caffeineAPIURL {
     if (kDebugMode) {
-      final env = caffeineApiUrl.trim();
-      if (env.isNotEmpty && !env.contains('caffeine.synqholdings.com')) {
+      final env = constants.caffeineApiUrl.trim();
+      if (env.isNotEmpty) {
         return env;
       }
     }
@@ -224,6 +224,9 @@ class AppDependencyProvider extends ChangeNotifier {
   set tmdbProxy(String value) {
     _tmdbProxy = value;
     _prefs.setTmdbProxy(value);
+    if (value.isNotEmpty) {
+      constants.tmdbApiBaseUrl = value;
+    }
     notifyListeners();
   }
 
@@ -494,6 +497,9 @@ class AppDependencyProvider extends ChangeNotifier {
     _animekaiServer = await _prefs.getAnimekaiServer();
     _hianimeServer = await _prefs.getHianimeServer();
     _tmdbProxy = await _prefs.getTmdbProxy();
+    if (_tmdbProxy.isNotEmpty) {
+      constants.tmdbApiBaseUrl = _tmdbProxy;
+    }
     _caffieneLogo = await _prefs.getCaffieneLogo();
     _displayOTTDrawer = await _prefs.getEnableOtt();
     _disableRevenueCat = await _prefs.getDisableRevenueCat();
