@@ -167,7 +167,7 @@ class _HeroPhotoViewState extends State<HeroPhotoView> {
                     children: [
                       const Padding(
                         padding: EdgeInsets.only(right: 8.0),
-                        child: Icon(FontAwesomeIcons.solidFloppyDisk),
+                        child: FaIcon(FontAwesomeIcons.solidFloppyDisk),
                       ),
                       Text(tr("download")),
                     ],

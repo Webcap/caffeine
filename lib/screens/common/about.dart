@@ -224,7 +224,7 @@ class AboutPage extends StatelessWidget {
                         color: const Color(0xFF5865F2).withValues(alpha: 0.1),
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(
+                      child: const FaIcon(
                         FontAwesomeIcons.discord,
                         color: Color(0xFF5865F2),
                         size: 24,

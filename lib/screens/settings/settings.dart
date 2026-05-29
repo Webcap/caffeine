@@ -352,7 +352,7 @@ class _SettingsState extends State<Settings> {
                 ),
                 const _Divider(),
                 _SettingsTile(
-                  icon: FontAwesomeIcons.networkWired,
+                  icon: Icons.lan_rounded,
                   title: tr("use_proxy"),
                   subtitle: tr("enable_warning"),
                   textPrim: textPrim,
@@ -426,7 +426,7 @@ class _SettingsState extends State<Settings> {
               border: border,
               children: [
                 _SettingsTile(
-                  icon: FontAwesomeIcons.language,
+                  icon: Icons.translate_rounded,
                   title: tr("app_language"),
                   textPrim: textPrim,
                   textSec: textSec,
@@ -448,7 +448,7 @@ class _SettingsState extends State<Settings> {
                 ),
                 const _Divider(),
                 _SettingsTile(
-                  icon: FontAwesomeIcons.earthAmericas,
+                  icon: Icons.public_rounded,
                   title: tr("watch_country"),
                   textPrim: textPrim,
                   textSec: textSec,
@@ -489,7 +489,7 @@ class _SettingsState extends State<Settings> {
                 ),
                 const _Divider(),
                 _SettingsTile(
-                  icon: FontAwesomeIcons.eraser,
+                  icon: Icons.cleaning_services_rounded,
                   title: tr("clear_cache"),
                   textPrim: textPrim,
                   textSec: textSec,
@@ -499,7 +499,7 @@ class _SettingsState extends State<Settings> {
                     child: InkWell(
                       onTap: () async {
                         final v1 = await clearCache();
-                        if (!mounted) return;
+                        if (!context.mounted) return;
                         GlobalMethods.showCustomScaffoldMessage(
                             SnackBar(
                                 duration: const Duration(milliseconds: 1500),
@@ -509,7 +509,7 @@ class _SettingsState extends State<Settings> {
                             context);
 
                         final v2 = await clearTempCache();
-                        if (!mounted) return;
+                        if (!context.mounted) return;
                         GlobalMethods.showCustomScaffoldMessage(
                             SnackBar(
                                 duration: const Duration(milliseconds: 1500),

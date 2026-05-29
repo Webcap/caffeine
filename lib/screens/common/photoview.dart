@@ -161,7 +161,7 @@ class _HeroPhotoViewState extends State<HeroPhotoView> {
                     '${currentIndex + 1}',
                     themeMode);
               },
-              icon: const Icon(FontAwesomeIcons.download),
+              icon: const FaIcon(FontAwesomeIcons.download),
             )
           ]),
       body: Stack(alignment: Alignment.bottomRight, children: [

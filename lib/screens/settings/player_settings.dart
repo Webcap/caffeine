@@ -310,7 +310,7 @@ class _PlayerSettingsState extends State<PlayerSettings> {
               child: Column(
                 children: [
                   _Tile(
-                    icon: FontAwesomeIcons.rotateRight,
+                    icon: Icons.forward_10_rounded,
                     title: tr("seek_second"),
                     textPrim: textPrim,
                     textSec: textSec,
@@ -326,7 +326,7 @@ class _PlayerSettingsState extends State<PlayerSettings> {
                   ),
                   const _TileDivider(),
                   _Tile(
-                    icon: FontAwesomeIcons.spinner,
+                    icon: Icons.slow_motion_video_rounded,
                     title: tr("buffer_amount"),
                     textPrim: textPrim,
                     textSec: textSec,
@@ -372,7 +372,7 @@ class _PlayerSettingsState extends State<PlayerSettings> {
                   ),
                   const _TileDivider(),
                   _Tile(
-                    icon: FontAwesomeIcons.fileVideo,
+                    icon: Icons.video_settings_rounded,
                     title: tr("video_resolution"),
                     textPrim: textPrim,
                     textSec: textSec,
@@ -388,7 +388,7 @@ class _PlayerSettingsState extends State<PlayerSettings> {
                   ),
                   const _TileDivider(),
                   _Tile(
-                    icon: FontAwesomeIcons.solidClock,
+                    icon: Icons.schedule_rounded,
                     title: tr("player_time_display"),
                     textPrim: textPrim,
                     textSec: textSec,
@@ -404,7 +404,7 @@ class _PlayerSettingsState extends State<PlayerSettings> {
                   ),
                   const _TileDivider(),
                   _Tile(
-                    icon: FontAwesomeIcons.language,
+                    icon: Icons.translate_rounded,
                     title: tr("default_audio_language"),
                     textPrim: textPrim,
                     textSec: textSec,

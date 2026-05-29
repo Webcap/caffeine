@@ -91,101 +91,97 @@ class TVEpisodeImagesDisplayState extends State<TVEpisodeImagesDisplay> {
                   ),
                 ],
               ),
-        Container(
-          child: SizedBox(
-            width: double.infinity,
-            height: 180,
-            child: tvImages == null
-                ? detailImageShimmer(themeMode)
-                : CarouselSlider(
-                    options: CarouselOptions(
-                        disableCenter: false,
-                        viewportFraction: 0.8,
-                        enlargeCenterPage: false,
-                        autoPlay: true,
-                        enableInfiniteScroll: false),
-                    items: [
-                      Container(
-                        child: Stack(
-                          alignment: AlignmentDirectional.bottomStart,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(8.0),
-                                child: tvImages!.still!.isEmpty
-                                    ? Image.asset('assets/images/na_logo.png',
-                                        fit: BoxFit.cover,
-                                        width: double.infinity)
-                                    : CachedNetworkImage(
-                                        cacheManager: cacheProp(),
-                                        fadeOutDuration:
-                                            const Duration(milliseconds: 300),
-                                        fadeOutCurve: Curves.easeOut,
-                                        fadeInDuration:
-                                            const Duration(milliseconds: 700),
-                                        fadeInCurve: Curves.easeIn,
-                                        imageUrl: buildImageUrl(
-                                                tmdbBaseImageUrl,
-                                                proxyUrl,
-                                                isProxyEnabled,
-                                                context) +
-                                            imageQuality +
-                                            tvImages!.still![0].stillPath!,
-                                        imageBuilder:
-                                            (context, imageProvider) =>
-                                                GestureDetector(
-                                          onTap: () {
-                                            Navigator.push(context,
-                                                MaterialPageRoute(
-                                                    builder: (context) {
-                                              return HeroPhotoView(
-                                                stills: tvImages!.still!,
-                                                name: widget.name,
-                                                imageType: 'still',
-                                              );
-                                            }));
-                                          },
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              image: DecorationImage(
-                                                image: imageProvider,
-                                                fit: BoxFit.cover,
-                                              ),
-                                            ),
+        SizedBox(
+          width: double.infinity,
+          height: 180,
+          child: tvImages == null
+              ? detailImageShimmer(themeMode)
+              : CarouselSlider(
+                  options: CarouselOptions(
+                      disableCenter: false,
+                      viewportFraction: 0.8,
+                      enlargeCenterPage: false,
+                      autoPlay: true,
+                      enableInfiniteScroll: false),
+                  items: [
+                    Stack(
+                      alignment: AlignmentDirectional.bottomStart,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(8.0),
+                            child: tvImages!.still!.isEmpty
+                                ? Image.asset('assets/images/na_logo.png',
+                                    fit: BoxFit.cover,
+                                    width: double.infinity)
+                                : CachedNetworkImage(
+                                    cacheManager: cacheProp(),
+                                    fadeOutDuration:
+                                        const Duration(milliseconds: 300),
+                                    fadeOutCurve: Curves.easeOut,
+                                    fadeInDuration:
+                                        const Duration(milliseconds: 700),
+                                    fadeInCurve: Curves.easeIn,
+                                    imageUrl: buildImageUrl(
+                                            tmdbBaseImageUrl,
+                                            proxyUrl,
+                                            isProxyEnabled,
+                                            context) +
+                                        imageQuality +
+                                        tvImages!.still![0].stillPath!,
+                                    imageBuilder:
+                                        (context, imageProvider) =>
+                                            GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(context,
+                                            MaterialPageRoute(
+                                                builder: (context) {
+                                          return HeroPhotoView(
+                                            stills: tvImages!.still!,
+                                            name: widget.name,
+                                            imageType: 'still',
+                                          );
+                                        }));
+                                      },
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          image: DecorationImage(
+                                            image: imageProvider,
+                                            fit: BoxFit.cover,
                                           ),
                                         ),
-                                        placeholder: (context, url) =>
-                                            detailImageImageSimmer(themeMode),
-                                        errorWidget: (context, url, error) =>
-                                            Image.asset(
-                                                'assets/images/na_logo.png',
-                                                fit: BoxFit.cover,
-                                                width: double.infinity),
                                       ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Container(
-                                color: Colors.black38,
-                                child: Text(tvImages!.still!.length == 1
-                                    ? tr("still_singular", namedArgs: {
-                                        "still":
-                                            tvImages!.still!.length.toString()
-                                      })
-                                    : tr("still_plural", namedArgs: {
-                                        "still":
-                                            tvImages!.still!.length.toString()
-                                      })),
-                              ),
-                            )
-                          ],
+                                    ),
+                                    placeholder: (context, url) =>
+                                        detailImageImageSimmer(themeMode),
+                                    errorWidget: (context, url, error) =>
+                                        Image.asset(
+                                            'assets/images/na_logo.png',
+                                            fit: BoxFit.cover,
+                                            width: double.infinity),
+                                  ),
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-          ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Container(
+                            color: Colors.black38,
+                            child: Text(tvImages!.still!.length == 1
+                                ? tr("still_singular", namedArgs: {
+                                    "still":
+                                        tvImages!.still!.length.toString()
+                                  })
+                                : tr("still_plural", namedArgs: {
+                                    "still":
+                                        tvImages!.still!.length.toString()
+                                  })),
+                          ),
+                        )
+                      ],
+                    ),
+                  ],
+                ),
         ),
       ],
     );

@@ -62,11 +62,11 @@ class VersionDisplay extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       decoration: BoxDecoration(
         color: (buildColor ?? defaultStyle?.color ?? Colors.white)
-            .withOpacity(0.1),
+            .withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(6),
         border: Border.all(
           color: (buildColor ?? defaultStyle?.color ?? Colors.white)
-              .withOpacity(0.2),
+              .withValues(alpha: 0.2),
           width: 1,
         ),
       ),
@@ -74,7 +74,7 @@ class VersionDisplay extends StatelessWidget {
         'Build $buildNumber',
         style: TextStyle(
           color: (buildColor ?? defaultStyle?.color ?? Colors.white)
-              .withOpacity(0.8),
+              .withValues(alpha: 0.8),
           fontSize: buildFontSize ?? (defaultStyle?.fontSize ?? 14) * 0.6,
           fontWeight: FontWeight.w600,
           fontFamily: 'Poppins',

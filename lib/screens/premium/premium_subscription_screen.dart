@@ -19,11 +19,11 @@ class _C {
 IconData getIconData(String name) {
   switch (name) {
     case 'ban':
-      return FontAwesomeIcons.ban;
+      return Icons.block_rounded;
     case 'football':
-      return FontAwesomeIcons.football;
+      return Icons.sports_soccer_rounded;
     case 'headset':
-      return FontAwesomeIcons.headset;
+      return Icons.headset_rounded;
     default:
       return Icons.star_rounded;
   }

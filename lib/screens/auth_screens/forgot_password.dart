@@ -30,7 +30,7 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     return InputDecoration(
       labelText: tr("email_address"),
       labelStyle: const TextStyle(color: _textSecondary),
-      prefixIcon: const Icon(
+      prefixIcon: const FaIcon(
         FontAwesomeIcons.envelope,
         color: _textSecondary,
         size: 18,

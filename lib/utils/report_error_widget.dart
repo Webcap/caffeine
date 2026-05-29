@@ -48,7 +48,7 @@ class ReportErrorWidget extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            const Icon(FontAwesomeIcons.discord, color: Color(0xFF5865F2)),
+                            const FaIcon(FontAwesomeIcons.discord, color: Color(0xFF5865F2)),
                             const SizedBox(
                               width: 10,
                             ),

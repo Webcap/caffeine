@@ -393,7 +393,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             children: [
                               Expanded(
                                 child: _WatchStatCard(
-                                  icon: FontAwesomeIcons.clapperboard,
+                                  icon: Icons.movie_creation_rounded,
                                   label: tr('movies'),
                                   value: moviesFormatted,
                                   isDark: isDark,

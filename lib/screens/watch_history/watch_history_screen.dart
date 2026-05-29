@@ -146,7 +146,7 @@ class _WatchHistoryState extends State<WatchHistory>
                   children: [
                     const Padding(
                       padding: EdgeInsets.only(right: 8.0),
-                      child: Icon(FontAwesomeIcons.clapperboard),
+                      child: FaIcon(FontAwesomeIcons.clapperboard),
                     ),
                     Text(
                       tr("movies"),

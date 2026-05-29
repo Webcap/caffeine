@@ -231,7 +231,7 @@ class DeleteAccountScreenState extends State<DeleteAccountScreen> {
                                               const SizedBox(
                                                 width: 5,
                                               ),
-                                              const Icon(
+                                              const FaIcon(
                                                 FontAwesomeIcons.trash,
                                                 size: 18,
                                               )

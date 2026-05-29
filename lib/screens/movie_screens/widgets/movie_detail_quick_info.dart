@@ -257,11 +257,13 @@ class MovieDetailQuickInfo extends StatelessWidget {
   }
 
   void _shareMovie(BuildContext context) {
-    Share.share(tr('share_movie', namedArgs: {
-      'title': movie.title ?? '—',
-      'rating': (movie.voteAverage ?? 0).toString(),
-      'id': '${movie.id}',
-    }));
+    SharePlus.instance.share(ShareParams(
+      text: tr('share_movie', namedArgs: {
+        'title': movie.title ?? '—',
+        'rating': (movie.voteAverage ?? 0).toString(),
+        'id': '${movie.id}',
+      }),
+    ));
   }
 }
 

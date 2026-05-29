@@ -170,7 +170,7 @@ class _BookmarkScreenState extends State<BookmarkScreen>
                             children: [
                               const Padding(
                                 padding: EdgeInsets.only(right: 8),
-                                child: Icon(
+                                child: FaIcon(
                                   FontAwesomeIcons.clapperboard,
                                   size: 16,
                                 ),

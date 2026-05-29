@@ -37,7 +37,7 @@ ThemeData darkThemeData() {
     ),
     textButtonTheme: TextButtonThemeData(
       style: ButtonStyle(
-        backgroundColor: WidgetStateProperty.all(maincolor.withOpacity(0.1)),
+        backgroundColor: WidgetStateProperty.all(maincolor.withValues(alpha: 0.1)),
         maximumSize: WidgetStateProperty.all(const Size(200, 60)),
         shape: WidgetStateProperty.all<RoundedRectangleBorder>(
           RoundedRectangleBorder(
@@ -133,7 +133,7 @@ ThemeData lightThemeData() {
     ),
     textButtonTheme: TextButtonThemeData(
       style: ButtonStyle(
-        backgroundColor: WidgetStateProperty.all(maincolor.withOpacity(0.1)),
+        backgroundColor: WidgetStateProperty.all(maincolor.withValues(alpha: 0.1)),
         maximumSize: WidgetStateProperty.all(const Size(200, 60)),
         shape: WidgetStateProperty.all<RoundedRectangleBorder>(
           RoundedRectangleBorder(
@@ -228,7 +228,7 @@ ThemeData lightsOutThemeData() {
     ),
     textButtonTheme: TextButtonThemeData(
       style: ButtonStyle(
-        backgroundColor: WidgetStateProperty.all(maincolor.withOpacity(0.1)),
+        backgroundColor: WidgetStateProperty.all(maincolor.withValues(alpha: 0.1)),
         maximumSize: WidgetStateProperty.all(const Size(200, 60)),
         shape: WidgetStateProperty.all<RoundedRectangleBorder>(
           RoundedRectangleBorder(

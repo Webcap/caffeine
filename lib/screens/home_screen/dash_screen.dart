@@ -57,10 +57,10 @@ class _caffieneHomePageState extends State<caffieneHomePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   static const List<_TabMeta> _tabs = [
-    _TabMeta(icon: FontAwesomeIcons.clapperboard, label: 'Movies'),
-    _TabMeta(icon: FontAwesomeIcons.tv, label: 'TV'),
-    _TabMeta(icon: FontAwesomeIcons.compass, label: 'Discover'),
-    _TabMeta(icon: FontAwesomeIcons.user, label: 'Profile'),
+    _TabMeta(icon: Icons.movie_creation_rounded, label: 'Movies'),
+    _TabMeta(icon: Icons.tv_rounded, label: 'TV'),
+    _TabMeta(icon: Icons.explore_rounded, label: 'Discover'),
+    _TabMeta(icon: Icons.person_rounded, label: 'Profile'),
   ];
 
   @override
@@ -127,7 +127,7 @@ class _caffieneHomePageState extends State<caffieneHomePage> {
           automaticallyImplyLeading: false,
           leadingWidth: 60,
           leading: _CircleIconButton(
-            icon: FontAwesomeIcons.barsStaggered,
+            icon: Icons.notes_rounded,
             isDark: isDark,
             onTap: () => _scaffoldKey.currentState?.openDrawer(),
           ),
@@ -135,7 +135,7 @@ class _caffieneHomePageState extends State<caffieneHomePage> {
           title: _GradientWordmark(isDark: isDark),
           actions: [
             _CircleIconButton(
-              icon: FontAwesomeIcons.magnifyingGlass,
+              icon: Icons.search_rounded,
               isDark: isDark,
               onTap: () => Navigator.push(
                 context,

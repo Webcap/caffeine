@@ -135,7 +135,7 @@ class _ScrollingRecentMoviesState extends State<ScrollingRecentMovies> {
                         onTap: () async {
                           if (_lockTap) return;
                               final connected = await checkConnection();
-                              if (!mounted) return;
+                              if (!context.mounted) return;
                               if (connected) {
                                 Navigator.push(
                                     context,

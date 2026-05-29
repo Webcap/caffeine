@@ -67,7 +67,7 @@ class DrawerWidget extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               children: [
                 _DrawerItem(
-                  icon: FontAwesomeIcons.bookmark,
+                  icon: Icons.bookmark_rounded,
                   label: tr('bookmarks'),
                   isDark: isDark,
                   surface: surface,
@@ -80,7 +80,7 @@ class DrawerWidget extends StatelessWidget {
                 ),
                 if (appDep.displayOTTDrawer)
                   _DrawerItem(
-                    icon: FontAwesomeIcons.tv,
+                    icon: Icons.tv_rounded,
                     label: tr('live_tv'),
                     isDark: isDark,
                     surface: surface,
@@ -104,7 +104,7 @@ class DrawerWidget extends StatelessWidget {
                   },
                 ),
                 _DrawerItem(
-                  icon: FontAwesomeIcons.server,
+                  icon: Icons.dns_rounded,
                   label: tr('check_server'),
                   isDark: isDark,
                   surface: surface,
