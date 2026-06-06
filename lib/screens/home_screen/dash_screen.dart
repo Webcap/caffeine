@@ -1,5 +1,7 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:reelriot/provider/app_dependency_provider.dart';
 import 'package:reelriot/provider/bookmarks_provider.dart';
+import 'package:reelriot/provider/sign_in_provider.dart';
 import 'package:reelriot/screens/common/update_screen.dart';
 import 'package:reelriot/screens/profile/profile_page.dart';
 import 'package:reelriot/utils/config.dart';
@@ -117,38 +119,19 @@ class _caffieneHomePageState extends State<caffieneHomePage> {
         ),
 
         // ── Cinematic AppBar ────────────────────────────────────────────────
-        appBar: AppBar(
-          elevation: 0,
-          scrolledUnderElevation: 0,
-          backgroundColor: isDark ? _C.bgCanvasDark : _C.bgCanvasLight,
-          surfaceTintColor: Colors.transparent,
-          systemOverlayStyle:
-              isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
-          automaticallyImplyLeading: false,
-          leadingWidth: 60,
-          leading: _CircleIconButton(
-            icon: Icons.notes_rounded,
-            isDark: isDark,
-            onTap: () => _scaffoldKey.currentState?.openDrawer(),
-          ),
-          centerTitle: true,
-          title: _GradientWordmark(isDark: isDark),
-          actions: [
-            _CircleIconButton(
-              icon: Icons.search_rounded,
-              isDark: isDark,
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => SearchPage(
-                    includeAdult: settings.isAdult,
-                    lang: lang,
-                  ),
-                ),
+        appBar: _HomeAppBar(
+          isDark: isDark,
+          selectedIndex: selectedIndex,
+          scaffoldKey: _scaffoldKey,
+          onSearchTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => SearchPage(
+                includeAdult: settings.isAdult,
+                lang: lang,
               ),
             ),
-            const SizedBox(width: 8),
-          ],
+          ),
         ),
 
         // ── Cinematic Bottom Tab Bar ────────────────────────────────────────
@@ -169,6 +152,192 @@ class _caffieneHomePageState extends State<caffieneHomePage> {
           ],
         ),
       ),
+    );
+  }
+}
+
+// ─── Smart AppBar — greeting on Movies tab, wordmark elsewhere ───────────
+
+class _HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
+  final bool isDark;
+  final int selectedIndex;
+  final GlobalKey<ScaffoldState> scaffoldKey;
+  final VoidCallback onSearchTap;
+
+  const _HomeAppBar({
+    required this.isDark,
+    required this.selectedIndex,
+    required this.scaffoldKey,
+    required this.onSearchTap,
+  });
+
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+
+  @override
+  Widget build(BuildContext context) {
+    // Show personalized greeting only on the Movies tab (index 0)
+    final showGreeting = selectedIndex == 0;
+
+    return AppBar(
+      elevation: 0,
+      scrolledUnderElevation: 0,
+      backgroundColor: isDark ? _C.bgCanvasDark : _C.bgCanvasLight,
+      surfaceTintColor: Colors.transparent,
+      systemOverlayStyle:
+          isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
+      automaticallyImplyLeading: false,
+      titleSpacing: 0,
+      title: showGreeting
+          ? _GreetingTitle(isDark: isDark, scaffoldKey: scaffoldKey)
+          : Padding(
+              padding: const EdgeInsets.only(left: 12),
+              child: Row(
+                children: [
+                  _CircleIconButton(
+                    icon: Icons.notes_rounded,
+                    isDark: isDark,
+                    onTap: () => scaffoldKey.currentState?.openDrawer(),
+                  ),
+                  const Spacer(),
+                  _GradientWordmark(isDark: isDark),
+                  const Spacer(),
+                ],
+              ),
+            ),
+      actions: [
+        _CircleIconButton(
+          icon: Icons.search_rounded,
+          isDark: isDark,
+          onTap: onSearchTap,
+        ),
+        const SizedBox(width: 8),
+      ],
+    );
+  }
+}
+
+// ─── Personalized greeting row ───────────────────────────────────────────────
+
+class _GreetingTitle extends StatelessWidget {
+  final bool isDark;
+  final GlobalKey<ScaffoldState> scaffoldKey;
+
+  const _GreetingTitle({
+    required this.isDark,
+    required this.scaffoldKey,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final signIn = context.watch<SignInProvider>();
+    final displayName = signIn.name ?? signIn.username ?? 'Guest';
+    final textPrim = isDark ? _C.textPrimDark : _C.textPrimLight;
+    final textSec = isDark ? const Color(0xB8FFFFFF) : const Color(0xFF64748B);
+
+    return Padding(
+      padding: const EdgeInsets.only(left: 4),
+      child: Row(
+        children: [
+          // Avatar / drawer opener
+          GestureDetector(
+            onTap: () => scaffoldKey.currentState?.openDrawer(),
+            child: Container(
+              width: 42,
+              height: 42,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: _C.primary.withValues(alpha: 0.15),
+                border: Border.all(
+                  color: _C.primary.withValues(alpha: 0.4),
+                  width: 1.5,
+                ),
+              ),
+              child: ClipOval(
+                child: _buildAvatar(signIn),
+              ),
+            ),
+          ),
+          const SizedBox(width: 10),
+          // Greeting text
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                children: [
+                  Text(
+                    'Hi Welcome',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: textSec,
+                      fontWeight: FontWeight.w500,
+                      fontFamily: 'Poppins',
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  const Text('👋', style: TextStyle(fontSize: 12)),
+                ],
+              ),
+              Text(
+                displayName,
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
+                  color: textPrim,
+                  fontFamily: 'PoppinsSB',
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Mirrors the avatar resolution in ProfilePage:
+  ///   1. OAuth / external image_url  → CachedNetworkImage
+  ///   2. Numeric profileId           → assets/images/profiles/{id}.png
+  ///   3. Fallback                    → generic icon
+  Widget _buildAvatar(SignInProvider signIn) {
+    final imageUrl = signIn.imageUrl ?? '';
+    if (imageUrl.isNotEmpty) {
+      return CachedNetworkImage(
+        imageUrl: imageUrl,
+        width: 42,
+        height: 42,
+        fit: BoxFit.cover,
+        memCacheWidth: 84,
+        memCacheHeight: 84,
+        placeholder: (_, __) => _AvatarFallback(),
+        errorWidget: (_, __, ___) => _AvatarFallback(),
+      );
+    }
+
+    // Use the numeric profile avatar chosen by the user in edit_profile
+    final profileId = signIn.profileId;
+    if (profileId != null && profileId != 0) {
+      return Image.asset(
+        'assets/images/profiles/$profileId.png',
+        width: 42,
+        height: 42,
+        fit: BoxFit.cover,
+        errorBuilder: (_, __, ___) => _AvatarFallback(),
+      );
+    }
+
+    return _AvatarFallback();
+  }
+}
+
+class _AvatarFallback extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: _C.primary.withValues(alpha: 0.2),
+      child: const Icon(Icons.person_rounded, color: _C.primary, size: 22),
     );
   }
 }

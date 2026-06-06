@@ -510,4 +510,25 @@ class Endpoints {
     final base = baseUrl.endsWith('/') ? baseUrl : '$baseUrl/';
     return '$base$provider/stream-tv?tmdbId=$tmdbId&episode=$episodeId&season=$seasonId&language=$language&country=$country';
   }
+
+  // ─── Reelriot Discovery Engine v1.2 ──────────────────────────────────────
+  /// Builds the GET /v1/discovery URL.
+  /// [userId]    — optional, enables "Because you watched" AI rows.
+  /// [mediaType] — optional, 'movie' or 'tv'.
+  /// [region]    — optional, ISO-3166-1 alpha-2 country code.
+  static String discoveryFeedUrl(
+    String baseUrl, {
+    String? userId,
+    String? mediaType,
+    String? region,
+  }) {
+    final b = _b(baseUrl);
+    final params = <String>[];
+    if (userId != null && userId.isNotEmpty) params.add('userId=$userId');
+    if (mediaType != null && mediaType.isNotEmpty) params.add('mediaType=$mediaType');
+    if (region != null && region.isNotEmpty) params.add('region=$region');
+    final query = params.isEmpty ? '' : '?${params.join('&')}';
+    return '${b}v1/discovery$query';
+  }
 }
+
