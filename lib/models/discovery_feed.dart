@@ -24,8 +24,20 @@ class DiscoveryFeed {
         );
       }
     }
-    // Flat array fallback: treat the whole response as a single 'featured' row.
+    
+    // If the API directly returns an array of rows
     if (json is List) {
+      // Check if it's an array of rows by looking for the 'items' key in the first element
+      if (json.isNotEmpty && json.first is Map && (json.first as Map).containsKey('items')) {
+        return DiscoveryFeed(
+          rows: json
+              .whereType<Map>()
+              .map((m) => DiscoveryRow.fromJson(Map<String, dynamic>.from(m)))
+              .toList(),
+        );
+      }
+      
+      // Fallback: treat the flat array as items for a single 'featured' row.
       return DiscoveryFeed(
         rows: [
           DiscoveryRow(
@@ -33,8 +45,8 @@ class DiscoveryFeed {
             title: 'Featured',
             type: 'featured',
             items: json
-                .whereType<Map<String, dynamic>>()
-                .map(DiscoveryItem.fromJson)
+                .whereType<Map>()
+                .map((m) => DiscoveryItem.fromJson(Map<String, dynamic>.from(m)))
                 .toList(),
           ),
         ],
@@ -81,8 +93,8 @@ class DiscoveryRow {
       type: json['type']?.toString() ?? '',
       items: rawItems is List
           ? rawItems
-              .whereType<Map<String, dynamic>>()
-              .map(DiscoveryItem.fromJson)
+              .whereType<Map>()
+              .map((m) => DiscoveryItem.fromJson(Map<String, dynamic>.from(m)))
               .toList()
           : [],
     );

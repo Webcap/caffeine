@@ -28,6 +28,7 @@ class DiscoveryService {
   Future<DiscoveryFeed?> fetchHomeFeed({
     required String caffeineBaseUrl,
     String? userId,
+    String? mediaType,
     String? region,
   }) async {
     if (caffeineBaseUrl.trim().isEmpty) return null;
@@ -35,6 +36,7 @@ class DiscoveryService {
     final url = Endpoints.discoveryFeedUrl(
       caffeineBaseUrl,
       userId: userId,
+      mediaType: mediaType,
       region: region,
     );
 

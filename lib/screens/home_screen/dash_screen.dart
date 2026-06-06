@@ -11,7 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:reelriot/provider/settings_provider.dart';
-import 'package:reelriot/screens/discover_screens/discovery_screen.dart';
+
 import 'package:reelriot/screens/movie_screens/main_movie_display.dart';
 import 'package:reelriot/screens/search/search_view.dart' show SearchPage;
 import 'package:reelriot/screens/tv_screens/tv_screen.dart';
@@ -61,7 +61,6 @@ class _caffieneHomePageState extends State<caffieneHomePage> {
   static const List<_TabMeta> _tabs = [
     _TabMeta(icon: Icons.movie_creation_rounded, label: 'Movies'),
     _TabMeta(icon: Icons.tv_rounded, label: 'TV'),
-    _TabMeta(icon: Icons.explore_rounded, label: 'Discover'),
     _TabMeta(icon: Icons.person_rounded, label: 'Profile'),
   ];
 
@@ -78,7 +77,7 @@ class _caffieneHomePageState extends State<caffieneHomePage> {
   void defHome() {
     final defaultHome =
         Provider.of<SettingsProvider>(context, listen: false).defaultValue;
-    setState(() => selectedIndex = defaultHome);
+    setState(() => selectedIndex = defaultHome >= _tabs.length ? 0 : defaultHome);
   }
 
   Future<void> checkForcedUpdate() async {
@@ -147,7 +146,6 @@ class _caffieneHomePageState extends State<caffieneHomePage> {
           children: const <Widget>[
             MainMoviesDisplay(),
             MainTVDisplay(),
-            DiscoverPage(),
             ProfilePage(),
           ],
         ),
@@ -231,7 +229,7 @@ class _GreetingTitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final signIn = context.watch<SignInProvider>();
-    final displayName = signIn.name ?? signIn.username ?? 'Guest';
+    final displayName = signIn.username ?? signIn.name ?? 'Guest';
     final textPrim = isDark ? _C.textPrimDark : _C.textPrimLight;
     final textSec = isDark ? const Color(0xB8FFFFFF) : const Color(0xFF64748B);
 

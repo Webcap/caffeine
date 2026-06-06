@@ -2,6 +2,11 @@ import 'package:reelriot/models/movie_models.dart';
 import 'package:reelriot/models/recently_watched.dart';
 import 'package:reelriot/provider/bookmarks_provider.dart';
 import 'package:reelriot/provider/recently_watched_provider.dart';
+import 'package:reelriot/functions/network.dart';
+import 'package:reelriot/api/endpoints.dart';
+import 'package:reelriot/provider/settings_provider.dart';
+import 'package:reelriot/provider/app_dependency_provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -29,11 +34,27 @@ class MovieDetailOptions extends StatefulWidget {
 
 class _MovieDetailOptionsState extends State<MovieDetailOptions> {
   bool? isBookmarked;
+  Moviedetail? movieDetails;
 
   @override
   void initState() {
     super.initState();
     _checkBookmark();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _fetchDetails();
+    });
+  }
+
+  Future<void> _fetchDetails() async {
+    final lang = Provider.of<SettingsProvider>(context, listen: false).appLanguage;
+    final isProxyEnabled = Provider.of<SettingsProvider>(context, listen: false).enableProxy;
+    final proxyUrl = Provider.of<AppDependencyProvider>(context, listen: false).tmdbProxy;
+    final api = Endpoints.movieDetailsUrl(widget.movie.id!, lang);
+    
+    final details = await fetchMovieDetails(api, isProxyEnabled, proxyUrl);
+    if (mounted) {
+      setState(() => movieDetails = details);
+    }
   }
 
   Future<void> _checkBookmark() async {
@@ -78,7 +99,6 @@ class _MovieDetailOptionsState extends State<MovieDetailOptions> {
             ? avg.toStringAsFixed(0)
             : avg.toStringAsFixed(1))
         : null;
-    final voteCount = widget.movie.voteCount ?? 0;
 
     return Consumer<RecentProvider>(
       builder: (context, recentProvider, child) {
@@ -95,39 +115,94 @@ class _MovieDetailOptionsState extends State<MovieDetailOptions> {
 
         return Consumer<BookmarksProvider>(
           builder: (context, provider, _) {
+            // ── Format Genres ───────────────────────────────────────────────
+            final genres = movieDetails?.genres?.map((g) => g.genreName).where((n) => n != null && n.isNotEmpty).take(3).join('  •  ');
+            
+            // ── Format Meta ────────────────────────────────────────────────
+            String runtimeStr = '';
+            if (movieDetails != null && movieDetails!.runtime != null && movieDetails!.runtime! > 0) {
+              final h = movieDetails!.runtime! ~/ 60;
+              final m = movieDetails!.runtime! % 60;
+              runtimeStr = '${h}h ${m}m';
+            }
+
             return Padding(
               padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-              child: Row(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // ── Rating badges (compact capsules) ─────────────────────────
-                  Expanded(
-                    child: Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: [
-                        if (ratingStr != null)
-                          _RatingChip(
-                            icon: Icons.star_rounded,
-                            value: '$ratingStr/10',
-                            accentColor: _C.ratingGold,
-                            elevated: elevated,
-                            border: border,
-                            textSec: textSec,
-                          ),
-                        _RatingChip(
-                          icon: Icons.people_outline_rounded,
-                          value: voteCount.toString(),
-                          accentColor: _C.primary.withValues(alpha: 0.9),
-                          elevated: elevated,
-                          border: border,
-                          textSec: textSec,
+                  // ── Genres Row ────────────────────────────────────────────
+                  if (genres != null && genres.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: Text(
+                        genres,
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                          color: textSec,
+                          fontFamily: 'Poppins',
+                          letterSpacing: 0.3,
                         ),
-                      ],
+                      ),
                     ),
-                  ),
-
-                  // ── Favorite heart (design.json: favoriteAction) ─────────────
-                  GestureDetector(
+                    
+                  // ── Meta Row + Heart ──────────────────────────────────────
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      // Meta items
+                      Expanded(
+                        child: Wrap(
+                          spacing: 12,
+                          runSpacing: 8,
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          children: [
+                            if (runtimeStr.isNotEmpty)
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(Icons.schedule_rounded, size: 14, color: textSec),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    runtimeStr,
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w500,
+                                      color: textSec,
+                                      fontFamily: 'Poppins',
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              
+                            // Hardcoded for UI showcase as per screenshot
+                            _Badge(text: 'PG-13', textSec: textSec, border: border, elevated: elevated),
+                            _Badge(text: 'FHD', textSec: textSec, border: border, elevated: Colors.red.withValues(alpha: 0.2), textColor: _C.primary),
+                            
+                            if (ratingStr != null)
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: _C.ratingGold.withValues(alpha: 0.2),
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: Text(
+                                  'IMDb - $ratingStr/10',
+                                  style: const TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w700,
+                                    color: _C.ratingGold,
+                                    fontFamily: 'PoppinsSB',
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                      
+                      // Favorite Heart
+                      GestureDetector(
                     onTap: () async {
                       if (widget.movie.id != null) {
                         if (isBookmarked == false) {
@@ -197,6 +272,8 @@ class _MovieDetailOptionsState extends State<MovieDetailOptions> {
                         color: isWatched ? Colors.green : textSec,
                       ),
                     ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -208,47 +285,38 @@ class _MovieDetailOptionsState extends State<MovieDetailOptions> {
   }
 }
 
-class _RatingChip extends StatelessWidget {
-  final IconData icon;
-  final String value;
-  final Color accentColor;
-  final Color elevated;
-  final Color border;
+class _Badge extends StatelessWidget {
+  final String text;
   final Color textSec;
+  final Color border;
+  final Color elevated;
+  final Color? textColor;
 
-  const _RatingChip({
-    required this.icon,
-    required this.value,
-    required this.accentColor,
-    required this.elevated,
-    required this.border,
+  const _Badge({
+    required this.text,
     required this.textSec,
+    required this.border,
+    required this.elevated,
+    this.textColor,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 32,
-      padding: const EdgeInsets.symmetric(horizontal: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
         color: elevated,
-        borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: border, width: 1),
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: border, width: 0.5),
       ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 16, color: accentColor),
-          const SizedBox(width: 6),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-              color: textSec,
-            ),
-          ),
-        ],
+      child: Text(
+        text,
+        style: TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.w700,
+          color: textColor ?? textSec,
+          fontFamily: 'PoppinsSB',
+        ),
       ),
     );
   }

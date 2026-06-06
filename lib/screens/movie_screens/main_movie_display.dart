@@ -15,6 +15,8 @@ import 'package:reelriot/provider/settings_provider.dart';
 import 'package:reelriot/provider/sign_in_provider.dart';
 import 'package:reelriot/screens/common/update_screen.dart';
 import 'package:reelriot/screens/movie_screens/movie_details.dart';
+import 'package:reelriot/models/tv.dart';
+import 'package:reelriot/screens/tv_screens/tv_detail_page.dart';
 import 'package:reelriot/screens/movie_screens/widgets/genre_list_grid.dart';
 import 'package:reelriot/screens/movie_screens/widgets/movies_from_watch_providers.dart';
 import 'package:reelriot/screens/movie_screens/widgets/scrolling_movie_list.dart';
@@ -112,6 +114,7 @@ class _MainMoviesDisplayState extends State<MainMoviesDisplay>
     final feed = await DiscoveryService.instance.fetchHomeFeed(
       caffeineBaseUrl: appDep.caffeineAPIURL,
       userId: signIn.uid,
+      mediaType: 'movie',
       region: settings.defaultCountry,
     );
 
@@ -209,9 +212,8 @@ class _MainMoviesDisplayState extends State<MainMoviesDisplay>
 
     // Inject sports slides when OTT is enabled
     if (appDep.displayOTTDrawer) {
-      for (final event in appDep.featuredEvents.take(3)) {
-        slides.add(_SportsSlide(event));
-      }
+      final sportsSlides = appDep.featuredEvents.take(3).map((e) => _SportsSlide(e)).toList();
+      slides.insertAll(0, sportsSlides);
     }
 
     if (mounted) {
@@ -241,11 +243,16 @@ class _MainMoviesDisplayState extends State<MainMoviesDisplay>
       WidgetsBinding.instance.addPostFrameCallback((_) => _buildHeroSlides());
     }
 
-    return ListView(
-      physics: const BouncingScrollPhysics(),
-      children: [
-        // ── 1. Hero carousel ─────────────────────────────────────────────────
-        _HeroCarousel(
+    return RefreshIndicator(
+      onRefresh: _loadData,
+      color: _C.primary,
+      backgroundColor: isDark ? _C.bgCanvasDark : _C.bgCanvasLight,
+      child: ListView(
+        physics: const AlwaysScrollableScrollPhysics(
+            parent: BouncingScrollPhysics()),
+        children: [
+          // ── 1. Hero carousel ─────────────────────────────────────────────────
+          _HeroCarousel(
           slides: _heroSlides,
           feedLoaded: _feedLoaded,
           themeMode: themeMode,
@@ -278,59 +285,76 @@ class _MainMoviesDisplayState extends State<MainMoviesDisplay>
 
         const BannerAdWidget(),
 
-        // ── 3. Trending Now (discovery or TMDB fallback) ─────────────────────
-        _TrendingNowRow(
-          movies: _trendingMovies,
-          isDark: isDark,
-          themeMode: themeMode,
-          imageQuality: settings.imageQuality,
-          isProxyEnabled: settings.enableProxy,
-          proxyUrl: appDep.tmdbProxy,
-          lang: lang,
-          includeAdult: includeAdult,
-        ),
+        // ── 3. Discovery Feed Rows or Fallback ───────────────────────────────
+        if (_feedLoaded && _feed != null && _feed!.rows.any((r) => r.type != 'featured'))
+          ..._feed!.rows.where((row) => row.type != 'featured').map((row) {
+            return _DiscoveryRowWidget(
+              row: row,
+              isDark: isDark,
+              themeMode: themeMode,
+              imageQuality: settings.imageQuality,
+              isProxyEnabled: settings.enableProxy,
+              proxyUrl: appDep.tmdbProxy,
+              lang: lang,
+              includeAdult: includeAdult,
+            );
+          })
+        else ...[
+          // ── Trending Now (discovery or TMDB fallback) ─────────────────────
+          _TrendingNowRow(
+            movies: _trendingMovies,
+            isDark: isDark,
+            themeMode: themeMode,
+            imageQuality: settings.imageQuality,
+            isProxyEnabled: settings.enableProxy,
+            proxyUrl: appDep.tmdbProxy,
+            lang: lang,
+            includeAdult: includeAdult,
+          ),
 
-        // ── 4. Remaining standard rows ───────────────────────────────────────
-        ScrollingMovies(
-          title: tr('popular'),
-          api: '$tmdbApiBaseUrl/movie/popular?api_key=$tmdbApiKey&language=$lang',
-          discoverType: 'popular',
-          isTrending: false,
-          includeAdult: includeAdult,
-        ),
-        ScrollingMovies(
-          title: tr('top_rated'),
-          api: '$tmdbApiBaseUrl/movie/top_rated?api_key=$tmdbApiKey&region=$region&language=$lang',
-          discoverType: 'top_rated',
-          isTrending: false,
-          includeAdult: includeAdult,
-        ),
-        ScrollingMovies(
-          title: tr('now_playing'),
-          api: '$tmdbApiBaseUrl/movie/now_playing?api_key=$tmdbApiKey&language=$lang',
-          discoverType: 'now_playing',
-          isTrending: false,
-          includeAdult: includeAdult,
-        ),
-        ScrollingMovies(
-          title: tr('upcoming'),
-          api: _upcomingUrl(lang),
-          discoverType: 'upcoming',
-          isTrending: false,
-          includeAdult: includeAdult,
-        ),
+          // ── Remaining standard rows ───────────────────────────────────────
+          ScrollingMovies(
+            title: tr('popular'),
+            api: '$tmdbApiBaseUrl/movie/popular?api_key=$tmdbApiKey&language=$lang',
+            discoverType: 'popular',
+            isTrending: false,
+            includeAdult: includeAdult,
+          ),
+          ScrollingMovies(
+            title: tr('top_rated'),
+            api: '$tmdbApiBaseUrl/movie/top_rated?api_key=$tmdbApiKey&region=$region&language=$lang',
+            discoverType: 'top_rated',
+            isTrending: false,
+            includeAdult: includeAdult,
+          ),
+          ScrollingMovies(
+            title: tr('now_playing'),
+            api: '$tmdbApiBaseUrl/movie/now_playing?api_key=$tmdbApiKey&language=$lang',
+            discoverType: 'now_playing',
+            isTrending: false,
+            includeAdult: includeAdult,
+          ),
+          ScrollingMovies(
+            title: tr('upcoming'),
+            api: _upcomingUrl(lang, region),
+            discoverType: 'upcoming',
+            isTrending: false,
+            includeAdult: includeAdult,
+          ),
+        ],
+
         GenreListGrid(
           api: '$tmdbApiBaseUrl/genre/movie/list?api_key=$tmdbApiKey&language=$lang',
         ),
         const MoviesFromWatchProviders(),
       ],
-    );
+    ));
   }
 
-  String _upcomingUrl(String lang) {
+  String _upcomingUrl(String lang, String region) {
     final today = DateTime.now().toIso8601String().split('T')[0];
     return '$tmdbApiBaseUrl/discover/movie?api_key=$tmdbApiKey'
-        '&language=$lang&sort_by=primary_release_date.asc'
+        '&language=$lang&region=$region&sort_by=primary_release_date.asc'
         '&primary_release_date.gte=$today&include_adult=false';
   }
 
@@ -1166,27 +1190,6 @@ class _TrendingNowRow extends StatelessWidget {
                                   ),
                                 ),
                               ),
-                              // Runtime placeholder — shown if available
-                              Padding(
-                                padding: const EdgeInsets.only(left: 2, bottom: 4),
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      Icons.access_time_rounded,
-                                      size: 10,
-                                      color: isDark ? _C.textSecDark : _C.textSecLight,
-                                    ),
-                                    const SizedBox(width: 3),
-                                    Text(
-                                      '— h —m',
-                                      style: TextStyle(
-                                        fontSize: 10,
-                                        color: isDark ? _C.textSecDark : _C.textSecLight,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
                             ],
                           ),
                         ),
@@ -1324,3 +1327,251 @@ class _DiscoverFallbackCarouselState
   @override
   bool get wantKeepAlive => true;
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Discovery Row Widget (Dynamic rows from Caffeine API)
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _DiscoveryRowWidget extends StatelessWidget {
+  final DiscoveryRow row;
+  final bool isDark;
+  final String themeMode;
+  final String imageQuality;
+  final bool isProxyEnabled;
+  final String proxyUrl;
+  final String lang;
+  final bool includeAdult;
+
+  const _DiscoveryRowWidget({
+    required this.row,
+    required this.isDark,
+    required this.themeMode,
+    required this.imageQuality,
+    required this.isProxyEnabled,
+    required this.proxyUrl,
+    required this.lang,
+    required this.includeAdult,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final textPrim = isDark ? _C.textPrimDark : _C.textPrimLight;
+    final items = row.items;
+
+    if (items.isEmpty) return const SizedBox.shrink();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Header row
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 8, 10),
+          child: Row(
+            children: [
+              Container(
+                width: 4,
+                height: 20,
+                decoration: BoxDecoration(
+                  color: _C.primary,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  row.title,
+                  style: TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w700,
+                    color: textPrim,
+                    fontFamily: 'PoppinsSB',
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        // Cards
+        SizedBox(
+          height: 215,
+          child: ListView.builder(
+            physics: const BouncingScrollPhysics(),
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            itemCount: items.length,
+            itemBuilder: (context, index) {
+              final item = items[index];
+              final imgBase = buildImageUrl(
+                  tmdbBaseImageUrl, proxyUrl, isProxyEnabled, context);
+              final posterUrl = item.posterPath != null
+                  ? '$imgBase$imageQuality${item.posterPath}'
+                  : '';
+
+              return Padding(
+                padding: const EdgeInsets.only(right: 10),
+                child: GestureDetector(
+                  onTap: () {
+                    final heroId = '${row.id}-${item.tmdbId}-$index';
+                    if (item.mediaType == 'tv') {
+                      final tvSeries = TV(
+                        id: item.tmdbId,
+                        name: item.title,
+                        posterPath: item.posterPath,
+                        backdropPath: item.backdropPath,
+                        voteAverage: item.voteAverage,
+                        overview: null,
+                        firstAirDate: null,
+                        originalLanguage: null,
+                        originalName: item.title,
+                        popularity: null,
+                        voteCount: null,
+                      );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => TVDetailPage(
+                            tvSeries: tvSeries,
+                            heroId: heroId,
+                          ),
+                        ),
+                      );
+                    } else {
+                      final movie = Movie(
+                        id: item.tmdbId,
+                        title: item.title,
+                        posterPath: item.posterPath,
+                        backdropPath: item.backdropPath,
+                        voteAverage: item.voteAverage,
+                        overview: null,
+                        releaseDate: null,
+                        adult: false,
+                        originalLanguage: null,
+                        originalTitle: item.title,
+                        popularity: null,
+                        video: false,
+                        voteCount: null,
+                      );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => MovieDetailPage(
+                            movie: movie,
+                            heroId: heroId,
+                          ),
+                        ),
+                      );
+                    }
+                  },
+                  child: SizedBox(
+                    width: 110,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Poster with rating badge
+                        Expanded(
+                          flex: 6,
+                          child: Hero(
+                            tag: '${row.id}-${item.tmdbId}-$index',
+                            child: Stack(
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: posterUrl.isEmpty
+                                      ? Image.asset(
+                                          'assets/images/na_logo.png',
+                                          fit: BoxFit.cover,
+                                          width: double.infinity,
+                                          height: double.infinity,
+                                        )
+                                      : CachedNetworkImage(
+                                          cacheManager: cacheProp(),
+                                          imageUrl: posterUrl,
+                                          fit: BoxFit.cover,
+                                          width: double.infinity,
+                                          height: double.infinity,
+                                          placeholder: (_, __) =>
+                                              scrollingImageShimmer(themeMode),
+                                          errorWidget: (_, __, ___) =>
+                                              Image.asset(
+                                            'assets/images/na_logo.png',
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                ),
+                                // Star rating badge
+                                if (item.voteAverage != null)
+                                  Positioned(
+                                    top: 6,
+                                    left: 6,
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 5, vertical: 2),
+                                      decoration: BoxDecoration(
+                                        color: Colors.black
+                                            .withValues(alpha: 0.65),
+                                        borderRadius: BorderRadius.circular(6),
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          const Icon(
+                                            Icons.star_rounded,
+                                            size: 11,
+                                            color: Color(0xFFFACC15),
+                                          ),
+                                          const SizedBox(width: 2),
+                                          Text(
+                                            item.voteAverage!
+                                                .toStringAsFixed(1),
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 10,
+                                              fontWeight: FontWeight.w700,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        // Title
+                        Expanded(
+                          flex: 2,
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(2, 5, 2, 0),
+                            child: Text(
+                              item.title ?? '',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                                color: textPrim,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+        const SizedBox(height: 12),
+        Divider(
+          color: isDark ? Colors.white12 : Colors.black12,
+          thickness: 1,
+          endIndent: 20,
+          indent: 10,
+        ),
+      ],
+    );
+  }
+}
+
