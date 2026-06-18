@@ -481,7 +481,36 @@ const List<_EspnLeagueConfig> _espnLeagues = [
   _EspnLeagueConfig('basketball', 'nba', 'Basketball', 'NBA'),
   _EspnLeagueConfig('football', 'nfl', 'American Football', 'NFL'),
   _EspnLeagueConfig('baseball', 'mlb', 'Baseball', 'MLB'),
+  _EspnLeagueConfig('hockey', 'nhl', 'Hockey', 'NHL'),
   _EspnLeagueConfig('mma', 'ufc', 'MMA', 'UFC'),
+  // --- Club Leagues ---
+  _EspnLeagueConfig('soccer', 'eng.1', 'Soccer', 'EPL'),
+  _EspnLeagueConfig('soccer', 'esp.1', 'Soccer', 'La Liga'),
+  _EspnLeagueConfig('soccer', 'ger.1', 'Soccer', 'Bundesliga'),
+  _EspnLeagueConfig('soccer', 'ita.1', 'Soccer', 'Serie A'),
+  _EspnLeagueConfig('soccer', 'fra.1', 'Soccer', 'Ligue 1'),
+  _EspnLeagueConfig('soccer', 'ned.1', 'Soccer', 'Eredivisie'),
+  _EspnLeagueConfig('soccer', 'por.1', 'Soccer', 'Primeira Liga'),
+  _EspnLeagueConfig('soccer', 'usa.1', 'Soccer', 'MLS'),
+  _EspnLeagueConfig('soccer', 'mex.1', 'Soccer', 'Liga MX'),
+  _EspnLeagueConfig('soccer', 'uefa.champions', 'Soccer', 'Champions League'),
+  _EspnLeagueConfig('soccer', 'uefa.europa', 'Soccer', 'Europa League'),
+  _EspnLeagueConfig('soccer', 'uefa.europa.conf', 'Soccer', 'Conference League'),
+  // --- International / FIFA tournaments ---
+  _EspnLeagueConfig('soccer', 'fifa.world', 'Soccer', 'FIFA World Cup'),
+  _EspnLeagueConfig('soccer', 'fifa.cwc', 'Soccer', 'Club World Cup'),
+  _EspnLeagueConfig('soccer', 'fifa.friendly', 'Soccer', 'Int\'l Friendlies'),
+  _EspnLeagueConfig('soccer', 'fifa.worldq.concacaf', 'Soccer', 'WC Qual. CONCACAF'),
+  _EspnLeagueConfig('soccer', 'fifa.worldq.conmebol', 'Soccer', 'WC Qual. CONMEBOL'),
+  _EspnLeagueConfig('soccer', 'fifa.worldq.uefa', 'Soccer', 'WC Qual. UEFA'),
+  // --- UEFA & Confederation tournaments ---
+  _EspnLeagueConfig('soccer', 'uefa.euro', 'Soccer', 'UEFA Euro'),
+  _EspnLeagueConfig('soccer', 'uefa.euroq', 'Soccer', 'Euro Qualifiers'),
+  _EspnLeagueConfig('soccer', 'uefa.nations', 'Soccer', 'UEFA Nations League'),
+  _EspnLeagueConfig('soccer', 'concacaf.gold', 'Soccer', 'CONCACAF Gold Cup'),
+  _EspnLeagueConfig('soccer', 'concacaf.nations.league', 'Soccer', 'CONCACAF Nations'),
+  _EspnLeagueConfig('soccer', 'conmebol.america', 'Soccer', 'Copa América'),
+  _EspnLeagueConfig('soccer', 'conmebol.libertadores', 'Soccer', 'Copa Libertadores'),
 ];
 
 /// Fetches ESPN scoreboard for a league on a date.
