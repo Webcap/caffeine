@@ -413,18 +413,7 @@ class Endpoints {
     return '${_b(baseUrl)}$provider/watch-tv?tmdbId=$tmdbId&season=$season&episode=$episode&server=$server';
   }
 
-  static String getIPTVEndpoint(String baseUrl) {
-    return '${_b(baseUrl)}daddylive/live';
-  }
 
-  static String getDaddyliveExtractHls(String baseUrl, String embedUrl) {
-    return '${_b(baseUrl)}daddylive/extract-hls?url=${Uri.encodeComponent(embedUrl)}';
-  }
-
-  static String getDaddyliveHls(String baseUrl, String channelId,
-      {String source = 'tv'}) {
-    return '${_b(baseUrl)}daddylive/hls?id=${Uri.encodeComponent(channelId)}&source=$source';
-  }
 
   /// ESPN scoreboard for a league on a date.
   /// [date] should be the user's local calendar date (e.g. DateTime.now()).

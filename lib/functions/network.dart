@@ -444,26 +444,6 @@ Future<String> getVttFileAsString(String url) async {
   }
 }
 
-Future<Channels> fetchChannels(String api) async {
-  try {
-    final res = await retryOptions.retry(
-      () => http.get(Uri.parse(api), headers: {'User-Agent': browserUserAgent}),
-      retryIf: (e) => e is SocketException || e is TimeoutException,
-    );
-    if (res.statusCode != 200) {
-      throw ChannelsNotFoundException();
-    }
-    final decodeRes = jsonDecode(res.body);
-    if (decodeRes is! Map<String, dynamic>) {
-      throw ChannelsNotFoundException();
-    }
-    return Channels.fromJson(decodeRes);
-  } catch (e) {
-    rethrow;
-  } finally {
-    client.close();
-  }
-}
 
 const String _espnNbaScoreboardUrl =
     'https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard';
