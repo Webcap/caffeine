@@ -62,7 +62,7 @@ dependencies:
   purchases_flutter: ^9.15.1
   mixpanel_flutter: ^2.4.5
   flutter_secure_storage: ^10.0.0
-  install_plugin_v2: ^1.0.0
+  flutter_app_installer: ^2.0.0
 dependency_overrides:
   media_kit:
     path: ../media-kit/media_kit
