@@ -3,6 +3,7 @@ import 'package:media_kit_video/media_kit_video.dart';
 import 'package:flutter/material.dart';
 import 'package:reelriot/utils/constant.dart';
 import 'dart:async';
+import 'dart:convert';
 
 enum CaffeinePlayerEventType {
   initialized,
@@ -145,6 +146,58 @@ class CaffeinePlayerController extends ChangeNotifier {
     );
   }
 
+  // ---------------------------------------------------------------------------
+  // Proxy routing
+  // ---------------------------------------------------------------------------
+
+  /// Domains whose streams must be fetched via the Caffeine server proxy.
+  /// The proxy adds proper browser Sec-Fetch-* headers and rewrites all HLS
+  /// segment URLs through itself so every request arrives from the server IP.
+  static const _proxiedDomains = [
+    'wfty.st',
+    'lb4.wfty.st',
+    'vixsrc.to',
+    'vix-content.net',
+    'vodvidl.site',
+    'vodvid.site',
+    'strmd.st',
+  ];
+
+  /// Returns true when [url]'s host matches a CDN-protected domain.
+  static bool _needsProxy(String url) {
+    try {
+      final host = Uri.parse(url).host.toLowerCase();
+      return _proxiedDomains.any((d) => host == d || host.endsWith('.$d'));
+    } catch (_) {
+      return false;
+    }
+  }
+
+  /// Builds a Caffeine proxy URL for [targetUrl] with upstream [headers].
+  /// The proxy route accepts the app API key as ?key= for authorization.
+  static String _buildCaffeineProxyUrl(
+    String targetUrl,
+    Map<String, String> headers,
+  ) {
+    final base = caffeineApiUrl.endsWith('/')
+        ? caffeineApiUrl.substring(0, caffeineApiUrl.length - 1)
+        : caffeineApiUrl;
+    // Use standard base64url (no padding) — the proxy's b64Decode handles it.
+    final urlB64 = base64Url.encode(utf8.encode(targetUrl));
+    final headersB64 = base64Url.encode(utf8.encode(jsonEncode(headers)));
+    final key = caffeineApiKey;
+    final keyParam =
+        key.isNotEmpty ? '&key=${Uri.encodeQueryComponent(key)}' : '';
+    return '$base/proxy/stream/video.m3u8'
+        '?url=${Uri.encodeQueryComponent(urlB64)}'
+        '&headers=${Uri.encodeQueryComponent(headersB64)}'
+        '$keyParam';
+  }
+
+  // ---------------------------------------------------------------------------
+  // Playback
+  // ---------------------------------------------------------------------------
+
   Future<void> setDataSource(
     String url, {
     Map<String, String>? headers,
@@ -152,19 +205,29 @@ class CaffeinePlayerController extends ChangeNotifier {
     Duration startAt = Duration.zero,
     List<CaffeinePlayerSubtitlesSource>? subtitles,
   }) async {
-    debugPrint('[PlayerController] setDataSource: $url');
-    
-    // Inject a Chrome user agent to prevent Cloudflare bot blocking on the proxy!
+    // Inject a Chrome user agent to prevent Cloudflare bot blocking.
     final finalHeaders = Map<String, String>.from(headers ?? {});
     if (!finalHeaders.keys.any((k) => k.toLowerCase() == 'user-agent')) {
       finalHeaders['User-Agent'] = browserUserAgent;
     }
 
-    // Since our normalized browserUserAgent is now comma-free, we no longer need 
-    // to escape it for libmpv. This also avoids passing backslashes to our proxy.
-    final safeHeaders = finalHeaders;
+    // Route CDN-protected streams through the Caffeine server proxy.
+    // The proxy adds Sec-Fetch-* and other browser-only headers that libmpv
+    // cannot send, and rewrites every HLS segment URL through itself — exactly
+    // replicating what the web player does in a real browser.
+    String playUrl = url;
+    Map<String, String> playHeaders = finalHeaders;
+    if (_needsProxy(url)) {
+      playUrl = _buildCaffeineProxyUrl(url, finalHeaders);
+      // The proxy handles all upstream auth; we only need UA for our own API.
+      playHeaders = {'User-Agent': browserUserAgent};
+      debugPrint('[PlayerController] 🌐 Routing via Caffeine proxy');
+      debugPrint('[PlayerController] original: $url');
+    } else {
+      debugPrint('[PlayerController] setDataSource: $url');
+    }
 
-    debugPrint('[PlayerController] headers: $safeHeaders');
+    debugPrint('[PlayerController] headers: $playHeaders');
 
     if (liveStream) {
       // Stability optimizations for live streams
@@ -205,15 +268,15 @@ class CaffeinePlayerController extends ChangeNotifier {
 
     await player.open(
       Media(
-        url,
-        httpHeaders: safeHeaders,
+        playUrl,
+        httpHeaders: playHeaders,
       ),
       play: false,
     );
 
     if (startAt > Duration.zero) {
       await player.seek(startAt);
-      
+
       StreamSubscription<Duration>? sub;
       sub = player.stream.duration.listen((d) {
         if (d > Duration.zero) {

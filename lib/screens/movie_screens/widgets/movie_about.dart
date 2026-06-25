@@ -48,42 +48,25 @@ class _MovieAboutState extends State<MovieAbout> {
                 bottomRight: Radius.circular(8.0))),
         child: Column(
           children: <Widget>[
-            GenreDisplay(
-              api: Endpoints.movieDetailsUrl(widget.movie.id!, lang),
-            ),
-            Row(
-              children: <Widget>[
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: Row(
-                      children: [
-                        const LeadingDot(),
-                        Expanded(
-                          child: Text(
-                            tr("overview"),
-                            style: kTextHeaderStyle,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
               child: widget.movie.overview == null ||
                       widget.movie.overview!.isEmpty
                   ? Text(tr("no_overview_movie"))
                   : ReadMoreText(
                       widget.movie.overview!,
-                      trimLines: 4,
-                      style: const TextStyle(fontFamily: 'Poppins'),
+                      trimLines: 3,
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontSize: 14,
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? const Color(0xB8FFFFFF)
+                            : const Color(0xFF475569),
+                      ),
                       colorClickableText: Theme.of(context).colorScheme.primary,
                       trimMode: TrimMode.Line,
-                      trimCollapsedText: tr("read_more"),
-                      trimExpandedText: tr("read_less"),
+                      trimCollapsedText: ' See More',
+                      trimExpandedText: ' See Less',
                       lessStyle: TextStyle(
                           fontSize: 14,
                           color: Theme.of(context).colorScheme.primary,
@@ -93,25 +76,6 @@ class _MovieAboutState extends State<MovieAbout> {
                           color: Theme.of(context).colorScheme.primary,
                           fontWeight: FontWeight.bold),
                     ),
-            ),
-            Row(
-              children: <Widget>[
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.only(
-                        left: 8.0, bottom: 4.0, right: 8.0),
-                    child: Text(
-                      widget.movie.releaseDate == null ||
-                              widget.movie.releaseDate!.isEmpty
-                          ? tr("no_release_date")
-                          : '${tr("release_date")} : ${DateTime.parse(widget.movie.releaseDate!).day} ${DateFormat("MMMM").format(DateTime.parse(widget.movie.releaseDate!))}, ${DateTime.parse(widget.movie.releaseDate!).year}',
-                      style: const TextStyle(fontFamily: 'PoppinsSB'),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ),
-              ],
             ),
             const SizedBox(height: 15),
             ScrollingArtists(

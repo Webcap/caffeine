@@ -103,6 +103,7 @@ class _LiveEventScreenState extends State<LiveEventScreen> {
   EspnScoreboardGame? _scoreGame;
   String? _currentUrl;
   String? _currentReferrer;
+  String? _currentUserAgent;
   List<dynamic> _sources = [];
 
   bool get _hasStream =>
@@ -119,6 +120,7 @@ class _LiveEventScreenState extends State<LiveEventScreen> {
     super.initState();
     _currentUrl = widget.videoUrl;
     _currentReferrer = widget.referrer;
+    _currentUserAgent = widget.userAgent;
     _sources = widget.sources ?? [];
     if (_hasStream) _initPlayer();
     if (widget.event.sport?.toLowerCase() == 'nba') _loadNbaScore();
@@ -145,7 +147,7 @@ class _LiveEventScreenState extends State<LiveEventScreen> {
       url,
       liveStream: true,
       headers: {
-        'User-Agent': widget.userAgent,
+        'User-Agent': _currentUserAgent ?? widget.userAgent,
         'Referer': _effectiveReferrer,
         'Origin': _getOrigin(_effectiveReferrer),
         'Accept': '*/*',
@@ -248,10 +250,12 @@ class _LiveEventScreenState extends State<LiveEventScreen> {
               onSourceChanged: (source) {
                 final url = source['url']?.toString();
                 final ref = source['referrer']?.toString() ?? '';
+                final ua = source['user_agent']?.toString();
                 if (url == null || url == _currentUrl) return;
                 setState(() {
                   _currentUrl = url;
                   _currentReferrer = ref;
+                  if (ua != null && ua.isNotEmpty) _currentUserAgent = ua;
                 });
                 _initPlayer();
               },

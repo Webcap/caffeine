@@ -413,18 +413,7 @@ class Endpoints {
     return '${_b(baseUrl)}$provider/watch-tv?tmdbId=$tmdbId&season=$season&episode=$episode&server=$server';
   }
 
-  static String getIPTVEndpoint(String baseUrl) {
-    return '${_b(baseUrl)}daddylive/live';
-  }
 
-  static String getDaddyliveExtractHls(String baseUrl, String embedUrl) {
-    return '${_b(baseUrl)}daddylive/extract-hls?url=${Uri.encodeComponent(embedUrl)}';
-  }
-
-  static String getDaddyliveHls(String baseUrl, String channelId,
-      {String source = 'tv'}) {
-    return '${_b(baseUrl)}daddylive/hls?id=${Uri.encodeComponent(channelId)}&source=$source';
-  }
 
   /// ESPN scoreboard for a league on a date.
   /// [date] should be the user's local calendar date (e.g. DateTime.now()).
@@ -510,4 +499,25 @@ class Endpoints {
     final base = baseUrl.endsWith('/') ? baseUrl : '$baseUrl/';
     return '$base$provider/stream-tv?tmdbId=$tmdbId&episode=$episodeId&season=$seasonId&language=$language&country=$country';
   }
+
+  // ─── Reelriot Discovery Engine v1.2 ──────────────────────────────────────
+  /// Builds the GET /v1/discovery URL.
+  /// [userId]    — optional, enables "Because you watched" AI rows.
+  /// [mediaType] — optional, 'movie' or 'tv'.
+  /// [region]    — optional, ISO-3166-1 alpha-2 country code.
+  static String discoveryFeedUrl(
+    String baseUrl, {
+    String? userId,
+    String? mediaType,
+    String? region,
+  }) {
+    final b = _b(baseUrl);
+    final params = <String>[];
+    if (userId != null && userId.isNotEmpty) params.add('userId=$userId');
+    if (mediaType != null && mediaType.isNotEmpty) params.add('mediaType=$mediaType');
+    if (region != null && region.isNotEmpty) params.add('region=$region');
+    final query = params.isEmpty ? '' : '?${params.join('&')}';
+    return '${b}v1/discovery$query';
+  }
 }
+

@@ -38,42 +38,26 @@ class _TVAboutState extends State<TVAbout> {
                 bottomRight: Radius.circular(8.0))),
         child: Column(
           children: <Widget>[
-            TVGenreDisplay(
-              api: Endpoints.tvDetailsUrl(widget.tvSeries.id!, lang),
-            ),
-            Row(
-              children: <Widget>[
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: Row(
-                      children: [
-                        const LeadingDot(),
-                        Expanded(
-                          child: Text(
-                            tr("overview"),
-                            style: kTextHeaderStyle,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
+
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
               child: widget.tvSeries.overview!.isEmpty ||
                       widget.tvSeries.overview == null
                   ? Text(tr("no_overview_tv"))
                   : ReadMoreText(
                       widget.tvSeries.overview!,
-                      trimLines: 4,
-                      style: const TextStyle(fontFamily: 'Poppins'),
+                      trimLines: 3,
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontSize: 14,
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? const Color(0xB8FFFFFF)
+                            : const Color(0xFF475569),
+                      ),
                       colorClickableText: const Color(0xFFDC2626),
                       trimMode: TrimMode.Line,
-                      trimCollapsedText: tr("read_more"),
-                      trimExpandedText: tr("read_less"),
+                      trimCollapsedText: ' See More',
+                      trimExpandedText: ' See Less',
                       lessStyle: const TextStyle(
                           fontSize: 14,
                           color: Color(0xFFDC2626),
@@ -84,27 +68,7 @@ class _TVAboutState extends State<TVAbout> {
                           fontWeight: FontWeight.bold),
                     ),
             ),
-            Row(
-              children: <Widget>[
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.only(
-                        left: 8.0, bottom: 4.0, right: 8.0),
-                    child: Text(
-                      widget.tvSeries.firstAirDate == null ||
-                              widget.tvSeries.firstAirDate!.isEmpty
-                          ? tr("first_episode_air_empty")
-                          : '${tr("first_episode_air")} ${DateTime.parse(widget.tvSeries.firstAirDate!).day} ${DateFormat("MMMM").format(DateTime.parse(widget.tvSeries.firstAirDate!))}, ${DateTime.parse(widget.tvSeries.firstAirDate!).year}',
-                      style: const TextStyle(
-                        fontFamily: 'PoppinsSB',
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ),
-              ],
-            ),
+            const SizedBox(height: 15),
             ScrollingTVArtists(
               passedFrom: 'tv_detail',
               api: Endpoints.getTVCreditsUrl(widget.tvSeries.id!, lang),
