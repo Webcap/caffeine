@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:media_kit/media_kit.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:reelriot/firebase_options.dart';
 
 import 'package:reelriot/caffiene_main.dart';
 import 'package:reelriot/utils/flavor_config.dart';
@@ -75,6 +77,14 @@ Future<void> appInitialize() async {
   WidgetsFlutterBinding.ensureInitialized();
   MediaKit.ensureInitialized();
   await dotenv.load(fileName: ".env");
+
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  } catch (e) {
+    debugPrint('Firebase initialization error: $e');
+  }
 
   // Supabase MUST be initialized before RecentProvider - its controllers
   // access Supabase.instance.client in their constructors
