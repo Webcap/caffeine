@@ -559,9 +559,12 @@ class _UpdateScreenState extends State<UpdateScreen> {
     }
 
     debugPrint('[Update] Proceeding with file open');
-    _fileOpener.open(file.path, type: 'application/vnd.android.package-archive').then((result) {
-      debugPrint('[Update] OpenFile result: ${result.type} - ${result.message}');
-    });
+    try {
+      final result = await _fileOpener.open(file.path, type: 'application/vnd.android.package-archive');
+      debugPrint('[Update] OpenFile result: $result');
+    } catch (e) {
+      debugPrint('[Update] Error opening file: $e');
+    }
   }
 
   void _onDeleteFile(String url) {
