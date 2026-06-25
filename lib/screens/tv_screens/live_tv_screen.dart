@@ -535,13 +535,16 @@ class ChannelListState extends State<ChannelList> {
             response['video_url'].toString().isNotEmpty) {
           videoUrl = response['video_url'];
           String? ref = response['referrer']?.toString();
-          if (ref == null || ref.isEmpty) {
-            final src = response['sources'];
-            if (src is List && src.isNotEmpty) {
-              ref = src.first['referrer']?.toString();
-            }
+          String? ua = response['user_agent']?.toString();
+          final src = response['sources'];
+          if ((ref == null || ref.isEmpty) && src is List && src.isNotEmpty) {
+            ref = src.first['referrer']?.toString();
+          }
+          if ((ua == null || ua.isEmpty) && src is List && src.isNotEmpty) {
+            ua = src.first['user_agent']?.toString();
           }
           referrer = ref ?? '';
+          if (ua != null && ua.isNotEmpty) userAgent = ua;
           matchedEvent = StreameastEvent(
             id: ev.game.id,
             title: ev.game.name,

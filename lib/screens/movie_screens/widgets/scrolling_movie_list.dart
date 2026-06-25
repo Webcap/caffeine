@@ -92,7 +92,8 @@ class ScrollingMoviesState extends State<ScrollingMovies>
           moviesList = value;
         });
       }
-    }).catchError((_) {
+    }).catchError((e) {
+      debugPrint('[ScrollingMovies] Error fetching \${widget.api}: $e');
       if (mounted) setState(() => moviesList = []);
     });
     getMoreData();

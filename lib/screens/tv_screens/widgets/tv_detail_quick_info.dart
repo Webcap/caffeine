@@ -81,7 +81,7 @@ class TVDetailQuickInfo extends StatelessWidget {
     final iconBg = isDark ? _C.iconBgDark : _C.iconBgLight;
     final border = isDark ? _C.borderDark : _C.borderLight;
 
-    final heroHeight = MediaQuery.of(context).size.height * 0.50;
+    final heroHeight = MediaQuery.of(context).size.height * 0.55;
     final imageUrl = tvSeries.backdropPath ?? tvSeries.posterPath;
     final baseUrl =
         buildImageUrl(tmdbBaseImageUrl, proxyUrl, isProxy, context);
@@ -185,41 +185,9 @@ class TVDetailQuickInfo extends StatelessWidget {
             ),
           ),
 
-          // ── Videos chip (lower-left over artwork) ──────────────────────
-          Positioned(
-            left: 16,
-            bottom: 100,
-            child: GestureDetector(
-              onTap: onVideosTap ?? () {},
-              child: Container(
-                height: 32,
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                decoration: BoxDecoration(
-                  color: Colors.black.withValues(alpha: 0.5),
-                  borderRadius: BorderRadius.circular(999),
-                  border: Border.all(color: border, width: 1),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      Icons.play_circle_fill_rounded,
-                      size: 18,
-                      color: _C.primary,
-                    ),
-                    const SizedBox(width: 6),
-                    Text(
-                      tr('videos'),
-                      style: const TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+          // ── Centered Play Button (Watch Now / Continue) ────────────────────────
+          Center(
+            child: _WatchNowButton(tvSeries: tvSeries),
           ),
 
           // ── TV title + year (anchored at bottom of hero) ───────────────
@@ -243,8 +211,8 @@ class TVDetailQuickInfo extends StatelessWidget {
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.w700,
+                          fontSize: 24,
+                          fontWeight: FontWeight.w800,
                           color: textPrim,
                           height: 1.2,
                           letterSpacing: 0.2,
@@ -286,13 +254,7 @@ class TVDetailQuickInfo extends StatelessWidget {
             ),
           ),
 
-          // ── Watch Now / Continue Button (Bottom center of hero) ──────────
-          Positioned(
-            left: 16,
-            right: 16,
-            bottom: 80,
-            child: _WatchNowButton(tvSeries: tvSeries),
-          ),
+
         ],
       ),
     );
@@ -408,49 +370,41 @@ class _WatchNowButton extends StatelessWidget {
            }
         }
       },
-      child: Container(
-        height: 48,
-        decoration: BoxDecoration(
-          color: _C.primary,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: _C.primary.withValues(alpha: 0.3),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 64,
+            height: 64,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.black.withValues(alpha: 0.5),
+              border: Border.all(
+                color: Colors.white.withValues(alpha: 0.2),
+                width: 1,
+              ),
             ),
-          ],
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.play_arrow_rounded, color: Colors.white, size: 28),
-            const SizedBox(width: 8),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  label.toUpperCase(),
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 0.5,
-                  ),
-                ),
-                Text(
-                  subtitle,
-                  style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.7),
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
+            child: const Icon(Icons.play_arrow_rounded, color: Colors.white, size: 40),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            label.toUpperCase(),
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 12,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 0.5,
             ),
-          ],
-        ),
+          ),
+          Text(
+            subtitle,
+            style: TextStyle(
+              color: Colors.white.withValues(alpha: 0.7),
+              fontSize: 10,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
       ),
     );
   }

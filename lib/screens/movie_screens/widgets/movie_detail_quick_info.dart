@@ -73,8 +73,8 @@ class MovieDetailQuickInfo extends StatelessWidget {
       }
     }
 
-    // Hero occupies ~45–55% of screen; use 0.5 of height
-    final heroHeight = MediaQuery.of(context).size.height * 0.50;
+    // Hero occupies ~55% of screen
+    final heroHeight = MediaQuery.of(context).size.height * 0.55;
     final imageUrl = movie.backdropPath ?? movie.posterPath;
     final baseUrl =
         buildImageUrl(tmdbBaseImageUrl, proxyUrl, isProxy, context);
@@ -154,39 +154,6 @@ class MovieDetailQuickInfo extends StatelessWidget {
             ),
           ),
 
-          // ── Watch trailer chip (lower-left over artwork) ───────────────────
-          Positioned(
-            left: 16,
-            bottom: 100,
-            child: GestureDetector(
-              onTap: onTrailerTap ?? () {},
-              child: Container(
-                height: 32,
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                decoration: BoxDecoration(
-                  color: Colors.black.withValues(alpha: 0.5),
-                  borderRadius: BorderRadius.circular(999),
-                  border: Border.all(color: border, width: 1),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.play_circle_fill_rounded,
-                        size: 18, color: _C.primary),
-                    const SizedBox(width: 6),
-                    Text(
-                      tr('videos'),
-                      style: const TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
 
           // ── Movie title + year (anchored at bottom of hero) ────────────────
           Positioned(
@@ -209,8 +176,8 @@ class MovieDetailQuickInfo extends StatelessWidget {
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.w700,
+                          fontSize: 24,
+                          fontWeight: FontWeight.w800,
                           color: textPrim,
                           height: 1.2,
                           letterSpacing: 0.2,

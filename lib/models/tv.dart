@@ -1,3 +1,5 @@
+import 'package:reelriot/models/genres.dart';
+
 class TVList {
   int? page;
   int? totalTV;
@@ -162,6 +164,7 @@ class TVDetails {
   List<EpisodeList>? episodes;
   List<CreatedBy>? createdBy;
   List<Networks>? networks;
+  List<Genres>? genres;
 
   TVDetails({
     this.runtime,
@@ -180,6 +183,7 @@ class TVDetails {
     this.createdBy,
     this.seasons,
     this.networks,
+    this.genres,
   });
 
   TVDetails.fromJson(Map<String, dynamic> json) {
@@ -192,6 +196,12 @@ class TVDetails {
     numberOfEpisodes = json['number_of_episodes'];
     numberOfSeasons = json['number_of_seasons'];
     inProduction = json['in_production'];
+    if (json['genres'] != null) {
+      genres = <Genres>[];
+      json['genres'].forEach((v) {
+        genres!.add(Genres.fromJson(v));
+      });
+    }
     if (json['production_companies'] != null) {
       productionCompanies = [];
       json['production_companies'].forEach((v) {

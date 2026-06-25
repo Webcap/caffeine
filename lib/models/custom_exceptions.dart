@@ -20,13 +20,3 @@ class ServerDownException implements Exception {
   }
 }
 
-class ChannelsNotFoundException implements Exception {
-  String? message;
-
-  ChannelsNotFoundException({this.message});
-
-  @override
-  String toString() {
-    return message ?? '';
-  }
-}
