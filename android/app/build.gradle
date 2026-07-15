@@ -110,3 +110,9 @@ dependencies {
     implementation 'com.google.android.gms:play-services-wallet:19.3.0-beta01'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.1.0"
 }
+
+configurations.all {
+    resolutionStrategy {
+        force 'com.startapp:inapp-sdk:5.1.0'
+    }
+}
