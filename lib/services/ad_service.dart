@@ -55,6 +55,20 @@ class AdService extends ChangeNotifier {
     }
   }
 
+  Future<StartAppBannerAd?> loadNewBannerAd() async {
+    if (!_isEnabled || _sdk == null) {
+      debugPrint('Start.io Banner Ad load skipped: enabled=$_isEnabled, sdk initialized=${_sdk != null}');
+      return null;
+    }
+    try {
+      final ad = await _sdk!.loadBannerAd(StartAppBannerType.BANNER);
+      return ad;
+    } catch (e) {
+      debugPrint('Start.io Banner Ad failed to load: $e');
+      return null;
+    }
+  }
+
   void _loadBannerAd() {
     if (!_isEnabled || _sdk == null || _isBannerAdLoading) {
       debugPrint(
