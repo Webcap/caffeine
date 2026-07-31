@@ -302,8 +302,8 @@ class RecentProvider extends ChangeNotifier {
             }
 
             if (showDetails.seasons != null) {
-              final s = completedEp.seasonNum!;
-              final e = completedEp.episodeNum!;
+              final s = completedEp.seasonNum ?? 1;
+              final e = completedEp.episodeNum ?? 1;
 
               // Find current season info
               final currentSeasonInfo = showDetails.seasons!.firstWhere(
