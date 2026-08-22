@@ -30,6 +30,26 @@ CAFFEINE_API_URL=http://10.0.2.2:8080
 
 Modify `tools/config.json` to change values returned by the mock server.
 
-## Version Control
+## Build Number & Version Generator
 
-run `dart run tools/version_gen.dart` to update the version in `pubspec.yaml` and `lib/screens/common/update_screen.dart`
+Run the build number generator to update `pubspec.yaml` and generate `lib/utils/app_version.g.dart`:
+
+```bash
+# Update date to today (YYYY.MM.DD) and increment build number (+1):
+dart run tools/build_number_gen.dart
+
+# Use Git commit count as build number:
+dart run tools/build_number_gen.dart --git
+
+# Use timestamp (YYMMddHHmm) as build number:
+dart run tools/build_number_gen.dart --timestamp
+
+# Set custom build number or version:
+dart run tools/build_number_gen.dart --build 1750 --version 2026.08.22
+
+# Only sync pubspec.yaml into lib/utils/app_version.g.dart without changing versions:
+dart run tools/build_number_gen.dart --sync
+
+# Dry run to preview changes:
+dart run tools/build_number_gen.dart --dry-run
+```

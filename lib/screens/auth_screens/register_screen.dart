@@ -279,7 +279,7 @@ class _SignupScreenState extends State<SignupScreen> {
       if (!mounted) return;
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const caffieneHomePage()),
+        MaterialPageRoute(builder: (_) => const CaffieneHomePage()),
       );
     } on AuthException catch (error) {
       debugPrint(
