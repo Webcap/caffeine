@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -65,9 +66,7 @@ class _ProfileEditState extends State<ProfileEdit> {
   final _formKey = GlobalKey<FormState>();
 
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _usernameController = TextEditingController();
   final FocusNode _nameFocusNode = FocusNode();
-  final FocusNode _usernameFocusNode = FocusNode();
 
   bool _isLoading = true;
   bool _isSaving = false;
@@ -75,12 +74,12 @@ class _ProfileEditState extends State<ProfileEdit> {
 
   String? _uid;
   String? _email;
+  String? _username;
   String? _joinedAtMonth;
   int? _joinedAtYear;
   bool? _isVerified;
 
   String _initialName = '';
-  String _initialUsername = '';
   int _initialProfileId = 0;
   int _selectedProfileId = 0;
 
@@ -88,28 +87,21 @@ class _ProfileEditState extends State<ProfileEdit> {
   void initState() {
     super.initState();
     _nameController.addListener(_onFormDirtyCheck);
-    _usernameController.addListener(_onFormDirtyCheck);
     _fetchUserData();
   }
 
   @override
   void dispose() {
     _nameController.removeListener(_onFormDirtyCheck);
-    _usernameController.removeListener(_onFormDirtyCheck);
     _nameController.dispose();
-    _usernameController.dispose();
     _nameFocusNode.dispose();
-    _usernameFocusNode.dispose();
     super.dispose();
   }
 
   bool get _isDirty {
     final nameChanged = _nameController.text.trim() != _initialName.trim();
-    final usernameChanged =
-        _usernameController.text.trim().toLowerCase() !=
-            _initialUsername.trim().toLowerCase();
     final avatarChanged = _selectedProfileId != _initialProfileId;
-    return nameChanged || usernameChanged || avatarChanged;
+    return nameChanged || avatarChanged;
   }
 
   void _onFormDirtyCheck() {
@@ -146,12 +138,11 @@ class _ProfileEditState extends State<ProfileEdit> {
         final fetchedProfileId = (data['profile_id'] as int?) ?? 0;
 
         _initialName = fetchedName;
-        _initialUsername = fetchedUsername;
         _initialProfileId = fetchedProfileId;
         _selectedProfileId = fetchedProfileId;
 
         _nameController.text = fetchedName;
-        _usernameController.text = fetchedUsername;
+        _username = fetchedUsername;
 
         _email = (data['email'] as String?) ?? user.email;
         _isVerified = data['verified'] as bool?;
@@ -183,24 +174,13 @@ class _ProfileEditState extends State<ProfileEdit> {
     }
   }
 
-  Future<bool> _checkUsernameExists(String username) async {
-    final res = await _supabase
-        .from('usernames')
-        .select('username')
-        .eq('username', username.trim().toLowerCase())
-        .limit(1);
-    return res.isNotEmpty;
-  }
-
   Future<void> _saveProfile() async {
     final isValid = _formKey.currentState?.validate() ?? false;
     if (!isValid || _uid == null || !_isDirty) return;
 
     _nameFocusNode.unfocus();
-    _usernameFocusNode.unfocus();
 
     final newName = _nameController.text.trim();
-    final newUsername = _usernameController.text.trim().toLowerCase();
 
     setState(() => _isSaving = true);
     HapticFeedback.mediumImpact();
@@ -211,52 +191,15 @@ class _ProfileEditState extends State<ProfileEdit> {
         data: {'avatar': _selectedProfileId},
       ));
 
-      // 2. Check if username changed
-      if (newUsername != _initialUsername.trim().toLowerCase()) {
-        final exists = await _checkUsernameExists(newUsername);
-        if (exists) {
-          if (mounted) {
-            setState(() => _isSaving = false);
-            GlobalMethods.showCustomScaffoldMessage(
-              SnackBar(
-                content: Text(
-                  tr("username_exists"),
-                  style: kTextSmallBodyStyle,
-                ),
-                duration: const Duration(seconds: 4),
-                behavior: SnackBarBehavior.floating,
-              ),
-              context,
-            );
-          }
-          return;
-        }
-
-        // Delete old username reservation if existed
-        if (_initialUsername.isNotEmpty) {
-          await _supabase
-              .from('usernames')
-              .delete()
-              .eq('username', _initialUsername.trim().toLowerCase());
-        }
-
-        // Insert new username
-        await _supabase.from('usernames').insert({
-          'username': newUsername,
-          'user_id': _uid!,
-        });
-      }
-
-      // 3. Update profiles table
+      // 2. Update profiles table (name and avatar)
       await _supabase.from('profiles').update({
         'name': newName,
-        'username': newUsername,
         'profile_id': _selectedProfileId,
       }).eq('id', _uid!);
 
       if (!mounted) return;
 
-      // 4. Update SignInProvider state for instantaneous sync across app
+      // 3. Update SignInProvider state for instantaneous sync across app
       await Provider.of<SignInProvider>(context, listen: false)
           .getUserDataFromFirestore(_uid);
 
@@ -576,11 +519,16 @@ class _ProfileEditState extends State<ProfileEdit> {
                                         false;
                                 if (!valid) return;
 
+                                final targetEmail = emailController.text.trim();
                                 setModalState(() => isEmailUpdating = true);
                                 try {
-                                  await _auth.updateUser(UserAttributes(
-                                    email: emailController.text.trim(),
-                                  ));
+                                  // Trigger email update and verification email dispatch via Resend
+                                  await _auth.updateUser(
+                                    UserAttributes(email: targetEmail),
+                                    emailRedirectTo: kIsWeb
+                                        ? null
+                                        : 'io.reelriot.app://login-callback/',
+                                  );
                                   if (!sheetContext.mounted) return;
                                   Navigator.of(sheetContext).pop();
                                   if (!context.mounted) return;
@@ -592,6 +540,21 @@ class _ProfileEditState extends State<ProfileEdit> {
                                       ),
                                       duration: const Duration(seconds: 4),
                                       behavior: SnackBarBehavior.floating,
+                                      action: SnackBarAction(
+                                        label: tr("resend"),
+                                        textColor: Colors.white,
+                                        onPressed: () async {
+                                          try {
+                                            await _auth.resend(
+                                              type: OtpType.emailChange,
+                                              email: targetEmail,
+                                              emailRedirectTo: kIsWeb
+                                                  ? null
+                                                  : 'io.reelriot.app://login-callback/',
+                                            );
+                                          } catch (_) {}
+                                        },
+                                      ),
                                     ),
                                   );
                                 } catch (e) {
@@ -1003,7 +966,7 @@ class _ProfileEditState extends State<ProfileEdit> {
           TextFormField(
             controller: _nameController,
             focusNode: _nameFocusNode,
-            textInputAction: TextInputAction.next,
+            textInputAction: TextInputAction.done,
             style: TextStyle(color: textPrim, fontSize: 15),
             validator: (value) {
               if (value == null || value.trim().isEmpty) {
@@ -1027,66 +990,6 @@ class _ProfileEditState extends State<ProfileEdit> {
                       icon: Icon(Icons.clear_rounded, size: 18, color: textSec),
                       onPressed: () {
                         _nameController.clear();
-                      },
-                    )
-                  : null,
-              filled: true,
-              fillColor: surface,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(_Design.radiusSm),
-                borderSide: BorderSide(color: border),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(_Design.radiusSm),
-                borderSide: BorderSide(color: border),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(_Design.radiusSm),
-                borderSide: const BorderSide(
-                  color: _Design.primary,
-                  width: 1.5,
-                ),
-              ),
-            ),
-          ),
-
-          const SizedBox(height: _Design.space4),
-
-          // Username
-          TextFormField(
-            controller: _usernameController,
-            focusNode: _usernameFocusNode,
-            textInputAction: TextInputAction.done,
-            autocorrect: false,
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(RegExp(r'^[a-zA-Z0-9_]*')),
-            ],
-            style: TextStyle(color: textPrim, fontSize: 15),
-            validator: (value) {
-              if (value == null || value.trim().isEmpty) {
-                return tr("username_empty");
-              }
-              if (value.trim().length < 5 || value.trim().length > 30) {
-                return tr("username_short_long");
-              }
-              if (!RegExp(r'^[a-zA-Z0-9_]*$').hasMatch(value.trim())) {
-                return tr("invalid_username");
-              }
-              return null;
-            },
-            decoration: InputDecoration(
-              labelText: tr("username"),
-              labelStyle: TextStyle(color: textSec),
-              prefixIcon: Icon(
-                Icons.alternate_email_rounded,
-                color: textSec,
-                size: 22,
-              ),
-              suffixIcon: _usernameController.text.isNotEmpty
-                  ? IconButton(
-                      icon: Icon(Icons.clear_rounded, size: 18, color: textSec),
-                      onPressed: () {
-                        _usernameController.clear();
                       },
                     )
                   : null,
@@ -1144,6 +1047,19 @@ class _ProfileEditState extends State<ProfileEdit> {
             ),
           ),
           const SizedBox(height: _Design.space3),
+          if (_username != null && _username!.isNotEmpty) ...[
+            _buildInfoRow(
+              icon: Icons.alternate_email_rounded,
+              label: tr("username"),
+              value: '@$_username',
+              textPrim: textPrim,
+              textSec: textSec,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: _Design.space2),
+              child: Divider(height: 1, color: border),
+            ),
+          ],
           _buildInfoRow(
             icon: Icons.email_outlined,
             label: tr("change_email"),

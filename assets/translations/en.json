@@ -327,6 +327,7 @@
     "enter_new_email": "Enter your new email address",
     "email_confirmation_sent": "Confirmation link sent to your new email address.",
     "update_email": "Update email",
+    "resend": "Resend",
     "discard_dialog_title": "Discard unsaved changes?",
     "discard_dialog_desc": "You have unsaved modifications. Leaving now will discard your changes.",
     "discard": "Discard",
