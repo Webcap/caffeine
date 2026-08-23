@@ -278,7 +278,8 @@ class DeleteAccountScreenState extends State<DeleteAccountScreen> {
         try {
           final uri = Uri.parse('$caffeineApiUrl/user/account');
           final headers = {
-            ...caffeineApiHeaders,
+            'Content-Type': 'application/json',
+            if (caffeineApiKey.isNotEmpty) 'x-api-key': caffeineApiKey,
             'Authorization': 'Bearer $accessToken',
           };
           final response = await http
