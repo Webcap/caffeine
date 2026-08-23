@@ -226,6 +226,7 @@ class RecentProvider extends ChangeNotifier {
   Future<void> deleteMovie(int id) async {
     await _movieController.deleteMovie(id);
     await fetchMovies();
+    await invalidateAndRefreshWatchStats();
   }
 
   Future<void> markMovieAsCompleted(RecentMovie movie) async {
@@ -239,7 +240,11 @@ class RecentProvider extends ChangeNotifier {
       remaining: 0,
       dateTime: DateTime.now().toIso8601String(),
     );
+    if ((updated.elapsed ?? 0) == 0) {
+      updated.elapsed = 7200000; // default 2hr if no progress
+    }
     await updateMovie(updated, movie.id!);
+    await invalidateAndRefreshWatchStats();
   }
 
   /// Episode
@@ -415,6 +420,7 @@ class RecentProvider extends ChangeNotifier {
   Future<void> deleteEpisode(int id, int episodeNum, int seasonNum) async {
     await _episodeController.deleteTV(id, episodeNum, seasonNum);
     await fetchEpisodes();
+    await invalidateAndRefreshWatchStats();
   }
 
   Future<void> markEpisodeAsCompleted(RecentEpisode episode) async {
@@ -430,11 +436,12 @@ class RecentProvider extends ChangeNotifier {
       remaining: 0,
       dateTime: DateTime.now().toIso8601String(),
     );
-    if (updated.elapsed == 0) {
+    if ((updated.elapsed ?? 0) == 0) {
       updated.elapsed = 3600000; // default 1hr if no progress
     }
     await updateEpisode(
         updated, episode.id!, episode.episodeNum!, episode.seasonNum!);
+    await invalidateAndRefreshWatchStats();
   }
 
   Future<void> markUntilEpisodeAsCompleted({
@@ -464,6 +471,30 @@ class RecentProvider extends ChangeNotifier {
       }
     }
     await fetchEpisodes();
+    await invalidateAndRefreshWatchStats();
+  }
+
+  /// Invalidates both local and server cache, then fetches fresh stats from the API
+  Future<void> invalidateAndRefreshWatchStats() async {
+    try {
+      sharedPrefsSingleton.remove('cached_movie_watch_mins');
+      sharedPrefsSingleton.remove('cached_tv_watch_mins');
+
+      final uid = Supabase.instance.client.auth.currentUser?.id;
+      if (uid != null) {
+        final base = caffeineApiUrl.replaceAll(RegExp(r'/+$'), '');
+        final url = Uri.parse('$base/v1/user/$uid/watch-stats/cache');
+        await http
+            .delete(url, headers: caffeineApiHeaders)
+            .timeout(const Duration(seconds: 4))
+            .catchError((_) => http.Response('', 500));
+      }
+    } catch (e) {
+      debugPrint('[RecentProvider] ⚠️ invalidateAndRefreshWatchStats error: $e');
+    }
+
+    // Immediately fetch updated watch stats and notify listeners
+    await fetchWatchStatsFromApi();
   }
 
 
