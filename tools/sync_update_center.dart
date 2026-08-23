@@ -56,6 +56,13 @@ Future<void> main(List<String> args) async {
 
   bool synced = false;
 
+  final downloadUrls = <String, String>{
+    'universal': downloadUrl,
+    'arm64_v8a': 'https://github.com/$repoName/releases/download/v$version/ReelRiot-$environment-v$versionClean-arm64-v8a.apk',
+    'armeabi_v7a': 'https://github.com/$repoName/releases/download/v$version/ReelRiot-$environment-v$versionClean-armeabi-v7a.apk',
+    'x86_64': 'https://github.com/$repoName/releases/download/v$version/ReelRiot-$environment-v$versionClean-x86_64.apk',
+  };
+
   // 1. Primary Sync: Supabase Direct Upsert (Single source of truth)
   if (supabaseUrl != null && serviceRoleKey != null && supabaseUrl.isNotEmpty && serviceRoleKey.isNotEmpty) {
     try {
@@ -76,6 +83,7 @@ Future<void> main(List<String> args) async {
         'is_forced': isForced,
         'rollout_percentage': 100,
         'download_url': downloadUrl,
+        'download_urls': downloadUrls,
         'store_url': storeUrl,
         'changelog': changelog,
         'updated_at': DateTime.now().toUtc().toIso8601String(),
@@ -96,6 +104,7 @@ Future<void> main(List<String> args) async {
             'version': version,
             'is_forced': isForced,
             'rollout_percentage': 100,
+            'download_urls': downloadUrls,
             'changelog': changelog,
           });
           await http.post(historyUri, headers: headers, body: historyPayload);
@@ -127,6 +136,7 @@ Future<void> main(List<String> args) async {
         'is_forced': isForced,
         'rollout_percentage': 100,
         'download_url': downloadUrl,
+        'download_urls': downloadUrls,
         'store_url': storeUrl,
         'changelog': changelog,
       });
