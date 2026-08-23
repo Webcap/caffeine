@@ -117,21 +117,23 @@ class _UnifiedVideoLoaderState extends State<UnifiedVideoLoader> {
       // --- Resumption Logic ---
       if (widget.mediaType == MediaType.movie) {
         final meta = widget.movieMetadata!;
-        var isBookmarked = await movieController.contain(meta.movieId!);
-        if (isBookmarked && meta.elapsed == null) {
+        if (meta.elapsed == null || meta.elapsed == 0) {
           var rMovies =
               Provider.of<RecentProvider>(context, listen: false).movies;
+          if (rMovies.isEmpty) {
+            rMovies = await movieController.getRecentMovieList();
+          }
           int index = rMovies.indexWhere((e) => e.id == meta.movieId);
           if (index != -1) {
             final movie = rMovies[index];
             if (shouldShowInContinueWatching(movie.elapsed, movie.remaining)) {
-              setState(() {
-                meta.elapsed = movie.elapsed!;
-              });
-            } else {
-              setState(() {
-                meta.elapsed = 0;
-              });
+              if (mounted) {
+                setState(() {
+                  meta.elapsed = movie.elapsed ?? 0;
+                });
+              } else {
+                meta.elapsed = movie.elapsed ?? 0;
+              }
             }
           }
         }
@@ -141,21 +143,23 @@ class _UnifiedVideoLoaderState extends State<UnifiedVideoLoader> {
         }
       } else {
         final meta = widget.tvMetadata!;
-        var isBookmarked = await tvController.contain(meta.episodeId!);
-        if (isBookmarked && meta.elapsed == null) {
+        if (meta.elapsed == null || meta.elapsed == 0) {
           var rEpisodes =
               Provider.of<RecentProvider>(context, listen: false).episodes;
+          if (rEpisodes.isEmpty) {
+            rEpisodes = await tvController.getEpisodeList();
+          }
           int index = rEpisodes.indexWhere((e) => e.id == meta.episodeId);
           if (index != -1) {
             final episode = rEpisodes[index];
             if (shouldShowInContinueWatching(episode.elapsed, episode.remaining)) {
-              setState(() {
-                meta.elapsed = episode.elapsed!;
-              });
-            } else {
-              setState(() {
-                meta.elapsed = 0;
-              });
+              if (mounted) {
+                setState(() {
+                  meta.elapsed = episode.elapsed ?? 0;
+                });
+              } else {
+                meta.elapsed = episode.elapsed ?? 0;
+              }
             }
           }
         }

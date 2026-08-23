@@ -277,38 +277,46 @@ class CaffeinePlayerController extends ChangeNotifier {
       Media(
         playUrl,
         httpHeaders: playHeaders,
+        start: startAt > Duration.zero ? startAt : null,
       ),
-      play: false,
+      play: true,
     );
 
-    await player.play();
-
     if (startAt > Duration.zero) {
-      // Wait until the player reports a valid duration before seeking.
-      // For HLS streams, duration is not known until the manifest is parsed
-      // after playback begins, so any pre-play seek gets reset to 0.
-      StreamSubscription<Duration>? durationSub;
+      // In addition to Media(..., start: startAt), perform a seek once the player
+      // is ready/playing to guarantee resumption across all formats & HLS streams.
       bool seekDone = false;
+      StreamSubscription? posSub;
+      StreamSubscription? durSub;
 
-      Future<void> doSeek() async {
+      void performSeek() {
         if (seekDone) return;
         seekDone = true;
-        durationSub?.cancel();
+        posSub?.cancel();
+        durSub?.cancel();
         try {
-          await player.seek(startAt);
-          debugPrint('[PlayerController] ▶️ Resumed at ${startAt.inSeconds}s');
-        } catch (_) {}
+          player.seek(startAt);
+          debugPrint('[PlayerController] ▶️ Resumed at ${startAt.inSeconds}s (${startAt.inMilliseconds}ms)');
+        } catch (e) {
+          debugPrint('[PlayerController] ⚠️ Seek failed: $e');
+        }
       }
 
-      durationSub = player.stream.duration.listen((d) {
+      durSub = player.stream.duration.listen((d) {
         if (d > Duration.zero) {
-          doSeek();
+          performSeek();
         }
       });
 
-      // Fallback: if duration stream doesn't fire within 2s (e.g. some MP4s),
-      // seek anyway.
-      Future.delayed(const Duration(milliseconds: 2000), doSeek);
+      posSub = player.stream.position.listen((p) {
+        // If playback started at 0:00 despite startAt, force seek
+        if (p > Duration.zero && p < startAt - const Duration(seconds: 2)) {
+          performSeek();
+        }
+      });
+
+      // Fallback timer
+      Future.delayed(const Duration(milliseconds: 1500), performSeek);
     }
 
     _emit(CaffeinePlayerEventType.initialized);
