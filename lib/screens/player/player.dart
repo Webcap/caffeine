@@ -123,9 +123,13 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
 
     // Periodic save every 30 seconds
     _periodicSaveTimer = Timer.periodic(const Duration(seconds: 30), (timer) {
-      if (_betterPlayerController.isVideoInitialized() == true) {
-        final elapsed =
-            _betterPlayerController.player.state.position.inMilliseconds;
+      if (_betterPlayerController.isVideoInitialized() == true || _isEmbed) {
+        final elapsed = _isEmbed
+            ? ((widget.mediaType == MediaType.movie
+                    ? (widget.movieMetadata?.elapsed ?? 0)
+                    : (widget.tvMetadata?.elapsed ?? 0)) +
+                playbackDurationInSeconds * 1000)
+            : _betterPlayerController.player.state.position.inMilliseconds;
         if (widget.mediaType == MediaType.movie) {
           insertRecentMovieData(manualElapsed: elapsed);
         } else {
@@ -170,6 +174,7 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
     if (link != null && isEmbedUrl(link)) {
       _isEmbed = true;
       _embedUrl = link;
+      startDurationTimer();
     } else {
       _isEmbed = false;
       _betterPlayerController.setDataSource(
@@ -423,12 +428,21 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
   }
 
   Future<void> insertRecentMovieData({int? manualElapsed}) async {
-    if (!mounted || duration <= 0) return;
+    if (!mounted || widget.movieMetadata == null) return;
 
     int elapsed = manualElapsed ??
-        _betterPlayerController.player.state.position.inMilliseconds;
+        (_isEmbed
+            ? ((widget.movieMetadata?.elapsed ?? 0) +
+                playbackDurationInSeconds * 1000)
+            : (_betterPlayerController.isVideoInitialized() == true
+                ? _betterPlayerController.player.state.position.inMilliseconds
+                : 0));
 
-    int remaining = duration - elapsed;
+    if (elapsed < 3000 && playbackDurationInSeconds < 3) return;
+
+    final effectiveDuration =
+        duration > 0 ? duration : (elapsed + 7200000); // 2h fallback
+    int remaining = (effectiveDuration - elapsed).clamp(0, effectiveDuration);
     String dt = DateTime.now().toString();
 
     var isBookmarked = await recentlyWatchedMoviesController
@@ -447,10 +461,7 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
         title: widget.movieMetadata?.movieName ?? '',
         backdropPath: widget.movieMetadata?.backdropPath ?? '');
 
-    double percentage = 0.0;
-    if (duration > 0) {
-      percentage = (elapsed / duration) * 100;
-    }
+    double percentage = (elapsed / effectiveDuration) * 100;
 
     if (!isBookmarked) {
       await prv.addMovie(rMov);
@@ -460,13 +471,13 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
       } else {
         final completed = RecentMovie(
           dateTime: dt,
-          elapsed: duration,
+          elapsed: effectiveDuration,
           id: widget.movieMetadata!.movieId!,
-          posterPath: widget.movieMetadata!.posterPath!,
-          releaseYear: widget.movieMetadata!.releaseYear!,
+          posterPath: widget.movieMetadata!.posterPath ?? '',
+          releaseYear: widget.movieMetadata!.releaseYear ?? 0,
           remaining: 0,
-          title: widget.movieMetadata!.movieName,
-          backdropPath: widget.movieMetadata!.backdropPath!,
+          title: widget.movieMetadata!.movieName ?? '',
+          backdropPath: widget.movieMetadata!.backdropPath ?? '',
         );
         await prv.updateMovie(completed, widget.movieMetadata!.movieId!);
       }
@@ -474,12 +485,21 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
   }
 
   Future<void> insertRecentEpisodeData({int? manualElapsed}) async {
-    if (!mounted || duration <= 0) return;
+    if (!mounted || widget.tvMetadata == null) return;
 
     int elapsed = manualElapsed ??
-        _betterPlayerController.player.state.position.inMilliseconds;
+        (_isEmbed
+            ? ((widget.tvMetadata?.elapsed ?? 0) +
+                playbackDurationInSeconds * 1000)
+            : (_betterPlayerController.isVideoInitialized() == true
+                ? _betterPlayerController.player.state.position.inMilliseconds
+                : 0));
 
-    int remaining = duration - elapsed;
+    if (elapsed < 3000 && playbackDurationInSeconds < 3) return;
+
+    final effectiveDuration =
+        duration > 0 ? duration : (elapsed + 2700000); // 45m fallback
+    int remaining = (effectiveDuration - elapsed).clamp(0, effectiveDuration);
     String dt = DateTime.now().toString();
 
     var isBookmarked = await recentlyWatchedEpisodeController
@@ -500,10 +520,7 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
         seasonNum: widget.tvMetadata?.seasonNumber ?? 0,
         seriesId: widget.tvMetadata?.tvId ?? 0);
 
-    double percentage = 0.0;
-    if (duration > 0) {
-      percentage = (elapsed / duration) * 100;
-    }
+    double percentage = (elapsed / effectiveDuration) * 100;
 
     if (!isBookmarked) {
       await prv.addEpisode(rEpisode);
@@ -517,15 +534,15 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
       } else {
         final completed = RecentEpisode(
             dateTime: dt,
-            elapsed: duration,
+            elapsed: effectiveDuration,
             id: widget.tvMetadata!.episodeId!,
-            posterPath: widget.tvMetadata!.posterPath!,
+            posterPath: widget.tvMetadata!.posterPath ?? '',
             remaining: 0,
-            seriesName: widget.tvMetadata!.seriesName!,
-            episodeName: widget.tvMetadata!.episodeName!,
-            episodeNum: widget.tvMetadata!.episodeNumber!,
-            seasonNum: widget.tvMetadata!.seasonNumber!,
-            seriesId: widget.tvMetadata!.tvId!);
+            seriesName: widget.tvMetadata!.seriesName ?? '',
+            episodeName: widget.tvMetadata!.episodeName ?? '',
+            episodeNum: widget.tvMetadata!.episodeNumber ?? 0,
+            seasonNum: widget.tvMetadata!.seasonNumber ?? 0,
+            seriesId: widget.tvMetadata!.tvId ?? 0);
         await prv.updateEpisode(
             completed,
             widget.tvMetadata!.episodeId!,
@@ -542,7 +559,7 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
     final isResuming = state == AppLifecycleState.resumed;
 
     if (isInBackground) {
-      if (_betterPlayerController.isVideoInitialized() == true) {
+      if (_betterPlayerController.isVideoInitialized() == true || _isEmbed) {
         widget.mediaType == MediaType.movie
             ? insertRecentMovieData()
             : insertRecentEpisodeData();
@@ -559,9 +576,13 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
   @override
   void dispose() {
     // Save progress before disposing
-    if (_betterPlayerController.isVideoInitialized() == true) {
-      final elapsed =
-          _betterPlayerController.player.state.position.inMilliseconds;
+    if (_betterPlayerController.isVideoInitialized() == true || _isEmbed) {
+      final elapsed = _isEmbed
+          ? ((widget.mediaType == MediaType.movie
+                  ? (widget.movieMetadata?.elapsed ?? 0)
+                  : (widget.tvMetadata?.elapsed ?? 0)) +
+              playbackDurationInSeconds * 1000)
+          : _betterPlayerController.player.state.position.inMilliseconds;
       if (widget.mediaType == MediaType.movie) {
         insertRecentMovieData(manualElapsed: elapsed);
       } else {
@@ -870,9 +891,13 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
 
         final navigator = Navigator.of(context);
 
-        if (_betterPlayerController.isVideoInitialized() == true) {
-          final elapsed =
-              _betterPlayerController.player.state.position.inMilliseconds;
+        if (_betterPlayerController.isVideoInitialized() == true || _isEmbed) {
+          final elapsed = _isEmbed
+              ? ((widget.mediaType == MediaType.movie
+                      ? (widget.movieMetadata?.elapsed ?? 0)
+                      : (widget.tvMetadata?.elapsed ?? 0)) +
+                  playbackDurationInSeconds * 1000)
+              : _betterPlayerController.player.state.position.inMilliseconds;
 
           if (widget.mediaType == MediaType.movie) {
             await insertRecentMovieData(manualElapsed: elapsed);

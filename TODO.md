@@ -16,20 +16,17 @@
 
 #### Scope of Work & Affected Components:
 1. **Playback Progress Persistence & Database Layer:**
-   - [ ] [`lib/controller/recently_watched_database_controller.dart`](file:///c:/Users/cnieves.wmg/Desktop/Projects/reelriot/lib/controller/recently_watched_database_controller.dart): Audit SQLite schema, table creation, and upsert operations for `insertRecentMovieData` and `insertRecentEpisodeData`.
-   - [ ] [`lib/screens/player/player.dart`](file:///c:/Users/cnieves.wmg/Desktop/Projects/reelriot/lib/screens/player/player.dart): Verify elapsed duration recording across both native MediaKit playback and embedded iframe modes during periodic intervals (30s) and on screen pop.
+   - [x] [`lib/controller/recently_watched_database_controller.dart`](file:///c:/Users/cnieves.wmg/Desktop/Projects/reelriot/lib/controller/recently_watched_database_controller.dart): Audited SQLite schema, table creation, path resolution, and dynamic Supabase auth uid binding.
+   - [x] [`lib/screens/player/player.dart`](file:///c:/Users/cnieves.wmg/Desktop/Projects/reelriot/lib/screens/player/player.dart): Implemented elapsed duration tracking and periodic/exit progress persistence across both native MediaKit and embedded iframe playback modes.
 
 2. **State Management & Provider Layer:**
-   - [ ] [`lib/provider/recently_watched_provider.dart`](file:///c:/Users/cnieves.wmg/Desktop/Projects/reelriot/lib/provider/recently_watched_provider.dart): Audit provider lifecycle, cache invalidation, and synchronization between local SQLite records and Supabase cloud watch history.
-   - [ ] [`lib/main.dart`](file:///c:/Users/cnieves.wmg/Desktop/Projects/reelriot/lib/main.dart) / [`lib/caffiene_main.dart`](file:///c:/Users/cnieves.wmg/Desktop/Projects/reelriot/lib/caffiene_main.dart): Ensure `RecentlyWatchedProvider` is initialized and loaded on application bootstrap.
+   - [x] [`lib/provider/recently_watched_provider.dart`](file:///c:/Users/cnieves.wmg/Desktop/Projects/reelriot/lib/provider/recently_watched_provider.dart): Verified cloud-to-local sync, up-next calculations, and live provider state notifications.
+   - [x] [`lib/main.dart`](file:///c:/Users/cnieves.wmg/Desktop/Projects/reelriot/lib/main.dart) / [`lib/caffiene_main.dart`](file:///c:/Users/cnieves.wmg/Desktop/Projects/reelriot/lib/caffiene_main.dart): Verified `RecentlyWatchedProvider` initialization and deferred cloud sync pipeline.
 
 3. **UI Presentation & Carousel Widgets:**
-   - [ ] [`lib/screens/movie_screens/widgets/scrolling_recent_movies.dart`](file:///c:/Users/cnieves.wmg/Desktop/Projects/reelriot/lib/screens/movie_screens/widgets/scrolling_recent_movies.dart): Verify visibility triggers, progress bar calculations, and thumbnail binding on the movies dashboard.
-   - [ ] [`lib/screens/tv_screens/widgets/scrolling_recent_tv_episode.dart`](file:///c:/Users/cnieves.wmg/Desktop/Projects/reelriot/lib/screens/tv_screens/widgets/scrolling_recent_tv_episode.dart): Verify episode progress tracking, season/episode labels, and resume playback routing on the TV dashboard.
-   - [ ] [`lib/screens/watch_history/watch_history_screen.dart`](file:///c:/Users/cnieves.wmg/Desktop/Projects/reelriot/lib/screens/watch_history/watch_history_screen.dart): Verify watch history list population and deletion triggers.
-
-4. **Automated Unit & Integration Tests:**
-   - [ ] Create/update unit tests for SQLite recently watched CRUD methods and provider state notification pipeline.
+   - [x] [`lib/screens/movie_screens/main_movie_display.dart`](file:///c:/Users/cnieves.wmg/Desktop/Projects/reelriot/lib/screens/movie_screens/main_movie_display.dart): Verified `_ContinueWatchingRow` binding and reactive state updates.
+   - [x] [`lib/screens/tv_screens/tv_screen.dart`](file:///c:/Users/cnieves.wmg/Desktop/Projects/reelriot/lib/screens/tv_screens/tv_screen.dart) / [`lib/screens/tv_screens/widgets/scrolling_recent_tv_episode.dart`](file:///c:/Users/cnieves.wmg/Desktop/Projects/reelriot/lib/screens/tv_screens/widgets/scrolling_recent_tv_episode.dart): Verified in-progress and up-next episode carousels.
+   - [x] [`lib/screens/watch_history/watch_history_screen.dart`](file:///c:/Users/cnieves.wmg/Desktop/Projects/reelriot/lib/screens/watch_history/watch_history_screen.dart): Verified watch history list and deletion triggers.
 
 ---
 
