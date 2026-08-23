@@ -34,12 +34,13 @@ param (
     [ValidateSet('prod', 'dev')]
     [string]$Flavor = 'prod',
 
-    [ValidateSet('All', 'AppBundle', 'Apk', 'SplitApk')]
-    [string]$Target = 'All',
+    [ValidateSet('Apk', 'SplitApk', 'AppBundle', 'All')]
+    [string]$Target = 'Apk',
 
     [switch]$BumpVersion,
     [switch]$Clean,
     [switch]$SkipTests,
+    [switch]$PublishGithub,
     [string]$OutDir = 'build/outputs/releases'
 )
 
@@ -188,4 +189,25 @@ foreach ($File in $Artifacts) {
         Write-Host "    SHA256: $Hash" -ForegroundColor DarkGray
     }
 }
-Write-Host "======================================================`n"
+Write-Host "======================================================"
+
+# ── 6. Publish to GitHub Releases (Optional) ──────────────────────────────────
+if ($PublishGithub) {
+    Write-Host "`nPublishing GitHub Release for v$AppVersion..." -ForegroundColor Cyan
+    if (Get-Command "gh" -ErrorAction SilentlyContinue) {
+        $Tag = "v$AppVersion"
+        $Title = "ReelRiot Mobile v$AppVersion"
+        $ReleaseFiles = $Artifacts -join ' '
+        
+        Write-Host "-> Creating release page with GitHub CLI (gh)..." -ForegroundColor Gray
+        & gh release create $Tag $Artifacts --title $Title --generate-notes
+        if ($LASTEXITCODE -eq 0) {
+            Write-Host "✓ GitHub Release page published successfully: https://github.com/$(gh repo view --json nameWithOwner -q .nameWithOwner)/releases/tag/$Tag" -ForegroundColor Green
+        } else {
+            Write-Warning "Failed to publish GitHub release using GitHub CLI."
+        }
+    } else {
+        Write-Warning "GitHub CLI ('gh') is not installed. To publish automatically from local CLI, install gh (winget install GitHub.cli)."
+    }
+}
+Write-Host ""
