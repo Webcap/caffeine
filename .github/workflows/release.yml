@@ -60,6 +60,10 @@ jobs:
           channel: 'stable'
           cache: true
 
+      - name: Clone media-kit Dependency Overrides
+        run: |
+          git clone --depth 1 https://github.com/Webcap/media-kit.git ../media-kit || git clone --depth 1 https://github.com/media-kit/media-kit.git ../media-kit
+
       - name: Restore Dependencies
         run: flutter pub get
 
@@ -96,6 +100,10 @@ jobs:
         with:
           channel: 'stable'
           cache: true
+
+      - name: Clone media-kit Dependency Overrides
+        run: |
+          git clone --depth 1 https://github.com/Webcap/media-kit.git ../media-kit || git clone --depth 1 https://github.com/media-kit/media-kit.git ../media-kit
 
       - name: Restore Dependencies
         run: flutter pub get
