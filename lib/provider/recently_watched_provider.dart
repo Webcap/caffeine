@@ -63,71 +63,73 @@ class RecentProvider extends ChangeNotifier {
     _language = language;
   }
 
-  /// Fetches cloud watch_history, merges with local (highest progress wins),
+  /// Fetches cloud watch_history from Caffeine API, merges with local (highest progress wins),
   /// replaces local DB, then refreshes. No-op if user not signed in.
   Future<void> syncFromCloud() async {
     final uid = Supabase.instance.client.auth.currentUser?.id;
     if (uid == null) return;
 
     try {
-      final cwRes = await Supabase.instance.client
-          .from('continue_watching_history')
-          .select()
-          .eq('user_id', uid);
+      final base = caffeineApiUrl.replaceAll(RegExp(r'/+$'), '');
+      final url = Uri.parse('$base/v1/user/$uid/history?limit=100');
 
-      final cpRes = await Supabase.instance.client
-          .from('completed_watch_history')
-          .select()
-          .eq('user_id', uid);
+      final res = await http
+          .get(url, headers: caffeineApiHeaders)
+          .timeout(const Duration(seconds: 8));
 
-      final allData = [...cwRes, ...cpRes];
+      if (res.statusCode == 200) {
+        final body = jsonDecode(res.body);
+        if (body['success'] == true && body['history'] != null) {
+          final List<dynamic> history = body['history'];
+          final List<RecentMovie> cloudMovies = [];
+          final List<RecentEpisode> cloudEpisodes = [];
 
-      final List<RecentMovie> cloudMovies = [];
-      final List<RecentEpisode> cloudEpisodes = [];
+          for (var row in history) {
+            final isTv = row['media_type'] == 'tv';
+            final isCompleted = row['completed'] == true;
+            final elapsed = _ensureMs((row['elapsed_ms'] as num?)?.toInt() ?? 0);
+            final remaining = (row['remaining_ms'] as num?)?.toInt() ?? 0;
 
-      for (var row in allData) {
-         final isTv = row['media_type'] == 'tv';
-         final isCompleted = row.containsKey('time_watched_ms');
+            if (isTv) {
+              cloudEpisodes.add(RecentEpisode(
+                id: (row['id'] as num?)?.toInt(),
+                seriesId: (row['id'] as num?)?.toInt(),
+                seriesName: row['title'],
+                episodeName: row['episode_name'],
+                posterPath: row['poster_path'],
+                seasonNum: (row['season_num'] as num?)?.toInt(),
+                episodeNum: (row['episode_num'] as num?)?.toInt(),
+                elapsed: elapsed,
+                remaining: isCompleted ? 0 : remaining,
+                dateTime: row['updated_at'],
+              ));
+            } else {
+              cloudMovies.add(RecentMovie(
+                id: (row['id'] as num?)?.toInt(),
+                title: row['title'],
+                posterPath: row['poster_path'],
+                backdropPath: row['backdrop_path'],
+                releaseYear: null,
+                elapsed: elapsed,
+                remaining: isCompleted ? 0 : remaining,
+                dateTime: row['updated_at'],
+              ));
+            }
+          }
 
-         if (isTv) {
-            cloudEpisodes.add(RecentEpisode(
-               id: row['media_id'],
-               seriesId: row['media_id'],
-               seriesName: row['title'],
-               episodeName: row['episode_name'],
-               posterPath: row['poster_path'],
-               seasonNum: row['season_num'],
-               episodeNum: row['episode_num'],
-               elapsed: _ensureMs(isCompleted ? row['time_watched_ms'] : row['elapsed_ms']),
-               remaining: isCompleted ? 0 : (row['duration_ms'] ?? 0) - (row['elapsed_ms'] ?? 0),
-               dateTime: row['updated_at'],
-            ));
-         } else {
-            cloudMovies.add(RecentMovie(
-               id: row['media_id'],
-               title: row['title'],
-               posterPath: row['poster_path'],
-               backdropPath: row['backdrop_path'],
-               releaseYear: null,
-               elapsed: _ensureMs(isCompleted ? row['time_watched_ms'] : row['elapsed_ms']),
-               remaining: isCompleted ? 0 : (row['duration_ms'] ?? 0) - (row['elapsed_ms'] ?? 0),
-               dateTime: row['updated_at'],
-            ));
-         }
+          final localMovies = await _movieController.getRecentMovieList();
+          final localEpisodes = await _episodeController.getEpisodeList();
+
+          final mergedMovies = _mergeMovies(cloudMovies, localMovies);
+          final mergedEpisodes = _mergeEpisodes(cloudEpisodes, localEpisodes);
+
+          await _movieController.replaceAllMovies(mergedMovies);
+          await _episodeController.replaceAllEpisodes(mergedEpisodes);
+        }
       }
-
-      final localMovies = await _movieController.getRecentMovieList();
-      final localEpisodes = await _episodeController.getEpisodeList();
-
-      final mergedMovies = _mergeMovies(cloudMovies, localMovies);
-      final mergedEpisodes = _mergeEpisodes(cloudEpisodes, localEpisodes);
-
-      await _movieController.replaceAllMovies(mergedMovies);
-      await _episodeController.replaceAllEpisodes(mergedEpisodes);
-
-      await _movieController.setWatchHistoryCollection();
-      await _episodeController.setWatchHistoryCollection();
-    } catch (_) {}
+    } catch (e) {
+      debugPrint('[WatchHistory] ❌ syncFromCloud API error: $e');
+    }
 
     await fetchMovies();
     await fetchEpisodes();
