@@ -83,6 +83,36 @@ class _ProfileEditState extends State<ProfileEdit> {
   int _initialProfileId = 0;
   int _selectedProfileId = 0;
 
+  static const int _emailCooldownSeconds = 60;
+  DateTime? _lastEmailSentTimestamp;
+
+  bool _canSendVerificationEmail({BuildContext? targetContext}) {
+    final ctx = targetContext ?? context;
+    if (_lastEmailSentTimestamp != null) {
+      final diff =
+          DateTime.now().difference(_lastEmailSentTimestamp!).inSeconds;
+      if (diff < _emailCooldownSeconds) {
+        final remaining = _emailCooldownSeconds - diff;
+        if (ctx.mounted) {
+          ScaffoldMessenger.of(ctx).showSnackBar(
+            SnackBar(
+              content: Text(
+                tr("rate_limit_wait",
+                    namedArgs: {'seconds': remaining.toString()}),
+                style: kTextSmallBodyStyle,
+              ),
+              duration: const Duration(seconds: 3),
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        }
+        return false;
+      }
+    }
+    _lastEmailSentTimestamp = DateTime.now();
+    return true;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -519,6 +549,11 @@ class _ProfileEditState extends State<ProfileEdit> {
                                         false;
                                 if (!valid) return;
 
+                                if (!_canSendVerificationEmail(
+                                    targetContext: sheetContext)) {
+                                  return;
+                                }
+
                                 final targetEmail = emailController.text.trim();
                                 setModalState(() => isEmailUpdating = true);
                                 try {
@@ -544,6 +579,10 @@ class _ProfileEditState extends State<ProfileEdit> {
                                         label: tr("resend"),
                                         textColor: Colors.white,
                                         onPressed: () async {
+                                          if (!_canSendVerificationEmail(
+                                              targetContext: context)) {
+                                            return;
+                                          }
                                           try {
                                             await _auth.resend(
                                               type: OtpType.emailChange,
@@ -552,11 +591,42 @@ class _ProfileEditState extends State<ProfileEdit> {
                                                   ? null
                                                   : 'io.reelriot.app://login-callback/',
                                             );
+                                          } on AuthException catch (err) {
+                                            if (context.mounted) {
+                                              final msg =
+                                                  err.message.toLowerCase();
+                                              if (msg.contains('rate') ||
+                                                  msg.contains('limit') ||
+                                                  msg.contains('too many')) {
+                                                _globalMethods.authErrorHandle(
+                                                    tr("rate_limit_exceeded"),
+                                                    context);
+                                              } else {
+                                                _globalMethods.authErrorHandle(
+                                                    err.message, context);
+                                              }
+                                            }
                                           } catch (_) {}
                                         },
                                       ),
                                     ),
                                   );
+                                } on AuthException catch (e) {
+                                  if (sheetContext.mounted) {
+                                    setModalState(() => isEmailUpdating = false);
+                                  }
+                                  if (context.mounted) {
+                                    final msg = e.message.toLowerCase();
+                                    if (msg.contains('rate') ||
+                                        msg.contains('limit') ||
+                                        msg.contains('too many')) {
+                                      _globalMethods.authErrorHandle(
+                                          tr("rate_limit_exceeded"), context);
+                                    } else {
+                                      _globalMethods.authErrorHandle(
+                                          e.message, context);
+                                    }
+                                  }
                                 } catch (e) {
                                   if (sheetContext.mounted) {
                                     setModalState(() => isEmailUpdating = false);

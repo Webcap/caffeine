@@ -327,6 +327,8 @@
     "email_confirmation_sent": "Enlace de confirmación enviado a tu nuevo correo.",
     "update_email": "Actualizar correo",
     "resend": "Reenviar",
+    "rate_limit_wait": "Espera {seconds}s antes de solicitar otro correo.",
+    "rate_limit_exceeded": "Demasiadas solicitudes. Espera un momento antes de volver a intentarlo.",
     "discard_dialog_title": "¿Descartar cambios sin guardar?",
     "discard_dialog_desc": "Tienes modificaciones sin guardar. Salir ahora descartará tus cambios.",
     "discard": "Descartar",
