@@ -168,42 +168,58 @@ jobs:
           if [ "$BUILD_FLAVOR" = "dev" ]; then TARGET_ENTRY="lib/main_dev.dart"; fi
           flutter build apk --flavor "$BUILD_FLAVOR" -t "$TARGET_ENTRY" --release --split-per-abi
 
-      - name: Organize Release Artifacts
+      - name: Organize & Standardize Release Artifacts
         id: organize_artifacts
         run: |
           mkdir -p dist/
-          VERSION_NAME=$(grep '^version:' pubspec.yaml | sed 's/version: //' | tr -d '\r\n')
-          echo "APP_VERSION=$VERSION_NAME" >> $GITHUB_OUTPUT
-          
-          # Collect AABs
-          find build/app/outputs/bundle -name "*.aab" -exec cp {} dist/ \; 2>/dev/null || true
-          
-          # Collect APKs
-          find build/app/outputs/flutter-apk -name "*.apk" -exec cp {} dist/ \; 2>/dev/null || true
-          
-          ls -la dist/
+          VERSION_RAW=$(grep '^version:' pubspec.yaml | sed 's/version: //' | tr -d '\r\n')
+          VERSION_CLEAN=$(echo "$VERSION_RAW" | tr '+' '_')
+          echo "APP_VERSION=$VERSION_RAW" >> $GITHUB_OUTPUT
+          echo "TAG_NAME=v$VERSION_RAW" >> $GITHUB_OUTPUT
+
+          # Copy & Standardize AABs
+          find build/app/outputs/bundle -name "*.aab" -exec cp {} "dist/ReelRiot-${BUILD_FLAVOR}-v${VERSION_CLEAN}.aab" \; 2>/dev/null || true
+
+          # Copy & Standardize APKs
+          if [ -f "build/app/outputs/flutter-apk/app-${BUILD_FLAVOR}-release.apk" ]; then
+            cp "build/app/outputs/flutter-apk/app-${BUILD_FLAVOR}-release.apk" "dist/ReelRiot-${BUILD_FLAVOR}-v${VERSION_CLEAN}-universal.apk"
+          fi
+          if [ -f "build/app/outputs/flutter-apk/app-arm64-v8a-${BUILD_FLAVOR}-release.apk" ]; then
+            cp "build/app/outputs/flutter-apk/app-arm64-v8a-${BUILD_FLAVOR}-release.apk" "dist/ReelRiot-${BUILD_FLAVOR}-v${VERSION_CLEAN}-arm64-v8a.apk"
+          fi
+          if [ -f "build/app/outputs/flutter-apk/app-armeabi-v7a-${BUILD_FLAVOR}-release.apk" ]; then
+            cp "build/app/outputs/flutter-apk/app-armeabi-v7a-${BUILD_FLAVOR}-release.apk" "dist/ReelRiot-${BUILD_FLAVOR}-v${VERSION_CLEAN}-armeabi-v7a.apk"
+          fi
+          if [ -f "build/app/outputs/flutter-apk/app-x86_64-${BUILD_FLAVOR}-release.apk" ]; then
+            cp "build/app/outputs/flutter-apk/app-x86_64-${BUILD_FLAVOR}-release.apk" "dist/ReelRiot-${BUILD_FLAVOR}-v${VERSION_CLEAN}-x86_64.apk"
+          fi
+
+          # Generate SHA256 Checksums
+          cd dist
+          sha256sum * > checksums.txt 2>/dev/null || shasum -a 256 * > checksums.txt
+          cd ..
+          ls -lh dist/
+
+      - name: Generate Commit-Based Changelog
+        run: |
+          dart tools/changelog_gen.dart --output dist/RELEASE_NOTES.md
+          cat dist/RELEASE_NOTES.md
 
       - name: Archive CI Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: reelriot-mobile-${{ env.BUILD_FLAVOR }}-${{ steps.organize_artifacts.outputs.APP_VERSION }}
+          name: reelriot-mobile-${{ env.BUILD_FLAVOR }}-v${{ steps.organize_artifacts.outputs.APP_VERSION }}
           path: dist/*
           if-no-files-found: error
 
-      - name: Publish GitHub Release
+      - name: Publish GitHub Release Page
         if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
         uses: softprops/action-gh-release@v2
         with:
-          files: dist/*
+          tag_name: ${{ steps.organize_artifacts.outputs.TAG_NAME }}
+          target_commitish: ${{ github.sha }}
           name: "ReelRiot Mobile v${{ steps.organize_artifacts.outputs.APP_VERSION }}"
-          body: |
-            ## ReelRiot Mobile Release `v${{ steps.organize_artifacts.outputs.APP_VERSION }}`
-            
-            ### Artifacts Included:
-            - **Google Play App Bundle**: `app-${{ env.BUILD_FLAVOR }}-release.aab`
-            - **Universal APK**: `app-${{ env.BUILD_FLAVOR }}-release.apk`
-            - **Optimized ABI APKs**: `arm64-v8a`, `armeabi-v7a`, `x86_64`
-            
-            ${{ inputs.release_notes }}
+          files: dist/*
+          body_path: dist/RELEASE_NOTES.md
           draft: false
           prerelease: ${{ env.BUILD_FLAVOR == 'dev' }}

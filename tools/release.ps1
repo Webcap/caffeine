@@ -34,12 +34,14 @@ param (
     [ValidateSet('prod', 'dev')]
     [string]$Flavor = 'prod',
 
-    [ValidateSet('All', 'AppBundle', 'Apk', 'SplitApk')]
-    [string]$Target = 'All',
+    [ValidateSet('Apk', 'SplitApk', 'AppBundle', 'All')]
+    [string]$Target = 'Apk',
 
     [switch]$BumpVersion,
+    [switch]$UpdateChangelog,
     [switch]$Clean,
     [switch]$SkipTests,
+    [switch]$PublishGithub,
     [string]$OutDir = 'build/outputs/releases'
 )
 
@@ -55,6 +57,7 @@ Write-Host "======================================================" -ForegroundC
 Write-Host " Flavor : $Flavor" -ForegroundColor Yellow
 Write-Host " Target : $Target" -ForegroundColor Yellow
 Write-Host " BumpVer: $BumpVersion" -ForegroundColor Yellow
+Write-Host " ChgLog : $UpdateChangelog" -ForegroundColor Yellow
 Write-Host " OutDir : $OutDir" -ForegroundColor Yellow
 Write-Host "======================================================"
 
@@ -79,7 +82,7 @@ if ($LASTEXITCODE -ne 0) {
     Write-Error "flutter pub get failed with exit code $LASTEXITCODE"
 }
 
-# ── 3. Version Management ─────────────────────────────────────────────────────
+# ── 3. Version & Changelog Management ─────────────────────────────────────────
 Write-Host "`n[3/5] Resolving build version..." -ForegroundColor Cyan
 if ($BumpVersion) {
     & dart tools/build_number_gen.dart --mode auto
@@ -94,6 +97,11 @@ if ($PubspecContent -match 'version:\s*([^\r\n]+)') {
     $AppVersion = "unknown"
 }
 Write-Host "-> Target Version: $AppVersion" -ForegroundColor Green
+
+if ($UpdateChangelog -or $BumpVersion) {
+    Write-Host "-> Generating commit-based CHANGELOG.md entry..." -ForegroundColor Gray
+    & dart tools/changelog_gen.dart --write
+}
 
 # ── 4. Quality Gate ───────────────────────────────────────────────────────────
 if (-not $SkipTests) {
@@ -188,4 +196,25 @@ foreach ($File in $Artifacts) {
         Write-Host "    SHA256: $Hash" -ForegroundColor DarkGray
     }
 }
-Write-Host "======================================================`n"
+Write-Host "======================================================"
+
+# ── 6. Publish to GitHub Releases (Optional) ──────────────────────────────────
+if ($PublishGithub) {
+    Write-Host "`nPublishing GitHub Release for v$AppVersion..." -ForegroundColor Cyan
+    if (Get-Command "gh" -ErrorAction SilentlyContinue) {
+        $Tag = "v$AppVersion"
+        $Title = "ReelRiot Mobile v$AppVersion"
+        $ReleaseFiles = $Artifacts -join ' '
+        
+        Write-Host "-> Creating release page with GitHub CLI (gh)..." -ForegroundColor Gray
+        & gh release create $Tag $Artifacts --title $Title --generate-notes
+        if ($LASTEXITCODE -eq 0) {
+            Write-Host "✓ GitHub Release page published successfully: https://github.com/$(gh repo view --json nameWithOwner -q .nameWithOwner)/releases/tag/$Tag" -ForegroundColor Green
+        } else {
+            Write-Warning "Failed to publish GitHub release using GitHub CLI."
+        }
+    } else {
+        Write-Warning "GitHub CLI ('gh') is not installed. To publish automatically from local CLI, install gh (winget install GitHub.cli)."
+    }
+}
+Write-Host ""
