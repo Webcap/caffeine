@@ -53,3 +53,20 @@ dart run tools/build_number_gen.dart --sync
 # Dry run to preview changes:
 dart run tools/build_number_gen.dart --dry-run
 ```
+
+## Release Build Pipeline
+
+Automate full release builds locally using `tools/release.ps1`:
+
+```powershell
+# Build production AAB and all APK formats:
+.\tools\release.ps1 -Flavor prod -Target All
+
+# Auto-bump build number and compile APKs:
+.\tools\release.ps1 -Flavor prod -Target Apk -BumpVersion
+
+# Perform clean development build:
+.\tools\release.ps1 -Flavor dev -Clean
+```
+
+For complete technical specifications and CI/CD architecture, see [`docs/RELEASE_PIPELINE.md`](../docs/RELEASE_PIPELINE.md).
