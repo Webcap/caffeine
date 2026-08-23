@@ -64,6 +64,23 @@ jobs:
         run: |
           git clone --depth 1 https://github.com/Webcap/media-kit.git ../media-kit || git clone --depth 1 https://github.com/media-kit/media-kit.git ../media-kit
 
+      - name: Reconstruct Environment (.env)
+        run: |
+          cat << 'EOF' > .env
+          TMDB_API_KEY=${{ secrets.TMDB_API_KEY }}
+          CAFFEINE_API_URL=${{ secrets.CAFFEINE_API_URL }}
+          CAFFEINE_API_KEY=${{ secrets.CAFFEINE_API_KEY }}
+          CONSUMET_URL=${{ secrets.CONSUMET_URL }}
+          OPENSUBTITLES_API_KEY=${{ secrets.OPENSUBTITLES_API_KEY }}
+          MIXPANEL_API_KEY=${{ secrets.MIXPANEL_API_KEY }}
+          SUPABASE_URL=${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANNON_KEY=${{ secrets.SUPABASE_ANNON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          REVENUECAT_PUBLIC_SDK_KEY_ANDROID=${{ secrets.REVENUECAT_PUBLIC_SDK_KEY_ANDROID }}
+          REVENUECAT_PUBLIC_SDK_KEY_IOS=${{ secrets.REVENUECAT_PUBLIC_SDK_KEY_IOS }}
+          REVENUECAT_ENTITLEMENT_ID=${{ secrets.REVENUECAT_ENTITLEMENT_ID || 'premium' }}
+          EOF
+
       - name: Restore Dependencies
         run: flutter pub get
 

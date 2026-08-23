@@ -303,7 +303,7 @@ class CaffeinePlayerController extends ChangeNotifier {
   Future<void> setupDataSource(dynamic dataSource) async {
     try {
       final url = (dataSource as dynamic).url as String;
-      return setDataSource(url);
+      return await setDataSource(url);
     } catch (e) {
       debugPrint('[CaffeinePlayerController] ⚠️ setupDataSource failed: $e');
     }
