@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:reelriot/provider/settings_provider.dart';
 import 'package:reelriot/provider/sign_in_provider.dart';
 import 'package:reelriot/screens/auth_screens/welcome.dart';
+import 'package:reelriot/utils/constant.dart';
 import 'package:reelriot/utils/globlal_methods.dart';
 import 'package:reelriot/utils/theme/textStyle.dart';
 
@@ -266,30 +268,64 @@ class DeleteAccountScreenState extends State<DeleteAccountScreen> {
     setState(() => _isDeleting = true);
 
     try {
-      // 1. Delete associated data across user tables safely
-      Future<void> safeDelete(String table, String column, String value) async {
+      final session = _supabase.auth.currentSession;
+      final accessToken = session?.accessToken;
+
+      bool backendDeleted = false;
+
+      // 1. Call backend API to delete from auth.users (service role) and purge databases
+      if (accessToken != null && accessToken.isNotEmpty) {
         try {
-          await _supabase.from(table).delete().eq(column, value);
-        } catch (e) {
-          debugPrint('[DeleteAccount] Notice: could not clear $table for $value: $e');
+          final uri = Uri.parse('$caffeineApiUrl/user/account');
+          final headers = {
+            ...caffeineApiHeaders,
+            'Authorization': 'Bearer $accessToken',
+          };
+          final response = await http
+              .delete(uri, headers: headers)
+              .timeout(const Duration(seconds: 15));
+          if (response.statusCode >= 200 && response.statusCode < 300) {
+            backendDeleted = true;
+          } else {
+            debugPrint(
+                '[DeleteAccount] Backend returned status ${response.statusCode}: ${response.body}');
+          }
+        } catch (apiErr) {
+          debugPrint(
+              '[DeleteAccount] Error calling delete account API: $apiErr');
         }
       }
 
-      await safeDelete('continue_watching_history', 'user_id', _uid!);
-      await safeDelete('completed_watch_history', 'user_id', _uid!);
-      await safeDelete('bookmarks', 'user_id', _uid!);
-      await safeDelete('usernames', 'user_id', _uid!);
-      await safeDelete('messages', 'user_id', _uid!);
-      await _supabase.from('profiles').delete().eq('id', _uid!);
+      // 2. Direct client fallback cleanup if backend call was unreachable
+      if (!backendDeleted) {
+        Future<void> safeDelete(
+            String table, String column, String value) async {
+          try {
+            await _supabase.from(table).delete().eq(column, value);
+          } catch (e) {
+            debugPrint(
+                '[DeleteAccount] Notice: could not clear $table for $value: $e');
+          }
+        }
+
+        await safeDelete('continue_watching_history', 'user_id', _uid!);
+        await safeDelete('completed_watch_history', 'user_id', _uid!);
+        await safeDelete('bookmarks', 'user_id', _uid!);
+        await safeDelete('usernames', 'user_id', _uid!);
+        await safeDelete('messages', 'user_id', _uid!);
+        await _supabase.from('profiles').delete().eq('id', _uid!);
+      }
 
       if (!mounted) return;
 
-      // 2. Sign out and purge local databases/cache
-      final signInProvider = Provider.of<SignInProvider>(context, listen: false);
+      // 3. Clear local databases, cached data and sign out
+      final signInProvider =
+          Provider.of<SignInProvider>(context, listen: false);
+      await signInProvider.clearStoredData();
       await signInProvider.userSignOut();
 
       if (mounted) {
-        // 3. Clear navigation stack and route directly to welcome screen
+        // 4. Clear navigation stack and route directly to welcome screen
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (_) => const WelcomeScreen()),
           (route) => false,
