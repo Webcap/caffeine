@@ -14,6 +14,8 @@
     "cancelled": "Cancelled",
     "up_next": "Up Next",
     "mark_as_completed": "Mark as Completed",
+    "completed": "Completed",
+    "items": "items",
     "remove_from_history": "Remove from History",
     "mark_watched_until_here": "Mark watched until here",
     "pilot": "Pilot",

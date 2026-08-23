@@ -91,14 +91,21 @@ class RecentProvider extends ChangeNotifier {
             final remaining = (row['remaining_ms'] as num?)?.toInt() ?? 0;
 
             if (isTv) {
+              final seriesId = (row['id'] as num?)?.toInt();
+              final sNum = (row['season_num'] as num?)?.toInt() ?? 1;
+              final eNum = (row['episode_num'] as num?)?.toInt() ?? 1;
+              final epId = seriesId != null
+                  ? (seriesId * 10000 + sNum * 100 + eNum)
+                  : (sNum * 100 + eNum);
+
               cloudEpisodes.add(RecentEpisode(
-                id: (row['id'] as num?)?.toInt(),
-                seriesId: (row['id'] as num?)?.toInt(),
+                id: epId,
+                seriesId: seriesId,
                 seriesName: row['title'],
                 episodeName: row['episode_name'],
                 posterPath: row['poster_path'],
-                seasonNum: (row['season_num'] as num?)?.toInt(),
-                episodeNum: (row['episode_num'] as num?)?.toInt(),
+                seasonNum: sNum,
+                episodeNum: eNum,
                 elapsed: elapsed,
                 remaining: isCompleted ? 0 : remaining,
                 dateTime: row['updated_at'],

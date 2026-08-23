@@ -193,7 +193,11 @@ class RecentlyWatchedMoviesController {
     final db = await database;
     await db.delete(tableName);
     for (final m in movies) {
-      await db.insert(tableName, m.toMap());
+      await db.insert(
+        tableName,
+        m.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
     }
   }
 }
@@ -399,7 +403,11 @@ class RecentlyWatchedEpisodeController {
     final db = await database;
     await db.delete(tableName);
     for (final e in episodes) {
-      await db.insert(tableName, e.toMap());
+      await db.insert(
+        tableName,
+        e.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
     }
   }
 }
