@@ -1,5 +1,4 @@
 import 'package:reelriot/models/provider_video_source.dart';
-import 'package:reelriot/utils/config.dart';
 import 'package:reelriot/video_providers/provider_loader.dart';
 import 'package:reelriot/utils/globals.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -13,107 +12,25 @@ void main() {
         movieId: 123,
         movieName: 'Test Movie',
         releaseYear: '2023',
-        consumetUrl: 'https://consumet.api',
-        newFlixHQUrl: 'https://flixhq.api',
         flixApiUrl: 'https://flixapi.api',
         language: 'en',
         country: 'US',
-        newFlixhqServer: 'megacloud',
-        streamingServerFlixHQ: 'vidcloud',
-        streamingServerDCVA: 'asianload',
-        streamingServerZoro: 'vidcloud',
       );
 
       expect(result.success, isFalse);
       expect(result.errorMessage, equals('Unknown provider: unknown_provider'));
     });
 
-    test('should return error for not-yet-configured anime providers',
-        () async {
-      final result = await ProviderLoader.loadMovieFromProvider(
-        providerCode: 'animekai',
-        route: StreamRoute.tmDB,
-        movieId: 123,
-        movieName: 'Test Movie',
-        releaseYear: '2023',
-        consumetUrl: 'https://consumet.api',
-        newFlixHQUrl: 'https://flixhq.api',
-        flixApiUrl: 'https://flixapi.api',
-        language: 'en',
-        country: 'US',
-        newFlixhqServer: 'megacloud',
-        streamingServerFlixHQ: 'vidcloud',
-        streamingServerDCVA: 'asianload',
-        streamingServerZoro: 'vidcloud',
-      );
-
-      expect(result.success, isFalse);
-      expect(
-          result.errorMessage, equals('Provider animekai not yet configured'));
-    });
-
-    test('should return error for animepahe provider', () async {
-      final result = await ProviderLoader.loadMovieFromProvider(
-        providerCode: 'animepahe',
-        route: StreamRoute.tmDB,
-        movieId: 123,
-        movieName: 'Test Movie',
-        releaseYear: '2023',
-        consumetUrl: 'https://consumet.api',
-        newFlixHQUrl: 'https://flixhq.api',
-        flixApiUrl: 'https://flixapi.api',
-        language: 'en',
-        country: 'US',
-        newFlixhqServer: 'megacloud',
-        streamingServerFlixHQ: 'vidcloud',
-        streamingServerDCVA: 'asianload',
-        streamingServerZoro: 'vidcloud',
-      );
-
-      expect(result.success, isFalse);
-      expect(
-          result.errorMessage, equals('Provider animepahe not yet configured'));
-    });
-
-    test('should return error for hianime provider', () async {
-      final result = await ProviderLoader.loadMovieFromProvider(
-        providerCode: 'hianime',
-        route: StreamRoute.tmDB,
-        movieId: 123,
-        movieName: 'Test Movie',
-        releaseYear: '2023',
-        consumetUrl: 'https://consumet.api',
-        newFlixHQUrl: 'https://flixhq.api',
-        flixApiUrl: 'https://flixapi.api',
-        language: 'en',
-        country: 'US',
-        newFlixhqServer: 'megacloud',
-        streamingServerFlixHQ: 'vidcloud',
-        streamingServerDCVA: 'asianload',
-        streamingServerZoro: 'vidcloud',
-      );
-
-      expect(result.success, isFalse);
-      expect(
-          result.errorMessage, equals('Provider hianime not yet configured'));
-    });
-
     test('should return error for empty FlixAPI URL', () async {
       final result = await ProviderLoader.loadMovieFromProvider(
-        providerCode: 'vidsrc',
+        providerCode: 'vixsrc',
         route: StreamRoute.tmDB,
         movieId: 123,
         movieName: 'Test Movie',
         releaseYear: '2023',
-        consumetUrl: 'https://consumet.api',
-        newFlixHQUrl: '',
         flixApiUrl: '',
         language: 'en',
         country: 'US',
-        newFlixhqServer: 'megacloud',
-        streamingServerFlixHQ: 'vidcloud',
-        streamingServerDCVA: 'asianload',
-        streamingServerZoro: 'vidcloud',
       );
 
       expect(result.success, isFalse);
@@ -130,13 +47,7 @@ void main() {
         seriesName: 'Test Series',
         seasonNumber: 1,
         episodeNumber: 1,
-        consumetUrl: 'https://consumet.api',
-        newFlixHQUrl: 'https://flixhq.api',
         flixApiUrl: 'https://flixapi.api',
-        newFlixhqServer: 'megacloud',
-        streamingServerFlixHQ: 'vidcloud',
-        streamingServerDCVA: 'asianload',
-        streamingServerZoro: 'vidcloud',
         language: 'en',
         country: 'US',
       );
@@ -145,46 +56,15 @@ void main() {
       expect(result.errorMessage, equals('Unknown provider: unknown_provider'));
     });
 
-    test('should return error for not-yet-configured anime providers',
-        () async {
+    test('should route vidfun for TV shows without unknown provider error', () async {
       final result = await ProviderLoader.loadTVFromProvider(
-        providerCode: 'animekai',
+        providerCode: 'vidfun',
         route: StreamRoute.tmDB,
-        tvId: 123,
-        seriesName: 'Test Series',
+        tvId: 1399,
+        seriesName: 'Game of Thrones',
         seasonNumber: 1,
         episodeNumber: 1,
-        consumetUrl: 'https://consumet.api',
-        newFlixHQUrl: 'https://flixhq.api',
-        flixApiUrl: 'https://flixapi.api',
-        newFlixhqServer: 'megacloud',
-        streamingServerFlixHQ: 'vidcloud',
-        streamingServerDCVA: 'asianload',
-        streamingServerZoro: 'vidcloud',
-        language: 'en',
-        country: 'US',
-      );
-
-      expect(result.success, isFalse);
-      expect(
-          result.errorMessage, equals('Provider animekai not yet configured'));
-    });
-
-    test('should return error for empty FlixAPI URL for vidsrc', () async {
-      final result = await ProviderLoader.loadTVFromProvider(
-        providerCode: 'vidsrc',
-        route: StreamRoute.tmDB,
-        tvId: 123,
-        seriesName: 'Test Series',
-        seasonNumber: 1,
-        episodeNumber: 1,
-        consumetUrl: 'https://consumet.api',
-        newFlixHQUrl: '',
         flixApiUrl: '',
-        newFlixhqServer: 'megacloud',
-        streamingServerFlixHQ: 'vidcloud',
-        streamingServerDCVA: 'asianload',
-        streamingServerZoro: 'vidcloud',
         language: 'en',
         country: 'US',
       );
@@ -195,13 +75,14 @@ void main() {
   });
 
   group('ProviderLoader - Supported Providers', () {
-    test('should handle all FlixAPI multi providers for movies', () async {
+    test('should handle all Caffeine multi providers for movies', () async {
       final providers = [
-        'pstream',
         'vixsrc',
-        'vidsrc',
+        'vidlink',
+        'vidsrcsu',
+        'vidfun',
         'vidzee',
-        'showbox'
+        'coorenlabs'
       ];
 
       for (final provider in providers) {
@@ -211,15 +92,9 @@ void main() {
           movieId: 123,
           movieName: 'Test Movie',
           releaseYear: '2023',
-          consumetUrl: 'https://consumet.api',
-          newFlixHQUrl: 'https://flixhq.api',
           flixApiUrl: '',
           language: 'en',
           country: 'US',
-          newFlixhqServer: 'megacloud',
-          streamingServerFlixHQ: 'vidcloud',
-          streamingServerDCVA: 'asianload',
-          streamingServerZoro: 'vidcloud',
         );
 
         expect(
@@ -230,29 +105,25 @@ void main() {
       }
     });
 
-    test('should handle all FlixAPI multi providers for TV', () async {
+    test('should handle all Caffeine multi providers for TV', () async {
       final providers = [
-        'pstream',
         'vixsrc',
-        'vidsrc',
+        'vidlink',
+        'vidsrcsu',
+        'vidfun',
         'vidzee',
-        'showbox'
+        'coorenlabs'
       ];
 
       for (final provider in providers) {
         final result = await ProviderLoader.loadTVFromProvider(
           providerCode: provider,
           route: StreamRoute.tmDB,
-          tvId: 123,seriesName: 'Test Series',
+          tvId: 123,
+          seriesName: 'Test Series',
           seasonNumber: 1,
           episodeNumber: 1,
-          consumetUrl: 'https://consumet.api',
-          newFlixHQUrl: 'https://flixhq.api',
           flixApiUrl: '',
-          newFlixhqServer: 'megacloud',
-          streamingServerFlixHQ: 'vidcloud',
-          streamingServerDCVA: 'asianload',
-          streamingServerZoro: 'vidcloud',
           language: 'en',
           country: 'US',
         );

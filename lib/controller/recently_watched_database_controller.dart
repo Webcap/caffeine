@@ -17,7 +17,7 @@ class RecentlyWatchedMoviesController {
   String dateTimeCol = 'date_watched';
   String posterPathCol = 'poster_path';
   String backdropPathCol = 'backdrop_path';
-  String? uid;
+  String? get uid => _auth.currentUser?.id;
 
   RecentlyWatchedMoviesController._createInstance();
 
@@ -29,9 +29,15 @@ class RecentlyWatchedMoviesController {
 
   Future<Database> initializeDatabase() async {
     Directory directory = await getApplicationDocumentsDirectory();
-    String path = '${directory.path}recent_movies.db';
+    String properPath = '${directory.path}/recent_movies.db';
+    String legacyPath = '${directory.path}recent_movies.db';
+    if (!await File(properPath).exists() && await File(legacyPath).exists()) {
+      try {
+        await File(legacyPath).copy(properPath);
+      } catch (_) {}
+    }
     var recentMoviesDatabase =
-        await openDatabase(path, version: 1, onCreate: _createDb);
+        await openDatabase(properPath, version: 1, onCreate: _createDb);
     return recentMoviesDatabase;
   }
 
@@ -209,8 +215,7 @@ class RecentlyWatchedMoviesController {
   }
 
   Future<void> setWatchHistoryCollection() async {
-    final user = _auth.currentUser;
-    uid = user?.id;
+    // No-op: uid dynamically retrieves _auth.currentUser?.id
   }
 
   Future<bool> checkIfDocExists(String docId) async {
@@ -247,7 +252,7 @@ class RecentlyWatchedEpisodeController {
   String colDateAdded = 'date_added';
   String colSeriesId = 'series_id';
   RecentlyWatchedEpisodeController._createInstance();
-  String? uid;
+  String? get uid => _auth.currentUser?.id;
 
   GoTrueClient get _auth => Supabase.instance.client.auth;
   SupabaseClient get _supabase => Supabase.instance.client;
@@ -259,9 +264,15 @@ class RecentlyWatchedEpisodeController {
   }
   Future<Database> initializeDatabase() async {
     Directory directory = await getApplicationDocumentsDirectory();
-    String path = '${directory.path}recent_episodes_v2.db';
+    String properPath = '${directory.path}/recent_episodes_v2.db';
+    String legacyPath = '${directory.path}recent_episodes_v2.db';
+    if (!await File(properPath).exists() && await File(legacyPath).exists()) {
+      try {
+        await File(legacyPath).copy(properPath);
+      } catch (_) {}
+    }
     var episodesDatabase =
-        await openDatabase(path, version: 1, onCreate: _createDb);
+        await openDatabase(properPath, version: 1, onCreate: _createDb);
     return episodesDatabase;
   }
 
@@ -460,8 +471,7 @@ class RecentlyWatchedEpisodeController {
   }
 
   Future<void> setWatchHistoryCollection() async {
-    final user = _auth.currentUser;
-    uid = user?.id;
+    // No-op: uid dynamically retrieves _auth.currentUser?.id
   }
 
   Future<void> clearAllEpisodes() async {

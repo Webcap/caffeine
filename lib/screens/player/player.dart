@@ -36,6 +36,7 @@ import 'package:reelriot/functions/network.dart';
 import 'package:reelriot/api/endpoints.dart';
 import 'package:reelriot/screens/player/widgets/subtitle_selection_sheet.dart';
 import 'package:reelriot/screens/player/widgets/glass_player_controls.dart';
+import 'package:reelriot/utils/helpers/web_page.dart';
 
 class Player extends StatefulWidget {
   final Map<String, String> sources;
@@ -98,6 +99,19 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
   DateTime? _loadStartTime;
   DateTime? _bufferingStartTime;
 
+  bool _isEmbed = false;
+  bool _isEmbedFullscreen = false;
+  String _embedUrl = '';
+
+  static bool isEmbedUrl(String url) {
+    if (url.isEmpty) return false;
+    final u = url.toLowerCase();
+    if (u.contains('.m3u8') || u.contains('.mp4') || u.contains('.mkv') || u.contains('.webm')) {
+      return false;
+    }
+    return u.contains('/embed') || u.contains('vixsrc.to/');
+  }
+
   Timer? _periodicSaveTimer;
 
   @override
@@ -109,9 +123,13 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
 
     // Periodic save every 30 seconds
     _periodicSaveTimer = Timer.periodic(const Duration(seconds: 30), (timer) {
-      if (_betterPlayerController.isVideoInitialized() == true) {
-        final elapsed =
-            _betterPlayerController.player.state.position.inMilliseconds;
+      if (_betterPlayerController.isVideoInitialized() == true || _isEmbed) {
+        final elapsed = _isEmbed
+            ? ((widget.mediaType == MediaType.movie
+                    ? (widget.movieMetadata?.elapsed ?? 0)
+                    : (widget.tvMetadata?.elapsed ?? 0)) +
+                playbackDurationInSeconds * 1000)
+            : _betterPlayerController.player.state.position.inMilliseconds;
         if (widget.mediaType == MediaType.movie) {
           insertRecentMovieData(manualElapsed: elapsed);
         } else {
@@ -120,11 +138,12 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
       }
     });
 
-    // Force landscape and keep screen on
+    // Force landscape, hide status/nav bars, and keep screen on
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
     ]);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
     WakelockPlus.enable();
 
     _currentSources = Map.from(widget.sources);
@@ -152,12 +171,19 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
         ? (widget.movieMetadata?.elapsed ?? 0)
         : (widget.tvMetadata?.elapsed ?? 0);
 
-    _betterPlayerController.setDataSource(
-      link ?? '',
-      headers: widget.headers,
-      subtitles: widget.subs,
-      startAt: Duration(milliseconds: initialElapsed),
-    );
+    if (link != null && isEmbedUrl(link)) {
+      _isEmbed = true;
+      _embedUrl = link;
+      startDurationTimer();
+    } else {
+      _isEmbed = false;
+      _betterPlayerController.setDataSource(
+        link ?? '',
+        headers: widget.headers,
+        subtitles: widget.subs,
+        startAt: Duration(milliseconds: initialElapsed),
+      );
+    }
 
     _loadStartTime = DateTime.now();
     AnalyticsService.instance.trackQoSEvent('Playback Attempt', {
@@ -279,18 +305,7 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
           movieId: widget.movieMetadata!.movieId!,
           movieName: widget.movieMetadata!.movieName ?? '',
           releaseYear: widget.movieMetadata!.releaseYear?.toString(),
-          consumetUrl: appDep.consumetUrl,
-          newFlixHQUrl: appDep.newFlixHQUrl,
           flixApiUrl: appDep.flixApiUrl,
-          newFlixhqServer: appDep.newFlixhqServer,
-          streamingServerFlixHQ: appDep.streamingServerFlixHQ,
-          streamingServerDCVA: appDep.streamingServerDCVA,
-          streamingServerZoro: appDep.streamingServerZoro,
-          gokuServer: appDep.gokuServer,
-          sflixServer: appDep.sflixServer,
-          himoviesServer: appDep.himoviesServer,
-          animekaiServer: appDep.animekaiServer,
-          hianimeServer: appDep.hianimeServer,
           language: language,
           country: country,
         );
@@ -303,18 +318,7 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
           seriesName: widget.tvMetadata!.seriesName ?? '',
           seasonNumber: widget.tvMetadata!.seasonNumber ?? 1,
           episodeNumber: widget.tvMetadata!.episodeNumber ?? 1,
-          consumetUrl: appDep.consumetUrl,
-          newFlixHQUrl: appDep.newFlixHQUrl,
           flixApiUrl: appDep.flixApiUrl,
-          newFlixhqServer: appDep.newFlixhqServer,
-          streamingServerFlixHQ: appDep.streamingServerFlixHQ,
-          streamingServerDCVA: appDep.streamingServerDCVA,
-          streamingServerZoro: appDep.streamingServerZoro,
-          gokuServer: appDep.gokuServer,
-          sflixServer: appDep.sflixServer,
-          himoviesServer: appDep.himoviesServer,
-          animekaiServer: appDep.animekaiServer,
-          hianimeServer: appDep.hianimeServer,
           language: language,
           country: country,
         );
@@ -344,18 +348,27 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
             : widget.settings.defaultVideoResolution.toString();
         final link = newSources[keyToFind] ?? newSources.values.first;
 
-        final elapsed = await _currentElapsedMilliseconds;
-        _betterPlayerController.setDataSource(
-          link,
-          headers: VideoUtils.extractHeaders(result.videoLinks!),
-          subtitles: _currentSubs,
-          startAt: Duration(milliseconds: elapsed),
-        );
-        _selectPreferredAudioTrack();
-        if (mounted) {
-          setState(() {});
+        if (isEmbedUrl(link)) {
+          _isEmbed = true;
+          _embedUrl = link;
+          if (_betterPlayerController.isPlaying()) {
+            _betterPlayerController.pause();
+          }
+          if (mounted) setState(() {});
+          break;
+        } else {
+          _isEmbed = false;
+          final elapsed = await _currentElapsedMilliseconds;
+          _betterPlayerController.setDataSource(
+            link,
+            headers: VideoUtils.extractHeaders(result.videoLinks!),
+            subtitles: _currentSubs,
+            startAt: Duration(milliseconds: elapsed),
+          );
+          _selectPreferredAudioTrack();
+          if (mounted) setState(() {});
+          break;
         }
-        break;
       }
     }
     _isRetrying = false;
@@ -415,12 +428,21 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
   }
 
   Future<void> insertRecentMovieData({int? manualElapsed}) async {
-    if (!mounted || duration <= 0) return;
+    if (!mounted || widget.movieMetadata == null) return;
 
     int elapsed = manualElapsed ??
-        _betterPlayerController.player.state.position.inMilliseconds;
+        (_isEmbed
+            ? ((widget.movieMetadata?.elapsed ?? 0) +
+                playbackDurationInSeconds * 1000)
+            : (_betterPlayerController.isVideoInitialized() == true
+                ? _betterPlayerController.player.state.position.inMilliseconds
+                : 0));
 
-    int remaining = duration - elapsed;
+    if (elapsed < 3000 && playbackDurationInSeconds < 3) return;
+
+    final effectiveDuration =
+        duration > 0 ? duration : (elapsed + 7200000); // 2h fallback
+    int remaining = (effectiveDuration - elapsed).clamp(0, effectiveDuration);
     String dt = DateTime.now().toString();
 
     var isBookmarked = await recentlyWatchedMoviesController
@@ -439,10 +461,7 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
         title: widget.movieMetadata?.movieName ?? '',
         backdropPath: widget.movieMetadata?.backdropPath ?? '');
 
-    double percentage = 0.0;
-    if (duration > 0) {
-      percentage = (elapsed / duration) * 100;
-    }
+    double percentage = (elapsed / effectiveDuration) * 100;
 
     if (!isBookmarked) {
       await prv.addMovie(rMov);
@@ -452,13 +471,13 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
       } else {
         final completed = RecentMovie(
           dateTime: dt,
-          elapsed: duration,
+          elapsed: effectiveDuration,
           id: widget.movieMetadata!.movieId!,
-          posterPath: widget.movieMetadata!.posterPath!,
-          releaseYear: widget.movieMetadata!.releaseYear!,
+          posterPath: widget.movieMetadata!.posterPath ?? '',
+          releaseYear: widget.movieMetadata!.releaseYear ?? 0,
           remaining: 0,
-          title: widget.movieMetadata!.movieName,
-          backdropPath: widget.movieMetadata!.backdropPath!,
+          title: widget.movieMetadata!.movieName ?? '',
+          backdropPath: widget.movieMetadata!.backdropPath ?? '',
         );
         await prv.updateMovie(completed, widget.movieMetadata!.movieId!);
       }
@@ -466,12 +485,21 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
   }
 
   Future<void> insertRecentEpisodeData({int? manualElapsed}) async {
-    if (!mounted || duration <= 0) return;
+    if (!mounted || widget.tvMetadata == null) return;
 
     int elapsed = manualElapsed ??
-        _betterPlayerController.player.state.position.inMilliseconds;
+        (_isEmbed
+            ? ((widget.tvMetadata?.elapsed ?? 0) +
+                playbackDurationInSeconds * 1000)
+            : (_betterPlayerController.isVideoInitialized() == true
+                ? _betterPlayerController.player.state.position.inMilliseconds
+                : 0));
 
-    int remaining = duration - elapsed;
+    if (elapsed < 3000 && playbackDurationInSeconds < 3) return;
+
+    final effectiveDuration =
+        duration > 0 ? duration : (elapsed + 2700000); // 45m fallback
+    int remaining = (effectiveDuration - elapsed).clamp(0, effectiveDuration);
     String dt = DateTime.now().toString();
 
     var isBookmarked = await recentlyWatchedEpisodeController
@@ -492,10 +520,7 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
         seasonNum: widget.tvMetadata?.seasonNumber ?? 0,
         seriesId: widget.tvMetadata?.tvId ?? 0);
 
-    double percentage = 0.0;
-    if (duration > 0) {
-      percentage = (elapsed / duration) * 100;
-    }
+    double percentage = (elapsed / effectiveDuration) * 100;
 
     if (!isBookmarked) {
       await prv.addEpisode(rEpisode);
@@ -509,15 +534,15 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
       } else {
         final completed = RecentEpisode(
             dateTime: dt,
-            elapsed: duration,
+            elapsed: effectiveDuration,
             id: widget.tvMetadata!.episodeId!,
-            posterPath: widget.tvMetadata!.posterPath!,
+            posterPath: widget.tvMetadata!.posterPath ?? '',
             remaining: 0,
-            seriesName: widget.tvMetadata!.seriesName!,
-            episodeName: widget.tvMetadata!.episodeName!,
-            episodeNum: widget.tvMetadata!.episodeNumber!,
-            seasonNum: widget.tvMetadata!.seasonNumber!,
-            seriesId: widget.tvMetadata!.tvId!);
+            seriesName: widget.tvMetadata!.seriesName ?? '',
+            episodeName: widget.tvMetadata!.episodeName ?? '',
+            episodeNum: widget.tvMetadata!.episodeNumber ?? 0,
+            seasonNum: widget.tvMetadata!.seasonNumber ?? 0,
+            seriesId: widget.tvMetadata!.tvId ?? 0);
         await prv.updateEpisode(
             completed,
             widget.tvMetadata!.episodeId!,
@@ -534,7 +559,7 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
     final isResuming = state == AppLifecycleState.resumed;
 
     if (isInBackground) {
-      if (_betterPlayerController.isVideoInitialized() == true) {
+      if (_betterPlayerController.isVideoInitialized() == true || _isEmbed) {
         widget.mediaType == MediaType.movie
             ? insertRecentMovieData()
             : insertRecentEpisodeData();
@@ -551,9 +576,13 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
   @override
   void dispose() {
     // Save progress before disposing
-    if (_betterPlayerController.isVideoInitialized() == true) {
-      final elapsed =
-          _betterPlayerController.player.state.position.inMilliseconds;
+    if (_betterPlayerController.isVideoInitialized() == true || _isEmbed) {
+      final elapsed = _isEmbed
+          ? ((widget.mediaType == MediaType.movie
+                  ? (widget.movieMetadata?.elapsed ?? 0)
+                  : (widget.tvMetadata?.elapsed ?? 0)) +
+              playbackDurationInSeconds * 1000)
+          : _betterPlayerController.player.state.position.inMilliseconds;
       if (widget.mediaType == MediaType.movie) {
         insertRecentMovieData(manualElapsed: elapsed);
       } else {
@@ -567,12 +596,13 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
     _betterPlayerController.dispose();
     WidgetsBinding.instance.removeObserver(this);
 
-    // Restore orientations and disable wakelock
+    // Restore orientations, system overlays, and disable wakelock
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
     ]);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     WakelockPlus.disable();
 
     super.dispose();
@@ -861,9 +891,13 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
 
         final navigator = Navigator.of(context);
 
-        if (_betterPlayerController.isVideoInitialized() == true) {
-          final elapsed =
-              _betterPlayerController.player.state.position.inMilliseconds;
+        if (_betterPlayerController.isVideoInitialized() == true || _isEmbed) {
+          final elapsed = _isEmbed
+              ? ((widget.mediaType == MediaType.movie
+                      ? (widget.movieMetadata?.elapsed ?? 0)
+                      : (widget.tvMetadata?.elapsed ?? 0)) +
+                  playbackDurationInSeconds * 1000)
+              : _betterPlayerController.player.state.position.inMilliseconds;
 
           if (widget.mediaType == MediaType.movie) {
             await insertRecentMovieData(manualElapsed: elapsed);
@@ -880,38 +914,113 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
         backgroundColor: Colors.black,
         body: Stack(
           children: [
-            Center(
-              child: mkv.Video(
-                controller: _betterPlayerController.videoController,
-                controls: mkv.NoVideoControls,
+            if (_isEmbed)
+              Positioned.fill(
+                child: UrlWebPage(
+                  url: _embedUrl,
+                  embedded: true,
+                  blockAds: true,
+                  tryExtractHls: true,
+                  onFullscreenChanged: (isFull) {
+                    setState(() {
+                      _isEmbedFullscreen = isFull;
+                    });
+                  },
+                  onHlsExtracted: (hls) {
+                    debugPrint('[Player] 🎯 HLS stream extracted from embed: $hls');
+                    _isEmbed = false;
+                    _betterPlayerController.setDataSource(
+                      hls,
+                      subtitles: _currentSubs,
+                    );
+                    if (mounted) setState(() {});
+                  },
+                ),
+              )
+            else ...[
+              Center(
+                child: mkv.Video(
+                  controller: _betterPlayerController.videoController,
+                  controls: mkv.NoVideoControls,
+                ),
               ),
-            ),
-            StreamBuilder<bool>(
-              stream: _betterPlayerController.player.stream.buffering,
-              builder: (context, snapshot) {
-                if (snapshot.data == true) {
-                  return const Center(
-                    child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+              StreamBuilder<bool>(
+                stream: _betterPlayerController.player.stream.buffering,
+                builder: (context, snapshot) {
+                  if (snapshot.data == true) {
+                    return const Center(
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                    );
+                  }
+                  return const SizedBox.shrink();
+                },
+              ),
+            ],
+            if (!_isEmbed)
+              GlassPlayerControls(
+                controller: _betterPlayerController,
+                title: widget.mediaType == MediaType.movie
+                    ? widget.movieMetadata?.movieName ?? ''
+                    : widget.tvMetadata?.seriesName ?? '',
+                subtitle: widget.mediaType == MediaType.tvShow
+                    ? 'Season ${widget.tvMetadata?.seasonNumber} Episode ${widget.tvMetadata?.episodeNumber}'
+                    : null,
+                onBack: () => Navigator.of(context).pop(),
+                onSubtitlePressed: _openSubtitleSelectionSheet,
+                onResolutionPressed: () {}, // Resolution sheet not implemented yet
+                onCastPressed: _openCastSheet,
+              )
+            else
+              Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
+                child: AnimatedOpacity(
+                  opacity: _isEmbedFullscreen ? 0.0 : 1.0,
+                  duration: const Duration(milliseconds: 250),
+                  curve: Curves.easeInOut,
+                  child: IgnorePointer(
+                    ignoring: _isEmbedFullscreen,
+                    child: SafeArea(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 12),
+                        child: Row(
+                          children: [
+                            GlassIconButton(
+                              icon: Icons.arrow_back_ios_new_rounded,
+                              onPressed: () => Navigator.of(context).pop(),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                widget.mediaType == MediaType.movie
+                                    ? widget.movieMetadata?.movieName ?? ''
+                                    : widget.tvMetadata?.seriesName ?? '',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  shadows: [
+                                    Shadow(
+                                      color: Colors.black87,
+                                      blurRadius: 8,
+                                    ),
+                                  ],
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
-                  );
-                }
-                return const SizedBox.shrink();
-              },
-            ),
-            GlassPlayerControls(
-              controller: _betterPlayerController,
-              title: widget.mediaType == MediaType.movie
-                  ? widget.movieMetadata?.movieName ?? ''
-                  : widget.tvMetadata?.seriesName ?? '',
-              subtitle: widget.mediaType == MediaType.tvShow
-                  ? 'Season ${widget.tvMetadata?.seasonNumber} Episode ${widget.tvMetadata?.episodeNumber}'
-                  : null,
-              onBack: () => Navigator.of(context).pop(),
-              onSubtitlePressed: _openSubtitleSelectionSheet,
-              onResolutionPressed: () {}, // Resolution sheet not implemented yet
-              onCastPressed: _openCastSheet,
-            ),
+                  ),
+                ),
+              ),
             if (isCasting) _CastingOverlay(castService: castService),
           ],
         ),

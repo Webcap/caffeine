@@ -29,6 +29,8 @@ void main() {
 
   group('AdService Initialization', () {
     test('Initialization status should be tracked', () async {
+      when(() => mockSdk.setTestAdsEnabled(any()))
+          .thenAnswer((_) async {});
       when(() => mockSdk.loadBannerAd(any()))
           .thenAnswer((_) async => MockStartAppBannerAd());
       when(() => mockSdk.loadInterstitialAd(

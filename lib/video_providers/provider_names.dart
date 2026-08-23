@@ -1,12 +1,10 @@
 class ProviderNames {
-  /// Supported providers - caffeine-api scraper (vixsrc) first, then others
+  /// Supported active providers - fast multi scrapers ordered by empirical performance
   static List<VideoProvider> providers = [
-    VideoProvider(fullName: 'VidLink', codeName: 'vidlink'),
-    VideoProvider(fullName: 'VidSrc.su', codeName: 'vidsrcsu'),
+    VideoProvider(fullName: 'Vixsrc', codeName: 'vixsrc'),
+    VideoProvider(fullName: 'CoorenLabs', codeName: 'coorenlabs'),
+    VideoProvider(fullName: 'VidZee', codeName: 'vidzee'),
     VideoProvider(fullName: 'VidFun', codeName: 'vidfun'),
-    VideoProvider(fullName: 'Goku', codeName: 'goku'),
-    VideoProvider(fullName: 'Sflix', codeName: 'sflix'),
-    VideoProvider(fullName: 'HiMovies', codeName: 'himovies'),
   ];
 
   static String get defaultPrecedenceString =>
@@ -15,12 +13,18 @@ class ProviderNames {
   /// Providers shown in the server status screen (API /providers/status).
   /// Add new providers here and in caffeine-api scraper registry to include them in the status check.
   static const checkableCodeNames = {
+    'vixsrc',
+    'coorenlabs',
+    'vidzee',
+    'vidfun',
     'vidlink',
     'vidsrcsu',
-    'vidfun',
-    'goku',
-    'sflix',
-    'himovies',
+  };
+
+  /// Headless browser scrapers disabled due to timeouts / Cloudflare blocks
+  static const disabledCodeNames = {
+    'vidlink',
+    'vidsrcsu',
   };
 }
 

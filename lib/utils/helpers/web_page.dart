@@ -3,8 +3,10 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:webview_flutter_android/webview_flutter_android.dart';
 
 // class UrlWebPage extends StatefulWidget {
 //   String url;
@@ -91,6 +93,9 @@ class UrlWebPage extends StatefulWidget {
   /// Called when HLS URL is extracted via JS (only if [tryExtractHls] is true).
   final void Function(String hls)? onHlsExtracted;
 
+  /// Called when the webview enters or exits fullscreen custom view.
+  final void Function(bool isFullscreen)? onFullscreenChanged;
+
   UrlWebPage({
     super.key,
     required this.url,
@@ -98,6 +103,7 @@ class UrlWebPage extends StatefulWidget {
     this.blockAds = false,
     this.tryExtractHls = false,
     this.onHlsExtracted,
+    this.onFullscreenChanged,
   });
 
   @override
@@ -109,16 +115,122 @@ class UrlWebPageState extends State<UrlWebPage> {
 
   static const String _adBlockJs = r'''
     (function() {
-      var hide = function(sel) { try { document.querySelectorAll(sel).forEach(function(el){ el.style.display='none'; el.remove(); }); } catch(e){} };
-      hide('[id*="ad"]'); hide('[class*="ad"]'); hide('.adsbygoogle'); hide('ins.adsbygoogle');
-      hide('iframe[src*="doubleclick"]'); hide('iframe[src*="googlesyndication"]'); hide('iframe[src*="ads"]');
-      hide('.ad-overlay'); hide('.ad-container'); hide('.ad-overlay-alt'); hide('[class*="overlay"][class*="ad"]');
-      document.querySelectorAll('button, [role="button"], a').forEach(function(el){
-        var t = (el.textContent||'').toLowerCase(); var c = (el.className||'')+''; var id = (el.id||'')+'';
-        if(/close|skip|play|dismiss|x/.test(t) || /close|skip|dismiss/.test(c+id)) el.click();
-      });
-      document.querySelectorAll('video').forEach(function(v){ v.muted=false; v.play().catch(function(){}); });
-      document.querySelectorAll('[class*="play"], .vjs-big-play-button').forEach(function(b){ b.click(); });
+      // 1. Intercept and block popup windows (window.open)
+      try {
+        window.open = function() {
+          console.log("[AdBlock] Blocked window.open");
+          return null;
+        };
+        Object.defineProperty(window, 'open', {
+          value: function() { console.log("[AdBlock] Blocked window.open"); return null; },
+          writable: false,
+          configurable: false
+        });
+      } catch(e) {}
+
+      // 2. Disable alert/confirm/prompt scam popups
+      try {
+        window.alert = function() {};
+        window.confirm = function() { return false; };
+        window.prompt = function() { return null; };
+      } catch(e) {}
+
+      // 3. Helper to check if a URL belongs to the player domain
+      function isAllowedUrl(url) {
+        try {
+          if (!url) return false;
+          if (url.startsWith('/') || url.startsWith('#') || url.startsWith('javascript:') || url.startsWith('blob:') || url.startsWith('data:')) return true;
+          var a = document.createElement('a');
+          a.href = url;
+          var curHost = window.location.hostname.toLowerCase();
+          var tgtHost = (a.hostname || '').toLowerCase();
+          if (!tgtHost || curHost === tgtHost) return true;
+          var curParts = curHost.split('.');
+          var tgtParts = tgtHost.split('.');
+          if (curParts.length >= 2 && tgtParts.length >= 2) {
+            var curRoot = curParts.slice(-2).join('.');
+            var tgtRoot = tgtParts.slice(-2).join('.');
+            return curRoot === tgtRoot;
+          }
+          return false;
+        } catch(e) { return false; }
+      }
+
+      // 4. Remove intrusive ad overlays, popups, and click-hijacking layers
+      function cleanAdLayers() {
+        try {
+          var hideSelectors = [
+            '[id*="ad"]', '[class*="ad"]', '.adsbygoogle', 'ins.adsbygoogle',
+            'iframe[src*="doubleclick"]', 'iframe[src*="googlesyndication"]', 'iframe[src*="ads"]',
+            'iframe[src*="pop"]', 'iframe[src*="banner"]', 'iframe[src*="traffic"]',
+            '.ad-overlay', '.ad-container', '.ad-overlay-alt', '[class*="overlay"][class*="ad"]',
+            '[id*="pop"]', '[class*="pop"]', '[class*="sponsor"]', '[id*="sponsor"]'
+          ];
+          hideSelectors.forEach(function(sel) {
+            try {
+              document.querySelectorAll(sel).forEach(function(el) {
+                if (!el.querySelector('video') && el.tagName !== 'VIDEO') {
+                  el.style.display = 'none';
+                  el.remove();
+                }
+              });
+            } catch(e) {}
+          });
+
+          // Remove transparent overlay divs that hijack taps
+          document.querySelectorAll('div, a, span, section').forEach(function(el) {
+            if (el.tagName === 'VIDEO' || el.querySelector('video') || el.classList.contains('vjs-tech')) return;
+            var style = window.getComputedStyle(el);
+            var zIndex = parseInt(style.zIndex, 10);
+            if (zIndex > 50 && (style.position === 'fixed' || style.position === 'absolute')) {
+              var rect = el.getBoundingClientRect();
+              if (rect.width > window.innerWidth * 0.7 && rect.height > window.innerHeight * 0.7) {
+                el.remove();
+              }
+            }
+          });
+
+          // Neutralize external anchor tags
+          document.querySelectorAll('a').forEach(function(a) {
+            var href = a.getAttribute('href') || '';
+            if (a.target === '_blank' || (href.startsWith('http') && !isAllowedUrl(href))) {
+              a.removeAttribute('target');
+              a.setAttribute('data-blocked-href', href);
+              a.removeAttribute('href');
+              a.onclick = function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                return false;
+              };
+            }
+          });
+        } catch(e) {}
+      }
+
+      // 5. Intercept click events at the capture phase to block popunder redirects
+      if (!window.__reelriot_click_intercepted) {
+        window.__reelriot_click_intercepted = true;
+        window.addEventListener('click', function(e) {
+          var target = e.target;
+          while (target && target !== document.body && target !== document.documentElement) {
+            if (target.tagName === 'A') {
+              var href = target.getAttribute('href') || target.getAttribute('data-blocked-href') || '';
+              if (href && !isAllowedUrl(href)) {
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+                return false;
+              }
+            }
+            target = target.parentElement;
+          }
+        }, true);
+      }
+
+      cleanAdLayers();
+      if (!window.__reelriot_ad_interval) {
+        window.__reelriot_ad_interval = setInterval(cleanAdLayers, 1000);
+      }
     })();
   ''';
 
@@ -255,6 +367,82 @@ class UrlWebPageState extends State<UrlWebPage> {
           );
         },
       );
+
+    if (controller.platform is AndroidWebViewController) {
+      final androidController =
+          controller.platform as AndroidWebViewController;
+      androidController.setMediaPlaybackRequiresUserGesture(false);
+      bool isFullscreenActive = false;
+      androidController.setCustomWidgetCallbacks(
+        onShowCustomWidget: (Widget customView, void Function() callback) {
+          if (!mounted) return;
+          log("[UrlWebPage] 📺 Pushing fullscreen custom view route");
+          isFullscreenActive = true;
+          SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+          widget.onFullscreenChanged?.call(true);
+
+          Navigator.of(context).push<void>(
+            PageRouteBuilder<void>(
+              opaque: true,
+              fullscreenDialog: true,
+              transitionDuration: const Duration(milliseconds: 300),
+              reverseTransitionDuration: const Duration(milliseconds: 250),
+              pageBuilder: (context, animation, secondaryAnimation) {
+                SystemChrome.setEnabledSystemUIMode(
+                    SystemUiMode.immersiveSticky);
+                return PopScope(
+                  canPop: true,
+                  onPopInvokedWithResult: (didPop, result) {
+                    callback();
+                  },
+                  child: Scaffold(
+                    backgroundColor: Colors.black,
+                    body: Center(child: customView),
+                  ),
+                );
+              },
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) {
+                final curvedAnimation = CurvedAnimation(
+                  parent: animation,
+                  curve: Curves.easeOutCubic,
+                  reverseCurve: Curves.easeInCubic,
+                );
+                return FadeTransition(
+                  opacity: curvedAnimation,
+                  child: ScaleTransition(
+                    scale: Tween<double>(begin: 0.92, end: 1.0)
+                        .animate(curvedAnimation),
+                    child: child,
+                  ),
+                );
+              },
+            ),
+          ).then((_) {
+            isFullscreenActive = false;
+            if (mounted) {
+              SystemChrome.setEnabledSystemUIMode(
+                  SystemUiMode.immersiveSticky);
+              widget.onFullscreenChanged?.call(false);
+            }
+          });
+        },
+        onHideCustomWidget: () {
+          log("[UrlWebPage] 📺 onHideCustomWidget called by webview");
+          if (isFullscreenActive && mounted) {
+            final nav = Navigator.of(context);
+            if (nav.canPop()) {
+              nav.pop();
+            }
+          }
+          isFullscreenActive = false;
+          if (mounted) {
+            widget.onFullscreenChanged?.call(false);
+          }
+        },
+      );
+    }
+
     if (widget.tryExtractHls && widget.onHlsExtracted != null) {
       controller.addJavaScriptChannel(
         'HlsExtracted',
@@ -276,10 +464,74 @@ class UrlWebPageState extends State<UrlWebPage> {
     controller
       ..setNavigationDelegate(
         NavigationDelegate(
+          onNavigationRequest: (NavigationRequest request) {
+            if (widget.blockAds || widget.embedded) {
+              final reqUrl = request.url;
+
+              // Allow initial URL and internal protocols/blobs
+              if (reqUrl == widget.url ||
+                  reqUrl.startsWith('about:') ||
+                  reqUrl.startsWith('data:') ||
+                  reqUrl.startsWith('blob:') ||
+                  reqUrl.startsWith('javascript:')) {
+                return NavigationDecision.navigate;
+              }
+
+              // Allow stream and video segments
+              final lower = reqUrl.toLowerCase();
+              if (lower.contains('.m3u8') ||
+                  lower.contains('.mp4') ||
+                  lower.contains('.webm') ||
+                  lower.contains('.ts') ||
+                  lower.contains('.key') ||
+                  lower.contains('.m4s') ||
+                  lower.contains('.mpd')) {
+                return NavigationDecision.navigate;
+              }
+
+              // Allow navigation within the same root domain
+              final uri = Uri.tryParse(reqUrl);
+              final initialUri = Uri.tryParse(widget.url);
+              if (uri != null &&
+                  initialUri != null &&
+                  uri.host.isNotEmpty &&
+                  initialUri.host.isNotEmpty) {
+                final reqHost = uri.host.toLowerCase();
+                final initHost = initialUri.host.toLowerCase();
+                if (reqHost == initHost ||
+                    reqHost.endsWith('.$initHost') ||
+                    initHost.endsWith('.$reqHost')) {
+                  return NavigationDecision.navigate;
+                }
+
+                final reqParts = reqHost.split('.');
+                final initParts = initHost.split('.');
+                if (reqParts.length >= 2 && initParts.length >= 2) {
+                  final reqRoot =
+                      reqParts.sublist(reqParts.length - 2).join('.');
+                  final initRoot =
+                      initParts.sublist(initParts.length - 2).join('.');
+                  if (reqRoot == initRoot) {
+                    return NavigationDecision.navigate;
+                  }
+                }
+              }
+
+              // Block all other ad redirects and popup navigations
+              log('[UrlWebPage] 🛑 Blocked ad navigation: $reqUrl');
+              return NavigationDecision.prevent;
+            }
+            return NavigationDecision.navigate;
+          },
+          onPageStarted: (_) {
+            if (widget.blockAds) {
+              _runAdBlock();
+            }
+          },
           onPageFinished: (_) {
             if (widget.blockAds) {
               _runAdBlock();
-              for (final ms in [800, 2000, 4000]) {
+              for (final ms in [500, 1200, 2500, 5000]) {
                 Future<void>.delayed(Duration(milliseconds: ms), _runAdBlock);
               }
             }

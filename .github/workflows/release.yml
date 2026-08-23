@@ -252,7 +252,7 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           CAFFEINE_API_URL: ${{ secrets.CAFFEINE_API_URL }}
-          CAFFEINE_API_KEY: ${{ secrets.CAFFEINE_API_KEY }}
+          CAFFEINE_API_KEY: ${{ secrets.CAFFEINE_API_KEY || secrets.ADMIN_SECRET }}
         run: |
           VERSION_RAW="${{ steps.organize_artifacts.outputs.APP_VERSION }}"
           VERSION_CLEAN=$(echo "$VERSION_RAW" | tr '+' '_')

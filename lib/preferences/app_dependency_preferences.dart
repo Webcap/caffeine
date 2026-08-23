@@ -5,7 +5,6 @@ import 'package:reelriot/utils/constant.dart';
 import 'dart:math' as math;
 
 class AppDependencies {
-  static const CONSUMET_URL_KEY = "consumetUrlKey";
   static const VIDSRC_API_URL = "vidsrcApi";
   static const CAFFIENE_LOGO_URL = "caffieneLogoUrl";
   static const STREAM_SERVER_FLIXHQ = "vidcloud";
@@ -18,9 +17,6 @@ class AppDependencies {
   static const NEW_FLIXHQ_URL = "newFlixHQUrl";
   static const NEW_FLIXHQ_SERVER = "newFlixHQServer";
   static const TMDB_PROXY = "tmdb_proxy";
-  static const GOKU_SERVER = "goku_server";
-  static const SFLIX_SERVER = "sflix_server";
-  static const HIMOVIES_SERVER = "himovies_server";
   static const ANIMEKAI_SERVER = "animekai_server";
   static const HIANIME_SERVER = "hianime_server";
   static const ENABLE_LIVE_SPORTS = "enable_live_sports";
@@ -102,15 +98,6 @@ class AppDependencies {
       return defaultCaffeineApiUrl;
     }
     return stored;
-  }
-
-  Future<void> setConsumetUrl(String value) async {
-    sharedPrefsSingleton.setString(CONSUMET_URL_KEY, value);
-  }
-
-  Future<String> getConsumetUrl() async {
-    return sharedPrefsSingleton.getString(CONSUMET_URL_KEY) ??
-        'https://consumet-api-livid.vercel.app/';
   }
 
   Future<void> setvidSrcApi(String value) async {
@@ -224,30 +211,6 @@ class AppDependencies {
 
   Future<String> getTmdbProxy() async {
     return sharedPrefsSingleton.getString(TMDB_PROXY) ?? "";
-  }
-
-  Future<void> setGokuServer(String value) async {
-    sharedPrefsSingleton.setString(GOKU_SERVER, value);
-  }
-
-  Future<String> getGokuServer() async {
-    return sharedPrefsSingleton.getString(GOKU_SERVER) ?? 'vidcloud';
-  }
-
-  Future<void> setSflixServer(String value) async {
-    sharedPrefsSingleton.setString(SFLIX_SERVER, value);
-  }
-
-  Future<String> getSflixServer() async {
-    return sharedPrefsSingleton.getString(SFLIX_SERVER) ?? 'vidcloud';
-  }
-
-  Future<void> setHimoviesServer(String value) async {
-    sharedPrefsSingleton.setString(HIMOVIES_SERVER, value);
-  }
-
-  Future<String> getHimoviesServer() async {
-    return sharedPrefsSingleton.getString(HIMOVIES_SERVER) ?? 'vidcloud';
   }
 
   Future<void> setAnimekaiServer(String value) async {
