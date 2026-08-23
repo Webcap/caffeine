@@ -735,10 +735,25 @@ class _ListItemState extends State<ListItem> {
                           );
                         case DownloadStatus.failed:
                         case DownloadStatus.canceled:
-                          return _secondaryButton(
-                              label: tr("download"),
-                              onPressed: () => widget
-                                  .onDownloadPlayPausedPressed(widget.url));
+                          return Column(
+                            children: [
+                              _secondaryButton(
+                                  label: tr("download"),
+                                  onPressed: () => widget
+                                      .onDownloadPlayPausedPressed(widget.url)),
+                              const SizedBox(height: 8),
+                              TextButton.icon(
+                                icon: const Icon(Icons.open_in_browser, size: 16, color: _UpdateDesign.textSecondary),
+                                label: const Text("Download in Browser", style: TextStyle(color: _UpdateDesign.textSecondary, fontSize: 13)),
+                                onPressed: () async {
+                                  final uri = Uri.tryParse(widget.url);
+                                  if (uri != null && await canLaunchUrl(uri)) {
+                                    await launchUrl(uri, mode: LaunchMode.externalApplication);
+                                  }
+                                },
+                              ),
+                            ],
+                          );
                         case DownloadStatus.queued:
                           break;
                       }

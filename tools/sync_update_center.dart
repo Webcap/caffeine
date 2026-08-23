@@ -23,10 +23,12 @@ Future<void> main(List<String> args) async {
   final versionClean = version.replaceAll('+', '_');
   final repoName = options['repo'] ?? envMap['GITHUB_REPOSITORY'] ?? 'Webcap/reelriot';
 
+  final flavor = (environment == 'development') ? 'dev' : 'prod';
+
   // Enforce Universal APK link for the update center
   String downloadUrl = options['download-url'] ?? '';
   if (downloadUrl.isEmpty) {
-    downloadUrl = 'https://github.com/$repoName/releases/download/v$version/ReelRiot-$environment-v$versionClean-universal.apk';
+    downloadUrl = 'https://github.com/$repoName/releases/download/v$version/ReelRiot-$flavor-v$versionClean-universal.apk';
   }
 
   final storeUrl = options['store-url'] ??
@@ -43,6 +45,13 @@ Future<void> main(List<String> args) async {
     changelog = options['changelog'];
   }
 
+  final downloadUrls = <String, String>{
+    'universal': downloadUrl,
+    'arm64_v8a': 'https://github.com/$repoName/releases/download/v$version/ReelRiot-$flavor-v$versionClean-arm64-v8a.apk',
+    'armeabi_v7a': 'https://github.com/$repoName/releases/download/v$version/ReelRiot-$flavor-v$versionClean-armeabi-v7a.apk',
+    'x86_64': 'https://github.com/$repoName/releases/download/v$version/ReelRiot-$flavor-v$versionClean-x86_64.apk',
+  };
+
   stdout.writeln('======================================================');
   stdout.writeln('         Syncing to ReelRiot Update Center            ');
   stdout.writeln('======================================================');
@@ -55,13 +64,6 @@ Future<void> main(List<String> args) async {
   stdout.writeln('======================================================');
 
   bool synced = false;
-
-  final downloadUrls = <String, String>{
-    'universal': downloadUrl,
-    'arm64_v8a': 'https://github.com/$repoName/releases/download/v$version/ReelRiot-$environment-v$versionClean-arm64-v8a.apk',
-    'armeabi_v7a': 'https://github.com/$repoName/releases/download/v$version/ReelRiot-$environment-v$versionClean-armeabi-v7a.apk',
-    'x86_64': 'https://github.com/$repoName/releases/download/v$version/ReelRiot-$environment-v$versionClean-x86_64.apk',
-  };
 
   // 1. Primary Sync: Supabase Direct Upsert (Single source of truth)
   if (supabaseUrl != null && serviceRoleKey != null && supabaseUrl.isNotEmpty && serviceRoleKey.isNotEmpty) {
@@ -89,7 +91,24 @@ Future<void> main(List<String> args) async {
         'updated_at': DateTime.now().toUtc().toIso8601String(),
       });
 
-      final response = await http.post(uri, headers: headers, body: payload);
+      var response = await http.post(uri, headers: headers, body: payload);
+
+      // Fallback: If download_urls column does not exist yet in Supabase schema, retry without it
+      if (response.statusCode == 400 && response.body.contains('download_urls')) {
+        stdout.writeln('ℹ️ Supabase table missing download_urls column, retrying with base schema...');
+        final basePayload = jsonEncode({
+          'platform': platform,
+          'environment': environment,
+          'latest_version': version,
+          'is_forced': isForced,
+          'rollout_percentage': 100,
+          'download_url': downloadUrl,
+          'store_url': storeUrl,
+          'changelog': changelog,
+          'updated_at': DateTime.now().toUtc().toIso8601String(),
+        });
+        response = await http.post(uri, headers: headers, body: basePayload);
+      }
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         stdout.writeln('✓ Successfully updated app_updates table in Supabase.');
@@ -104,7 +123,6 @@ Future<void> main(List<String> args) async {
             'version': version,
             'is_forced': isForced,
             'rollout_percentage': 100,
-            'download_urls': downloadUrls,
             'changelog': changelog,
           });
           await http.post(historyUri, headers: headers, body: historyPayload);
@@ -125,6 +143,7 @@ Future<void> main(List<String> args) async {
       final uri = Uri.parse('$sanitizedBaseUrl/admin/updates');
 
       final headers = <String, String>{
+        'x-admin-secret': caffeineApiKey,
         'x-api-key': caffeineApiKey,
         'Content-Type': 'application/json',
       };
