@@ -200,6 +200,11 @@ jobs:
           cd ..
           ls -lh dist/
 
+      - name: Generate Commit-Based Changelog
+        run: |
+          dart tools/changelog_gen.dart --output dist/RELEASE_NOTES.md
+          cat dist/RELEASE_NOTES.md
+
       - name: Archive CI Artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -215,20 +220,6 @@ jobs:
           target_commitish: ${{ github.sha }}
           name: "ReelRiot Mobile v${{ steps.organize_artifacts.outputs.APP_VERSION }}"
           files: dist/*
-          generate_release_notes: true
-          body: |
-            # 🚀 ReelRiot Mobile `v${{ steps.organize_artifacts.outputs.APP_VERSION }}`
-
-            ### 📦 Download Packages
-            | Architecture / Format | Target Device | Recommended File |
-            | :--- | :--- | :--- |
-            | **Universal APK** | Any Android 7.0+ Device | `ReelRiot-${{ env.BUILD_FLAVOR }}-v*.apk` |
-            | **ARM64 (64-bit)** | Modern Android Phones & Tablets | `ReelRiot-${{ env.BUILD_FLAVOR }}-v*-arm64-v8a.apk` |
-            | **ARMv7 (32-bit)** | Older Android Phones | `ReelRiot-${{ env.BUILD_FLAVOR }}-v*-armeabi-v7a.apk` |
-            | **x86_64** | ChromeOS / Android Emulators | `ReelRiot-${{ env.BUILD_FLAVOR }}-v*-x86_64.apk` |
-            | **Google Play Bundle** | Play Console Store Upload | `ReelRiot-${{ env.BUILD_FLAVOR }}-v*.aab` |
-
-            ---
-            ${{ inputs.release_notes }}
+          body_path: dist/RELEASE_NOTES.md
           draft: false
           prerelease: ${{ env.BUILD_FLAVOR == 'dev' }}

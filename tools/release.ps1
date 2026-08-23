@@ -38,6 +38,7 @@ param (
     [string]$Target = 'Apk',
 
     [switch]$BumpVersion,
+    [switch]$UpdateChangelog,
     [switch]$Clean,
     [switch]$SkipTests,
     [switch]$PublishGithub,
@@ -56,6 +57,7 @@ Write-Host "======================================================" -ForegroundC
 Write-Host " Flavor : $Flavor" -ForegroundColor Yellow
 Write-Host " Target : $Target" -ForegroundColor Yellow
 Write-Host " BumpVer: $BumpVersion" -ForegroundColor Yellow
+Write-Host " ChgLog : $UpdateChangelog" -ForegroundColor Yellow
 Write-Host " OutDir : $OutDir" -ForegroundColor Yellow
 Write-Host "======================================================"
 
@@ -80,7 +82,7 @@ if ($LASTEXITCODE -ne 0) {
     Write-Error "flutter pub get failed with exit code $LASTEXITCODE"
 }
 
-# ── 3. Version Management ─────────────────────────────────────────────────────
+# ── 3. Version & Changelog Management ─────────────────────────────────────────
 Write-Host "`n[3/5] Resolving build version..." -ForegroundColor Cyan
 if ($BumpVersion) {
     & dart tools/build_number_gen.dart --mode auto
@@ -95,6 +97,11 @@ if ($PubspecContent -match 'version:\s*([^\r\n]+)') {
     $AppVersion = "unknown"
 }
 Write-Host "-> Target Version: $AppVersion" -ForegroundColor Green
+
+if ($UpdateChangelog -or $BumpVersion) {
+    Write-Host "-> Generating commit-based CHANGELOG.md entry..." -ForegroundColor Gray
+    & dart tools/changelog_gen.dart --write
+}
 
 # ── 4. Quality Gate ───────────────────────────────────────────────────────────
 if (-not $SkipTests) {

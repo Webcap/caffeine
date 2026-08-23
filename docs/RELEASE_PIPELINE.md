@@ -191,8 +191,20 @@ git push origin main --tags
 When a release completes, GitHub Actions generates an official release page containing:
 1. **CalVer Release Header**: Tagged automatically as `vYYYY.MM.DD+<buildNumber>`.
 2. **Download Matrix**: Download links for Universal APK, ARM64-v8a, ARMv7, x86_64, and Play Store AAB.
-3. **Automated Changelog**: Full list of Git commits, merged PRs, and contributors since the previous release tag.
+3. **Automated Categorized Changelog**: Generated via `tools/changelog_gen.dart`.
 4. **SHA-256 Checksums (`checksums.txt`)**: Cryptographic hashes for security verification.
+
+### 6.4 Commit-Based Changelog Categorization Standard
+
+The changelog generator parses git commits into categorized release sections using conventional commit conventions:
+
+| Commit Prefix | Category Header | Example Message |
+| :--- | :--- | :--- |
+| `feat:`, `feat(*):`, `feature:` | **🚀 Features & Additions** | `feat: add VidSrc fallback provider` |
+| `fix:`, `fix(*):`, `bugfix:` | **🐛 Bug Fixes** | `fix: resolve crash on null episode airDate` |
+| `perf:`, `refactor:`, `ui:` | **⚡ Improvements & Optimizations** | `perf: tree-shake poppins fonts (-5MB)` |
+| `chore:`, `ci:`, `build:` | **🔧 Maintenance & Infrastructure** | `ci: add automated release workflow` |
+| Other commit formats | **📦 General Updates** | `Update translations and strings` |
 
 ---
 

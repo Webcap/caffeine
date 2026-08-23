@@ -52,6 +52,19 @@ dart run tools/build_number_gen.dart --sync
 
 # Dry run to preview changes:
 dart run tools/build_number_gen.dart --dry-run
+## Commit-Based Changelog Generator
+
+Automatically parse and categorize commits since the last release tag:
+
+```bash
+# Print generated changelog to terminal:
+dart run tools/changelog_gen.dart
+
+# Prepend new release section directly into CHANGELOG.md:
+dart run tools/changelog_gen.dart --write
+
+# Output markdown to a specific file:
+dart run tools/changelog_gen.dart --output release_notes.md
 ```
 
 ## Release Build Pipeline
@@ -62,7 +75,7 @@ Automate full release builds locally using `tools/release.ps1`:
 # Build production AAB and all APK formats:
 .\tools\release.ps1 -Flavor prod -Target All
 
-# Auto-bump build number and compile APKs:
+# Auto-bump build number, update CHANGELOG.md, and compile APKs:
 .\tools\release.ps1 -Flavor prod -Target Apk -BumpVersion
 
 # Perform clean development build:
