@@ -461,7 +461,9 @@ class _CinematicTabBar extends StatelessWidget {
       ),
       child: SafeArea(
         top: false,
-        child: Center(
+        child: Align(
+          alignment: Alignment.bottomCenter,
+          heightFactor: 1.0,
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 560),
             child: Padding(
