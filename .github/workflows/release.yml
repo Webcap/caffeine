@@ -4,14 +4,19 @@ on:
   push:
     tags:
       - 'v*'
+    branches:
+      - main
+      - production
+      - development
   workflow_dispatch:
     inputs:
       flavor:
-        description: 'Product flavor to build'
+        description: 'Product flavor (auto uses branch: development->dev, main/prod->prod)'
         required: true
-        default: 'prod'
+        default: 'auto'
         type: choice
         options:
+          - 'auto'
           - 'prod'
           - 'dev'
       build_target:
@@ -98,7 +103,7 @@ jobs:
     needs: quality-gate
     runs-on: ubuntu-latest
     env:
-      BUILD_FLAVOR: ${{ inputs.flavor || 'prod' }}
+      BUILD_FLAVOR: ${{ (inputs.flavor == 'prod' && 'prod') || (inputs.flavor == 'dev' && 'dev') || (github.ref_name == 'development' && 'dev') || 'prod' }}
       BUILD_TARGET: ${{ inputs.build_target || 'all' }}
     steps:
       - name: Checkout Source Code
@@ -160,16 +165,16 @@ jobs:
         if: env.KEYSTORE_BASE64 != ''
         env:
           KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
-          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-          STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS || 'reelriot' }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD || 'reelriot2026' }}
+          STORE_PASSWORD: ${{ secrets.STORE_PASSWORD || 'reelriot2026' }}
         run: |
-          echo "$KEYSTORE_BASE64" | base64 --decode > android/app/upload-keystore.jks
+          echo "$KEYSTORE_BASE64" | base64 --decode > android/app/reelriot-release.jks
           cat << EOF > android/key.properties
           storePassword=$STORE_PASSWORD
           keyPassword=$KEY_PASSWORD
           keyAlias=$KEY_ALIAS
-          storeFile=upload-keystore.jks
+          storeFile=reelriot-release.jks
           EOF
 
       - name: Build App Bundle (AAB)
@@ -238,13 +243,33 @@ jobs:
           if-no-files-found: error
 
       - name: Publish GitHub Release Page
-        if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
+        if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch' || github.ref_name == 'main' || github.ref_name == 'production' || github.ref_name == 'development'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.organize_artifacts.outputs.TAG_NAME }}
           target_commitish: ${{ github.sha }}
-          name: "ReelRiot Mobile v${{ steps.organize_artifacts.outputs.APP_VERSION }}"
+          name: "${{ env.BUILD_FLAVOR == 'dev' && 'ReelRiot Mobile (Dev Preview)' || 'ReelRiot Mobile' }} v${{ steps.organize_artifacts.outputs.APP_VERSION }}"
           files: dist/*
           body_path: dist/RELEASE_NOTES.md
           draft: false
           prerelease: ${{ env.BUILD_FLAVOR == 'dev' }}
+
+      - name: Sync Release to ReelRiot Update Center
+        if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch' || github.ref_name == 'main' || github.ref_name == 'production' || github.ref_name == 'development'
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          CAFFEINE_API_URL: ${{ secrets.CAFFEINE_API_URL }}
+          CAFFEINE_API_KEY: ${{ secrets.CAFFEINE_API_KEY }}
+        run: |
+          VERSION_RAW="${{ steps.organize_artifacts.outputs.APP_VERSION }}"
+          VERSION_CLEAN=$(echo "$VERSION_RAW" | tr '+' '_')
+          REPO_NAME="${{ github.repository }}"
+          DOWNLOAD_URL="https://github.com/${REPO_NAME}/releases/download/v${VERSION_RAW}/ReelRiot-${BUILD_FLAVOR}-v${VERSION_CLEAN}-universal.apk"
+
+          dart tools/sync_update_center.dart \
+            --platform android \
+            --environment "${BUILD_FLAVOR}" \
+            --version "${VERSION_RAW}" \
+            --download-url "${DOWNLOAD_URL}" \
+            --changelog-file dist/RELEASE_NOTES.md

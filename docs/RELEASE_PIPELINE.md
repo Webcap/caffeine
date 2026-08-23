@@ -170,7 +170,18 @@ sequenceDiagram
     Build->>Rel: Publish Release with Attached Binaries & Notes
 ```
 
-### 6.2 Triggering a Release via Git Tag
+### 6.2 Branch & Flavor Mapping Strategy
+
+The CI/CD pipeline automatically resolves which flavor and entry point to build based on the active Git branch:
+
+| Trigger Source | Branch / Tag | Build Flavor | Entry Point | App ID / Package | Release Status |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Production Tag** | `v*` | `prod` | `lib/main.dart` | `media.webcap.reelriot` | **Official Production Release** |
+| **Main / Prod Branch** | `main`, `production` | `prod` | `lib/main.dart` | `media.webcap.reelriot` | **Official Production Release** |
+| **Dev Branch** | `development` | `dev` | `lib/main_dev.dart` | `media.webcap.reelriot.dev` | **Pre-release (Dev Preview)** |
+| **Manual Trigger** | Any | `auto`, `prod`, `dev` | Dynamic | Dynamic | Per selected parameters |
+
+### 6.3 Triggering a Release via Git Tag
 
 Pushing an annotated Git tag matching the version pattern will automatically trigger the full production release pipeline:
 
@@ -205,6 +216,13 @@ The changelog generator parses git commits into categorized release sections usi
 | `perf:`, `refactor:`, `ui:` | **⚡ Improvements & Optimizations** | `perf: tree-shake poppins fonts (-5MB)` |
 | `chore:`, `ci:`, `build:` | **🔧 Maintenance & Infrastructure** | `ci: add automated release workflow` |
 | Other commit formats | **📦 General Updates** | `Update translations and strings` |
+
+### 6.5 Update Center Automated Synchronization
+
+Upon publishing the GitHub Release, the pipeline automatically syncs release metadata to the **ReelRiot Update Center** (via Supabase / Caffeine API) using `tools/sync_update_center.dart`:
+1. **Target Table**: `app_updates` (`platform`, `environment`, `latest_version`, `download_url`, `changelog`).
+2. **History Log**: `app_update_history` (maintains deployment paper trail).
+3. **In-App Delivery**: ReelRiot mobile clients querying `/v1/updates` immediately receive the new version prompt and direct APK download URL without any manual database edits.
 
 ---
 
