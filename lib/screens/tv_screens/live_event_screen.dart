@@ -7,6 +7,7 @@ import 'package:reelriot/functions/network.dart';
 import 'package:reelriot/models/espn_scoreboard.dart';
 import 'package:reelriot/models/live_tv.dart';
 import 'package:reelriot/screens/tv_screens/live_tv_screen.dart';
+import 'package:reelriot/utils/helpers/web_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -105,13 +106,29 @@ class _LiveEventScreenState extends State<LiveEventScreen> {
   String? _currentReferrer;
   String? _currentUserAgent;
   List<dynamic> _sources = [];
+  bool _isEmbed = false;
+  String? _embedUrl;
+
+  static bool isEmbedUrl(String url) {
+    final lower = url.toLowerCase();
+    return lower.contains('vixsrc.to') ||
+        lower.contains('vidsrc.to') ||
+        lower.contains('vidsrc.me') ||
+        lower.contains('/embed/') ||
+        lower.contains('embed.su') ||
+        lower.contains('sportsembed.su') ||
+        lower.contains('watchfooty.st') ||
+        lower.contains('streameast') ||
+        (!lower.contains('.m3u8') && !lower.contains('.mp4') && !lower.contains('.mkv'));
+  }
 
   bool get _hasStream =>
-      (widget.videoUrl != null && widget.videoUrl!.trim().isNotEmpty);
+      (widget.videoUrl != null && widget.videoUrl!.trim().isNotEmpty) ||
+      (_currentUrl != null && _currentUrl!.trim().isNotEmpty);
 
   String? get _effectiveVideoUrl => _currentUrl?.trim().isNotEmpty == true
       ? _currentUrl
-      : null;
+      : widget.videoUrl;
 
   String get _effectiveReferrer => _currentReferrer ?? '';
 
@@ -138,11 +155,53 @@ class _LiveEventScreenState extends State<LiveEventScreen> {
     setState(() => _scoreGame = game);
   }
 
+  void _onStreamError() {
+    if (!mounted) return;
+    debugPrint('[LiveEventScreen] ❌ Native stream failed. Attempting next mirror...');
+    if (_sources.isNotEmpty) {
+      final currentIndex = _sources.indexWhere((s) => s['url'] == _currentUrl);
+      if (currentIndex >= 0 && currentIndex < _sources.length - 1) {
+        final nextSource = _sources[currentIndex + 1];
+        final nextUrl = nextSource['url']?.toString();
+        if (nextUrl != null && nextUrl.isNotEmpty) {
+          debugPrint('[LiveEventScreen] 🔄 Auto-switching to mirror: ${nextSource['name'] ?? nextUrl}');
+          setState(() {
+            _currentUrl = nextUrl;
+            _currentReferrer = nextSource['referrer']?.toString() ?? '';
+            final ua = nextSource['user_agent']?.toString();
+            if (ua != null && ua.isNotEmpty) _currentUserAgent = ua;
+          });
+          _initPlayerWithUrl(nextUrl);
+          return;
+        }
+      }
+    }
+  }
+
   void _initPlayerWithUrl(String url) {
     _controller?.dispose();
     _controller = null;
+
+    if (isEmbedUrl(url)) {
+      setState(() {
+        _isEmbed = true;
+        _embedUrl = url;
+      });
+      return;
+    }
+
+    setState(() {
+      _isEmbed = false;
+      _embedUrl = null;
+    });
     
     final c = CaffeinePlayerController();
+    c.addEventsListener((event) {
+      if (event == CaffeinePlayerEventType.error) {
+        _onStreamError();
+      }
+    });
+
     c.setDataSource(
       url,
       liveStream: true,
@@ -221,15 +280,17 @@ class _LiveEventScreenState extends State<LiveEventScreen> {
         children: [
           Expanded(
             flex: 1,
-            child: _hasStream && _controller != null
-                ? Container(
-                    color: Colors.black,
-                    child: mkv.Video(
-                      controller: _controller!.videoController,
-                      controls: mkv.MaterialVideoControls,
-                    ),
-                  )
-                : _NoStreamPlaceholder(eventPageUrl: widget.event.url),
+            child: _isEmbed && _embedUrl != null
+                ? UrlWebPage(url: _embedUrl!)
+                : (_hasStream && _controller != null
+                    ? Container(
+                        color: Colors.black,
+                        child: mkv.Video(
+                          controller: _controller!.videoController,
+                          controls: mkv.MaterialVideoControls,
+                        ),
+                      )
+                    : _NoStreamPlaceholder(eventPageUrl: widget.event.url)),
           ),
           Container(
             width: double.infinity,
