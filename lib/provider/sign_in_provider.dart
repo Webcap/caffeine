@@ -331,6 +331,10 @@ class SignInProvider extends ChangeNotifier {
     await s.remove('firstRun');
     await s.remove('caffeine_recent_searches');
     await s.remove('adultStatus-v2');
+    await s.remove('cached_movie_watch_mins');
+    await s.remove('cached_tv_watch_mins');
+    await s.remove('last_synced_user_id');
+    await s.remove('last_synced_bookmark_uid');
 
     // Clear local watch data so new user does not see previous user's data.
     await RecentlyWatchedMoviesController().clearAllMovies();

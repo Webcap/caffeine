@@ -63,11 +63,31 @@ class RecentProvider extends ChangeNotifier {
     _language = language;
   }
 
-  /// Fetches cloud watch_history from Caffeine API, merges with local (highest progress wins),
-  /// replaces local DB, then refreshes. No-op if user not signed in.
-  Future<void> syncFromCloud() async {
+  /// Clears in-memory and local SQLite history data.
+  Future<void> clearLocalData() async {
+    _movies = [];
+    _episodes = [];
+    _apiMovieWatchTimeMinutes = null;
+    _apiTvWatchTimeMinutes = null;
+    await _movieController.clearAllMovies();
+    await _episodeController.clearAllEpisodes();
+    await sharedPrefsSingleton.remove('cached_movie_watch_mins');
+    await sharedPrefsSingleton.remove('cached_tv_watch_mins');
+    await sharedPrefsSingleton.remove('last_synced_user_id');
+    notifyListeners();
+  }
+
+  /// Fetches cloud watch_history from Caffeine API.
+  /// When a new account signs in (or forceReplace is true), local DB is replaced completely
+  /// with the logged-in user's cloud data to prevent cross-account history leakage.
+  Future<void> syncFromCloud({bool forceReplace = false}) async {
     final uid = Supabase.instance.client.auth.currentUser?.id;
     if (uid == null) return;
+
+    final lastSyncedUid = sharedPrefsSingleton.getString('last_synced_user_id');
+    final bool isUserSwitch = lastSyncedUid != null && lastSyncedUid != uid;
+    final bool replaceWithoutMerge =
+        forceReplace || isUserSwitch || (lastSyncedUid == null);
 
     try {
       final base = caffeineApiUrl.replaceAll(RegExp(r'/+$'), '');
@@ -124,14 +144,22 @@ class RecentProvider extends ChangeNotifier {
             }
           }
 
-          final localMovies = await _movieController.getRecentMovieList();
-          final localEpisodes = await _episodeController.getEpisodeList();
+          if (replaceWithoutMerge) {
+            // Replace local DB completely to prevent another user's local history from merging into this account
+            await _movieController.replaceAllMovies(cloudMovies);
+            await _episodeController.replaceAllEpisodes(cloudEpisodes);
+          } else {
+            final localMovies = await _movieController.getRecentMovieList();
+            final localEpisodes = await _episodeController.getEpisodeList();
 
-          final mergedMovies = _mergeMovies(cloudMovies, localMovies);
-          final mergedEpisodes = _mergeEpisodes(cloudEpisodes, localEpisodes);
+            final mergedMovies = _mergeMovies(cloudMovies, localMovies);
+            final mergedEpisodes = _mergeEpisodes(cloudEpisodes, localEpisodes);
 
-          await _movieController.replaceAllMovies(mergedMovies);
-          await _episodeController.replaceAllEpisodes(mergedEpisodes);
+            await _movieController.replaceAllMovies(mergedMovies);
+            await _episodeController.replaceAllEpisodes(mergedEpisodes);
+          }
+
+          await sharedPrefsSingleton.setString('last_synced_user_id', uid);
         }
       }
     } catch (e) {

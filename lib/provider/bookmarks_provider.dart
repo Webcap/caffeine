@@ -3,6 +3,7 @@ import 'package:reelriot/functions/functions.dart';
 import 'package:reelriot/models/movie_models.dart';
 import 'package:reelriot/models/tv.dart';
 import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 /// Manages bookmarks state (movies + TV), local SQLite, and Supabase sync.
@@ -216,6 +217,14 @@ class BookmarksProvider extends ChangeNotifier {
       if (res.isEmpty) return;
       final data = res[0];
 
+      final prefs = await SharedPreferences.getInstance();
+      final lastSyncedUid = prefs.getString('last_synced_bookmark_uid');
+      final bool isUserSwitch = lastSyncedUid != null && lastSyncedUid != uid;
+      if (isUserSwitch) {
+        await _movieDb.clearAll();
+        await _tvDb.clearAll();
+      }
+
       final moviesList = data['movies'] as List<dynamic>? ?? [];
       final tvShowsList = data['tv_shows'] as List<dynamic>? ?? [];
 
@@ -240,6 +249,7 @@ class BookmarksProvider extends ChangeNotifier {
         }
       }
 
+      await prefs.setString('last_synced_bookmark_uid', uid);
       await fetchMovies();
       await fetchTV();
     } catch (e) {
