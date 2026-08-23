@@ -32,4 +32,25 @@
 
 ## 2. General Roadmap & Enhancements
 
+### Task 2.1: Redesign Edit Profile Screen
+* **Target Milestone:** Upcoming Feature Release
+* **Priority:** Medium-High
+* **Objective:** Modernize the user profile editing experience ([`lib/screens/profile/edit_profile.dart`](file:///c:/Users/cnieves.wmg/Desktop/Projects/reelriot/lib/screens/profile/edit_profile.dart)) to align with ReelRiot's updated design tokens, premium dark mode aesthetic, and responsive layout guidelines.
+
+#### Scope of Work & Affected Components:
+1. **Visual & UI Refresh:**
+   - [ ] Modernize the avatar selection modal/grid with animated previews, active indicators, and category tabs.
+   - [ ] Redesign form input fields (display name, username, bio/details) with floating labels, clear validation states, and haptic feedback.
+   - [ ] Standardize action buttons, discard/save states, and sticky bottom bar for one-handed reachability.
+2. **State & Synchronization:**
+   - [ ] Ensure seamless real-time Supabase profile sync (`profiles` table) and immediate optimistic UI update in `SignInProvider` and `ProfilePage`.
+   - [ ] Optimize account management actions (password change, re-authentication, account deletion modals).
+3. **Accessibility & Localization:**
+   - [ ] Verify full string extraction for `EasyLocalization` across English and Spanish translations.
+   - [ ] Support tablet/foldable adaptive form layouts and keyboard avoidance behaviors.
+
+---
+
+## 3. Backlog & Telemetry
+
 * [ ] Add automated telemetry/QoS event verification for embedded player streams.
