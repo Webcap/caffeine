@@ -359,50 +359,6 @@ class Endpoints {
     return '${_b(baseUrl)}v3/tv/sources/$id/$seasonNum/$episodeNum';
   }
 
-  static String searchMovieTVForStreamDramacool(
-      String titleName, String baseUrl) {
-    return '${_b(baseUrl)}movies/dramacool/$titleName';
-  }
-
-  static String getMovieTVStreamInfoDramacool(
-      String titleStreamId, String baseUrl) {
-    return '${_b(baseUrl)}movies/dramacool/info?id=$titleStreamId';
-  }
-
-  static String getMovieTVStreamLinksDramacool(
-      String episodeId, String mediaId, String baseUrl, String server) {
-    return '${_b(baseUrl)}movies/dramacool/watch?episodeId=$episodeId&mediaId=$mediaId&server=$server';
-  }
-
-  static String searchMovieTVForStreamViewasian(
-      String titleName, String baseUrl) {
-    return '${_b(baseUrl)}movies/viewasian/$titleName';
-  }
-
-  static String getMovieTVStreamInfoViewasian(
-      String titleStreamId, String baseUrl) {
-    return '${_b(baseUrl)}movies/viewasian/info?id=$titleStreamId';
-  }
-
-  static String getMovieTVStreamLinksViewasian(
-      String episodeId, String mediaId, String baseUrl, String server) {
-    return '${_b(baseUrl)}movies/viewasian/watch?episodeId=$episodeId&mediaId=$mediaId';
-  }
-
-  // ZORO MOVIES FUNC
-  static String searchZoroMoviesTV(String baseUrl, String title) {
-    return '${_b(baseUrl)}anime/zoro/$title';
-  }
-
-  static String getMovieTVInfoZoro(String baseUrl, String titleStreamId) {
-    return '${_b(baseUrl)}anime/zoro/info?id=$titleStreamId';
-  }
-
-  static String getMovieTVStreamLinksZoro(
-      String baseUrl, String episodeId, String server) {
-    return '${_b(baseUrl)}anime/zoro/watch?episodeId=$episodeId&server=$server';
-  }
-
   static String getMovieEndpointCaffeineAPI(
       String baseUrl, int tmdbId, String provider, String server) {
     return '${_b(baseUrl)}$provider/watch-movie?tmdbId=$tmdbId&server=$server';
@@ -440,51 +396,6 @@ class Endpoints {
       [String provider = 'vidsrcsu', String language = 'en', String country = 'US']) {
     final base = baseUrl.endsWith('/') ? baseUrl : '$baseUrl/';
     return '$base$provider/stream-tv?tmdbId=$tmdbId&season=$season&episode=$episode&language=$language&country=$country';
-  }
-
-  /// Goku provider (Consumet)
-  static String searchMovieTVForStreamGoku(String titleName, String baseUrl) {
-    return '${_b(baseUrl)}movies/goku/$titleName';
-  }
-
-  static String getMovieTVStreamInfoGoku(String titleStreamId, String baseUrl) {
-    return '${_b(baseUrl)}movies/goku/info?id=$titleStreamId';
-  }
-
-  static String getMovieTVStreamLinksGoku(
-      String episodeId, String mediaId, String baseUrl, String server) {
-    return '${_b(baseUrl)}movies/goku/watch?episodeId=$episodeId&mediaId=$mediaId&server=$server';
-  }
-
-  /// Sflix provider (Consumet)
-  static String searchMovieTVForStreamSflix(String titleName, String baseUrl) {
-    return '${_b(baseUrl)}movies/sflix/$titleName';
-  }
-
-  static String getMovieTVStreamInfoSflix(
-      String titleStreamId, String baseUrl) {
-    return '${_b(baseUrl)}movies/sflix/info?id=$titleStreamId';
-  }
-
-  static String getMovieTVStreamLinksSflix(
-      String episodeId, String mediaId, String baseUrl, String server) {
-    return '${_b(baseUrl)}movies/sflix/watch?episodeId=$episodeId&mediaId=$mediaId&server=$server';
-  }
-
-  /// HiMovies provider (Consumet)
-  static String searchMovieTVForStreamHimovies(
-      String titleName, String baseUrl) {
-    return '${_b(baseUrl)}movies/himovies/$titleName';
-  }
-
-  static String getMovieTVStreamInfoHimovies(
-      String titleStreamId, String baseUrl) {
-    return '${_b(baseUrl)}movies/himovies/info?id=$titleStreamId';
-  }
-
-  static String getMovieTVStreamLinksHimovies(
-      String episodeId, String mediaId, String baseUrl, String server) {
-    return '${_b(baseUrl)}movies/himovies/watch?episodeId=$episodeId&mediaId=$mediaId&server=$server';
   }
 
   /// FlixAPI Multi-provider (pstream, vixsrc, showbox)

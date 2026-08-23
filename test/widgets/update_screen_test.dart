@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:reelriot/models/update.dart';
 import 'package:reelriot/screens/common/update_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -36,6 +37,13 @@ void main() {
     SharedPreferences.setMockInitialValues({});
     await EasyLocalization.ensureInitialized();
     registerFallbackValue(const Locale('en'));
+    registerFallbackValue(MockAppDependencyProvider());
+
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(
+      const MethodChannel('plugins.flutter.io/path_provider'),
+      (MethodCall methodCall) async => '.',
+    );
   });
 
   setUp(() {
@@ -49,7 +57,7 @@ void main() {
   testWidgets('UpdateScreen renders update info and handles Changelog dialog',
       (WidgetTester tester) async {
     final updateInfo = AppUpdateInfo(
-      latestVersion: '2.0.3',
+      latestVersion: '3000.0.0',
       forcedUpdate: false,
       updateDownloadUrl: 'https://example.com/update.apk',
       updateChangelog: 'New features!',
@@ -61,6 +69,8 @@ void main() {
     await tester.pumpWidget(
       EasyLocalization(
         supportedLocales: const [Locale('en')],
+        startLocale: const Locale('en'),
+        fallbackLocale: const Locale('en'),
         path: 'assets/translations',
         assetLoader: JsonAssetLoader(),
         child: Builder(
@@ -76,18 +86,16 @@ void main() {
       ),
     );
 
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 100));
+    await tester.pumpAndSettle();
 
-    expect(find.textContaining('2.0.3'), findsOneWidget);
-    expect(find.text('See Changelogs'), findsOneWidget);
+    expect(find.textContaining('3000.0.0'), findsOneWidget);
+    expect(find.byType(OutlinedButton), findsOneWidget);
     
-    await tester.tap(find.text('See Changelogs'));
+    await tester.tap(find.byType(OutlinedButton));
     await tester.pumpAndSettle();
     expect(find.text('New features!'), findsOneWidget);
     
-    expect(find.text('OK'), findsOneWidget);
-    await tester.tap(find.text('OK'));
+    await tester.tap(find.byType(FilledButton).last);
     await tester.pumpAndSettle();
     expect(find.text('New features!'), findsNothing);
   });

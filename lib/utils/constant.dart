@@ -37,8 +37,6 @@ bool isCaffeineApiPreviewUrl(String url) {
 }
 
 //API KEYS - lazy getters so dotenv is loaded first
-String get consumetApi => dotenv.env['CONSUMET_URL'] ?? '';
-String get consumetInfoApi => dotenv.env['CONSUMET_URL'] ?? '';
 String get caffeineApiUrl =>
     dotenv.env['CAFFEINE_API_URL'] ?? defaultCaffeineApiUrl;
 
@@ -85,7 +83,7 @@ const retryOptionsStream = RetryOptions(
     maxDelay: Duration(milliseconds: 300),
     delayFactor: Duration(seconds: 0),
     maxAttempts: 1);
-const timeOutStream = Duration(seconds: 15);
+const timeOutStream = Duration(seconds: 6);
 
 
 bool enabled = true;

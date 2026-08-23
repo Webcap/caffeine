@@ -4,73 +4,53 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   group('ProviderNames', () {
     group('providers', () {
-      test('should contain vixsrc as first provider', () {
-        expect(ProviderNames.providers.first.codeName, equals('vixsrc'));
-        expect(ProviderNames.providers.first.fullName, equals('Vixsrc'));
+      test('should contain high-performing providers in empirical order', () {
+        final expectedCodes = ['vixsrc', 'coorenlabs', 'vidzee', 'wfs', 'vidfun'];
+        final actualCodes = ProviderNames.providers.map((p) => p.codeName).toList();
+        expect(actualCodes, equals(expectedCodes));
       });
 
-      test('should contain vidsrc provider', () {
-        final vidsrc = ProviderNames.providers.firstWhere(
-          (p) => p.codeName == 'vidsrc',
+      test('should have 5 active providers', () {
+        expect(ProviderNames.providers.length, equals(5));
+      });
+
+      test('should exclude failing headless browser providers from active list', () {
+        final activeCodes = ProviderNames.providers.map((p) => p.codeName).toList();
+        expect(activeCodes.contains('vidlink'), isFalse);
+        expect(activeCodes.contains('vidsrcsu'), isFalse);
+      });
+
+      test('defaultPrecedenceString should format active providers correctly', () {
+        final precedence = ProviderNames.defaultPrecedenceString;
+        expect(
+          precedence,
+          equals('vixsrc-Vixsrc coorenlabs-CoorenLabs vidzee-VidZee wfs-WatchFreeStreams vidfun-VidFun'),
         );
-        expect(vidsrc.fullName, equals('VidSrc'));
       });
 
-      test('should contain all FlixAPI multi providers', () {
-        final multiProviders = [
-          'vixsrc',
-          'vidsrc',
-          'vidzee',
-          'pstream',
-          'showbox',
-        ];
-
-        for (final code in multiProviders) {
-          final provider = ProviderNames.providers.firstWhere(
-            (p) => p.codeName == code,
-            orElse: () => throw Exception('Provider $code not found'),
-          );
-          expect(provider.codeName, equals(code));
-        }
-      });
-
-      test('should contain consumet-based providers', () {
+      test('should not contain consumet-based providers', () {
         final consumetProviders = ['goku', 'sflix', 'himovies'];
-
-        for (final code in consumetProviders) {
-          final provider = ProviderNames.providers.firstWhere(
-            (p) => p.codeName == code,
-            orElse: () => throw Exception('Provider $code not found'),
-          );
-          expect(provider.codeName, equals(code));
-        }
-      });
-
-      test('should have 9 total providers', () {
-        expect(ProviderNames.providers.length, equals(8));
-      });
-
-      test('should not contain anime providers in active list', () {
-        final animeProviders = ['animekai', 'animepahe', 'hianime'];
         final providerCodes =
             ProviderNames.providers.map((p) => p.codeName).toList();
 
-        for (final code in animeProviders) {
+        for (final code in consumetProviders) {
           expect(providerCodes.contains(code), isFalse);
         }
       });
 
-      test('should not contain draman', () {
+      test('should not contain anime/drama providers in active list', () {
+        final legacyProviders = ['animekai', 'animepahe', 'hianime', 'dramacool', 'viewasian', 'zoro'];
         final providerCodes =
             ProviderNames.providers.map((p) => p.codeName).toList();
-        expect(providerCodes.contains('dramacool'), isFalse);
-        expect(providerCodes.contains('viewasian'), isFalse);
-        expect(providerCodes.contains('zoro'), isFalse);
+
+        for (final code in legacyProviders) {
+          expect(providerCodes.contains(code), isFalse);
+        }
       });
     });
 
-    group('checkableCodeNames', () {
-      test('should include all active providers', () {
+    group('checkableCodeNames and disabledCodeNames', () {
+      test('should include all active providers in checkableCodeNames', () {
         for (final provider in ProviderNames.providers) {
           expect(
             ProviderNames.checkableCodeNames.contains(provider.codeName),
@@ -80,20 +60,30 @@ void main() {
         }
       });
 
-      test('should include anime providers', () {
-        final animeProviders = ['animekai', 'animepahe', 'hianime'];
-
-        for (final code in animeProviders) {
-          expect(
-            ProviderNames.checkableCodeNames.contains(code),
-            isTrue,
-            reason: '$code should be in checkableCodeNames',
-          );
-        }
+      test('should include disabled headless browser providers in checkableCodeNames', () {
+        expect(ProviderNames.checkableCodeNames.contains('vidlink'), isTrue);
+        expect(ProviderNames.checkableCodeNames.contains('vidsrcsu'), isTrue);
       });
 
-      test('should have 12 total checkable code names', () {
-        expect(ProviderNames.checkableCodeNames.length, equals(11));
+      test('disabledCodeNames should identify failing headless browser providers', () {
+        expect(ProviderNames.disabledCodeNames.contains('vidlink'), isTrue);
+        expect(ProviderNames.disabledCodeNames.contains('vidsrcsu'), isTrue);
+        expect(ProviderNames.disabledCodeNames.contains('vixsrc'), isFalse);
+        expect(ProviderNames.disabledCodeNames.contains('coorenlabs'), isFalse);
+        expect(ProviderNames.disabledCodeNames.contains('vidzee'), isFalse);
+        expect(ProviderNames.disabledCodeNames.contains('wfs'), isFalse);
+        expect(ProviderNames.disabledCodeNames.contains('vidfun'), isFalse);
+      });
+
+      test('should not include consumet providers', () {
+        final consumetProviders = ['goku', 'sflix', 'himovies'];
+        for (final code in consumetProviders) {
+          expect(
+            ProviderNames.checkableCodeNames.contains(code),
+            isFalse,
+            reason: '$code should not be in checkableCodeNames',
+          );
+        }
       });
     });
   });

@@ -41,7 +41,6 @@ Future<void> fetchConfigFromApi(
         }
       }
 
-      setString('consumet_url', (v) => appDependencyProvider.consumetUrl = v);
       setString('vidscr_api', (v) => appDependencyProvider.vidsrcapi = v);
       setString('opensubtitles_key',
           (v) => appDependencyProvider.opensubtitlesKey = v);
@@ -96,10 +95,6 @@ Future<void> fetchConfigFromApi(
       });
       setString('new_flixhq_server',
           (v) => appDependencyProvider.newFlixhqServer = v);
-      setString('goku_server', (v) => appDependencyProvider.gokuServer = v);
-      setString('sflix_server', (v) => appDependencyProvider.sflixServer = v);
-      setString(
-          'himovies_server', (v) => appDependencyProvider.himoviesServer = v);
       setString(
           'animekai_server', (v) => appDependencyProvider.animekaiServer = v);
       setString(
@@ -111,8 +106,9 @@ Future<void> fetchConfigFromApi(
       setString('revenuecat_entitlement_id',
           (v) => appDependencyProvider.revenueCatEntitlementId = v);
           
-      // Success: Now fetch feature flags too
+      // Success: Now fetch feature flags and provider health in background
       await fetchFeatureFlagsFromApi(appDependencyProvider);
+      await fetchProviderHealthFromApi(appDependencyProvider);
     }
   } catch (e) {
     debugPrint('Error fetching config: $e');
@@ -234,3 +230,37 @@ Future<AppUpdateInfo> fetchUpdateInfoFromApi(
     updateChangelog: opt(p.updateChangelog),
   );
 }
+
+/// Fetches scraper provider statuses and updates circuit breaker state.
+Future<void> fetchProviderHealthFromApi(AppDependencyProvider provider) async {
+  try {
+    final base = provider.caffeineAPIURL;
+    final baseUrl = base.endsWith('/') ? base.substring(0, base.length - 1) : base;
+    if (baseUrl.isEmpty) return;
+
+    final uri = Uri.parse('$baseUrl/providers/status');
+    final response = await http.get(uri, headers: caffeineApiHeaders).timeout(
+          const Duration(seconds: 10),
+          onTimeout: () => throw Exception('Timeout'),
+        );
+    if (response.statusCode != 200) return;
+    final json = jsonDecode(response.body);
+    if (json is! Map || json['providers'] is! List) return;
+
+    final healthMap = <String, bool>{};
+    for (final e in json['providers'] as List) {
+      if (e is Map) {
+        final id = e['id']?.toString();
+        final active = e['active'] == true;
+        if (id != null && id.isNotEmpty) {
+          healthMap[id] = active;
+        }
+      }
+    }
+    provider.providerHealth = healthMap;
+    debugPrint('[ProviderHealth] Updated health state: $healthMap');
+  } catch (e) {
+    debugPrint('[ProviderHealth] Background health check error: $e');
+  }
+}
+

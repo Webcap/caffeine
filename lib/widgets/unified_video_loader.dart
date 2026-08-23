@@ -82,11 +82,21 @@ class _UnifiedVideoLoaderState extends State<UnifiedVideoLoader> {
     super.initState();
     final availableCodes =
         ProviderNames.providers.map((p) => p.codeName).toSet();
-    videoProviders.addAll(
-        parseProviderPrecedenceString(prefString.proPreference)
-            .where((provider) =>
-                provider != null && availableCodes.contains(provider.codeName))
-            .cast<VideoProvider>());
+    final parsed = parseProviderPrecedenceString(prefString.proPreference)
+        .where((provider) =>
+            provider != null && availableCodes.contains(provider.codeName))
+        .cast<VideoProvider>()
+        .toList();
+
+    // Circuit breaker: prioritize verified active providers over degraded ones
+    parsed.sort((a, b) {
+      final aHealthy = appDep.isProviderHealthy(a.codeName);
+      final bHealthy = appDep.isProviderHealthy(b.codeName);
+      if (aHealthy == bHealthy) return 0;
+      return aHealthy ? -1 : 1;
+    });
+
+    videoProviders.addAll(parsed);
     providerStates = videoProviders
         .map((p) => ProviderLoadState(
               codeName: p.codeName,
@@ -172,18 +182,7 @@ class _UnifiedVideoLoaderState extends State<UnifiedVideoLoader> {
             movieId: widget.movieMetadata!.movieId!,
             movieName: widget.movieMetadata!.movieName ?? '',
             releaseYear: widget.movieMetadata!.releaseYear?.toString(),
-            consumetUrl: appDep.consumetUrl,
-            newFlixHQUrl: appDep.newFlixHQUrl,
             flixApiUrl: appDep.flixApiUrl,
-            newFlixhqServer: appDep.newFlixhqServer,
-            streamingServerFlixHQ: appDep.streamingServerFlixHQ,
-            streamingServerDCVA: appDep.streamingServerDCVA,
-            streamingServerZoro: appDep.streamingServerZoro,
-            gokuServer: appDep.gokuServer,
-            sflixServer: appDep.sflixServer,
-            himoviesServer: appDep.himoviesServer,
-            animekaiServer: appDep.animekaiServer,
-            hianimeServer: appDep.hianimeServer,
             language: settings.defaultAudioLanguage,
             country: settings.defaultCountry,
           );
@@ -195,18 +194,7 @@ class _UnifiedVideoLoaderState extends State<UnifiedVideoLoader> {
             seriesName: widget.tvMetadata!.seriesName ?? '',
             seasonNumber: widget.tvMetadata!.seasonNumber!,
             episodeNumber: widget.tvMetadata!.episodeNumber!,
-            consumetUrl: appDep.consumetUrl,
-            newFlixHQUrl: appDep.newFlixHQUrl,
             flixApiUrl: appDep.flixApiUrl,
-            newFlixhqServer: appDep.newFlixhqServer,
-            streamingServerFlixHQ: appDep.streamingServerFlixHQ,
-            streamingServerDCVA: appDep.streamingServerDCVA,
-            streamingServerZoro: appDep.streamingServerZoro,
-            gokuServer: appDep.gokuServer,
-            sflixServer: appDep.sflixServer,
-            himoviesServer: appDep.himoviesServer,
-            animekaiServer: appDep.animekaiServer,
-            hianimeServer: appDep.hianimeServer,
             language: settings.defaultAudioLanguage,
             country: settings.defaultCountry,
           );

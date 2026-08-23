@@ -33,6 +33,23 @@ class AppDependencyProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Map<String, bool> _providerHealth = {};
+  /// Cached provider health states (active vs degraded) for circuit-breaking
+  Map<String, bool> get providerHealth => _providerHealth;
+
+  set providerHealth(Map<String, bool> value) {
+    _providerHealth = value;
+    notifyListeners();
+  }
+
+  /// Check if a video provider is currently marked healthy/active. Defaults to true if unverified.
+  bool isProviderHealthy(String codeName) {
+    if (_providerHealth.containsKey(codeName)) {
+      return _providerHealth[codeName] == true;
+    }
+    return true;
+  }
+
   /// Returns the value of a feature flag, or a default value if not found.
   T getFlag<T>(String key, T defaultValue) {
     if (_featureFlags.containsKey(key)) {
@@ -102,19 +119,6 @@ class AppDependencyProvider extends ChangeNotifier {
   /// FlixAPI is merged into Caffeine API; same base URL.
   String get flixApiUrl => caffeineAPIURL;
 
-  String _consumetUrl = consumetApi;
-  String get consumetUrl {
-    final v = _consumetUrl.trim();
-    return v.isEmpty ? _consumetUrl : (v.endsWith('/') ? v : '$v/');
-  }
-
-  set consumetUrl(String value) {
-    final v = value.trim();
-    _consumetUrl = v.isEmpty ? value : (v.endsWith('/') ? v : '$v/');
-    _prefs.setConsumetUrl(_consumetUrl);
-    notifyListeners();
-  }
-
   String _vidSrcApi = vidSrcApi;
   String get vidsrcapi => _vidSrcApi;
   set vidsrcapi(String value) {
@@ -161,30 +165,6 @@ class AppDependencyProvider extends ChangeNotifier {
   set newFlixhqServer(String value) {
     _newFlixhqServer = value;
     _prefs.setStreamServerNewFlixHQ(value);
-    notifyListeners();
-  }
-
-  String _gokuServer = 'vidcloud';
-  String get gokuServer => _gokuServer;
-  set gokuServer(String value) {
-    _gokuServer = value;
-    _prefs.setGokuServer(value);
-    notifyListeners();
-  }
-
-  String _sflixServer = 'vidcloud';
-  String get sflixServer => _sflixServer;
-  set sflixServer(String value) {
-    _sflixServer = value;
-    _prefs.setSflixServer(value);
-    notifyListeners();
-  }
-
-  String _himoviesServer = 'vidcloud';
-  String get himoviesServer => _himoviesServer;
-  set himoviesServer(String value) {
-    _himoviesServer = value;
-    _prefs.setHimoviesServer(value);
     notifyListeners();
   }
 
@@ -486,7 +466,6 @@ class AppDependencyProvider extends ChangeNotifier {
   Future<void> loadFromPrefs() async {
     _anonymousId = await _prefs.getAnonymousId();
     _caffeineAPIUrl = await _prefs.getFQURL();
-    _consumetUrl = await _prefs.getConsumetUrl();
     _vidSrcApi = await _prefs.getvidSrcApi();
     _opensubtitlesKey = await _prefs.getOpenSubtitlesKey();
     _streamingServerFlixHQ = await _prefs.getStreamServerFlixHQ();
@@ -495,9 +474,6 @@ class AppDependencyProvider extends ChangeNotifier {
     _fetchRoute = await _prefs.getStreamRoute();
     _newFlixHQUrl = await _prefs.getNewFlixHQUrl();
     _newFlixhqServer = await _prefs.getStreamServerNewFlixHQ();
-    _gokuServer = await _prefs.getGokuServer();
-    _sflixServer = await _prefs.getSflixServer();
-    _himoviesServer = await _prefs.getHimoviesServer();
     _animekaiServer = await _prefs.getAnimekaiServer();
     _hianimeServer = await _prefs.getHianimeServer();
     _tmdbProxy = await _prefs.getTmdbProxy();
