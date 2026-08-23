@@ -1,7 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:convert';
-
 import 'package:reelriot/provider/app_dependency_provider.dart';
 import 'package:reelriot/provider/settings_provider.dart';
 import 'package:reelriot/video_providers/provider_names.dart';
@@ -59,69 +58,50 @@ class _ScraperProvider {
       {required this.id, required this.name, required this.active});
 }
 
-// ─── Design tokens (design.json) ─────────────────────────────────────────────
-class _Design {
-  static const primary = Color(0xFFDC2626);
-  static const success = Color(0xFF22C55E);
+// ─────────────────────────────────────────────
+//  Design Tokens
+// ─────────────────────────────────────────────
+abstract class _D {
+  static const Color bg = Color(0xFF080B12);
+  static const Color surface = Color(0xFF0E1219);
+  static const Color surfaceAlt = Color(0xFF131822);
+  static const Color red = Color(0xFFE02020);
+  static const Color redGlow = Color(0x40E02020);
+  static const Color redDim = Color(0x1AE02020);
+  static const Color green = Color(0xFF22C55E);
+  static const Color greenGlow = Color(0x4022C55E);
+  static const Color greenDim = Color(0x1A22C55E);
+  static const Color amber = Color(0xFFF59E0B);
+  static const Color amberDim = Color(0x1AF59E0B);
+  
+  static const Color white = Color(0xFFFFFFFF);
+  static const Color white72 = Color(0xB8FFFFFF);
+  static const Color white40 = Color(0x66FFFFFF);
+  static const Color white12 = Color(0x1FFFFFFF);
+  static const Color white06 = Color(0x0FFFFFFF);
 
-  static const bgCanvasDark = Color(0xFF030712);
-  static const bgCanvasLight = Color(0xFFF8FAFC);
-  static const bgSurfaceDark = Color(0xFF0B0F14);
-  static const bgSurfaceLight = Color(0xFFFFFFFF);
-  static const borderDark = Color(0x14FFFFFF);
-  static const borderLight = Color(0x140F172A);
-  static const iconBgDark = Color(0x14FFFFFF);
+  static const double radiusCard = 24.0;
+  static const double radiusMd = 16.0;
+  static const double radiusPill = 999.0;
 
-  static const textPrimDark = Color(0xFFFFFFFF);
-  static const textPrimLight = Color(0xFF0B0F14);
-  static const textSecDark = Color(0xB8FFFFFF);
-  static const textSecLight = Color(0xFF64748B);
+  static const List<BoxShadow> cardShadow = [
+    BoxShadow(color: Color(0x60000000), blurRadius: 36, offset: Offset(0, 16)),
+  ];
+  static const List<BoxShadow> redShadow = [
+    BoxShadow(color: Color(0x55E02020), blurRadius: 28, offset: Offset(0, 8)),
+  ];
 
-  static const radiusMd = 16.0;
-  static const screenPadH = 24.0;
-  static const space2 = 8.0;
-  static const space4 = 16.0;
-  static const shadowCard = BoxShadow(
-    color: Color(0x38000000),
-    blurRadius: 30,
-    offset: Offset(0, 10),
-  );
+  static LinearGradient get cardGradient => const LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [Color(0xFF141923), Color(0xFF0A0E16)],
+      );
+
+  static LinearGradient get redGradient => const LinearGradient(
+        colors: [Color(0xFFE02020), Color(0xFFC01010)],
+      );
 
   static const _checkTimeout = Duration(seconds: 10);
-}
-
-class _StatusRow extends StatelessWidget {
-  final String label;
-  final String value;
-  final Color textSec;
-
-  const _StatusRow({
-    required this.label,
-    required this.value,
-    required this.textSec,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(
-          width: 80,
-          child: Text(
-            label,
-            style: TextStyle(color: textSec, fontSize: 12),
-          ),
-        ),
-        Expanded(
-          child: Text(
-            value,
-            style: TextStyle(color: textSec, fontSize: 12),
-          ),
-        ),
-      ],
-    );
-  }
 }
 
 enum _ApiStatus { idle, checking, available, unavailable }
@@ -133,18 +113,36 @@ class ServerStatusScreen extends StatefulWidget {
   State<ServerStatusScreen> createState() => _ServerStatusScreenState();
 }
 
-class _ServerStatusScreenState extends State<ServerStatusScreen> {
+class _ServerStatusScreenState extends State<ServerStatusScreen>
+    with SingleTickerProviderStateMixin {
   _ApiStatus _status = _ApiStatus.idle;
   int? _responseMs;
   String? _errorMessage;
   _StatusResponse? _statusResponse;
   List<_ScraperProvider> _scraperProviders = [];
+  late final AnimationController _pulseCtrl;
 
   String get _apiBaseUrl {
     final url = Provider.of<AppDependencyProvider>(context, listen: false)
         .caffeineAPIURL;
     if (url.isEmpty) return '';
     return url.endsWith('/') ? url.substring(0, url.length - 1) : url;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _pulseCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1800),
+    )..repeat(reverse: true);
+    WidgetsBinding.instance.addPostFrameCallback((_) => _checkCaffeineApi());
+  }
+
+  @override
+  void dispose() {
+    _pulseCtrl.dispose();
+    super.dispose();
   }
 
   Future<void> _checkCaffeineApi() async {
@@ -176,7 +174,7 @@ class _ServerStatusScreenState extends State<ServerStatusScreen> {
     try {
       final uri = Uri.parse(checkUrl);
       final response = await http.get(uri, headers: caffeineApiHeaders).timeout(
-            _Design._checkTimeout,
+            _D._checkTimeout,
             onTimeout: () => throw Exception('Timeout'),
           );
       stopwatch.stop();
@@ -258,268 +256,510 @@ class _ServerStatusScreenState extends State<ServerStatusScreen> {
     }
   }
 
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _checkCaffeineApi());
-  }
-
   @override
   Widget build(BuildContext context) {
     final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     final isDark = themeMode == 'dark' || themeMode == 'amoled';
-    final bg = isDark ? _Design.bgCanvasDark : _Design.bgCanvasLight;
-    final surface = isDark ? _Design.bgSurfaceDark : _Design.bgSurfaceLight;
-    final textPrim = isDark ? _Design.textPrimDark : _Design.textPrimLight;
-    final textSec = isDark ? _Design.textSecDark : _Design.textSecLight;
-    final border = isDark ? _Design.borderDark : _Design.borderLight;
 
     return Scaffold(
-      backgroundColor: bg,
+      backgroundColor: isDark ? _D.bg : Theme.of(context).scaffoldBackgroundColor,
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
         elevation: 0,
         scrolledUnderElevation: 0,
-        backgroundColor: surface,
+        backgroundColor: Colors.transparent,
         leading: Padding(
-          padding: const EdgeInsets.only(left: _Design.space2),
+          padding: const EdgeInsets.only(left: 12),
           child: Material(
-            color: isDark ? _Design.iconBgDark : border,
+            color: isDark ? _D.white06 : Colors.black12,
             shape: const CircleBorder(),
             clipBehavior: Clip.antiAlias,
             child: InkWell(
               onTap: () => Navigator.pop(context),
               customBorder: const CircleBorder(),
-              child: Padding(
-                padding: const EdgeInsets.all(10),
-                child:
-                    Icon(Icons.arrow_back_rounded, size: 22, color: textPrim),
+              child: Icon(
+                Icons.arrow_back_rounded,
+                size: 20,
+                color: isDark ? _D.white72 : Colors.black87,
               ),
             ),
           ),
         ),
-        iconTheme: IconThemeData(color: textPrim),
+        iconTheme: IconThemeData(color: isDark ? _D.white72 : Colors.black87),
         title: Text(
           tr('check_server'),
           style: TextStyle(
-            color: textPrim,
-            fontSize: 18,
+            color: isDark ? _D.white72 : Colors.black87,
+            fontSize: 16,
             fontWeight: FontWeight.w600,
+            letterSpacing: 0.2,
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(_Design.screenPadH),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const SizedBox(height: 24),
-
-            // Status card
-            Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: surface,
-                borderRadius: BorderRadius.circular(_Design.radiusMd),
-                border: Border.all(color: border),
-                boxShadow: const [_Design.shadowCard],
-              ),
-              padding: const EdgeInsets.all(_Design.space4),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          child: Center(
+            child: Container(
+              constraints: const BoxConstraints(maxWidth: 440),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Row(
-                    children: [
-                      Container(
-                        width: 48,
-                        height: 48,
-                        decoration: BoxDecoration(
-                          color: isDark ? _Design.iconBgDark : border,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: _status == _ApiStatus.checking
-                            ? const Padding(
-                                padding: EdgeInsets.all(12),
-                                child:
-                                    CircularProgressIndicator(strokeWidth: 2),
-                              )
-                            : Icon(
-                                _status == _ApiStatus.available
-                                    ? Icons.check_circle_rounded
-                                    : Icons.error_rounded,
-                                size: 28,
-                                color: _status == _ApiStatus.available
-                                    ? _Design.success
-                                    : _Design.primary,
-                              ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Reelriot API',
-                              style: TextStyle(
-                                color: textPrim,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              _status == _ApiStatus.checking
-                                  ? tr('checking_server')
-                                  : _status == _ApiStatus.available
-                                      ? (_statusResponse?.status == 'degraded'
-                                          ? '${tr('server_working')} (degraded)'
-                                          : tr('server_working'))
-                                      : _status == _ApiStatus.unavailable
-                                          ? (_errorMessage ?? tr('server_down'))
-                                          : tr('checking_server'),
-                              style: TextStyle(
-                                color: textSec,
-                                fontSize: 14,
-                              ),
-                            ),
-                            if (_responseMs != null &&
-                                _status != _ApiStatus.checking) ...[
-                              const SizedBox(height: 4),
-                              Text(
-                                '${_responseMs}ms',
-                                style: TextStyle(
-                                  color: textSec,
-                                  fontSize: 13,
-                                ),
-                              ),
-                            ],
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  if (_statusResponse != null &&
-                      _status != _ApiStatus.checking &&
-                      (_statusResponse!.version != null ||
-                          _statusResponse!.uptime != null)) ...[
-                    const SizedBox(height: 16),
-                    const Divider(height: 1),
-                    const SizedBox(height: 12),
-                    if (_statusResponse!.version != null)
-                      _StatusRow(
-                        label: 'Version',
-                        value: _statusResponse!.version!,
-                        textSec: textSec,
-                      ),
-                    if (_statusResponse!.uptime?.human != null) ...[
-                      const SizedBox(height: 6),
-                      _StatusRow(
-                        label: 'Uptime',
-                        value: _statusResponse!.uptime!.human!,
-                        textSec: textSec,
-                      ),
-                    ],
+                  const SizedBox(height: 8),
+
+                  // Hero Server Card
+                  _buildServerHeroCard(isDark),
+
+                  const SizedBox(height: 24),
+
+                  // Scraper providers section
+                  if (_status == _ApiStatus.available &&
+                      _scraperProviders.isNotEmpty) ...[
+                    _buildScraperProvidersCard(isDark),
+                    const SizedBox(height: 24),
                   ],
+
+                  // Check button
+                  _buildCheckButton(),
+                  const SizedBox(height: 24),
                 ],
               ),
             ),
+          ),
+        ),
+      ),
+    );
+  }
 
-            const SizedBox(height: 24),
+  Widget _buildServerHeroCard(bool isDark) {
+    final isChecking = _status == _ApiStatus.checking;
+    final isOnline = _status == _ApiStatus.available;
+    final isDegraded = _statusResponse?.status == 'degraded';
 
-            // Scraper providers (from API /providers)
-            if (_status == _ApiStatus.available &&
-                _scraperProviders.isNotEmpty) ...[
+    Color statusColor;
+    Color statusDim;
+    String statusTitle;
+    IconData statusIcon;
+
+    if (isChecking) {
+      statusColor = _D.amber;
+      statusDim = _D.amberDim;
+      statusTitle = tr('checking_server');
+      statusIcon = Icons.sync_rounded;
+    } else if (isOnline) {
+      if (isDegraded) {
+        statusColor = _D.amber;
+        statusDim = _D.amberDim;
+        statusTitle = '${tr('server_working')} (Degraded)';
+        statusIcon = Icons.warning_amber_rounded;
+      } else {
+        statusColor = _D.green;
+        statusDim = _D.greenDim;
+        statusTitle = tr('server_working');
+        statusIcon = Icons.check_circle_rounded;
+      }
+    } else {
+      statusColor = _D.red;
+      statusDim = _D.redDim;
+      statusTitle = _errorMessage ?? tr('server_down');
+      statusIcon = Icons.cancel_rounded;
+    }
+
+    return Container(
+      decoration: BoxDecoration(
+        gradient: isDark ? _D.cardGradient : null,
+        color: isDark ? null : Colors.white,
+        borderRadius: BorderRadius.circular(_D.radiusCard),
+        border: Border.all(color: isDark ? _D.white12 : Colors.black12),
+        boxShadow: isDark ? _D.cardShadow : [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.06),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // Glowing Status Icon Box
+              AnimatedBuilder(
+                animation: _pulseCtrl,
+                builder: (_, child) {
+                  final glowOpacity = isChecking
+                      ? (_pulseCtrl.value * 0.4 + 0.1)
+                      : (isOnline ? 0.35 : 0.25);
+                  return Container(
+                    width: 54,
+                    height: 54,
+                    decoration: BoxDecoration(
+                      color: statusDim,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: statusColor.withValues(alpha: 0.35),
+                        width: 1.5,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: statusColor.withValues(alpha: glowOpacity),
+                          blurRadius: 16,
+                          spreadRadius: 2,
+                        ),
+                      ],
+                    ),
+                    child: isChecking
+                        ? const Center(
+                            child: SizedBox(
+                              width: 22,
+                              height: 22,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2.2,
+                                color: _D.amber,
+                              ),
+                            ),
+                          )
+                        : Icon(statusIcon, color: statusColor, size: 28),
+                  );
+                },
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Reelriot API',
+                      style: TextStyle(
+                        color: isDark ? _D.white : Colors.black87,
+                        fontSize: 19,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: -0.2,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      statusTitle,
+                      style: TextStyle(
+                        color: statusColor,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              if (_responseMs != null && !isChecking)
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  decoration: BoxDecoration(
+                    color: (_responseMs! < 500
+                            ? _D.green
+                            : (_responseMs! < 1000 ? _D.amber : _D.red))
+                        .withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(100),
+                    border: Border.all(
+                      color: (_responseMs! < 500
+                              ? _D.green
+                              : (_responseMs! < 1000 ? _D.amber : _D.red))
+                          .withValues(alpha: 0.25),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.bolt_rounded,
+                        size: 13,
+                        color: _responseMs! < 500
+                            ? _D.green
+                            : (_responseMs! < 1000 ? _D.amber : _D.red),
+                      ),
+                      const SizedBox(width: 2),
+                      Text(
+                        '${_responseMs}ms',
+                        style: TextStyle(
+                          color: _responseMs! < 500
+                              ? _D.green
+                              : (_responseMs! < 1000 ? _D.amber : _D.red),
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+            ],
+          ),
+
+          // Metadata Chips (Version, Uptime)
+          if (_statusResponse != null &&
+              !isChecking &&
+              (_statusResponse!.version != null ||
+                  _statusResponse!.uptime?.human != null)) ...[
+            const SizedBox(height: 20),
+            Container(
+              height: 1,
+              color: isDark ? _D.white06 : Colors.black.withValues(alpha: 0.06),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                if (_statusResponse!.version != null)
+                  Expanded(
+                    child: _buildMetaTile(
+                      label: 'Version',
+                      value: _statusResponse!.version!,
+                      icon: Icons.tag_rounded,
+                      isDark: isDark,
+                    ),
+                  ),
+                if (_statusResponse!.version != null &&
+                    _statusResponse!.uptime?.human != null)
+                  const SizedBox(width: 12),
+                if (_statusResponse!.uptime?.human != null)
+                  Expanded(
+                    child: _buildMetaTile(
+                      label: 'Uptime',
+                      value: _statusResponse!.uptime!.human!,
+                      icon: Icons.access_time_rounded,
+                      isDark: isDark,
+                    ),
+                  ),
+              ],
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMetaTile({
+    required String label,
+    required String value,
+    required IconData icon,
+    required bool isDark,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      decoration: BoxDecoration(
+        color: isDark ? _D.surfaceAlt : const Color(0xFFF1F5F9),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: isDark ? _D.white06 : Colors.black.withValues(alpha: 0.05),
+        ),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            icon,
+            size: 16,
+            color: isDark ? _D.white40 : Colors.black45,
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: TextStyle(
+                    color: isDark ? _D.white40 : Colors.black45,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  value,
+                  style: TextStyle(
+                    color: isDark ? _D.white72 : Colors.black87,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildScraperProvidersCard(bool isDark) {
+    final activeCount = _scraperProviders.where((p) => p.active).length;
+    final totalCount = _scraperProviders.length;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
               Text(
                 'Scraper providers',
                 style: TextStyle(
-                  color: textSec,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
+                  color: isDark ? _D.white72 : Colors.black87,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.2,
                 ),
               ),
-              const SizedBox(height: 8),
               Container(
-                width: double.infinity,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
-                  color: surface,
-                  borderRadius: BorderRadius.circular(_Design.radiusMd),
-                  border: Border.all(color: border),
-                  boxShadow: const [_Design.shadowCard],
+                  color: (activeCount > 0 ? _D.green : _D.red)
+                      .withValues(alpha: 0.14),
+                  borderRadius: BorderRadius.circular(100),
                 ),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: _Design.space4,
-                  vertical: _Design.space2,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: _scraperProviders
-                      .map((p) => Padding(
-                            padding: const EdgeInsets.only(bottom: 10),
-                            child: Row(
-                              children: [
-                                Container(
-                                  width: 10,
-                                  height: 10,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: p.active
-                                        ? _Design.success
-                                        : _Design.primary,
-                                  ),
-                                ),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  child: Text(
-                                    p.name,
-                                    style: TextStyle(
-                                      color: textPrim,
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                ),
-                                Text(
-                                  p.active
-                                      ? tr('server_working')
-                                      : tr('server_down'),
-                                  style: TextStyle(
-                                    color: textSec,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ))
-                      .toList(),
-                ),
-              ),
-              const SizedBox(height: 24),
-            ],
-
-            // Check again
-            SizedBox(
-              height: 50,
-              child: ElevatedButton.icon(
-                onPressed:
-                    _status == _ApiStatus.checking ? null : _checkCaffeineApi,
-                icon: _status == _ApiStatus.checking
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Icon(Icons.refresh_rounded, size: 22),
-                label: Text(tr('check')),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: _Design.primary,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(_Design.radiusMd),
+                child: Text(
+                  '$activeCount / $totalCount Online',
+                  style: TextStyle(
+                    color: activeCount > 0 ? _D.green : _D.red,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
               ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 8),
+        Container(
+          decoration: BoxDecoration(
+            gradient: isDark ? _D.cardGradient : null,
+            color: isDark ? null : Colors.white,
+            borderRadius: BorderRadius.circular(_D.radiusCard),
+            border: Border.all(color: isDark ? _D.white12 : Colors.black12),
+            boxShadow: isDark ? _D.cardShadow : [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 18,
+                offset: const Offset(0, 6),
+              ),
+            ],
+          ),
+          child: ListView.separated(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            itemCount: _scraperProviders.length,
+            separatorBuilder: (_, __) => Container(
+              height: 1,
+              margin: const EdgeInsets.symmetric(horizontal: 16),
+              color: isDark ? _D.white06 : Colors.black.withValues(alpha: 0.04),
             ),
+            itemBuilder: (context, index) {
+              final p = _scraperProviders[index];
+              return Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 9,
+                      height: 9,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: p.active ? _D.green : _D.red,
+                        boxShadow: [
+                          BoxShadow(
+                            color: (p.active ? _D.green : _D.red)
+                                .withValues(alpha: 0.5),
+                            blurRadius: 6,
+                            spreadRadius: 1,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Text(
+                        p.name,
+                        style: TextStyle(
+                          color: isDark ? _D.white : Colors.black87,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: (p.active ? _D.green : _D.red)
+                            .withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(100),
+                      ),
+                      child: Text(
+                        p.active ? tr('server_working') : tr('server_down'),
+                        style: TextStyle(
+                          color: p.active ? _D.green : _D.red,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
 
-          ],
+  Widget _buildCheckButton() {
+    final isChecking = _status == _ApiStatus.checking;
+
+    return Container(
+      height: 52,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(_D.radiusPill),
+        gradient: _D.redGradient,
+        boxShadow: _D.redShadow,
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: isChecking ? null : _checkCaffeineApi,
+          borderRadius: BorderRadius.circular(_D.radiusPill),
+          child: Center(
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (isChecking)
+                  const SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: _D.white,
+                    ),
+                  )
+                else
+                  const Icon(Icons.refresh_rounded, color: _D.white, size: 20),
+                const SizedBox(width: 8),
+                Text(
+                  tr('check'),
+                  style: const TextStyle(
+                    color: _D.white,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 0.3,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
