@@ -54,11 +54,12 @@ class _LivePlayerState extends State<LivePlayer> {
       },
     );
 
-    // Force landscape and keep screen on
+    // Force landscape, hide status/nav bars, and keep screen on
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
     ]);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
     WakelockPlus.enable();
   }
 
@@ -66,12 +67,13 @@ class _LivePlayerState extends State<LivePlayer> {
   void dispose() {
     _betterPlayerController.dispose();
     
-    // Restore orientations and disable wakelock
+    // Restore orientations, system overlays, and disable wakelock
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
     ]);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     WakelockPlus.disable();
 
     super.dispose();

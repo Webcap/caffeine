@@ -157,7 +157,7 @@ class _GlassPlayerControlsState extends State<GlassPlayerControls> {
       ),
       child: Row(
         children: [
-          _GlassIconButton(
+          GlassIconButton(
             icon: Icons.arrow_back_ios_new_rounded,
             onPressed: widget.onBack,
           ),
@@ -194,7 +194,7 @@ class _GlassPlayerControlsState extends State<GlassPlayerControls> {
             const SizedBox(width: 16),
             Consumer<CastService>(
               builder: (context, castService, _) {
-                return _GlassIconButton(
+                return GlassIconButton(
                   icon: castService.isConnected
                       ? Icons.cast_connected_rounded
                       : Icons.cast_rounded,
@@ -213,7 +213,7 @@ class _GlassPlayerControlsState extends State<GlassPlayerControls> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         if (!widget.isLive) ...[
-          _GlassIconButton(
+          GlassIconButton(
             icon: Icons.replay_10_rounded,
             size: 48,
             onPressed: () {
@@ -228,7 +228,7 @@ class _GlassPlayerControlsState extends State<GlassPlayerControls> {
           stream: widget.controller.player.stream.playing,
           builder: (context, snapshot) {
             final isPlaying = snapshot.data ?? false;
-            return _GlassIconButton(
+            return GlassIconButton(
               icon: isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
               size: 72,
               onPressed: () {
@@ -244,7 +244,7 @@ class _GlassPlayerControlsState extends State<GlassPlayerControls> {
         ),
         if (!widget.isLive) ...[
           const SizedBox(width: 48),
-          _GlassIconButton(
+          GlassIconButton(
             icon: Icons.forward_10_rounded,
             size: 48,
             onPressed: () {
@@ -325,12 +325,12 @@ class _GlassPlayerControlsState extends State<GlassPlayerControls> {
                 ),
               ],
               const Spacer(),
-              _GlassIconButton(
+              GlassIconButton(
                 icon: Icons.subtitles_rounded,
                 onPressed: widget.onSubtitlePressed,
               ),
               const SizedBox(width: 16),
-              _GlassIconButton(
+              GlassIconButton(
                 icon: Icons.settings_rounded,
                 onPressed: widget.onResolutionPressed,
               ),
@@ -382,12 +382,13 @@ class _GlassPlayerControlsState extends State<GlassPlayerControls> {
   }
 }
 
-class _GlassIconButton extends StatelessWidget {
+class GlassIconButton extends StatelessWidget {
   final IconData icon;
   final VoidCallback onPressed;
   final double size;
 
-  const _GlassIconButton({
+  const GlassIconButton({
+    super.key,
     required this.icon,
     required this.onPressed,
     this.size = 28,

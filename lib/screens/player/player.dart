@@ -100,6 +100,7 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
   DateTime? _bufferingStartTime;
 
   bool _isEmbed = false;
+  bool _isEmbedFullscreen = false;
   String _embedUrl = '';
 
   static bool isEmbedUrl(String url) {
@@ -133,11 +134,12 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
       }
     });
 
-    // Force landscape and keep screen on
+    // Force landscape, hide status/nav bars, and keep screen on
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
     ]);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
     WakelockPlus.enable();
 
     _currentSources = Map.from(widget.sources);
@@ -573,12 +575,13 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
     _betterPlayerController.dispose();
     WidgetsBinding.instance.removeObserver(this);
 
-    // Restore orientations and disable wakelock
+    // Restore orientations, system overlays, and disable wakelock
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
     ]);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     WakelockPlus.disable();
 
     super.dispose();
@@ -893,6 +896,11 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
                   embedded: true,
                   blockAds: true,
                   tryExtractHls: true,
+                  onFullscreenChanged: (isFull) {
+                    setState(() {
+                      _isEmbedFullscreen = isFull;
+                    });
+                  },
                   onHlsExtracted: (hls) {
                     debugPrint('[Player] 🎯 HLS stream extracted from embed: $hls');
                     _isEmbed = false;
@@ -925,19 +933,69 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
                 },
               ),
             ],
-            GlassPlayerControls(
-              controller: _betterPlayerController,
-              title: widget.mediaType == MediaType.movie
-                  ? widget.movieMetadata?.movieName ?? ''
-                  : widget.tvMetadata?.seriesName ?? '',
-              subtitle: widget.mediaType == MediaType.tvShow
-                  ? 'Season ${widget.tvMetadata?.seasonNumber} Episode ${widget.tvMetadata?.episodeNumber}'
-                  : null,
-              onBack: () => Navigator.of(context).pop(),
-              onSubtitlePressed: _openSubtitleSelectionSheet,
-              onResolutionPressed: () {}, // Resolution sheet not implemented yet
-              onCastPressed: _openCastSheet,
-            ),
+            if (!_isEmbed)
+              GlassPlayerControls(
+                controller: _betterPlayerController,
+                title: widget.mediaType == MediaType.movie
+                    ? widget.movieMetadata?.movieName ?? ''
+                    : widget.tvMetadata?.seriesName ?? '',
+                subtitle: widget.mediaType == MediaType.tvShow
+                    ? 'Season ${widget.tvMetadata?.seasonNumber} Episode ${widget.tvMetadata?.episodeNumber}'
+                    : null,
+                onBack: () => Navigator.of(context).pop(),
+                onSubtitlePressed: _openSubtitleSelectionSheet,
+                onResolutionPressed: () {}, // Resolution sheet not implemented yet
+                onCastPressed: _openCastSheet,
+              )
+            else
+              Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
+                child: AnimatedOpacity(
+                  opacity: _isEmbedFullscreen ? 0.0 : 1.0,
+                  duration: const Duration(milliseconds: 250),
+                  curve: Curves.easeInOut,
+                  child: IgnorePointer(
+                    ignoring: _isEmbedFullscreen,
+                    child: SafeArea(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 12),
+                        child: Row(
+                          children: [
+                            GlassIconButton(
+                              icon: Icons.arrow_back_ios_new_rounded,
+                              onPressed: () => Navigator.of(context).pop(),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                widget.mediaType == MediaType.movie
+                                    ? widget.movieMetadata?.movieName ?? ''
+                                    : widget.tvMetadata?.seriesName ?? '',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  shadows: [
+                                    Shadow(
+                                      color: Colors.black87,
+                                      blurRadius: 8,
+                                    ),
+                                  ],
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             if (isCasting) _CastingOverlay(castService: castService),
           ],
         ),
