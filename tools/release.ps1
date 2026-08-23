@@ -10,10 +10,13 @@
     The build flavor to target ('prod' or 'dev'). Defaults to 'prod'.
 
 .PARAMETER Target
-    The build target ('All', 'AppBundle', 'Apk', 'SplitApk'). Defaults to 'All'.
+    The build target ('Apk', 'SplitApk', 'AppBundle', 'All'). Defaults to 'Apk'.
 
 .PARAMETER BumpVersion
     When specified, auto-increments the build number and updates CalVer date before building.
+
+.PARAMETER UpdateChangelog
+    When specified, generates a commit-based section in CHANGELOG.md.
 
 .PARAMETER Clean
     When specified, runs 'flutter clean' before starting the build.
@@ -21,11 +24,14 @@
 .PARAMETER SkipTests
     When specified, skips static analysis and test validation gates.
 
+.PARAMETER PublishGithub
+    When specified, creates a GitHub Release page using the GitHub CLI (gh).
+
 .PARAMETER OutDir
     The destination directory for release artifacts. Defaults to 'build/outputs/releases'.
 
 .EXAMPLE
-    .\tools\release.ps1 -Flavor prod -Target All -BumpVersion
+    .\tools\release.ps1 -Flavor prod -Target Apk -BumpVersion
     .\tools\release.ps1 -Flavor dev -Target Apk
 #>
 
@@ -61,7 +67,7 @@ Write-Host " ChgLog : $UpdateChangelog" -ForegroundColor Yellow
 Write-Host " OutDir : $OutDir" -ForegroundColor Yellow
 Write-Host "======================================================"
 
-# ── 1. Pre-flight Checks ──────────────────────────────────────────────────────
+# --- 1. Pre-flight Checks -----------------------------------------------------
 Write-Host "`n[1/5] Checking prerequisites..." -ForegroundColor Cyan
 if (-not (Get-Command "flutter" -ErrorAction SilentlyContinue)) {
     Write-Error "Flutter SDK was not found in PATH."
@@ -70,7 +76,7 @@ if (-not (Test-Path ".env")) {
     Write-Warning "No .env file found in workspace root. Using environment defaults."
 }
 
-# ── 2. Clean & Dependencies ──────────────────────────────────────────────────
+# --- 2. Clean and Dependencies ------------------------------------------------
 if ($Clean) {
     Write-Host "`n[2/5] Cleaning workspace..." -ForegroundColor Cyan
     & flutter clean
@@ -82,7 +88,7 @@ if ($LASTEXITCODE -ne 0) {
     Write-Error "flutter pub get failed with exit code $LASTEXITCODE"
 }
 
-# ── 3. Version & Changelog Management ─────────────────────────────────────────
+# --- 3. Version and Changelog Management --------------------------------------
 Write-Host "`n[3/5] Resolving build version..." -ForegroundColor Cyan
 if ($BumpVersion) {
     & dart tools/build_number_gen.dart --mode auto
@@ -103,9 +109,9 @@ if ($UpdateChangelog -or $BumpVersion) {
     & dart tools/changelog_gen.dart --write
 }
 
-# ── 4. Quality Gate ───────────────────────────────────────────────────────────
+# --- 4. Quality Gate ----------------------------------------------------------
 if (-not $SkipTests) {
-    Write-Host "`n[4/5] Running Quality Gate (lints & SVG tests)..." -ForegroundColor Cyan
+    Write-Host "`n[4/5] Running Quality Gate (lints and SVG tests)..." -ForegroundColor Cyan
     Write-Host "-> Running flutter analyze..." -ForegroundColor Gray
     & flutter analyze
     if ($LASTEXITCODE -ne 0) {
@@ -121,7 +127,7 @@ if (-not $SkipTests) {
     Write-Host "`n[4/5] Quality Gate skipped (-SkipTests specified)." -ForegroundColor Yellow
 }
 
-# ── 5. Compilation ────────────────────────────────────────────────────────────
+# --- 5. Compilation -----------------------------------------------------------
 Write-Host "`n[5/5] Compiling release binaries..." -ForegroundColor Cyan
 
 $EntryPoint = if ($Flavor -eq 'dev') { "lib/main_dev.dart" } else { "lib/main.dart" }
@@ -133,20 +139,6 @@ if (-not (Test-Path $OutDir)) {
 }
 
 $Artifacts = @()
-
-# Build AppBundle (AAB)
-if ($Target -eq 'All' -or $Target -eq 'AppBundle') {
-    Write-Host "-> Building App Bundle (.aab) for $Flavor..." -ForegroundColor Yellow
-    & flutter build appbundle --flavor $Flavor -t $EntryPoint --release
-    if ($LASTEXITCODE -ne 0) { Write-Error "AppBundle build failed." }
-
-    $SrcAab = "build/app/outputs/bundle/${Flavor}Release/app-$Flavor-release.aab"
-    if (Test-Path $SrcAab) {
-        $DestAab = "$OutDir/ReelRiot-$Flavor-$SanitizedVersion.aab"
-        Copy-Item -Path $SrcAab -Destination $DestAab -Force
-        $Artifacts += $DestAab
-    }
-}
 
 # Build Universal APK
 if ($Target -eq 'All' -or $Target -eq 'Apk') {
@@ -179,7 +171,27 @@ if ($Target -eq 'All' -or $Target -eq 'SplitApk') {
     }
 }
 
-# ── Summary & Checksums ───────────────────────────────────────────────────────
+# Build AppBundle (AAB)
+if ($Target -eq 'All' -or $Target -eq 'AppBundle') {
+    Write-Host "-> Building App Bundle (.aab) for $Flavor..." -ForegroundColor Yellow
+    try {
+        & flutter build appbundle --flavor $Flavor -t $EntryPoint --release
+        if ($LASTEXITCODE -eq 0) {
+            $SrcAab = "build/app/outputs/bundle/${Flavor}Release/app-$Flavor-release.aab"
+            if (Test-Path $SrcAab) {
+                $DestAab = "$OutDir/ReelRiot-$Flavor-$SanitizedVersion.aab"
+                Copy-Item -Path $SrcAab -Destination $DestAab -Force
+                $Artifacts += $DestAab
+            }
+        } else {
+            Write-Warning "AppBundle build failed. Note: Building .aab requires Android NDK tools for stripping native symbols locally."
+        }
+    } catch {
+        Write-Warning "AppBundle build encountered an error: $_"
+    }
+}
+
+# --- Summary and Checksums ----------------------------------------------------
 Write-Host "`n======================================================" -ForegroundColor Green
 Write-Host "              Release Build Succeeded!                " -ForegroundColor Green
 Write-Host "======================================================" -ForegroundColor Green
@@ -198,23 +210,23 @@ foreach ($File in $Artifacts) {
 }
 Write-Host "======================================================"
 
-# ── 6. Publish to GitHub Releases (Optional) ──────────────────────────────────
+# --- 6. Publish to GitHub Releases (Optional) ---------------------------------
 if ($PublishGithub) {
     Write-Host "`nPublishing GitHub Release for v$AppVersion..." -ForegroundColor Cyan
-    if (Get-Command "gh" -ErrorAction SilentlyContinue) {
+    $GhCmd = Get-Command -Name "gh" -ErrorAction SilentlyContinue
+    if ($null -ne $GhCmd) {
         $Tag = "v$AppVersion"
         $Title = "ReelRiot Mobile v$AppVersion"
-        $ReleaseFiles = $Artifacts -join ' '
-        
-        Write-Host "-> Creating release page with GitHub CLI (gh)..." -ForegroundColor Gray
+        Write-Host "-> Creating release page with GitHub CLI..." -ForegroundColor Gray
         & gh release create $Tag $Artifacts --title $Title --generate-notes
         if ($LASTEXITCODE -eq 0) {
-            Write-Host "✓ GitHub Release page published successfully: https://github.com/$(gh repo view --json nameWithOwner -q .nameWithOwner)/releases/tag/$Tag" -ForegroundColor Green
+            $RepoName = (& gh repo view --json nameWithOwner -q .nameWithOwner)
+            Write-Host "[OK] GitHub Release page published: https://github.com/$RepoName/releases/tag/$Tag" -ForegroundColor Green
         } else {
             Write-Warning "Failed to publish GitHub release using GitHub CLI."
         }
     } else {
-        Write-Warning "GitHub CLI ('gh') is not installed. To publish automatically from local CLI, install gh (winget install GitHub.cli)."
+        Write-Warning "GitHub CLI is not installed. To publish from local CLI, install gh (winget install GitHub.cli)."
     }
 }
 Write-Host ""
