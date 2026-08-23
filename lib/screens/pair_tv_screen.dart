@@ -204,7 +204,7 @@ class _PairTvScreenState extends State<PairTvScreen> {
               ),
               decoration: InputDecoration(
                 hintText: 'ABC12XYZ',
-                hintStyle: TextStyle(color: Colors.white.withOpacity(0.4)),
+                hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.4)),
                 counterText: '',
                 filled: true,
                 fillColor: const Color(0xFF1a1a2e),

@@ -20,9 +20,9 @@ class StyledSwitch extends StatelessWidget {
       value: value,
       onChanged: onChanged,
       activeThumbColor: activeColor,
-      activeTrackColor: activeColor.withOpacity(0.4),
-      inactiveThumbColor: textSec.withOpacity(0.8),
-      inactiveTrackColor: textSec.withOpacity(0.2),
+      activeTrackColor: activeColor.withValues(alpha: 0.4),
+      inactiveThumbColor: textSec.withValues(alpha: 0.8),
+      inactiveTrackColor: textSec.withValues(alpha: 0.2),
     );
   }
 }

@@ -37,9 +37,8 @@ class _MainTVDisplayState extends State<MainTVDisplay> {
     final lang = Provider.of<SettingsProvider>(context).appLanguage;
     final featuredEvent =
         Provider.of<AppDependencyProvider>(context).featuredEvent;
-    return Container(
-      child: ListView(
-        children: [
+    return ListView(
+      children: [
           if (featuredEvent != null)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
@@ -99,7 +98,6 @@ class _MainTVDisplayState extends State<MainTVDisplay> {
           TVGenreListGrid(api: Endpoints.tvGenresUrl(lang)),
           const TVShowsFromWatchProviders(),
         ],
-      ),
-    );
+      );
   }
 }

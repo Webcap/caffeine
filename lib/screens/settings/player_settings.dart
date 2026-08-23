@@ -203,7 +203,7 @@ class _PlayerSettingsState extends State<PlayerSettings> {
                           data: SliderTheme.of(context).copyWith(
                             activeTrackColor: _Design.primary,
                             thumbColor: _Design.primary,
-                            overlayColor: _Design.primary.withOpacity(0.2),
+                            overlayColor: _Design.primary.withValues(alpha: 0.2),
                           ),
                           child: Slider(
                             value: sv.subtitleFontSize.toDouble(),

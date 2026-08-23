@@ -1,6 +1,6 @@
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:flutter/foundation.dart';
-import 'package:package_info_plus/package_info_plus.dart';
+import 'package:reelriot/utils/config.dart';
 
 class AnalyticsService {
   static final AnalyticsService _instance = AnalyticsService._internal();
@@ -21,8 +21,7 @@ class AnalyticsService {
     if (_initialized) return;
 
     try {
-      final info = await PackageInfo.fromPlatform();
-      _appVersion = '${info.version}+${info.buildNumber}';
+      _appVersion = currentAppVersion;
 
       _mixpanel = await Mixpanel.init(token, trackAutomaticEvents: true);
       _initialized = true;

@@ -90,10 +90,9 @@ class MovieVideosState extends State<MovieVideosDisplay> {
                   ),
                 ],
               ),
-        Container(
-          child: SizedBox(
-            width: double.infinity,
-            height: 230,
+        SizedBox(
+          width: double.infinity,
+          height: 230,
             child: movieVideos == null
                 ? detailVideoShimmer(themeMode)
                 : movieVideos!.result!.isEmpty
@@ -212,7 +211,6 @@ class MovieVideosState extends State<MovieVideosDisplay> {
                         ),
                       ),
           ),
-        ),
       ],
     );
   }

@@ -27,7 +27,7 @@ abstract class AppRoutes {
   static const passwordchangescreen = Routes.passwordChangeScreen;
   static const noConnection = Routes.noConnection;
   static const profile = Routes.profile;
-  static const WatchHistory = Routes.watchHistory;
+  static const watchHistory = Routes.watchHistory;
   static const pairTv = Routes.pairTv;
   static const paymentMethod = Routes.paymentMethod;
   static const addNewCard = Routes.addNewCard;

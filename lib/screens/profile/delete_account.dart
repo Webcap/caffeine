@@ -68,6 +68,7 @@ class DeleteAccountScreenState extends State<DeleteAccountScreen> {
         await _supabase.from('watch_history').delete().eq('user_id', uid!);
         await _supabase.from('profiles').delete().eq('id', uid!);
 
+        if (!mounted) return;
         await Provider.of<SignInProvider>(context, listen: false).userSignOut();
 
         if (mounted) {

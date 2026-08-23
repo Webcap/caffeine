@@ -89,10 +89,9 @@ class SimilarTVTabState extends State<SimilarTVTab>
     super.build(context);
     final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
-    return Container(
-      child: Column(
-        children: <Widget>[
-          Row(
+    return Column(
+      children: <Widget>[
+        Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Expanded(
@@ -147,8 +146,7 @@ class SimilarTVTabState extends State<SimilarTVTab>
                       ),
           ),
         ],
-      ),
-    );
+      );
   }
 
   @override

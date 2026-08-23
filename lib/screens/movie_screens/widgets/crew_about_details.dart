@@ -89,59 +89,53 @@ class _CrewDetailAboutState extends State<CrewDetailAbout> {
                         index: widget.selectedIndex,
                         children: [
                           SingleChildScrollView(
-                            child: Container(
-                              child: Column(
-                                children: <Widget>[
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 10.0, right: 10, top: 10.0),
-                                    child: Column(
-                                      children: [
-                                        PersonAboutWidget(
-                                            api: Endpoints.getPersonDetails(
-                                                widget.crew!.id!, lang)),
-                                        PersonSocialLinks(
-                                          api: Endpoints
-                                              .getExternalLinksForPerson(
-                                                  widget.crew!.id!, lang),
-                                        ),
-                                        PersonImagesDisplay(
-                                          personName: widget.crew!.name!,
-                                          api: Endpoints.getPersonImages(
-                                            widget.crew!.id!,
-                                          ),
-                                          title: tr("images"),
-                                        ),
-                                        PersonDataTable(
+                            child: Column(
+                              children: <Widget>[
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 10.0, right: 10, top: 10.0),
+                                  child: Column(
+                                    children: [
+                                      PersonAboutWidget(
                                           api: Endpoints.getPersonDetails(
-                                              widget.crew!.id!, lang),
+                                              widget.crew!.id!, lang)),
+                                      PersonSocialLinks(
+                                        api: Endpoints
+                                            .getExternalLinksForPerson(
+                                                widget.crew!.id!, lang),
+                                      ),
+                                      PersonImagesDisplay(
+                                        personName: widget.crew!.name!,
+                                        api: Endpoints.getPersonImages(
+                                          widget.crew!.id!,
                                         ),
-                                      ],
-                                    ),
+                                        title: tr("images"),
+                                      ),
+                                      PersonDataTable(
+                                        api: Endpoints.getPersonDetails(
+                                            widget.crew!.id!, lang),
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ),
-                          Container(
-                            child: PersonMovieListWidget(
+                          PersonMovieListWidget(
+                            isPersonAdult: widget.crew!.adult!,
+                            includeAdult:
+                                Provider.of<SettingsProvider>(context)
+                                    .isAdult,
+                            api: Endpoints.getMovieCreditsForPerson(
+                                widget.crew!.id!, lang),
+                          ),
+                          PersonTVListWidget(
                               isPersonAdult: widget.crew!.adult!,
                               includeAdult:
                                   Provider.of<SettingsProvider>(context)
                                       .isAdult,
-                              api: Endpoints.getMovieCreditsForPerson(
-                                  widget.crew!.id!, lang),
-                            ),
-                          ),
-                          Container(
-                            child: PersonTVListWidget(
-                                isPersonAdult: widget.crew!.adult!,
-                                includeAdult:
-                                    Provider.of<SettingsProvider>(context)
-                                        .isAdult,
-                                api: Endpoints.getTVCreditsForPerson(
-                                    widget.crew!.id!, lang)),
-                          ),
+                              api: Endpoints.getTVCreditsForPerson(
+                                  widget.crew!.id!, lang)),
                         ],
                       ),
                     ),

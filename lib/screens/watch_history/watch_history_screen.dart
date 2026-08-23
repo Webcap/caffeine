@@ -188,7 +188,7 @@ class _WatchHistoryState extends State<WatchHistory>
               controller: tabController,
               children: [
                 MovieWatchHistory(movieList: firebaseMovies),
-                tvWatchHistory(tvList: firebaseTvShows)
+                TVWatchHistory(tvList: firebaseTvShows)
               ],
             ),
           )

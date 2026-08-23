@@ -78,7 +78,7 @@ class _ProviderLoadingWidgetState extends State<ProviderLoadingWidget>
               ),
             ),
             child: Image.asset(
-              appConfig.app_icon,
+              appConfig.appIcon,
               height: 72,
               width: 72,
             ),

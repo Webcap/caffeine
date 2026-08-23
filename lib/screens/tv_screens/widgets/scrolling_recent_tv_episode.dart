@@ -41,10 +41,10 @@ class _ScrollingRecentEpisodesState extends State<ScrollingRecentEpisodes> {
     });
   }
   @override
-  Widget build(BuildContext context) {
-    final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
-    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
-    final fetchRoute = Provider.of<AppDependencyProvider>(context).fetchRoute;
+  Widget build(BuildContext bContext) {
+    final imageQuality = Provider.of<SettingsProvider>(bContext).imageQuality;
+    final themeMode = Provider.of<SettingsProvider>(bContext).appTheme;
+    final fetchRoute = Provider.of<AppDependencyProvider>(bContext).fetchRoute;
     return Column(
       children: <Widget>[
         Row(
@@ -90,7 +90,7 @@ class _ScrollingRecentEpisodesState extends State<ScrollingRecentEpisodes> {
           ],
         ),
         LayoutBuilder(
-          builder: (context, constraints) {
+          builder: (_, constraints) {
             final screenHeight = MediaQuery.sizeOf(context).height;
             final screenWidth = MediaQuery.sizeOf(context).width;
             final rowHeight = (screenHeight * 0.28).clamp(260.0, 340.0);
@@ -109,9 +109,9 @@ class _ScrollingRecentEpisodesState extends State<ScrollingRecentEpisodes> {
                       physics: const BouncingScrollPhysics(),
                       itemCount: widget.episodesList.length,
                       scrollDirection: Axis.horizontal,
-                      itemBuilder: (BuildContext context, int index) {
+                      itemBuilder: (BuildContext ctx, int index) {
                         final recentEpisodes =
-                            Provider.of<RecentProvider>(context, listen: false);
+                            Provider.of<RecentProvider>(ctx, listen: false);
                         return Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: GestureDetector(
@@ -119,7 +119,7 @@ class _ScrollingRecentEpisodesState extends State<ScrollingRecentEpisodes> {
                               _suppressTap();
                               final ep = widget.episodesList[index];
                               MobileContextMenu.show(
-                                context: context,
+                                context: ctx,
                                 title: ep.seriesName ?? '',
                                 subtitle:
                                     'S${ep.seasonNum} | E${ep.episodeNum} - ${ep.episodeName}',

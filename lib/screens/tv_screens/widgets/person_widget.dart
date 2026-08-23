@@ -48,10 +48,9 @@ class PersonSocialLinksState extends State<PersonSocialLinks> {
     final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     return Padding(
       padding: const EdgeInsets.only(top: 10.0),
-      child: Container(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
@@ -139,7 +138,6 @@ class PersonSocialLinksState extends State<PersonSocialLinks> {
             ),
           ],
         ),
-      ),
     );
   }
 }

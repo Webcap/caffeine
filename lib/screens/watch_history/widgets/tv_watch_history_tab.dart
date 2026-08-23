@@ -10,16 +10,16 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:reelriot/utils/constant.dart';
 
-class tvWatchHistory extends StatefulWidget {
-  const tvWatchHistory({super.key, required this.tvList});
+class TVWatchHistory extends StatefulWidget {
+  const TVWatchHistory({super.key, required this.tvList});
 
   final List<TV>? tvList;
 
   @override
-  State<tvWatchHistory> createState() => _tvWatchHistoryState();
+  State<TVWatchHistory> createState() => _TVWatchHistoryState();
 }
 
-class _tvWatchHistoryState extends State<tvWatchHistory> {
+class _TVWatchHistoryState extends State<TVWatchHistory> {
   int count = 0;
   TVDatabaseController tvDatabaseController = TVDatabaseController();
   final _scrollController = ScrollController();

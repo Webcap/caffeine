@@ -57,9 +57,8 @@ class MovieInfoTableState extends State<MovieInfoTable> {
               ),
             ],
           ),
-          Container(
-            child: SingleChildScrollView(
-              scrollDirection: Axis.vertical,
+          SingleChildScrollView(
+            scrollDirection: Axis.vertical,
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: movieDetails == null
@@ -229,7 +228,6 @@ class MovieInfoTableState extends State<MovieInfoTable> {
                       ]),
               ),
             ),
-          ),
         ],
       ),
     );

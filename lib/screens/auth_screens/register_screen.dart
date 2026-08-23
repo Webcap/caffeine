@@ -410,7 +410,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                 ),
                               ],
                             ),
-                            child: Image.asset(appConfig.app_icon),
+                            child: Image.asset(appConfig.appIcon),
                           ),
                         ),
                       ),

@@ -98,8 +98,7 @@ class ParticularGenreMoviesState extends State<ParticularGenreMovies> {
                 ? Center(
                     child: _EmptyGenreCard(message: tr("no_genre_movie")),
                   )
-                : Container(
-                    child: Column(
+                : Column(
                     children: [
                       Expanded(
                         child: Padding(
@@ -130,7 +129,7 @@ class ParticularGenreMoviesState extends State<ParticularGenreMovies> {
                             child: Center(child: LinearProgressIndicator()),
                           )),
                     ],
-                  ));
+                  );
   }
 }
 

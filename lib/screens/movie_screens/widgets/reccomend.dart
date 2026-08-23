@@ -88,10 +88,9 @@ class MovieRecommendationsTabState extends State<MovieRecommendationsTab>
     super.build(context);
     final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
-    return Container(
-      child: Column(
-        children: <Widget>[
-          Row(
+    return Column(
+      children: <Widget>[
+        Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Expanded(
@@ -152,8 +151,7 @@ class MovieRecommendationsTabState extends State<MovieRecommendationsTab>
             indent: 10,
           ),
         ],
-      ),
-    );
+      );
   }
 
   @override
@@ -240,10 +238,9 @@ class SimilarMoviesTabState extends State<SimilarMoviesTab>
     super.build(context);
     final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
-    return Container(
-      child: Column(
-        children: <Widget>[
-          Row(
+    return Column(
+      children: <Widget>[
+        Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Expanded(
@@ -300,8 +297,7 @@ class SimilarMoviesTabState extends State<SimilarMoviesTab>
                       ),
           ),
         ],
-      ),
-    );
+      );
   }
 
   @override
