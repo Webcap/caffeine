@@ -40,19 +40,6 @@ class _WatchHistoryState extends State<WatchHistory>
     getWatchedMovieAndTV();
   }
 
-  Future<bool> checkIfDocExists(String docId) async {
-    try {
-      final res = await _supabase
-          .from('watch_history')
-          .select('user_id')
-          .eq('user_id', docId)
-          .limit(1);
-      return res.isNotEmpty;
-    } catch (e) {
-      rethrow;
-    }
-  }
-
   void getWatchedMovieAndTV() async {
     final user = _auth.currentUser;
     uid = user?.id;
@@ -63,12 +50,6 @@ class _WatchHistoryState extends State<WatchHistory>
     setState(() {
       isLoading = true;
     });
-
-    if (await checkIfDocExists(uid!) == false) {
-      if (mounted) {
-        openSnackbar(context, "error fetching dataset", Colors.red);
-      }
-    }
 
     // Fetch active continue-watching progress
     final cwRes = await _supabase

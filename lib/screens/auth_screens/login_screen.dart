@@ -79,7 +79,12 @@ class _LoginScreenState extends State<LoginScreen> {
       );
       if (!mounted) return;
 
-      await Provider.of<RecentProvider>(context, listen: false).syncFromCloud();
+      try {
+        await Provider.of<RecentProvider>(context, listen: false).syncFromCloud();
+      } catch (e) {
+        debugPrint('[Login] Notice: syncFromCloud background error: $e');
+      }
+
       if (!mounted) return;
       Navigator.pushReplacement(
         context,
@@ -102,6 +107,10 @@ class _LoginScreenState extends State<LoginScreen> {
       } else {
         globalMethods.authErrorHandle(error.message, context);
       }
+    } catch (error) {
+      if (!mounted) return;
+      debugPrint('[Login] Unexpected error during login: $error');
+      globalMethods.authErrorHandle(error.toString(), context);
     } finally {
       if (mounted) {
         setState(() {

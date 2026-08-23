@@ -179,7 +179,7 @@ class BookmarksProvider extends ChangeNotifier {
           .limit(1);
       return res.isNotEmpty;
     } catch (e) {
-      rethrow;
+      return false;
     }
   }
 
@@ -200,12 +200,15 @@ class BookmarksProvider extends ChangeNotifier {
         return;
       }
 
-      if (!await _checkIfBookmarksExists(uid)) {
-        await _supabase.from('bookmarks').insert({
-          'user_id': uid,
-          'movies': [],
-          'tv_shows': [],
-        });
+      final exists = await _checkIfBookmarksExists(uid);
+      if (!exists) {
+        try {
+          await _supabase.from('bookmarks').upsert({
+            'user_id': uid,
+            'movies': [],
+            'tv_shows': [],
+          }, onConflict: 'user_id');
+        } catch (_) {}
       }
 
       final res = await _supabase
