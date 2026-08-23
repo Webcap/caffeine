@@ -20,7 +20,15 @@ Future<void> main(List<String> args) async {
   if (environment == 'dev') environment = 'development';
 
   final version = options['version'] ?? _getVersionFromPubspec(projectRoot);
-  final downloadUrl = options['download-url'] ?? '';
+  final versionClean = version.replaceAll('+', '_');
+  final repoName = options['repo'] ?? envMap['GITHUB_REPOSITORY'] ?? 'Webcap/reelriot';
+
+  // Enforce Universal APK link for the update center
+  String downloadUrl = options['download-url'] ?? '';
+  if (downloadUrl.isEmpty) {
+    downloadUrl = 'https://github.com/$repoName/releases/download/v$version/ReelRiot-$environment-v$versionClean-universal.apk';
+  }
+
   final storeUrl = options['store-url'] ??
       (platform == 'android' ? 'https://play.google.com/store/apps/details?id=media.webcap.reelriot' : '');
   final isForced = options['forced'] == 'true' || options['forced'] == true;
@@ -41,6 +49,7 @@ Future<void> main(List<String> args) async {
   stdout.writeln(' Platform   : $platform');
   stdout.writeln(' Environment: $environment');
   stdout.writeln(' Version    : $version');
+  stdout.writeln(' Package    : Universal APK (All ABIs)');
   stdout.writeln(' DownloadUrl: $downloadUrl');
   stdout.writeln(' Forced     : $isForced');
   stdout.writeln('======================================================');
