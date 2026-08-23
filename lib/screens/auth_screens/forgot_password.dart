@@ -144,9 +144,12 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             ),
           ),
           SafeArea(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
-              child: Column(
+            child: Center(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 480),
+                  child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   IconButton(
@@ -284,6 +287,8 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               ),
             ),
           ),
+        ),
+      ),
         ],
       ),
     );

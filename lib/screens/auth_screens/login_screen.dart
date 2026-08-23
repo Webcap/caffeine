@@ -200,12 +200,16 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
           SafeArea(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
-              child: ConstrainedBox(
-                constraints: BoxConstraints(minHeight: Get.height - 64),
-                child: IntrinsicHeight(
-                  child: Column(
+            child: Center(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minHeight: Get.height - 64,
+                    maxWidth: 480,
+                  ),
+                  child: IntrinsicHeight(
+                    child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       IconButton(
@@ -457,6 +461,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
           ),
+        ),
         ],
       ),
     );

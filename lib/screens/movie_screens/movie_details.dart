@@ -90,19 +90,24 @@ class MovieDetailPageState extends State<MovieDetailPage>
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
-                child: SizedBox(
-                  width: double.infinity,
-                  height: 52,
-                  child: WatchNowButton(
-                    releaseYear:
-                        DateTime.tryParse(widget.movie.releaseDate!)!.year,
-                    movieId: widget.movie.id!,
-                    movieName: widget.movie.title,
-                    adult: widget.movie.adult,
-                    posterPath: widget.movie.posterPath,
-                    backdropPath: widget.movie.backdropPath,
-                    api: Endpoints.movieDetailsUrl(widget.movie.id!, lang),
-                    releaseDate: widget.movie.releaseDate,
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 600),
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: 52,
+                      child: WatchNowButton(
+                        releaseYear:
+                            DateTime.tryParse(widget.movie.releaseDate!)!.year,
+                        movieId: widget.movie.id!,
+                        movieName: widget.movie.title,
+                        adult: widget.movie.adult,
+                        posterPath: widget.movie.posterPath,
+                        backdropPath: widget.movie.backdropPath,
+                        api: Endpoints.movieDetailsUrl(widget.movie.id!, lang),
+                        releaseDate: widget.movie.releaseDate,
+                      ),
+                    ),
                   ),
                 ),
               ),
