@@ -134,7 +134,7 @@ class MovieGridItem extends StatelessWidget {
                               const Icon(
                                 Icons.star_rounded,
                               ),
-                              Text(movie.voteAverage!.toStringAsFixed(1))
+                              Text((movie.voteAverage ?? 0.0).toStringAsFixed(1))
                             ],
                           ),
                         ),
