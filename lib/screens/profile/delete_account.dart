@@ -266,12 +266,20 @@ class DeleteAccountScreenState extends State<DeleteAccountScreen> {
     setState(() => _isDeleting = true);
 
     try {
-      // 1. Delete associated data across all user tables
-      await _supabase.from('usernames').delete().eq('user_id', _uid!);
-      await _supabase.from('bookmarks').delete().eq('user_id', _uid!);
-      await _supabase.from('watch_history').delete().eq('user_id', _uid!);
-      await _supabase.from('continue_watching_history').delete().eq('user_id', _uid!);
-      await _supabase.from('completed_watch_history').delete().eq('user_id', _uid!);
+      // 1. Delete associated data across user tables safely
+      Future<void> safeDelete(String table, String column, String value) async {
+        try {
+          await _supabase.from(table).delete().eq(column, value);
+        } catch (e) {
+          debugPrint('[DeleteAccount] Notice: could not clear $table for $value: $e');
+        }
+      }
+
+      await safeDelete('continue_watching_history', 'user_id', _uid!);
+      await safeDelete('completed_watch_history', 'user_id', _uid!);
+      await safeDelete('bookmarks', 'user_id', _uid!);
+      await safeDelete('usernames', 'user_id', _uid!);
+      await safeDelete('messages', 'user_id', _uid!);
       await _supabase.from('profiles').delete().eq('id', _uid!);
 
       if (!mounted) return;
