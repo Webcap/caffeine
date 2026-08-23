@@ -221,6 +221,18 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
       }
     });
 
+    _betterPlayerController.player.stream.completed.listen((completed) {
+      if (completed && mounted) {
+        debugPrint('[Player] 🏁 Stream completed event fired');
+        if (widget.mediaType == MediaType.movie) {
+          insertRecentMovieData(manualElapsed: duration > 0 ? duration : 7200000);
+        } else {
+          insertRecentEpisodeData(manualElapsed: duration > 0 ? duration : 2700000);
+        }
+        _invalidateWatchStatsCache();
+      }
+    });
+
     AnalyticsService.instance.trackEvent('Playback Started', {
       'type': widget.mediaType == MediaType.movie ? 'movie' : 'tv_show',
       'id': widget.mediaType == MediaType.movie
@@ -443,8 +455,11 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
 
     if (elapsed < 3000 && playbackDurationInSeconds < 3) return;
 
-    final effectiveDuration =
-        duration > 0 ? duration : (elapsed + 7200000); // 2h fallback
+    final int playerDur =
+        _betterPlayerController.player.state.duration.inMilliseconds;
+    final int effectiveDuration = playerDur > 0
+        ? playerDur
+        : (duration > 0 ? duration : 7200000); // 2h fallback
     int remaining = (effectiveDuration - elapsed).clamp(0, effectiveDuration);
     String dt = DateTime.now().toString();
 
@@ -464,12 +479,14 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
         title: widget.movieMetadata?.movieName ?? '',
         backdropPath: widget.movieMetadata?.backdropPath ?? '');
 
-    double percentage = (elapsed / effectiveDuration) * 100;
+    final bool isCompleted = _betterPlayerController.player.state.completed ||
+        (effectiveDuration > 0 && (elapsed / effectiveDuration) >= 0.9) ||
+        (effectiveDuration > 60000 && remaining <= 45000);
 
     if (!isBookmarked) {
       await prv.addMovie(rMov);
     } else {
-      if (percentage <= 90) {
+      if (!isCompleted) {
         await prv.updateMovie(rMov, widget.movieMetadata!.movieId!);
       } else {
         final completed = RecentMovie(
@@ -500,8 +517,11 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
 
     if (elapsed < 3000 && playbackDurationInSeconds < 3) return;
 
-    final effectiveDuration =
-        duration > 0 ? duration : (elapsed + 2700000); // 45m fallback
+    final int playerDur =
+        _betterPlayerController.player.state.duration.inMilliseconds;
+    final int effectiveDuration = playerDur > 0
+        ? playerDur
+        : (duration > 0 ? duration : 2700000); // 45m fallback
     int remaining = (effectiveDuration - elapsed).clamp(0, effectiveDuration);
     String dt = DateTime.now().toString();
 
@@ -523,12 +543,14 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
         seasonNum: widget.tvMetadata?.seasonNumber ?? 0,
         seriesId: widget.tvMetadata?.tvId ?? 0);
 
-    double percentage = (elapsed / effectiveDuration) * 100;
+    final bool isCompleted = _betterPlayerController.player.state.completed ||
+        (effectiveDuration > 0 && (elapsed / effectiveDuration) >= 0.9) ||
+        (effectiveDuration > 60000 && remaining <= 45000);
 
     if (!isBookmarked) {
       await prv.addEpisode(rEpisode);
     } else {
-      if (percentage <= 90) {
+      if (!isCompleted) {
         await prv.updateEpisode(
             rEpisode,
             widget.tvMetadata!.episodeId!,
@@ -541,11 +563,11 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
             id: widget.tvMetadata!.episodeId!,
             posterPath: widget.tvMetadata!.posterPath ?? '',
             remaining: 0,
-            seriesName: widget.tvMetadata!.seriesName ?? '',
-            episodeName: widget.tvMetadata!.episodeName ?? '',
-            episodeNum: widget.tvMetadata!.episodeNumber ?? 0,
-            seasonNum: widget.tvMetadata!.seasonNumber ?? 0,
-            seriesId: widget.tvMetadata!.tvId ?? 0);
+            seriesName: widget.tvMetadata?.seriesName ?? '',
+            episodeName: widget.tvMetadata?.episodeName ?? '',
+            episodeNum: widget.tvMetadata?.episodeNumber ?? 0,
+            seasonNum: widget.tvMetadata?.seasonNumber ?? 0,
+            seriesId: widget.tvMetadata?.tvId ?? 0);
         await prv.updateEpisode(
             completed,
             widget.tvMetadata!.episodeId!,
@@ -595,16 +617,26 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
       // Don't save if we barely started (< 3s)
       if (elapsed < 3000 && playbackDurationInSeconds < 3) return;
 
-      final int effectiveDuration = duration > 0
-          ? duration
-          : (widget.mediaType == MediaType.movie
-              ? elapsed + 7200000   // 2h fallback for movies
-              : elapsed + 2700000); // 45m fallback for episodes
+      final bool playerCompleted =
+          _betterPlayerController.player.state.completed;
+      final int playerDur =
+          _betterPlayerController.player.state.duration.inMilliseconds;
+      final int effectiveDuration = playerDur > 0
+          ? playerDur
+          : (duration > 0
+              ? duration
+              : (widget.mediaType == MediaType.movie ? 7200000 : 2700000));
 
-      final int remaining = (effectiveDuration - elapsed).clamp(0, effectiveDuration);
-      final double percentage = effectiveDuration > 0 ? (elapsed / effectiveDuration) * 100 : 0;
+      final double percentage = effectiveDuration > 0
+          ? (elapsed / effectiveDuration) * 100
+          : 0;
+      final int remaining = playerCompleted
+          ? 0
+          : (effectiveDuration - elapsed).clamp(0, effectiveDuration);
       final String dt = DateTime.now().toString();
-      final bool isCompleted = percentage > 90;
+      final bool isCompleted = playerCompleted ||
+          percentage >= 90 ||
+          (effectiveDuration > 60000 && remaining <= 45000);
 
       if (widget.mediaType == MediaType.movie && widget.movieMetadata != null) {
         final meta = widget.movieMetadata!;

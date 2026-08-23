@@ -428,27 +428,50 @@ class _LoginScreenState extends State<LoginScreen> {
                       const Spacer(),
                       const SizedBox(height: 24),
                       Center(
-                        child: Wrap(
-                          alignment: WrapAlignment.center,
-                          crossAxisAlignment: WrapCrossAlignment.center,
-                          spacing: 4,
+                        child: Column(
                           children: [
-                            Text(
-                              "Don't have an account?",
-                              style: TextStyle(
-                                color: _textSecondary,
-                                fontSize: 14,
-                              ),
+                            Wrap(
+                              alignment: WrapAlignment.center,
+                              crossAxisAlignment: WrapCrossAlignment.center,
+                              spacing: 4,
+                              children: [
+                                Text(
+                                  "Don't have an account?",
+                                  style: TextStyle(
+                                    color: _textSecondary,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    Get.toNamed(Routes.signup);
+                                  },
+                                  child: const Text(
+                                    'Sign up',
+                                    style: TextStyle(
+                                      color: _primaryColor,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                            TextButton(
+                            const SizedBox(height: 6),
+                            TextButton.icon(
                               onPressed: () {
-                                Get.toNamed(Routes.signup);
+                                Get.offAllNamed(Routes.dash);
                               },
-                              child: const Text(
-                                'Sign up',
+                              icon: const Icon(
+                                Icons.arrow_forward_rounded,
+                                size: 16,
+                                color: _textSecondary,
+                              ),
+                              label: const Text(
+                                'Continue as Guest',
                                 style: TextStyle(
-                                  color: _primaryColor,
-                                  fontWeight: FontWeight.w700,
+                                  color: _textSecondary,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
                                 ),
                               ),
                             ),

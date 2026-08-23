@@ -159,7 +159,7 @@ class _PairTvScreenState extends State<PairTvScreen> {
                 ),
                 const SizedBox(height: 32),
                 ElevatedButton(
-                  onPressed: () => Get.offAllNamed(Routes.login),
+                  onPressed: () => Get.toNamed(Routes.login),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFDC2626),
                     foregroundColor: Colors.white,

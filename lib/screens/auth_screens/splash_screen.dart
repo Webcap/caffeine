@@ -107,8 +107,9 @@ class _SplashScreenState extends State<SplashScreen> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      final target = authenticated ? Routes.dash : Routes.login;
-      debugPrint('[Splash] 🚀 Navigating from ${Get.currentRoute} to $target');
+      const target = Routes.dash;
+      debugPrint(
+          '[Splash] 🚀 Navigating to $target (authenticated: $authenticated)');
       Get.offAllNamed(target);
     });
   }

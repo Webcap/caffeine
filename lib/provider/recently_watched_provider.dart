@@ -63,11 +63,31 @@ class RecentProvider extends ChangeNotifier {
     _language = language;
   }
 
-  /// Fetches cloud watch_history from Caffeine API, merges with local (highest progress wins),
-  /// replaces local DB, then refreshes. No-op if user not signed in.
-  Future<void> syncFromCloud() async {
+  /// Clears in-memory and local SQLite history data.
+  Future<void> clearLocalData() async {
+    _movies = [];
+    _episodes = [];
+    _apiMovieWatchTimeMinutes = null;
+    _apiTvWatchTimeMinutes = null;
+    await _movieController.clearAllMovies();
+    await _episodeController.clearAllEpisodes();
+    await sharedPrefsSingleton.remove('cached_movie_watch_mins');
+    await sharedPrefsSingleton.remove('cached_tv_watch_mins');
+    await sharedPrefsSingleton.remove('last_synced_user_id');
+    notifyListeners();
+  }
+
+  /// Fetches cloud watch_history from Caffeine API.
+  /// When a new account signs in (or forceReplace is true), local DB is replaced completely
+  /// with the logged-in user's cloud data to prevent cross-account history leakage.
+  Future<void> syncFromCloud({bool forceReplace = false}) async {
     final uid = Supabase.instance.client.auth.currentUser?.id;
     if (uid == null) return;
+
+    final lastSyncedUid = sharedPrefsSingleton.getString('last_synced_user_id');
+    final bool isUserSwitch = lastSyncedUid != null && lastSyncedUid != uid;
+    final bool replaceWithoutMerge =
+        forceReplace || isUserSwitch || (lastSyncedUid == null);
 
     try {
       final base = caffeineApiUrl.replaceAll(RegExp(r'/+$'), '');
@@ -124,14 +144,22 @@ class RecentProvider extends ChangeNotifier {
             }
           }
 
-          final localMovies = await _movieController.getRecentMovieList();
-          final localEpisodes = await _episodeController.getEpisodeList();
+          if (replaceWithoutMerge) {
+            // Replace local DB completely to prevent another user's local history from merging into this account
+            await _movieController.replaceAllMovies(cloudMovies);
+            await _episodeController.replaceAllEpisodes(cloudEpisodes);
+          } else {
+            final localMovies = await _movieController.getRecentMovieList();
+            final localEpisodes = await _episodeController.getEpisodeList();
 
-          final mergedMovies = _mergeMovies(cloudMovies, localMovies);
-          final mergedEpisodes = _mergeEpisodes(cloudEpisodes, localEpisodes);
+            final mergedMovies = _mergeMovies(cloudMovies, localMovies);
+            final mergedEpisodes = _mergeEpisodes(cloudEpisodes, localEpisodes);
 
-          await _movieController.replaceAllMovies(mergedMovies);
-          await _episodeController.replaceAllEpisodes(mergedEpisodes);
+            await _movieController.replaceAllMovies(mergedMovies);
+            await _episodeController.replaceAllEpisodes(mergedEpisodes);
+          }
+
+          await sharedPrefsSingleton.setString('last_synced_user_id', uid);
         }
       }
     } catch (e) {
@@ -583,30 +611,44 @@ class RecentProvider extends ChangeNotifier {
   }
 
   /// Watch time (minutes) in last 2 weeks for movies.
-  /// Strictly counts completed items (remaining == 0).
   int get movieWatchTimeMinutesLast2Weeks {
-    if (_apiMovieWatchTimeMinutes != null) return _apiMovieWatchTimeMinutes!;
-    int total = 0;
+    int localTotalMs = 0;
     for (final m in _movies) {
       if (!_isWithinLast2Weeks(m.dateTime)) continue;
-      // Only count completed movies
-      if (m.remaining != 0) continue;
-      total += _ensureMs(m.elapsed);
+      // Count completed movies
+      if (m.remaining == 0 || (m.elapsed != null && m.elapsed! > 0 && (m.remaining == null || m.remaining == 0))) {
+        int ms = _ensureMs(m.elapsed);
+        if (ms <= 0) ms = 7200000; // 2h fallback
+        localTotalMs += ms;
+      }
     }
-    return total ~/ 60000;
+    final int localMins = localTotalMs ~/ 60000;
+    if (_apiMovieWatchTimeMinutes != null && _apiMovieWatchTimeMinutes! > 0) {
+      return _apiMovieWatchTimeMinutes! > localMins
+          ? _apiMovieWatchTimeMinutes!
+          : localMins;
+    }
+    return localMins;
   }
 
   /// Watch time (minutes) in last 2 weeks for TV episodes.
-  /// Strictly counts completed items (remaining == 0).
   int get tvWatchTimeMinutesLast2Weeks {
-    if (_apiTvWatchTimeMinutes != null) return _apiTvWatchTimeMinutes!;
-    int total = 0;
+    int localTotalMs = 0;
     for (final e in _episodes) {
       if (!_isWithinLast2Weeks(e.dateTime)) continue;
-      // Only count completed episodes
-      if (e.remaining != 0) continue;
-      total += _ensureMs(e.elapsed);
+      // Count completed episodes
+      if (e.remaining == 0 || (e.elapsed != null && e.elapsed! > 0 && (e.remaining == null || e.remaining == 0))) {
+        int ms = _ensureMs(e.elapsed);
+        if (ms <= 0) ms = 2700000; // 45m fallback
+        localTotalMs += ms;
+      }
     }
-    return total ~/ 60000;
+    final int localMins = localTotalMs ~/ 60000;
+    if (_apiTvWatchTimeMinutes != null && _apiTvWatchTimeMinutes! > 0) {
+      return _apiTvWatchTimeMinutes! > localMins
+          ? _apiTvWatchTimeMinutes!
+          : localMins;
+    }
+    return localMins;
   }
 }

@@ -4,10 +4,12 @@ import 'package:reelriot/utils/globals.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:reelriot/models/profile_image_list.dart';
 import 'package:reelriot/screens/home_screen/dash_screen.dart';
 import 'package:reelriot/utils/config.dart';
 import 'package:reelriot/utils/globlal_methods.dart';
+import 'package:reelriot/utils/routes/app_pages.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -665,6 +667,27 @@ class _SignupScreenState extends State<SignupScreen> {
                                         fontSize: 16,
                                       ),
                                     ),
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          Center(
+                            child: TextButton.icon(
+                              onPressed: () {
+                                Get.offAllNamed(Routes.dash);
+                              },
+                              icon: const Icon(
+                                Icons.arrow_forward_rounded,
+                                size: 16,
+                                color: _textSecondary,
+                              ),
+                              label: const Text(
+                                'Continue as Guest',
+                                style: TextStyle(
+                                  color: _textSecondary,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
                             ),
                           ),
                         ],
