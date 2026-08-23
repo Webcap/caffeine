@@ -143,7 +143,7 @@ class SettingsPreferences {
     return sharedPrefsSingleton.getString(APP_LANGUAGE_CODE) ?? 'en';
   }
 
-  static const PROVIDER_PRECEDENCE = "providerPrecedence-v10";
+  static const PROVIDER_PRECEDENCE = "providerPrecedence-v12";
 
   Future<void> setProviderPrecedence(String pre) async {
     sharedPrefsSingleton.setString(PROVIDER_PRECEDENCE, pre);

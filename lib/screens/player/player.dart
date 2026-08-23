@@ -36,6 +36,7 @@ import 'package:reelriot/functions/network.dart';
 import 'package:reelriot/api/endpoints.dart';
 import 'package:reelriot/screens/player/widgets/subtitle_selection_sheet.dart';
 import 'package:reelriot/screens/player/widgets/glass_player_controls.dart';
+import 'package:reelriot/utils/helpers/web_page.dart';
 
 class Player extends StatefulWidget {
   final Map<String, String> sources;
@@ -98,6 +99,18 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
   DateTime? _loadStartTime;
   DateTime? _bufferingStartTime;
 
+  bool _isEmbed = false;
+  String _embedUrl = '';
+
+  static bool isEmbedUrl(String url) {
+    if (url.isEmpty) return false;
+    final u = url.toLowerCase();
+    if (u.contains('.m3u8') || u.contains('.mp4') || u.contains('.mkv') || u.contains('.webm')) {
+      return false;
+    }
+    return u.contains('/embed') || u.contains('vixsrc.to/');
+  }
+
   Timer? _periodicSaveTimer;
 
   @override
@@ -152,12 +165,18 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
         ? (widget.movieMetadata?.elapsed ?? 0)
         : (widget.tvMetadata?.elapsed ?? 0);
 
-    _betterPlayerController.setDataSource(
-      link ?? '',
-      headers: widget.headers,
-      subtitles: widget.subs,
-      startAt: Duration(milliseconds: initialElapsed),
-    );
+    if (link != null && isEmbedUrl(link)) {
+      _isEmbed = true;
+      _embedUrl = link;
+    } else {
+      _isEmbed = false;
+      _betterPlayerController.setDataSource(
+        link ?? '',
+        headers: widget.headers,
+        subtitles: widget.subs,
+        startAt: Duration(milliseconds: initialElapsed),
+      );
+    }
 
     _loadStartTime = DateTime.now();
     AnalyticsService.instance.trackQoSEvent('Playback Attempt', {
@@ -322,18 +341,27 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
             : widget.settings.defaultVideoResolution.toString();
         final link = newSources[keyToFind] ?? newSources.values.first;
 
-        final elapsed = await _currentElapsedMilliseconds;
-        _betterPlayerController.setDataSource(
-          link,
-          headers: VideoUtils.extractHeaders(result.videoLinks!),
-          subtitles: _currentSubs,
-          startAt: Duration(milliseconds: elapsed),
-        );
-        _selectPreferredAudioTrack();
-        if (mounted) {
-          setState(() {});
+        if (isEmbedUrl(link)) {
+          _isEmbed = true;
+          _embedUrl = link;
+          if (_betterPlayerController.isPlaying()) {
+            _betterPlayerController.pause();
+          }
+          if (mounted) setState(() {});
+          break;
+        } else {
+          _isEmbed = false;
+          final elapsed = await _currentElapsedMilliseconds;
+          _betterPlayerController.setDataSource(
+            link,
+            headers: VideoUtils.extractHeaders(result.videoLinks!),
+            subtitles: _currentSubs,
+            startAt: Duration(milliseconds: elapsed),
+          );
+          _selectPreferredAudioTrack();
+          if (mounted) setState(() {});
+          break;
         }
-        break;
       }
     }
     _isRetrying = false;
@@ -858,25 +886,45 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
         backgroundColor: Colors.black,
         body: Stack(
           children: [
-            Center(
-              child: mkv.Video(
-                controller: _betterPlayerController.videoController,
-                controls: mkv.NoVideoControls,
+            if (_isEmbed)
+              Positioned.fill(
+                child: UrlWebPage(
+                  url: _embedUrl,
+                  embedded: true,
+                  blockAds: true,
+                  tryExtractHls: true,
+                  onHlsExtracted: (hls) {
+                    debugPrint('[Player] 🎯 HLS stream extracted from embed: $hls');
+                    _isEmbed = false;
+                    _betterPlayerController.setDataSource(
+                      hls,
+                      subtitles: _currentSubs,
+                    );
+                    if (mounted) setState(() {});
+                  },
+                ),
+              )
+            else ...[
+              Center(
+                child: mkv.Video(
+                  controller: _betterPlayerController.videoController,
+                  controls: mkv.NoVideoControls,
+                ),
               ),
-            ),
-            StreamBuilder<bool>(
-              stream: _betterPlayerController.player.stream.buffering,
-              builder: (context, snapshot) {
-                if (snapshot.data == true) {
-                  return const Center(
-                    child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                    ),
-                  );
-                }
-                return const SizedBox.shrink();
-              },
-            ),
+              StreamBuilder<bool>(
+                stream: _betterPlayerController.player.stream.buffering,
+                builder: (context, snapshot) {
+                  if (snapshot.data == true) {
+                    return const Center(
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                    );
+                  }
+                  return const SizedBox.shrink();
+                },
+              ),
+            ],
             GlassPlayerControls(
               controller: _betterPlayerController,
               title: widget.mediaType == MediaType.movie

@@ -161,7 +161,6 @@ class CaffeinePlayerController extends ChangeNotifier {
   static const _proxiedDomains = [
     'wfty.st',
     'lb4.wfty.st',
-    'vixsrc.to',
     'vix-content.net',
     'vodvidl.site',
     'vodvid.site',

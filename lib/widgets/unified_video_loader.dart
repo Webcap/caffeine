@@ -258,6 +258,7 @@ class _UnifiedVideoLoaderState extends State<UnifiedVideoLoader> {
               tvMetadata: widget.tvMetadata,
               subtitleStyle: settings.subtitleTextStyle,
               currentProviderCode: successProviderCode,
+              availableProviders: videoProviders,
             );
           },
         ));

@@ -5,13 +5,13 @@ void main() {
   group('ProviderNames', () {
     group('providers', () {
       test('should contain high-performing providers in empirical order', () {
-        final expectedCodes = ['vixsrc', 'coorenlabs', 'vidzee', 'wfs', 'vidfun'];
+        final expectedCodes = ['vixsrc', 'coorenlabs', 'vidzee', 'vidfun'];
         final actualCodes = ProviderNames.providers.map((p) => p.codeName).toList();
         expect(actualCodes, equals(expectedCodes));
       });
 
-      test('should have 5 active providers', () {
-        expect(ProviderNames.providers.length, equals(5));
+      test('should have 4 active providers', () {
+        expect(ProviderNames.providers.length, equals(4));
       });
 
       test('should exclude failing headless browser providers from active list', () {
@@ -24,7 +24,7 @@ void main() {
         final precedence = ProviderNames.defaultPrecedenceString;
         expect(
           precedence,
-          equals('vixsrc-Vixsrc coorenlabs-CoorenLabs vidzee-VidZee wfs-WatchFreeStreams vidfun-VidFun'),
+          equals('vixsrc-Vixsrc coorenlabs-CoorenLabs vidzee-VidZee vidfun-VidFun'),
         );
       });
 
@@ -70,8 +70,6 @@ void main() {
         expect(ProviderNames.disabledCodeNames.contains('vidsrcsu'), isTrue);
         expect(ProviderNames.disabledCodeNames.contains('vixsrc'), isFalse);
         expect(ProviderNames.disabledCodeNames.contains('coorenlabs'), isFalse);
-        expect(ProviderNames.disabledCodeNames.contains('vidzee'), isFalse);
-        expect(ProviderNames.disabledCodeNames.contains('wfs'), isFalse);
         expect(ProviderNames.disabledCodeNames.contains('vidfun'), isFalse);
       });
 

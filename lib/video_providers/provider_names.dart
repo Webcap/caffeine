@@ -4,7 +4,6 @@ class ProviderNames {
     VideoProvider(fullName: 'Vixsrc', codeName: 'vixsrc'),
     VideoProvider(fullName: 'CoorenLabs', codeName: 'coorenlabs'),
     VideoProvider(fullName: 'VidZee', codeName: 'vidzee'),
-    VideoProvider(fullName: 'WatchFreeStreams', codeName: 'wfs'),
     VideoProvider(fullName: 'VidFun', codeName: 'vidfun'),
   ];
 
@@ -17,7 +16,6 @@ class ProviderNames {
     'vixsrc',
     'coorenlabs',
     'vidzee',
-    'wfs',
     'vidfun',
     'vidlink',
     'vidsrcsu',

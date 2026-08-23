@@ -23,7 +23,6 @@ class ProviderLoader {
         case 'vidsrcsu':
         case 'vidfun':
         case 'vixsrc':
-        case 'wfs':
         case 'vidzee':
         case 'flixhq':
         case 'coorenlabs':
@@ -69,7 +68,6 @@ class ProviderLoader {
         case 'vidsrcsu':
         case 'vidfun':
         case 'vixsrc':
-        case 'wfs':
         case 'vidzee':
         case 'flixhq':
         case 'coorenlabs':
@@ -123,29 +121,34 @@ class ProviderLoader {
     debugPrint('[ProviderLoader] $provider: found ${sources.links?.length ?? 0} links');
 
     if (sources.success && sources.links != null && sources.links!.isNotEmpty) {
-      final firstLink = sources.links!.first;
+      final validLinks = sources.links!.where((l) => l.url != null && l.url!.trim().isNotEmpty).toList();
+      if (validLinks.isNotEmpty) {
+        final m3u8Links = validLinks.where((l) =>
+            l.isM3U8 == true || l.url!.toLowerCase().contains('.m3u8')).toList();
+        final selectedLink = m3u8Links.isNotEmpty ? m3u8Links.first : validLinks.first;
 
-      final videoLinks = [
-        RegularVideoLinks(
-          url: firstLink.url,
-          quality: firstLink.quality ?? 'unknown quality',
-          isM3U8: firstLink.isM3U8 ?? firstLink.url?.endsWith('.m3u8') ?? false,
-          headers: firstLink.headers,
-        ),
-      ];
+        final videoLinks = [
+          RegularVideoLinks(
+            url: selectedLink.url,
+            quality: selectedLink.quality ?? 'unknown quality',
+            isM3U8: selectedLink.isM3U8 ?? selectedLink.url?.endsWith('.m3u8') ?? false,
+            headers: selectedLink.headers,
+          ),
+        ];
 
-      final subtitleLinks = firstLink.subtitles
-          ?.map((subtitle) => RegularSubtitleLinks(
-                url: subtitle.file,
-                language: subtitle.label,
-              ))
-          .toList();
+        final subtitleLinks = selectedLink.subtitles
+            ?.map((subtitle) => RegularSubtitleLinks(
+                  url: subtitle.file,
+                  language: subtitle.label,
+                ))
+            .toList();
 
-      return ProviderLoaderResult(
-        success: true,
-        videoLinks: videoLinks,
-        subtitleLinks: subtitleLinks,
-      );
+        return ProviderLoaderResult(
+          success: true,
+          videoLinks: videoLinks,
+          subtitleLinks: subtitleLinks,
+        );
+      }
     }
 
     return ProviderLoaderResult(
@@ -185,29 +188,34 @@ class ProviderLoader {
     );
 
     if (sources.success && sources.links != null && sources.links!.isNotEmpty) {
-      final firstLink = sources.links!.first;
+      final validLinks = sources.links!.where((l) => l.url != null && l.url!.trim().isNotEmpty).toList();
+      if (validLinks.isNotEmpty) {
+        final m3u8Links = validLinks.where((l) =>
+            l.isM3U8 == true || l.url!.toLowerCase().contains('.m3u8')).toList();
+        final selectedLink = m3u8Links.isNotEmpty ? m3u8Links.first : validLinks.first;
 
-      final videoLinks = [
-        RegularVideoLinks(
-          url: firstLink.url,
-          quality: firstLink.quality ?? 'unknown quality',
-          isM3U8: firstLink.isM3U8 ?? firstLink.url?.endsWith('.m3u8') ?? false,
-          headers: firstLink.headers,
-        ),
-      ];
+        final videoLinks = [
+          RegularVideoLinks(
+            url: selectedLink.url,
+            quality: selectedLink.quality ?? 'unknown quality',
+            isM3U8: selectedLink.isM3U8 ?? selectedLink.url?.endsWith('.m3u8') ?? false,
+            headers: selectedLink.headers,
+          ),
+        ];
 
-      final subtitleLinks = firstLink.subtitles
-          ?.map((subtitle) => RegularSubtitleLinks(
-                url: subtitle.file,
-                language: subtitle.label,
-              ))
-          .toList();
+        final subtitleLinks = selectedLink.subtitles
+            ?.map((subtitle) => RegularSubtitleLinks(
+                  url: subtitle.file,
+                  language: subtitle.label,
+                ))
+            .toList();
 
-      return ProviderLoaderResult(
-        success: true,
-        videoLinks: videoLinks,
-        subtitleLinks: subtitleLinks,
-      );
+        return ProviderLoaderResult(
+          success: true,
+          videoLinks: videoLinks,
+          subtitleLinks: subtitleLinks,
+        );
+      }
     }
 
     return ProviderLoaderResult(

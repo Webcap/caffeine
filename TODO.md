@@ -76,24 +76,24 @@
 
 ---
 
-### Task 1.4: Integrate High-Performing Available Alternatives (Vixsrc, CoorenLabs, VidZee, WFS)
+### Task 1.4: Integrate High-Performing Available Alternatives (Vixsrc, CoorenLabs, VidZee)
 * **Target Milestone:** Immediate Patch
 * **Priority:** Critical
-* **Rationale:** Caffeine API backend scrapers for Vixsrc (~200ms latency), CoorenLabs (~700ms latency), VidZee (~1000ms latency), and WatchFreeStreams / WFS (~1300ms latency) demonstrated 100% reliability and sub-second stream resolution in audit testing, but are currently omitted from the mobile application's active provider list.
+* **Rationale:** Caffeine API backend scrapers for Vixsrc (~200ms latency), CoorenLabs (~700ms latency), and VidZee (~1000ms latency) demonstrated high reliability and sub-second stream resolution in audit testing. WatchFreeStreams (`wfs.lol`) has been decommissioned and removed across all platforms.
 
 #### Scope of Work & Affected Components:
 1. **Provider Registry & Precedence:**
    - [x] [`lib/video_providers/provider_names.dart`](file:///c:/Users/cnieves.wmg/Desktop/Projects/reelriot/lib/video_providers/provider_names.dart):
-     - Register `vixsrc` (`Vixsrc`), `coorenlabs` (`CoorenLabs`), `vidzee` (`VidZee`), and `wfs` (`WatchFreeStreams`) in `ProviderNames.providers`.
-     - Update `defaultPrecedenceString` to prioritize `vixsrc` -> `coorenlabs` -> `vidzee` -> `wfs` -> `vidfun`.
+     - Register `vixsrc` (`Vixsrc`), `coorenlabs` (`CoorenLabs`), and `vidzee` (`VidZee`) in `ProviderNames.providers`.
+     - Update `defaultPrecedenceString` to prioritize `vixsrc` -> `coorenlabs` -> `vidzee` -> `vidfun`.
      - Add provider IDs to `checkableCodeNames`.
 
 2. **Provider Loader Route Dispatching:**
    - [x] [`lib/video_providers/provider_loader.dart`](file:///c:/Users/cnieves.wmg/Desktop/Projects/reelriot/lib/video_providers/provider_loader.dart):
-     - Ensure `loadMovieFromProvider()` and `loadTVFromProvider()` switch blocks route `vixsrc`, `coorenlabs`, `vidzee`, and `wfs` through `_loadMovieFlixAPIMulti` and `_loadTVFlixAPIMulti`.
+     - Ensure `loadMovieFromProvider()` and `loadTVFromProvider()` switch blocks route `vixsrc`, `coorenlabs`, and `vidzee` through `_loadMovieFlixAPIMulti` and `_loadTVFlixAPIMulti`.
 
 3. **Status Screen & Test Updates:**
-   - [x] [`lib/screens/common/server_status_screen.dart`](file:///c:/Users/cnieves.wmg/Desktop/Projects/reelriot/lib/screens/common/server_status_screen.dart): Verify health checks resolve correctly for newly added providers.
+   - [x] [`lib/screens/common/server_status_screen.dart`](file:///c:/Users/cnieves.wmg/Desktop/Projects/reelriot/lib/screens/common/server_status_screen.dart): Verify health checks resolve correctly for active providers.
    - [x] [`test/video_providers/provider_names_test.dart`](file:///c:/Users/cnieves.wmg/Desktop/Projects/reelriot/test/video_providers/provider_names_test.dart): Update test expectations for provider list length, order, and checkable names.
 
 ---

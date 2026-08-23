@@ -81,7 +81,6 @@ void main() {
         'vidlink',
         'vidsrcsu',
         'vidfun',
-        'wfs',
         'vidzee',
         'coorenlabs'
       ];
@@ -112,7 +111,6 @@ void main() {
         'vidlink',
         'vidsrcsu',
         'vidfun',
-        'wfs',
         'vidzee',
         'coorenlabs'
       ];
