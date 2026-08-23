@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:reelriot/screens/bookmarks/bookmark_screen.dart';
+import 'package:reelriot/screens/history/history_screen.dart';
 import 'package:reelriot/screens/common/update_screen.dart';
 import 'package:reelriot/utils/app_images.dart';
 import 'package:reelriot/utils/helpers/next_screen.dart';
@@ -75,6 +76,18 @@ class DrawerWidget extends StatelessWidget {
                   onTap: () {
                     Navigator.pop(context);
                     nextScreen(context, const BookmarkScreen());
+                  },
+                ),
+                _DrawerItem(
+                  icon: Icons.history_rounded,
+                  label: tr('watch_history'),
+                  isDark: isDark,
+                  surface: surface,
+                  border: border,
+                  textPrim: textPrim,
+                  onTap: () {
+                    Navigator.pop(context);
+                    nextScreen(context, const HistoryScreen());
                   },
                 ),
                 if (appDep.displayOTTDrawer)
