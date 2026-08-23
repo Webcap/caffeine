@@ -1,6 +1,9 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:reelriot/utils/globals.dart';
 import 'package:reelriot/controller/recently_watched_database_controller.dart';
@@ -626,6 +629,7 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
                 backdropPath: meta.backdropPath ?? '');
         // Fire-and-forget: writes SQLite + Supabase independently of context.
         recentlyWatchedMoviesController.insertMovie(toSave);
+        if (isCompleted) _invalidateWatchStatsCache();
       } else if (widget.tvMetadata != null) {
         final meta = widget.tvMetadata!;
         final RecentEpisode toSave = isCompleted
@@ -653,9 +657,34 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
                 seriesId: meta.tvId ?? 0);
         // Fire-and-forget: writes SQLite + Supabase independently of context.
         recentlyWatchedEpisodeController.insertTV(toSave);
+        if (isCompleted) _invalidateWatchStatsCache();
       }
     } catch (e) {
       debugPrint('[Player] ⚠️ _saveProgressOnExit failed: $e');
+    }
+  }
+
+  /// Clears the client-side SharedPreferences watch stats cache and fires a
+  /// DELETE to the Caffeine API to bust the server-side Redis cache.
+  /// Called only when playback is completed (>90% watched). Fire-and-forget.
+  void _invalidateWatchStatsCache() {
+    try {
+      sharedPrefsSingleton.remove('cached_movie_watch_mins');
+      sharedPrefsSingleton.remove('cached_tv_watch_mins');
+      debugPrint('[Player] Completed: local watch stats cache cleared');
+
+      final uid = Supabase.instance.client.auth.currentUser?.id;
+      if (uid == null) return;
+      final base = caffeineApiUrl.replaceAll(RegExp(r'/+$'), '');
+      final url = Uri.parse('$base/v1/user/$uid/watch-stats/cache');
+      http
+          .delete(url, headers: caffeineApiHeaders)
+          .then((_) => debugPrint('[Player] Server watch stats cache invalidated'))
+          .catchError(
+            (Object e) => debugPrint('[Player] Server cache invalidation failed: $e'),
+          );
+    } catch (e) {
+      debugPrint('[Player] _invalidateWatchStatsCache failed: $e');
     }
   }
 
