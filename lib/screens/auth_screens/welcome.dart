@@ -120,14 +120,18 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             ),
           ),
           SafeArea(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(20, 24, 20, 24),
-              child: ConstrainedBox(
-                constraints: BoxConstraints(minHeight: Get.height - 60),
-                child: IntrinsicHeight(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
+            child: Center(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(20, 24, 20, 24),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minHeight: Get.height - 60,
+                    maxWidth: 480,
+                  ),
+                  child: IntrinsicHeight(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
                       const Spacer(),
                       Center(
                         child: Container(
@@ -365,6 +369,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               ),
             ),
           ),
+        ),
         ],
       ),
     );

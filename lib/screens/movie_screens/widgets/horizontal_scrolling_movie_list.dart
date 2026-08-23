@@ -150,7 +150,8 @@ class HorizontalMovieListItem extends StatelessWidget {
                                           : Colors.black87),
                                   const SizedBox(width: 2),
                                   Text(
-                                    movie.voteAverage!.toStringAsFixed(1),
+                                    (movie.voteAverage ?? 0.0)
+                                        .toStringAsFixed(1),
                                     style: TextStyle(
                                         fontSize: 12,
                                         color: themeMode == "dark" ||

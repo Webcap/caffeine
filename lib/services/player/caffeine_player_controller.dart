@@ -277,23 +277,47 @@ class CaffeinePlayerController extends ChangeNotifier {
       Media(
         playUrl,
         httpHeaders: playHeaders,
+        start: startAt > Duration.zero ? startAt : null,
       ),
-      play: false,
+      play: true,
     );
 
     if (startAt > Duration.zero) {
-      await player.seek(startAt);
+      // In addition to Media(..., start: startAt), perform a seek once the player
+      // is ready/playing to guarantee resumption across all formats & HLS streams.
+      bool seekDone = false;
+      StreamSubscription? posSub;
+      StreamSubscription? durSub;
 
-      StreamSubscription<Duration>? sub;
-      sub = player.stream.duration.listen((d) {
-        if (d > Duration.zero) {
+      void performSeek() {
+        if (seekDone) return;
+        seekDone = true;
+        posSub?.cancel();
+        durSub?.cancel();
+        try {
           player.seek(startAt);
-          sub?.cancel();
+          debugPrint('[PlayerController] ▶️ Resumed at ${startAt.inSeconds}s (${startAt.inMilliseconds}ms)');
+        } catch (e) {
+          debugPrint('[PlayerController] ⚠️ Seek failed: $e');
+        }
+      }
+
+      durSub = player.stream.duration.listen((d) {
+        if (d > Duration.zero) {
+          performSeek();
         }
       });
-    }
 
-    await player.play();
+      posSub = player.stream.position.listen((p) {
+        // If playback started at 0:00 despite startAt, force seek
+        if (p > Duration.zero && p < startAt - const Duration(seconds: 2)) {
+          performSeek();
+        }
+      });
+
+      // Fallback timer
+      Future.delayed(const Duration(milliseconds: 1500), performSeek);
+    }
 
     _emit(CaffeinePlayerEventType.initialized);
   }

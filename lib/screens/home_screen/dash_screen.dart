@@ -461,18 +461,25 @@ class _CinematicTabBar extends StatelessWidget {
       ),
       child: SafeArea(
         top: false,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: List.generate(tabs.length, (i) {
-              return _TabButton(
-                meta: tabs[i],
-                isActive: i == selectedIndex,
-                isDark: isDark,
-                onTap: () => onTabChange(i),
-              );
-            }),
+        child: Align(
+          alignment: Alignment.bottomCenter,
+          heightFactor: 1.0,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 560),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: List.generate(tabs.length, (i) {
+                  return _TabButton(
+                    meta: tabs[i],
+                    isActive: i == selectedIndex,
+                    isDark: isDark,
+                    onTap: () => onTabChange(i),
+                  );
+                }),
+              ),
+            ),
           ),
         ),
       ),

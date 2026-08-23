@@ -1,11 +1,11 @@
 import 'package:reelriot/provider/app_dependency_provider.dart';
-import 'package:reelriot/screens/common/server_status_screen.dart';
 import 'package:reelriot/screens/tv_screens/live_tv_screen.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:reelriot/screens/bookmarks/bookmark_screen.dart';
+import 'package:reelriot/screens/history/history_screen.dart';
 import 'package:reelriot/screens/common/update_screen.dart';
 import 'package:reelriot/utils/app_images.dart';
 import 'package:reelriot/utils/helpers/next_screen.dart';
@@ -78,6 +78,18 @@ class DrawerWidget extends StatelessWidget {
                     nextScreen(context, const BookmarkScreen());
                   },
                 ),
+                _DrawerItem(
+                  icon: Icons.history_rounded,
+                  label: tr('watch_history'),
+                  isDark: isDark,
+                  surface: surface,
+                  border: border,
+                  textPrim: textPrim,
+                  onTap: () {
+                    Navigator.pop(context);
+                    nextScreen(context, const HistoryScreen());
+                  },
+                ),
                 if (appDep.displayOTTDrawer)
                   _DrawerItem(
                     icon: Icons.tv_rounded,
@@ -101,18 +113,6 @@ class DrawerWidget extends StatelessWidget {
                   onTap: () {
                     Navigator.pop(context);
                     nextScreen(context, const UpdateScreen(isForced: false));
-                  },
-                ),
-                _DrawerItem(
-                  icon: Icons.dns_rounded,
-                  label: tr('check_server'),
-                  isDark: isDark,
-                  surface: surface,
-                  border: border,
-                  textPrim: textPrim,
-                  onTap: () {
-                    Navigator.pop(context);
-                    nextScreen(context, const ServerStatusScreen());
                   },
                 ),
                 _DrawerItem(

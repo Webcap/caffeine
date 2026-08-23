@@ -199,7 +199,8 @@ class _TVBookmarkState extends State<TVBookmark> {
                                   ),
                                   const SizedBox(width: 4),
                                   Text(
-                                    tv.voteAverage!.toStringAsFixed(1),
+                                    (tv.voteAverage ?? 0.0)
+                                        .toStringAsFixed(1),
                                     style: const TextStyle(
                                       color: _C.ratingGold,
                                       fontSize: 12,
@@ -434,7 +435,7 @@ class _TVBookmarkState extends State<TVBookmark> {
                                 ),
                                 const SizedBox(width: 4),
                                 Text(
-                                  tv.voteAverage!.toStringAsFixed(1),
+                                  (tv.voteAverage ?? 0.0).toStringAsFixed(1),
                                   style: const TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w600,

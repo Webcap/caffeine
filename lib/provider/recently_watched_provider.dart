@@ -1,3 +1,7 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:reelriot/utils/constant.dart';
+import 'package:reelriot/utils/globals.dart';
 import 'package:reelriot/controller/recently_watched_database_controller.dart';
 import 'package:reelriot/models/recently_watched.dart';
 import 'package:reelriot/models/tv.dart';
@@ -10,10 +14,19 @@ import 'package:reelriot/functions/network.dart';
 import 'package:reelriot/api/endpoints.dart';
 
 class RecentProvider extends ChangeNotifier {
+  RecentProvider() {
+    _loadCachedWatchStats();
+  }
+
   final RecentlyWatchedMoviesController _movieController =
       RecentlyWatchedMoviesController();
   final RecentlyWatchedEpisodeController _episodeController =
       RecentlyWatchedEpisodeController();
+
+  int? _apiMovieWatchTimeMinutes;
+  int? _apiTvWatchTimeMinutes;
+  bool _isLoadingWatchStats = false;
+  bool get isLoadingWatchStats => _isLoadingWatchStats;
 
   List<RecentMovie> _movies = [];
   List<RecentMovie> get movies => _movies;
@@ -50,71 +63,80 @@ class RecentProvider extends ChangeNotifier {
     _language = language;
   }
 
-  /// Fetches cloud watch_history, merges with local (highest progress wins),
+  /// Fetches cloud watch_history from Caffeine API, merges with local (highest progress wins),
   /// replaces local DB, then refreshes. No-op if user not signed in.
   Future<void> syncFromCloud() async {
     final uid = Supabase.instance.client.auth.currentUser?.id;
     if (uid == null) return;
 
     try {
-      final cwRes = await Supabase.instance.client
-          .from('continue_watching_history')
-          .select()
-          .eq('user_id', uid);
+      final base = caffeineApiUrl.replaceAll(RegExp(r'/+$'), '');
+      final url = Uri.parse('$base/v1/user/$uid/history?limit=100');
 
-      final cpRes = await Supabase.instance.client
-          .from('completed_watch_history')
-          .select()
-          .eq('user_id', uid);
+      final res = await http
+          .get(url, headers: caffeineApiHeaders)
+          .timeout(const Duration(seconds: 8));
 
-      final allData = [...cwRes, ...cpRes];
+      if (res.statusCode == 200) {
+        final body = jsonDecode(res.body);
+        if (body['success'] == true && body['history'] != null) {
+          final List<dynamic> history = body['history'];
+          final List<RecentMovie> cloudMovies = [];
+          final List<RecentEpisode> cloudEpisodes = [];
 
-      final List<RecentMovie> cloudMovies = [];
-      final List<RecentEpisode> cloudEpisodes = [];
+          for (var row in history) {
+            final isTv = row['media_type'] == 'tv';
+            final isCompleted = row['completed'] == true;
+            final elapsed = _ensureMs((row['elapsed_ms'] as num?)?.toInt() ?? 0);
+            final remaining = (row['remaining_ms'] as num?)?.toInt() ?? 0;
 
-      for (var row in allData) {
-         final isTv = row['media_type'] == 'tv';
-         final isCompleted = row.containsKey('time_watched_ms');
+            if (isTv) {
+              final seriesId = (row['id'] as num?)?.toInt();
+              final sNum = (row['season_num'] as num?)?.toInt() ?? 1;
+              final eNum = (row['episode_num'] as num?)?.toInt() ?? 1;
+              final epId = seriesId != null
+                  ? (seriesId * 10000 + sNum * 100 + eNum)
+                  : (sNum * 100 + eNum);
 
-         if (isTv) {
-            cloudEpisodes.add(RecentEpisode(
-               id: row['media_id'],
-               seriesId: row['media_id'],
-               seriesName: row['title'],
-               episodeName: row['episode_name'],
-               posterPath: row['poster_path'],
-               seasonNum: row['season_num'],
-               episodeNum: row['episode_num'],
-               elapsed: _ensureMs(isCompleted ? row['time_watched_ms'] : row['elapsed_ms']),
-               remaining: isCompleted ? 0 : (row['duration_ms'] ?? 0) - (row['elapsed_ms'] ?? 0),
-               dateTime: row['updated_at'],
-            ));
-         } else {
-            cloudMovies.add(RecentMovie(
-               id: row['media_id'],
-               title: row['title'],
-               posterPath: row['poster_path'],
-               backdropPath: row['backdrop_path'],
-               releaseYear: null,
-               elapsed: _ensureMs(isCompleted ? row['time_watched_ms'] : row['elapsed_ms']),
-               remaining: isCompleted ? 0 : (row['duration_ms'] ?? 0) - (row['elapsed_ms'] ?? 0),
-               dateTime: row['updated_at'],
-            ));
-         }
+              cloudEpisodes.add(RecentEpisode(
+                id: epId,
+                seriesId: seriesId,
+                seriesName: row['title'],
+                episodeName: row['episode_name'],
+                posterPath: row['poster_path'],
+                seasonNum: sNum,
+                episodeNum: eNum,
+                elapsed: elapsed,
+                remaining: isCompleted ? 0 : remaining,
+                dateTime: row['updated_at'],
+              ));
+            } else {
+              cloudMovies.add(RecentMovie(
+                id: (row['id'] as num?)?.toInt(),
+                title: row['title'],
+                posterPath: row['poster_path'],
+                backdropPath: row['backdrop_path'],
+                releaseYear: null,
+                elapsed: elapsed,
+                remaining: isCompleted ? 0 : remaining,
+                dateTime: row['updated_at'],
+              ));
+            }
+          }
+
+          final localMovies = await _movieController.getRecentMovieList();
+          final localEpisodes = await _episodeController.getEpisodeList();
+
+          final mergedMovies = _mergeMovies(cloudMovies, localMovies);
+          final mergedEpisodes = _mergeEpisodes(cloudEpisodes, localEpisodes);
+
+          await _movieController.replaceAllMovies(mergedMovies);
+          await _episodeController.replaceAllEpisodes(mergedEpisodes);
+        }
       }
-
-      final localMovies = await _movieController.getRecentMovieList();
-      final localEpisodes = await _episodeController.getEpisodeList();
-
-      final mergedMovies = _mergeMovies(cloudMovies, localMovies);
-      final mergedEpisodes = _mergeEpisodes(cloudEpisodes, localEpisodes);
-
-      await _movieController.replaceAllMovies(mergedMovies);
-      await _episodeController.replaceAllEpisodes(mergedEpisodes);
-
-      await _movieController.setWatchHistoryCollection();
-      await _episodeController.setWatchHistoryCollection();
-    } catch (_) {}
+    } catch (e) {
+      debugPrint('[WatchHistory] ❌ syncFromCloud API error: $e');
+    }
 
     await fetchMovies();
     await fetchEpisodes();
@@ -213,6 +235,7 @@ class RecentProvider extends ChangeNotifier {
   Future<void> deleteMovie(int id) async {
     await _movieController.deleteMovie(id);
     await fetchMovies();
+    await invalidateAndRefreshWatchStats();
   }
 
   Future<void> markMovieAsCompleted(RecentMovie movie) async {
@@ -226,7 +249,11 @@ class RecentProvider extends ChangeNotifier {
       remaining: 0,
       dateTime: DateTime.now().toIso8601String(),
     );
+    if ((updated.elapsed ?? 0) == 0) {
+      updated.elapsed = 7200000; // default 2hr if no progress
+    }
     await updateMovie(updated, movie.id!);
+    await invalidateAndRefreshWatchStats();
   }
 
   /// Episode
@@ -402,6 +429,7 @@ class RecentProvider extends ChangeNotifier {
   Future<void> deleteEpisode(int id, int episodeNum, int seasonNum) async {
     await _episodeController.deleteTV(id, episodeNum, seasonNum);
     await fetchEpisodes();
+    await invalidateAndRefreshWatchStats();
   }
 
   Future<void> markEpisodeAsCompleted(RecentEpisode episode) async {
@@ -417,11 +445,12 @@ class RecentProvider extends ChangeNotifier {
       remaining: 0,
       dateTime: DateTime.now().toIso8601String(),
     );
-    if (updated.elapsed == 0) {
+    if ((updated.elapsed ?? 0) == 0) {
       updated.elapsed = 3600000; // default 1hr if no progress
     }
     await updateEpisode(
         updated, episode.id!, episode.episodeNum!, episode.seasonNum!);
+    await invalidateAndRefreshWatchStats();
   }
 
   Future<void> markUntilEpisodeAsCompleted({
@@ -451,8 +480,80 @@ class RecentProvider extends ChangeNotifier {
       }
     }
     await fetchEpisodes();
+    await invalidateAndRefreshWatchStats();
   }
 
+  /// Invalidates both local and server cache, then fetches fresh stats from the API
+  Future<void> invalidateAndRefreshWatchStats() async {
+    try {
+      sharedPrefsSingleton.remove('cached_movie_watch_mins');
+      sharedPrefsSingleton.remove('cached_tv_watch_mins');
+
+      final uid = Supabase.instance.client.auth.currentUser?.id;
+      if (uid != null) {
+        final base = caffeineApiUrl.replaceAll(RegExp(r'/+$'), '');
+        final url = Uri.parse('$base/v1/user/$uid/watch-stats/cache');
+        await http
+            .delete(url, headers: caffeineApiHeaders)
+            .timeout(const Duration(seconds: 4))
+            .catchError((_) => http.Response('', 500));
+      }
+    } catch (e) {
+      debugPrint('[RecentProvider] ⚠️ invalidateAndRefreshWatchStats error: $e');
+    }
+
+    // Immediately fetch updated watch stats and notify listeners
+    await fetchWatchStatsFromApi();
+  }
+
+
+  void _loadCachedWatchStats() {
+    try {
+      _apiMovieWatchTimeMinutes =
+          sharedPrefsSingleton.getInt('cached_movie_watch_mins');
+      _apiTvWatchTimeMinutes =
+          sharedPrefsSingleton.getInt('cached_tv_watch_mins');
+    } catch (_) {}
+  }
+
+  /// Fetches server-side watch stats for completed items from Caffeine API
+  Future<void> fetchWatchStatsFromApi() async {
+    final uid = Supabase.instance.client.auth.currentUser?.id;
+    if (uid == null) return;
+
+    final base = caffeineApiUrl.replaceAll(RegExp(r'/+$'), '');
+    final url = Uri.parse('$base/v1/user/$uid/watch-stats?days=14');
+
+    try {
+      _isLoadingWatchStats = true;
+      final response = await http
+          .get(url, headers: caffeineApiHeaders)
+          .timeout(const Duration(seconds: 8));
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['success'] == true && data['stats'] != null) {
+          final stats = data['stats'];
+          _apiMovieWatchTimeMinutes =
+              (stats['movies']?['minutes'] as num?)?.toInt() ?? 0;
+          _apiTvWatchTimeMinutes =
+              (stats['tv']?['minutes'] as num?)?.toInt() ?? 0;
+
+          // Cache on client
+          await sharedPrefsSingleton.setInt(
+              'cached_movie_watch_mins', _apiMovieWatchTimeMinutes!);
+          await sharedPrefsSingleton.setInt(
+              'cached_tv_watch_mins', _apiTvWatchTimeMinutes!);
+
+          notifyListeners();
+        }
+      }
+    } catch (_) {
+      // Keep cached or fallback to local
+    } finally {
+      _isLoadingWatchStats = false;
+    }
+  }
 
   static bool _isWithinLast2Weeks(String? dateTimeStr) {
     if (dateTimeStr == null || dateTimeStr.isEmpty) return false;
@@ -463,11 +564,6 @@ class RecentProvider extends ChangeNotifier {
 
   static int _ensureMs(int? value) {
     if (value == null) return 0;
-    // Heuristic: if value is > 0 and < 50,000, 
-    // it's likely "seconds" for any meaningful movie/episode watch session.
-    // 50,000 ms is only 50 seconds. 50,000 seconds is 13.8 hours.
-    // It's much more likely a legacy 13-hour watch session (or just a 2-hour one like 7200)
-    // than a 50-millisecond one.
     if (value > 0 && value < 50000) {
       return value * 1000;
     }
@@ -487,20 +583,28 @@ class RecentProvider extends ChangeNotifier {
   }
 
   /// Watch time (minutes) in last 2 weeks for movies.
+  /// Strictly counts completed items (remaining == 0).
   int get movieWatchTimeMinutesLast2Weeks {
+    if (_apiMovieWatchTimeMinutes != null) return _apiMovieWatchTimeMinutes!;
     int total = 0;
     for (final m in _movies) {
       if (!_isWithinLast2Weeks(m.dateTime)) continue;
+      // Only count completed movies
+      if (m.remaining != 0) continue;
       total += _ensureMs(m.elapsed);
     }
     return total ~/ 60000;
   }
 
   /// Watch time (minutes) in last 2 weeks for TV episodes.
+  /// Strictly counts completed items (remaining == 0).
   int get tvWatchTimeMinutesLast2Weeks {
+    if (_apiTvWatchTimeMinutes != null) return _apiTvWatchTimeMinutes!;
     int total = 0;
     for (final e in _episodes) {
       if (!_isWithinLast2Weeks(e.dateTime)) continue;
+      // Only count completed episodes
+      if (e.remaining != 0) continue;
       total += _ensureMs(e.elapsed);
     }
     return total ~/ 60000;

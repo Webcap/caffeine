@@ -77,7 +77,10 @@ class _ProfilePageState extends State<ProfilePage> {
       final appDep = Provider.of<AppDependencyProvider>(context, listen: false);
       await refreshConfig(appDep);
       if (!mounted) return;
-      await Provider.of<RecentProvider>(context, listen: false).syncFromCloud();
+      final recentPrv = Provider.of<RecentProvider>(context, listen: false);
+      await recentPrv.syncFromCloud();
+      if (!mounted) return;
+      await recentPrv.fetchWatchStatsFromApi();
     });
   }
 

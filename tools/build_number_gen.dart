@@ -91,12 +91,14 @@ void main(List<String> args) {
     newBuildNumber = _getGitCommitCount() ?? (currentBuildNumber + 1);
   } else if (useTimestamp) {
     final now = DateTime.now();
-    final yy = (now.year % 100).toString().padLeft(2, '0');
+    // Android versionCode limit is 2,100,000,000 (signed 32-bit int).
+    // Using single-digit year (e.g. 6 for 2026) -> 6MMddHHmm (e.g. 608231355) fits safely within 32-bit limit.
+    final y = (now.year % 10).toString();
     final mm = now.month.toString().padLeft(2, '0');
     final dd = now.day.toString().padLeft(2, '0');
     final hh = now.hour.toString().padLeft(2, '0');
     final min = now.minute.toString().padLeft(2, '0');
-    newBuildNumber = int.tryParse('$yy$mm$dd$hh$min') ?? (currentBuildNumber + 1);
+    newBuildNumber = int.tryParse('$y$mm$dd$hh$min') ?? (currentBuildNumber + 1);
   } else {
     newBuildNumber = currentBuildNumber + 1;
   }

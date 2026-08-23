@@ -1,6 +1,9 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:reelriot/utils/globals.dart';
 import 'package:reelriot/controller/recently_watched_database_controller.dart';
@@ -573,22 +576,123 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
     }
   }
 
-  @override
-  void dispose() {
-    // Save progress before disposing
-    if (_betterPlayerController.isVideoInitialized() == true || _isEmbed) {
-      final elapsed = _isEmbed
+  /// Captures playback position synchronously, then writes directly to the
+  /// local SQLite DB and Supabase without relying on context or Provider.
+  /// Safe to call from dispose() because it doesn't use BuildContext.
+  void _saveProgressOnExit() {
+    try {
+      // Capture all values synchronously BEFORE disposing the player.
+      final bool initialized = _betterPlayerController.isVideoInitialized();
+      if (!initialized && !_isEmbed) return;
+
+      final int elapsed = _isEmbed
           ? ((widget.mediaType == MediaType.movie
                   ? (widget.movieMetadata?.elapsed ?? 0)
                   : (widget.tvMetadata?.elapsed ?? 0)) +
               playbackDurationInSeconds * 1000)
           : _betterPlayerController.player.state.position.inMilliseconds;
-      if (widget.mediaType == MediaType.movie) {
-        insertRecentMovieData(manualElapsed: elapsed);
-      } else {
-        insertRecentEpisodeData(manualElapsed: elapsed);
+
+      // Don't save if we barely started (< 3s)
+      if (elapsed < 3000 && playbackDurationInSeconds < 3) return;
+
+      final int effectiveDuration = duration > 0
+          ? duration
+          : (widget.mediaType == MediaType.movie
+              ? elapsed + 7200000   // 2h fallback for movies
+              : elapsed + 2700000); // 45m fallback for episodes
+
+      final int remaining = (effectiveDuration - elapsed).clamp(0, effectiveDuration);
+      final double percentage = effectiveDuration > 0 ? (elapsed / effectiveDuration) * 100 : 0;
+      final String dt = DateTime.now().toString();
+      final bool isCompleted = percentage > 90;
+
+      if (widget.mediaType == MediaType.movie && widget.movieMetadata != null) {
+        final meta = widget.movieMetadata!;
+        final RecentMovie toSave = isCompleted
+            ? RecentMovie(
+                dateTime: dt,
+                elapsed: effectiveDuration,
+                id: meta.movieId ?? 0,
+                posterPath: meta.posterPath ?? '',
+                releaseYear: meta.releaseYear ?? 0,
+                remaining: 0,
+                title: meta.movieName ?? '',
+                backdropPath: meta.backdropPath ?? '')
+            : RecentMovie(
+                dateTime: dt,
+                elapsed: elapsed,
+                id: meta.movieId ?? 0,
+                posterPath: meta.posterPath ?? '',
+                releaseYear: meta.releaseYear ?? 0,
+                remaining: remaining,
+                title: meta.movieName ?? '',
+                backdropPath: meta.backdropPath ?? '');
+        // Fire-and-forget: writes SQLite + Supabase independently of context.
+        recentlyWatchedMoviesController.insertMovie(toSave);
+        if (isCompleted) _invalidateWatchStatsCache();
+      } else if (widget.tvMetadata != null) {
+        final meta = widget.tvMetadata!;
+        final RecentEpisode toSave = isCompleted
+            ? RecentEpisode(
+                dateTime: dt,
+                elapsed: effectiveDuration,
+                id: meta.episodeId ?? 0,
+                posterPath: meta.posterPath ?? '',
+                remaining: 0,
+                seriesName: meta.seriesName ?? '',
+                episodeName: meta.episodeName ?? '',
+                episodeNum: meta.episodeNumber ?? 0,
+                seasonNum: meta.seasonNumber ?? 0,
+                seriesId: meta.tvId ?? 0)
+            : RecentEpisode(
+                dateTime: dt,
+                elapsed: elapsed,
+                id: meta.episodeId ?? 0,
+                posterPath: meta.posterPath ?? '',
+                remaining: remaining,
+                seriesName: meta.seriesName ?? '',
+                episodeName: meta.episodeName ?? '',
+                episodeNum: meta.episodeNumber ?? 0,
+                seasonNum: meta.seasonNumber ?? 0,
+                seriesId: meta.tvId ?? 0);
+        // Fire-and-forget: writes SQLite + Supabase independently of context.
+        recentlyWatchedEpisodeController.insertTV(toSave);
+        if (isCompleted) _invalidateWatchStatsCache();
       }
+    } catch (e) {
+      debugPrint('[Player] ⚠️ _saveProgressOnExit failed: $e');
     }
+  }
+
+  /// Clears the client-side SharedPreferences watch stats cache and fires a
+  /// DELETE to the Caffeine API to bust the server-side Redis cache.
+  /// Called only when playback is completed (>90% watched). Fire-and-forget.
+  void _invalidateWatchStatsCache() {
+    try {
+      sharedPrefsSingleton.remove('cached_movie_watch_mins');
+      sharedPrefsSingleton.remove('cached_tv_watch_mins');
+      debugPrint('[Player] Completed: local watch stats cache cleared');
+
+      final uid = Supabase.instance.client.auth.currentUser?.id;
+      if (uid == null) return;
+      final base = caffeineApiUrl.replaceAll(RegExp(r'/+$'), '');
+      final url = Uri.parse('$base/v1/user/$uid/watch-stats/cache');
+      http
+          .delete(url, headers: caffeineApiHeaders)
+          .then((_) => debugPrint('[Player] Server watch stats cache invalidated'))
+          .catchError(
+            (Object e) => debugPrint('[Player] Server cache invalidation failed: $e'),
+          );
+    } catch (e) {
+      debugPrint('[Player] _invalidateWatchStatsCache failed: $e');
+    }
+  }
+
+  @override
+  void dispose() {
+    // Capture & persist position BEFORE disposing the player controller.
+    // Must be synchronous — dispose() cannot await.
+    _saveProgressOnExit();
 
     _durationTimer?.cancel();
     _resetTimer?.cancel();

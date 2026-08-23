@@ -1,6 +1,9 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
 import 'package:reelriot/models/recently_watched.dart';
+import 'package:reelriot/utils/constant.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -84,13 +87,23 @@ class RecentlyWatchedMoviesController {
   Future<void> removeMovieFromCloud(int movieId) async {
     if (uid == null) return;
     try {
-      await _supabase.from('continue_watching_history')
-            .delete()
-            .eq('user_id', uid!)
-            .eq('media_type', 'movie')
-            .eq('media_id', movieId);
+      final base = caffeineApiUrl.replaceAll(RegExp(r'/+$'), '');
+      final url = Uri.parse('$base/v1/user/$uid/history');
+      await http
+          .delete(
+            url,
+            headers: {
+              ...caffeineApiHeaders,
+              'Content-Type': 'application/json',
+            },
+            body: jsonEncode({
+              'media_type': 'movie',
+              'media_id': movieId,
+            }),
+          )
+          .timeout(const Duration(seconds: 6));
     } catch (e) {
-      debugPrint('[WatchHistory] ❌ Supabase Error: $e');
+      debugPrint('[WatchHistory] ❌ API Delete Error: $e');
     }
   }
 
@@ -123,94 +136,43 @@ class RecentlyWatchedMoviesController {
   }
 
   GoTrueClient get _auth => Supabase.instance.client.auth;
-  SupabaseClient get _supabase => Supabase.instance.client;
 
-  /// Upserts movie by id (replaces existing, no duplicates).
+  /// Upserts movie by id (replaces existing, no duplicates) via Caffeine API.
   Future<void> addWatchedMovietoFirebase(RecentMovie rMovie) async {
     if (uid == null) return;
     try {
       final elapsed = rMovie.elapsed ?? 0;
       final remaining = rMovie.remaining ?? 0;
       final total = elapsed + remaining;
-      final isFinished = total > 0 && (elapsed / total) >= 0.9;
-      
-      if (isFinished) {
-        // Only accumulate if we're moving from continue_watching to completed
-        // or if it was NOT already considered completed in this session.
-        final existingCompleted = await _supabase
-            .from('completed_watch_history')
-            .select('time_watched_ms, times_watched')
-            .eq('user_id', uid!)
-            .eq('media_id', rMovie.id!)
-            .eq('media_type', 'movie')
-            .maybeSingle();
+      final isFinished =
+          remaining == 0 && elapsed > 0 || (total > 0 && (elapsed / total) >= 0.9);
 
-        // Check if it's currently in continue_watching
-        final continueWatching = await _supabase
-            .from('continue_watching_history')
-            .select()
-            .eq('user_id', uid!)
-            .eq('media_id', rMovie.id!)
-            .eq('media_type', 'movie')
-            .maybeSingle();
+      final base = caffeineApiUrl.replaceAll(RegExp(r'/+$'), '');
+      final url = Uri.parse('$base/v1/user/$uid/history');
 
-        if (continueWatching != null || existingCompleted == null) {
-          // New completion or first time completion
-          int prevTimeWatchedMs = existingCompleted?['time_watched_ms'] ?? 0;
-          int timesWatched = existingCompleted?['times_watched'] ?? 0;
+      final payload = {
+        'media_type': 'movie',
+        'media_id': rMovie.id,
+        'title': rMovie.title,
+        'poster_path': rMovie.posterPath,
+        'backdrop_path': rMovie.backdropPath,
+        'elapsed_ms': elapsed,
+        'duration_ms': total,
+        'completed': isFinished,
+      };
 
-          final completedData = {
-            'user_id': uid!,
-            'media_type': 'movie',
-            'media_id': rMovie.id,
-            'title': rMovie.title,
-            'poster_path': rMovie.posterPath,
-            'backdrop_path': rMovie.backdropPath,
-            'updated_at': DateTime.now().toIso8601String(),
-            'season_num': null,
-            'episode_num': null,
-            'time_watched_ms': prevTimeWatchedMs + elapsed,
-            'times_watched': timesWatched + 1,
-          };
-
-          await _supabase.from('completed_watch_history').upsert(completedData,
-              onConflict: 'user_id,media_id,season_num,episode_num');
-
-          // Delete from continue watching
-          await _supabase
-              .from('continue_watching_history')
-              .delete()
-              .eq('user_id', uid!)
-              .eq('media_type', 'movie')
-              .eq('media_id', rMovie.id as Object);
-        } else {
-          // Already completed, just update the timestamp if needed
-          await _supabase.from('completed_watch_history').update({
-            'updated_at': DateTime.now().toIso8601String(),
-          }).eq('user_id', uid!)
-            .eq('media_id', rMovie.id!)
-            .eq('media_type', 'movie');
-        }
-      } else {
-        // For continue watching, standard upsert
-        final continueData = {
-          'user_id': uid!,
-          'media_type': 'movie',
-          'media_id': rMovie.id,
-          'title': rMovie.title,
-          'poster_path': rMovie.posterPath,
-          'backdrop_path': rMovie.backdropPath,
-          'updated_at': DateTime.now().toIso8601String(),
-          'season_num': null,
-          'episode_num': null,
-          'elapsed_ms': elapsed,
-          'duration_ms': total,
-        };
-        await _supabase.from('continue_watching_history').upsert(continueData,
-            onConflict: 'user_id,media_id,season_num,episode_num');
-      }
+      await http
+          .post(
+            url,
+            headers: {
+              ...caffeineApiHeaders,
+              'Content-Type': 'application/json',
+            },
+            body: jsonEncode(payload),
+          )
+          .timeout(const Duration(seconds: 6));
     } catch (e) {
-      debugPrint('[WatchHistory] ❌ Supabase Error: $e');
+      debugPrint('[WatchHistory] ❌ API Sync Error: $e');
     }
   }
 
@@ -231,7 +193,11 @@ class RecentlyWatchedMoviesController {
     final db = await database;
     await db.delete(tableName);
     for (final m in movies) {
-      await db.insert(tableName, m.toMap());
+      await db.insert(
+        tableName,
+        m.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
     }
   }
 }
@@ -255,7 +221,6 @@ class RecentlyWatchedEpisodeController {
   String? get uid => _auth.currentUser?.id;
 
   GoTrueClient get _auth => Supabase.instance.client.auth;
-  SupabaseClient get _supabase => Supabase.instance.client;
 
   factory RecentlyWatchedEpisodeController() {
     _recentlyWatchedEpisodeController ??=
@@ -326,15 +291,25 @@ class RecentlyWatchedEpisodeController {
       int epId, int episodeNum, int seasonNum) async {
     if (uid == null) return;
     try {
-      await _supabase.from('continue_watching_history')
-            .delete()
-            .eq('user_id', uid!)
-            .eq('media_type', 'tv')
-            .eq('media_id', epId)
-            .eq('season_num', seasonNum)
-            .eq('episode_num', episodeNum);
+      final base = caffeineApiUrl.replaceAll(RegExp(r'/+$'), '');
+      final url = Uri.parse('$base/v1/user/$uid/history');
+      await http
+          .delete(
+            url,
+            headers: {
+              ...caffeineApiHeaders,
+              'Content-Type': 'application/json',
+            },
+            body: jsonEncode({
+              'media_type': 'tv',
+              'media_id': epId,
+              'season_num': seasonNum,
+              'episode_num': episodeNum,
+            }),
+          )
+          .timeout(const Duration(seconds: 6));
     } catch (e) {
-      debugPrint('[WatchHistory] ❌ Supabase Error: $e');
+      debugPrint('[WatchHistory] ❌ API Delete Error: $e');
     }
   }
 
@@ -369,100 +344,45 @@ class RecentlyWatchedEpisodeController {
     return true;
   }
 
-  /// Upserts episode by id (replaces existing, no duplicates).
+  /// Upserts episode by id (replaces existing, no duplicates) via Caffeine API.
   Future<void> addWatchedTVtoFirebase(RecentEpisode rEpisode) async {
     if (uid == null) return;
     try {
       final elapsed = rEpisode.elapsed ?? 0;
       final remaining = rEpisode.remaining ?? 0;
       final total = elapsed + remaining;
-      final isFinished = total > 0 && (elapsed / total) >= 0.9;
+      final isFinished =
+          remaining == 0 && elapsed > 0 || (total > 0 && (elapsed / total) >= 0.9);
 
-      if (isFinished) {
-        // Only accumulate if we're moving from continue_watching to completed
-        // or if it was NOT already considered completed in this session.
-        final existingCompleted = await _supabase
-            .from('completed_watch_history')
-            .select('time_watched_ms, times_watched')
-            .eq('user_id', uid!)
-            .eq('media_id', rEpisode.seriesId ?? rEpisode.id!)
-            .eq('media_type', 'tv')
-            .eq('season_num', rEpisode.seasonNum!)
-            .eq('episode_num', rEpisode.episodeNum!)
-            .maybeSingle();
+      final base = caffeineApiUrl.replaceAll(RegExp(r'/+$'), '');
+      final url = Uri.parse('$base/v1/user/$uid/history');
 
-        // Check if it's currently in continue_watching
-        final continueWatching = await _supabase
-            .from('continue_watching_history')
-            .select()
-            .eq('user_id', uid!)
-            .eq('media_id', rEpisode.seriesId ?? rEpisode.id!)
-            .eq('media_type', 'tv')
-            .eq('season_num', rEpisode.seasonNum!)
-            .eq('episode_num', rEpisode.episodeNum!)
-            .maybeSingle();
+      final payload = {
+        'media_type': 'tv',
+        'media_id': rEpisode.seriesId ?? rEpisode.id,
+        'season_num': rEpisode.seasonNum,
+        'episode_num': rEpisode.episodeNum,
+        'title': rEpisode.seriesName,
+        'episode_name': rEpisode.episodeName,
+        'poster_path': rEpisode.posterPath,
+        'backdrop_path': rEpisode.posterPath,
+        'elapsed_ms': elapsed,
+        'duration_ms': total,
+        'completed': isFinished,
+      };
 
-        if (continueWatching != null || existingCompleted == null) {
-          int prevTimeWatchedMs = existingCompleted?['time_watched_ms'] ?? 0;
-          int timesWatched = existingCompleted?['times_watched'] ?? 0;
-
-          final completedData = {
-            'user_id': uid!,
-            'media_type': 'tv',
-            'media_id': rEpisode.seriesId ?? rEpisode.id,
-            'season_num': rEpisode.seasonNum,
-            'episode_num': rEpisode.episodeNum,
-            'title': rEpisode.seriesName,
-            'poster_path': rEpisode.posterPath,
-            'backdrop_path': rEpisode.posterPath, // fallback
-            'updated_at': DateTime.now().toIso8601String(),
-            'time_watched_ms': prevTimeWatchedMs + elapsed,
-            'times_watched': timesWatched + 1,
-          };
-
-          await _supabase.from('completed_watch_history').upsert(completedData,
-              onConflict: 'user_id,media_id,season_num,episode_num');
-
-          // Delete from continue watching
-          await _supabase
-              .from('continue_watching_history')
-              .delete()
-              .eq('user_id', uid!)
-              .eq('media_type', 'tv')
-              .eq('media_id', rEpisode.seriesId ?? rEpisode.id as Object)
-              .eq('season_num', rEpisode.seasonNum as Object)
-              .eq('episode_num', rEpisode.episodeNum as Object);
-        } else {
-          // Already completed, just update the timestamp
-          await _supabase.from('completed_watch_history').update({
-            'updated_at': DateTime.now().toIso8601String(),
-          }).eq('user_id', uid!)
-            .eq('media_id', rEpisode.seriesId ?? rEpisode.id!)
-            .eq('media_type', 'tv')
-            .eq('season_num', rEpisode.seasonNum!)
-            .eq('episode_num', rEpisode.episodeNum!);
-        }
-      } else {
-        // For continue watching, standard upsert
-        final continueData = {
-          'user_id': uid!,
-          'media_type': 'tv',
-          'media_id': rEpisode.seriesId ?? rEpisode.id,
-          'season_num': rEpisode.seasonNum,
-          'episode_num': rEpisode.episodeNum,
-          'title': rEpisode.seriesName,
-          'episode_name': rEpisode.episodeName,
-          'poster_path': rEpisode.posterPath,
-          'backdrop_path': rEpisode.posterPath, // fallback
-          'updated_at': DateTime.now().toIso8601String(),
-          'elapsed_ms': elapsed,
-          'duration_ms': total,
-        };
-        await _supabase.from('continue_watching_history').upsert(continueData,
-            onConflict: 'user_id,media_id,season_num,episode_num');
-      }
+      await http
+          .post(
+            url,
+            headers: {
+              ...caffeineApiHeaders,
+              'Content-Type': 'application/json',
+            },
+            body: jsonEncode(payload),
+          )
+          .timeout(const Duration(seconds: 6));
     } catch (e) {
-      debugPrint('[WatchHistory] ❌ Supabase Error: $e');
+      debugPrint('[WatchHistory] ❌ API Sync Error: $e');
     }
   }
 
@@ -483,7 +403,11 @@ class RecentlyWatchedEpisodeController {
     final db = await database;
     await db.delete(tableName);
     for (final e in episodes) {
-      await db.insert(tableName, e.toMap());
+      await db.insert(
+        tableName,
+        e.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
     }
   }
 }

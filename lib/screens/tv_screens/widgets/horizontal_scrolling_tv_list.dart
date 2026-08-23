@@ -139,7 +139,7 @@ class HorizontalTVListItem extends StatelessWidget {
                                 const Icon(
                                   Icons.star_rounded,
                                 ),
-                                Text(tv.voteAverage!.toStringAsFixed(1))
+                                Text((tv.voteAverage ?? 0.0).toStringAsFixed(1))
                               ],
                             ),
                           ),

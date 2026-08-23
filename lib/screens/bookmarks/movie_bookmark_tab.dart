@@ -208,7 +208,8 @@ class _MovieBookmarkState extends State<MovieBookmark> {
                                   ),
                                   const SizedBox(width: 4),
                                   Text(
-                                    movie.voteAverage!.toStringAsFixed(1),
+                                    (movie.voteAverage ?? 0.0)
+                                        .toStringAsFixed(1),
                                     style: const TextStyle(
                                       color: _C.ratingGold,
                                       fontSize: 12,
@@ -442,7 +443,7 @@ class _MovieBookmarkState extends State<MovieBookmark> {
                                 ),
                                 const SizedBox(width: 4),
                                 Text(
-                                  movie.voteAverage!.toStringAsFixed(1),
+                                  (movie.voteAverage ?? 0.0).toStringAsFixed(1),
                                   style: const TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w600,
