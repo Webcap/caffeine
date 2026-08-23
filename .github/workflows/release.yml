@@ -1,22 +1,14 @@
 name: ReelRiot Mobile Release Pipeline
 
 on:
-  push:
-    tags:
-      - 'v*'
-    branches:
-      - main
-      - production
-      - development
   workflow_dispatch:
     inputs:
       flavor:
-        description: 'Product flavor (auto uses branch: development->dev, main/prod->prod)'
+        description: 'Product flavor to build'
         required: true
-        default: 'auto'
+        default: 'prod'
         type: choice
         options:
-          - 'auto'
           - 'prod'
           - 'dev'
       build_target:
@@ -103,7 +95,7 @@ jobs:
     needs: quality-gate
     runs-on: ubuntu-latest
     env:
-      BUILD_FLAVOR: ${{ (inputs.flavor == 'prod' && 'prod') || (inputs.flavor == 'dev' && 'dev') || (github.ref_name == 'development' && 'dev') || 'prod' }}
+      BUILD_FLAVOR: ${{ inputs.flavor || 'prod' }}
       BUILD_TARGET: ${{ inputs.build_target || 'all' }}
     steps:
       - name: Checkout Source Code
@@ -243,7 +235,7 @@ jobs:
           if-no-files-found: error
 
       - name: Publish GitHub Release Page
-        if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch' || github.ref_name == 'main' || github.ref_name == 'production' || github.ref_name == 'development'
+        if: github.event_name == 'workflow_dispatch'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.organize_artifacts.outputs.TAG_NAME }}
@@ -255,7 +247,7 @@ jobs:
           prerelease: ${{ env.BUILD_FLAVOR == 'dev' }}
 
       - name: Sync Release to ReelRiot Update Center
-        if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch' || github.ref_name == 'main' || github.ref_name == 'production' || github.ref_name == 'development'
+        if: github.event_name == 'workflow_dispatch'
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}

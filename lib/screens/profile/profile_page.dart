@@ -61,12 +61,14 @@ class _ProfilePageState extends State<ProfilePage> {
   void initState() {
     super.initState();
     _initProfileStream();
+    getData();
     
     // Auth listener for basic state (login/logout)
     _authSubscription = _auth.onAuthStateChange.listen((data) {
       if (data.event == AuthChangeEvent.signedIn || 
           data.event == AuthChangeEvent.signedOut) {
         _initProfileStream();
+        getData();
       }
     });
 
@@ -101,10 +103,15 @@ class _ProfilePageState extends State<ProfilePage> {
           .map((data) {
             if (data.isNotEmpty) {
               debugPrint('[Avatar Sync] 🟢 Received real-time update: profile_id=${data.first['profile_id']}');
+              profileData = data.first;
               return data.first;
             }
             debugPrint('[Avatar Sync] ⚠️ Received empty profile update');
-            return null;
+            return profileData;
+          })
+          .handleError((error) {
+            debugPrint('[Avatar Sync] ⚠️ Stream error: $error');
+            return profileData;
           });
     });
   }
@@ -113,18 +120,23 @@ class _ProfilePageState extends State<ProfilePage> {
   Future<void> getData() async {
     final user = _auth.currentUser;
     if (user != null && !user.isAnonymous) {
-      final res = await _supabase.from('profiles').select().eq('id', user.id).limit(1);
-      if (res.isNotEmpty && context.mounted) {
-        final data = res[0];
-        setState(() {
-          if (data['joined_at'] != null) {
-            try {
-              final dt = DateTime.parse(data['joined_at'].toString());
-              month = DateFormat('MMMM').format(DateTime(0, dt.month));
-              year = dt.year;
-            } catch (_) {}
-          }
-        });
+      try {
+        final res = await _supabase.from('profiles').select().eq('id', user.id).limit(1);
+        if (res.isNotEmpty && mounted) {
+          final data = res[0];
+          setState(() {
+            profileData = data;
+            if (data['joined_at'] != null) {
+              try {
+                final dt = DateTime.parse(data['joined_at'].toString());
+                month = DateFormat('MMMM').format(DateTime(0, dt.month));
+                year = dt.year;
+              } catch (_) {}
+            }
+          });
+        }
+      } catch (e) {
+        debugPrint('[ProfilePage] getData failed: $e');
       }
     }
   }
@@ -233,15 +245,14 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           );
         }
-        final data = snapshot.data ?? profileData;
-        if (data == null) {
-          return Scaffold(
-            backgroundColor: bg,
-            body: Center(
-                child: Text(tr('error_occured'),
-                    style: TextStyle(color: textPrim))),
-          );
-        }
+        final data = snapshot.data ??
+            profileData ??
+            <String, dynamic>{
+              'name': sp.name ?? 'ReelRiot User',
+              'username': sp.name ?? 'ReelRiot User',
+              'profile_id': sp.profileId ?? '0',
+              'image_url': sp.imageUrl ?? '',
+            };
 
         final moviesMin = recent.movieWatchTimeMinutesLast2Weeks;
         final tvMin = recent.tvWatchTimeMinutesLast2Weeks;
