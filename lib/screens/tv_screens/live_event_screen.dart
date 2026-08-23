@@ -197,7 +197,7 @@ class _LiveEventScreenState extends State<LiveEventScreen> {
     
     final c = CaffeinePlayerController();
     c.addEventsListener((event) {
-      if (event == CaffeinePlayerEventType.error) {
+      if (event.type == CaffeinePlayerEventType.error) {
         _onStreamError();
       }
     });
