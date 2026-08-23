@@ -1,12 +1,51 @@
+import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:provider/provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:reelriot/provider/settings_provider.dart';
 import 'package:reelriot/provider/sign_in_provider.dart';
 import 'package:reelriot/screens/auth_screens/welcome.dart';
 import 'package:reelriot/utils/globlal_methods.dart';
 import 'package:reelriot/utils/theme/textStyle.dart';
-import 'package:easy_localization/easy_localization.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+
+// ─── Design tokens (design.json) ─────────────────────────────────────────────
+class _Design {
+  static const primary = Color(0xFFDC2626);
+  static const primaryDim = Color(0x1ADC2626);
+  static const primaryBorder = Color(0x33DC2626);
+
+  static const bgCanvasDark = Color(0xFF030712);
+  static const bgCanvasLight = Color(0xFFF8FAFC);
+  static const bgSurfaceDark = Color(0xFF0B0F14);
+  static const bgSurfaceLight = Color(0xFFFFFFFF);
+  static const bgCardDark = Color(0xFF111827);
+  static const bgCardLight = Color(0xFFF1F5F9);
+
+  static const borderDark = Color(0x14FFFFFF);
+  static const borderLight = Color(0x140F172A);
+  static const iconBgDark = Color(0x14FFFFFF);
+
+  static const textPrimDark = Color(0xFFFFFFFF);
+  static const textPrimLight = Color(0xFF0B0F14);
+  static const textSecDark = Color(0xB8FFFFFF);
+  static const textSecLight = Color(0xFF64748B);
+
+  static const radiusLg = 20.0;
+  static const radiusMd = 16.0;
+  static const radiusSm = 12.0;
+  static const screenPadH = 20.0;
+  static const space2 = 8.0;
+  static const space3 = 12.0;
+  static const space4 = 16.0;
+  static const space5 = 20.0;
+  static const space6 = 24.0;
+  static const ctaHeight = 52.0;
+  static const shadowCard = BoxShadow(
+    color: Color(0x38000000),
+    blurRadius: 30,
+    offset: Offset(0, 10),
+  );
+}
 
 class DeleteAccountScreen extends StatefulWidget {
   const DeleteAccountScreen({super.key});
@@ -16,233 +55,728 @@ class DeleteAccountScreen extends StatefulWidget {
 }
 
 class DeleteAccountScreenState extends State<DeleteAccountScreen> {
-  String confirmationText = '';
-  User? user;
-  final _formKey = GlobalKey<FormState>();
-  final _auth = Supabase.instance.client.auth;
   final _supabase = Supabase.instance.client;
   final GlobalMethods _globalMethods = GlobalMethods();
-  bool _isLoading = false;
-  bool _isDataLoaded = false;
-  String? uid;
-  String? username;
-  final FocusNode deleteFN = FocusNode();
+
+  final TextEditingController _confirmController = TextEditingController();
+  final FocusNode _confirmFocusNode = FocusNode();
+
+  bool _isLoadingData = true;
+  bool _isDeleting = false;
+  bool _isConfirmed = false;
+
+  String? _uid;
+  String? _email;
+  String? _name;
+  String? _username;
+  int? _profileId;
 
   @override
   void initState() {
     super.initState();
-    getUserData();
+    _loadUserData();
+    _confirmController.addListener(_onConfirmTextChanged);
   }
 
-  void getUserData() async {
-    user = _auth.currentUser;
-    uid = user?.id;
-    if (uid == null) {
-      setState(() => _isDataLoaded = true);
+  @override
+  void dispose() {
+    _confirmController.removeListener(_onConfirmTextChanged);
+    _confirmController.dispose();
+    _confirmFocusNode.dispose();
+    super.dispose();
+  }
+
+  void _onConfirmTextChanged() {
+    final confirmed = _confirmController.text.trim() == 'CONFIRM';
+    if (confirmed != _isConfirmed) {
+      setState(() {
+        _isConfirmed = confirmed;
+      });
+    }
+  }
+
+  Future<void> _loadUserData() async {
+    final user = _supabase.auth.currentUser;
+    _uid = user?.id;
+    _email = user?.email;
+
+    if (_uid == null) {
+      if (mounted) setState(() => _isLoadingData = false);
       return;
     }
 
-    final res = await _supabase
-        .from('profiles')
-        .select('username')
-        .eq('id', uid!)
-        .limit(1);
+    try {
+      final res = await _supabase
+          .from('profiles')
+          .select('name, username, email, profile_id')
+          .eq('id', _uid!)
+          .limit(1);
 
-    setState(() {
-      username = res.isNotEmpty ? res[0]['username'] as String? : null;
-      _isDataLoaded = true;
-    });
+      if (res.isNotEmpty && mounted) {
+        final data = res[0];
+        setState(() {
+          _name = data['name'] as String?;
+          _username = data['username'] as String?;
+          _email = (data['email'] as String?) ?? _email;
+          _profileId = data['profile_id'] as int?;
+          _isLoadingData = false;
+        });
+        return;
+      }
+    } catch (e) {
+      debugPrint('[DeleteAccount] Error loading profile: $e');
+    }
+
+    if (mounted) {
+      setState(() => _isLoadingData = false);
+    }
   }
 
-  void _submitForm() async {
-    final isValid = _formKey.currentState!.validate();
-    FocusScope.of(context).unfocus();
-    if (isValid && uid != null) {
-      setState(() {
-        _isLoading = true;
-      });
-      _formKey.currentState!.save();
-      try {
-        await _supabase.from('usernames').delete().eq('user_id', uid!);
-        await _supabase.from('bookmarks').delete().eq('user_id', uid!);
-        await _supabase.from('watch_history').delete().eq('user_id', uid!);
-        await _supabase.from('profiles').delete().eq('id', uid!);
+  Future<void> _showFinalConfirmationSheet({
+    required BuildContext context,
+    required Color surface,
+    required Color textPrim,
+    required Color textSec,
+    required Color border,
+  }) async {
+    _confirmFocusNode.unfocus();
 
-        if (!mounted) return;
-        await Provider.of<SignInProvider>(context, listen: false).userSignOut();
-
-        if (mounted) {
-          Navigator.pushReplacement(context,
-              MaterialPageRoute(builder: (context) => const WelcomeScreen()));
-          GlobalMethods.showCustomScaffoldMessage(
-              SnackBar(
-                content: Text(
-                  tr("account_deleted_successfully"),
-                  maxLines: 3,
-                  style: kTextSmallBodyStyle,
+    final result = await showModalBottomSheet<bool>(
+      context: context,
+      backgroundColor: surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(_Design.radiusLg)),
+      ),
+      builder: (modalContext) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: _Design.screenPadH,
+              vertical: _Design.space5,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: textSec.withValues(alpha: 0.3),
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
                 ),
-                duration: const Duration(seconds: 4),
-              ),
-              context);
+                const SizedBox(height: _Design.space5),
+                Center(
+                  child: Container(
+                    width: 64,
+                    height: 64,
+                    decoration: BoxDecoration(
+                      color: _Design.primaryDim,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: _Design.primaryBorder, width: 1.5),
+                    ),
+                    child: const Icon(
+                      Icons.delete_forever_rounded,
+                      color: _Design.primary,
+                      size: 32,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: _Design.space4),
+                Text(
+                  tr("delete_account_confirm_modal_title"),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: textPrim,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: _Design.space2),
+                Text(
+                  tr("delete_account_confirm_modal_desc"),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: textSec,
+                    fontSize: 14,
+                    height: 1.4,
+                  ),
+                ),
+                const SizedBox(height: _Design.space6),
+                SizedBox(
+                  height: _Design.ctaHeight,
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.of(modalContext).pop(true),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: _Design.primary,
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(_Design.radiusMd),
+                      ),
+                    ),
+                    child: Text(
+                      tr("delete_account_confirm_action"),
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: _Design.space3),
+                SizedBox(
+                  height: _Design.ctaHeight,
+                  child: OutlinedButton(
+                    onPressed: () => Navigator.of(modalContext).pop(false),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: textPrim,
+                      side: BorderSide(color: border),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(_Design.radiusMd),
+                      ),
+                    ),
+                    child: Text(
+                      tr("cancel"),
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+
+    if (result == true && mounted) {
+      _executeAccountDeletion();
+    }
+  }
+
+  Future<void> _executeAccountDeletion() async {
+    if (_uid == null) return;
+
+    setState(() => _isDeleting = true);
+
+    try {
+      // 1. Delete associated data across all user tables
+      await _supabase.from('usernames').delete().eq('user_id', _uid!);
+      await _supabase.from('bookmarks').delete().eq('user_id', _uid!);
+      await _supabase.from('watch_history').delete().eq('user_id', _uid!);
+      await _supabase.from('continue_watching_history').delete().eq('user_id', _uid!);
+      await _supabase.from('completed_watch_history').delete().eq('user_id', _uid!);
+      await _supabase.from('profiles').delete().eq('id', _uid!);
+
+      if (!mounted) return;
+
+      // 2. Sign out and purge local databases/cache
+      final signInProvider = Provider.of<SignInProvider>(context, listen: false);
+      await signInProvider.userSignOut();
+
+      if (mounted) {
+        // 3. Clear navigation stack and route directly to welcome screen
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (_) => const WelcomeScreen()),
+          (route) => false,
+        );
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              tr("account_deleted_successfully"),
+              style: kTextSmallBodyStyle,
+            ),
+            duration: const Duration(seconds: 4),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    } on AuthException catch (e) {
+      if (mounted) {
+        setState(() => _isDeleting = false);
+        final msg = e.message.toLowerCase();
+        if (msg.contains('mismatch')) {
+          _globalMethods.authErrorHandle(tr("user_mismatch"), context);
+        } else if (msg.contains('not found')) {
+          _globalMethods.authErrorHandle(tr("user_not_found"), context);
+        } else if (msg.contains('recent') && msg.contains('login')) {
+          _globalMethods.authErrorHandle(tr("requires_recent_login"), context);
+        } else {
+          _globalMethods.authErrorHandle(e.message, context);
         }
-      } on AuthException catch (e) {
-        if (mounted) {
-          final msg = e.message.toLowerCase();
-          if (msg.contains('mismatch')) {
-            _globalMethods.authErrorHandle(tr("user_mismatch"), context);
-          } else if (msg.contains('not found')) {
-            _globalMethods.authErrorHandle(tr("user_not_found"), context);
-          } else if (msg.contains('invalid') && msg.contains('credential')) {
-            _globalMethods.authErrorHandle(tr("invalid_credential"), context);
-          } else if (msg.contains('invalid') && msg.contains('email')) {
-            _globalMethods.authErrorHandle(tr("invalid_email"), context);
-          } else if (msg.contains('wrong') && msg.contains('password')) {
-            _globalMethods.authErrorHandle(tr("wrong_password"), context);
-          } else if (msg.contains('weak')) {
-            _globalMethods.authErrorHandle(tr("weak_password"), context);
-          } else if (msg.contains('recent') && msg.contains('login')) {
-            _globalMethods.authErrorHandle(
-                tr("requires_recent_login"), context);
-          } else {
-            _globalMethods.authErrorHandle(e.message, context);
-          }
-        }
-      } catch (e) {
-        if (mounted) {
-          _globalMethods.authErrorHandle(e.toString(), context);
-        }
-      } finally {
-        setState(() {
-          _isLoading = false;
-        });
-        if (mounted) {
-          Navigator.pop(context);
-        }
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isDeleting = false);
+        _globalMethods.authErrorHandle(e.toString(), context);
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
+    final isDark = themeMode == 'dark' || themeMode == 'amoled';
+    final bg = isDark ? _Design.bgCanvasDark : _Design.bgCanvasLight;
+    final surface = isDark ? _Design.bgSurfaceDark : _Design.bgSurfaceLight;
+    final cardBg = isDark ? _Design.bgCardDark : _Design.bgCardLight;
+    final textPrim = isDark ? _Design.textPrimDark : _Design.textPrimLight;
+    final textSec = isDark ? _Design.textSecDark : _Design.textSecLight;
+    final border = isDark ? _Design.borderDark : _Design.borderLight;
+
+    if (_isLoadingData) {
+      return Scaffold(
+        backgroundColor: bg,
+        appBar: _buildAppBar(context, textPrim, border, isDark),
+        body: const Center(
+          child: CircularProgressIndicator(
+            color: _Design.primary,
+            strokeWidth: 2,
+          ),
+        ),
+      );
+    }
+
+    if (_uid == null) {
+      return Scaffold(
+        backgroundColor: bg,
+        appBar: _buildAppBar(context, textPrim, border, isDark),
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: _Design.screenPadH),
+            child: Text(
+              tr("user_not_found"),
+              textAlign: TextAlign.center,
+              style: TextStyle(color: textSec, fontSize: 15),
+            ),
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
-        appBar: AppBar(title: Text(tr("delete_account"))),
-        body: !_isDataLoaded
-            ? const Center(child: CircularProgressIndicator())
-            : uid == null
-                ? Center(child: Text(tr("user_not_found")))
-                : Center(
-                    child: SingleChildScrollView(
-                        child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                        const SizedBox(
-                          height: 80,
+      backgroundColor: bg,
+      appBar: _buildAppBar(context, textPrim, border, isDark),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: _Design.screenPadH),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const SizedBox(height: _Design.space4),
+
+            // Danger Header Card
+            _buildWarningHero(textPrim, textSec),
+
+            const SizedBox(height: _Design.space5),
+
+            // Target Account Summary
+            _buildAccountContextCard(
+              surface: surface,
+              border: border,
+              textPrim: textPrim,
+              textSec: textSec,
+            ),
+
+            const SizedBox(height: _Design.space5),
+
+            // Consequences List
+            _buildConsequencesCard(
+              surface: surface,
+              border: border,
+              textPrim: textPrim,
+              textSec: textSec,
+            ),
+
+            const SizedBox(height: _Design.space6),
+
+            // Confirmation Input Section
+            _buildConfirmationInput(
+              surface: surface,
+              cardBg: cardBg,
+              border: border,
+              textPrim: textPrim,
+              textSec: textSec,
+            ),
+
+            const SizedBox(height: _Design.space6),
+
+            // Destructive Delete Button
+            SizedBox(
+              height: _Design.ctaHeight,
+              child: ElevatedButton(
+                onPressed: (_isConfirmed && !_isDeleting)
+                    ? () => _showFinalConfirmationSheet(
+                          context: context,
+                          surface: surface,
+                          textPrim: textPrim,
+                          textSec: textSec,
+                          border: border,
+                        )
+                    : null,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: _Design.primary,
+                  foregroundColor: Colors.white,
+                  disabledBackgroundColor:
+                      _Design.primary.withValues(alpha: 0.35),
+                  disabledForegroundColor: Colors.white.withValues(alpha: 0.4),
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(_Design.radiusMd),
+                  ),
+                ),
+                child: _isDeleting
+                    ? const SizedBox(
+                        height: 24,
+                        width: 24,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
                         ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            tr("delete_account"),
+                      )
+                    : Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.delete_forever_rounded, size: 22),
+                          const SizedBox(width: _Design.space2),
+                          Text(
+                            tr("delete_account_button"),
                             style: const TextStyle(
-                                fontSize: 30, fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        Text(
-                          tr("delete_notice"),
-                          textAlign: TextAlign.center,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(12.0),
-                          child: Form(
-                            key: _formKey,
-                            child: Column(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(12.0),
-                                  child: TextFormField(
-                                    key: const ValueKey('confirmation'),
-                                    validator: (value) {
-                                      if (value != 'CONFIRM') {
-                                        return tr("del_input_err");
-                                      }
-                                      return null;
-                                    },
-                                    focusNode: deleteFN,
-                                    textInputAction: TextInputAction.next,
-                                    keyboardType: TextInputType.text,
-                                    decoration: InputDecoration(
-                                        errorMaxLines: 3,
-                                        border: const UnderlineInputBorder(),
-                                        filled: true,
-                                        prefixIcon: const Icon(
-                                            Icons.text_fields_rounded),
-                                        labelText: tr("type_confirm"),
-                                        fillColor: Theme.of(context)
-                                            .colorScheme
-                                            .surface),
-                                    onSaved: (value) {
-                                      setState(() {
-                                        confirmationText = value!;
-                                      });
-                                    },
-                                    onChanged: (value) {
-                                      setState(() {
-                                        confirmationText = value;
-                                      });
-                                    },
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: 20,
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 25),
-                                  child: _isLoading
-                                      ? const CircularProgressIndicator()
-                                      : ElevatedButton(
-                                          style: ButtonStyle(
-                                              backgroundColor:
-                                                  const WidgetStatePropertyAll(
-                                                      Colors.red),
-                                              minimumSize:
-                                                  const WidgetStatePropertyAll(
-                                                      Size(200, 50)),
-                                              shape: WidgetStateProperty.all(
-                                                RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          10.0),
-                                                ),
-                                              )),
-                                          onPressed: () {
-                                            _submitForm();
-                                          },
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Text(
-                                                tr("delete_account"),
-                                                style: const TextStyle(
-                                                    fontWeight: FontWeight.w500,
-                                                    fontSize: 17),
-                                              ),
-                                              const SizedBox(
-                                                width: 5,
-                                              ),
-                                              const FaIcon(
-                                                FontAwesomeIcons.trash,
-                                                size: 18,
-                                              )
-                                            ],
-                                          )),
-                                ),
-                              ],
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
-                        )
-                      ]))));
+                        ],
+                      ),
+              ),
+            ),
+
+            const SizedBox(height: 40),
+          ],
+        ),
+      ),
+    );
+  }
+
+  PreferredSizeWidget _buildAppBar(
+    BuildContext context,
+    Color textPrim,
+    Color border,
+    bool isDark,
+  ) {
+    return AppBar(
+      elevation: 0,
+      scrolledUnderElevation: 0,
+      backgroundColor: isDark ? _Design.bgSurfaceDark : _Design.bgSurfaceLight,
+      leading: Padding(
+        padding: const EdgeInsets.only(left: _Design.space2),
+        child: Material(
+          color: isDark ? _Design.iconBgDark : border,
+          shape: const CircleBorder(),
+          clipBehavior: Clip.antiAlias,
+          child: InkWell(
+            onTap: () => Navigator.pop(context),
+            customBorder: const CircleBorder(),
+            child: const Padding(
+              padding: EdgeInsets.all(10),
+              child: Icon(
+                Icons.arrow_back_rounded,
+                size: 22,
+              ),
+            ),
+          ),
+        ),
+      ),
+      iconTheme: IconThemeData(color: textPrim),
+      title: Text(
+        tr("delete_account"),
+        style: TextStyle(
+          color: textPrim,
+          fontSize: 18,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildWarningHero(Color textPrim, Color textSec) {
+    return Column(
+      children: [
+        Container(
+          width: 64,
+          height: 64,
+          decoration: BoxDecoration(
+            color: _Design.primaryDim,
+            shape: BoxShape.circle,
+            border: Border.all(color: _Design.primaryBorder, width: 1.5),
+          ),
+          child: const Icon(
+            Icons.warning_amber_rounded,
+            color: _Design.primary,
+            size: 32,
+          ),
+        ),
+        const SizedBox(height: _Design.space3),
+        Text(
+          tr("delete_account_warning_title"),
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: textPrim,
+            fontSize: 22,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        const SizedBox(height: _Design.space2),
+        Text(
+          tr("delete_account_warning_desc"),
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: textSec,
+            fontSize: 14,
+            height: 1.4,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildAccountContextCard({
+    required Color surface,
+    required Color border,
+    required Color textPrim,
+    required Color textSec,
+  }) {
+    final avatarId = _profileId ?? 0;
+    final displayName = (_name != null && _name!.isNotEmpty)
+        ? _name!
+        : (_username != null && _username!.isNotEmpty)
+            ? _username!
+            : tr("profile");
+
+    return Container(
+      padding: const EdgeInsets.all(_Design.space4),
+      decoration: BoxDecoration(
+        color: surface,
+        borderRadius: BorderRadius.circular(_Design.radiusMd),
+        border: Border.all(color: border),
+        boxShadow: const [_Design.shadowCard],
+      ),
+      child: Row(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(_Design.radiusSm),
+            child: SizedBox(
+              width: 48,
+              height: 48,
+              child: Image.asset(
+                'assets/images/profiles/$avatarId.png',
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => Container(
+                  color: _Design.primaryDim,
+                  child: const Icon(
+                    Icons.person_rounded,
+                    color: _Design.primary,
+                    size: 26,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: _Design.space3),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  displayName,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: textPrim,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                if (_username != null && _username!.isNotEmpty)
+                  Text(
+                    '@$_username',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: textSec,
+                      fontSize: 13,
+                    ),
+                  ),
+                if (_email != null && _email!.isNotEmpty)
+                  Text(
+                    _email!,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: textSec,
+                      fontSize: 12,
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildConsequencesCard({
+    required Color surface,
+    required Color border,
+    required Color textPrim,
+    required Color textSec,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(_Design.space4),
+      decoration: BoxDecoration(
+        color: surface,
+        borderRadius: BorderRadius.circular(_Design.radiusMd),
+        border: Border.all(color: border),
+        boxShadow: const [_Design.shadowCard],
+      ),
+      child: Column(
+        children: [
+          _buildConsequenceRow(
+            icon: Icons.bookmark_remove_outlined,
+            text: tr("delete_account_consequence_bookmarks"),
+            textPrim: textPrim,
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: _Design.space3),
+            child: Divider(height: 1, color: border),
+          ),
+          _buildConsequenceRow(
+            icon: Icons.history_toggle_off_rounded,
+            text: tr("delete_account_consequence_history"),
+            textPrim: textPrim,
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: _Design.space3),
+            child: Divider(height: 1, color: border),
+          ),
+          _buildConsequenceRow(
+            icon: Icons.person_remove_outlined,
+            text: tr("delete_account_consequence_profile"),
+            textPrim: textPrim,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildConsequenceRow({
+    required IconData icon,
+    required String text,
+    required Color textPrim,
+  }) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(
+          icon,
+          size: 20,
+          color: _Design.primary,
+        ),
+        const SizedBox(width: _Design.space3),
+        Expanded(
+          child: Text(
+            text,
+            style: TextStyle(
+              color: textPrim,
+              fontSize: 13.5,
+              height: 1.35,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildConfirmationInput({
+    required Color surface,
+    required Color cardBg,
+    required Color border,
+    required Color textPrim,
+    required Color textSec,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          tr("delete_account_input_label"),
+          style: TextStyle(
+            color: textPrim,
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        const SizedBox(height: _Design.space2),
+        TextFormField(
+          controller: _confirmController,
+          focusNode: _confirmFocusNode,
+          autocorrect: false,
+          textCapitalization: TextCapitalization.characters,
+          style: TextStyle(
+            color: textPrim,
+            fontSize: 15,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 1.2,
+          ),
+          decoration: InputDecoration(
+            hintText: tr("delete_account_input_hint"),
+            hintStyle: TextStyle(
+              color: textSec.withValues(alpha: 0.5),
+              letterSpacing: 1.2,
+            ),
+            filled: true,
+            fillColor: surface,
+            prefixIcon: const Icon(
+              Icons.lock_person_outlined,
+              size: 22,
+              color: _Design.primary,
+            ),
+            suffixIcon: _isConfirmed
+                ? const Icon(
+                    Icons.check_circle_rounded,
+                    color: Colors.green,
+                    size: 22,
+                  )
+                : null,
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: _Design.space4,
+              vertical: _Design.space3,
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(_Design.radiusSm),
+              borderSide: BorderSide(color: border),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(_Design.radiusSm),
+              borderSide: BorderSide(
+                color: _isConfirmed ? Colors.green.withValues(alpha: 0.6) : border,
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(_Design.radiusSm),
+              borderSide: const BorderSide(
+                color: _Design.primary,
+                width: 1.5,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }

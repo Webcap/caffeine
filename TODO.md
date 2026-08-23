@@ -39,15 +39,15 @@
 
 #### Scope of Work & Affected Components:
 1. **Visual & UI Refresh:**
-   - [ ] Modernize the avatar selection modal/grid with animated previews, active indicators, and category tabs.
-   - [ ] Redesign form input fields (display name, username, bio/details) with floating labels, clear validation states, and haptic feedback.
-   - [ ] Standardize action buttons, discard/save states, and sticky bottom bar for one-handed reachability.
+   - [x] Modernize the avatar selection modal/grid with animated previews, active indicators, and category tabs / modal picker sheet.
+   - [x] Redesign form input fields (display name, username, bio/details) with floating labels, clear validation states, and haptic feedback.
+   - [x] Standardize action buttons, discard/save states, and sticky bottom bar for one-handed reachability.
 2. **State & Synchronization:**
-   - [ ] Ensure seamless real-time Supabase profile sync (`profiles` table) and immediate optimistic UI update in `SignInProvider` and `ProfilePage`.
-   - [ ] Optimize account management actions (password change, re-authentication, account deletion modals).
+   - [x] Ensure seamless real-time Supabase profile sync (`profiles` table) and immediate optimistic UI update in `SignInProvider` and `ProfilePage`.
+   - [x] Optimize account management actions (password change, re-authentication, account deletion modals & screens: [`lib/screens/profile/delete_account.dart`](file:///c:/Users/cnieves.wmg/Desktop/Projects/reelriot/lib/screens/profile/delete_account.dart), [`lib/screens/profile/edit_profile.dart`](file:///c:/Users/cnieves.wmg/Desktop/Projects/reelriot/lib/screens/profile/edit_profile.dart)).
 3. **Accessibility & Localization:**
-   - [ ] Verify full string extraction for `EasyLocalization` across English and Spanish translations.
-   - [ ] Support tablet/foldable adaptive form layouts and keyboard avoidance behaviors.
+   - [x] Verify full string extraction for `EasyLocalization` across English and Spanish translations for account management.
+   - [x] Support tablet/foldable adaptive form layouts and keyboard avoidance behaviors.
 
 ---
 
