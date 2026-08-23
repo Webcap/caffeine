@@ -261,11 +261,13 @@ class TVDetailQuickInfo extends StatelessWidget {
   }
 
   void _shareTV(BuildContext context) {
-    Share.share(tr('share_tv', namedArgs: {
-      'title': tvSeries.name ?? '—',
-      'rating': (tvSeries.voteAverage ?? 0).toString(),
-      'id': '${tvSeries.id}',
-    }));
+    SharePlus.instance.share(ShareParams(
+      text: tr('share_tv', namedArgs: {
+        'title': tvSeries.name ?? '—',
+        'rating': (tvSeries.voteAverage ?? 0).toString(),
+        'id': '${tvSeries.id}',
+      }),
+    ));
   }
 }
 

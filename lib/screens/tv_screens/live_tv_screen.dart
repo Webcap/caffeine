@@ -350,14 +350,7 @@ class ChannelListState extends State<ChannelList> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Consumer2<AdService, AppDependencyProvider>(
-          builder: (context, ads, app, _) {
-            final bannerAd = ads.bannerAd;
-            final adsEnabled = app.enableADS;
-            if (bannerAd == null || !adsEnabled) return const SizedBox.shrink();
-            return _BannerWrapper(ad: bannerAd);
-          },
-        ),
+        const _BannerWrapper(),
         if (featuredEvent != null) FeaturedMatchCard(event: featuredEvent),
         Padding(
           padding: const EdgeInsets.only(bottom: 16, top: 8),
@@ -1003,40 +996,63 @@ class _FilterChip extends StatelessWidget {
 }
 
 class _BannerWrapper extends StatefulWidget {
-  final StartAppBannerAd ad;
-  const _BannerWrapper({required this.ad});
+  const _BannerWrapper();
 
   @override
   State<_BannerWrapper> createState() => _BannerWrapperState();
 }
 
 class _BannerWrapperState extends State<_BannerWrapper> {
-  late Widget _bannerWidget;
+  StartAppBannerAd? _bannerAd;
+  bool _loading = false;
 
   @override
-  void initState() {
-    super.initState();
-    _bannerWidget = StartAppBanner(widget.ad);
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final remoteAdsEnabled =
+        Provider.of<AppDependencyProvider>(context).enableADS;
+    final adService = Provider.of<AdService>(context);
+
+    if (remoteAdsEnabled &&
+        _bannerAd == null &&
+        !_loading &&
+        adService.isEnabled) {
+      _loadAd(adService);
+    } else if ((!remoteAdsEnabled || !adService.isEnabled) && _bannerAd != null) {
+      setState(() {
+        _bannerAd = null;
+      });
+    }
   }
 
-  @override
-  void didUpdateWidget(_BannerWrapper oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.ad != widget.ad) {
-      _bannerWidget = StartAppBanner(widget.ad);
+  Future<void> _loadAd(AdService adService) async {
+    _loading = true;
+    final ad = await adService.loadNewBannerAd();
+    if (mounted) {
+      setState(() {
+        _bannerAd = ad;
+        _loading = false;
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: SizedBox(
-        height: 50,
-        child: Center(
-          child: _bannerWidget,
+    final remoteAdsEnabled =
+        Provider.of<AppDependencyProvider>(context).enableADS;
+    final adService = Provider.of<AdService>(context);
+
+    if (remoteAdsEnabled && adService.isEnabled && _bannerAd != null) {
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 16),
+        child: SizedBox(
+          height: 50,
+          child: Center(
+            child: StartAppBanner(_bannerAd!),
+          ),
         ),
-      ),
-    );
+      );
+    }
+    return const SizedBox.shrink();
   }
 }

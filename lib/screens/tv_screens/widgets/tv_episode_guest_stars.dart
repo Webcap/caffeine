@@ -60,9 +60,8 @@ class TVEpisodeGuestStarsTabState extends State<TVEpisodeGuestStarsTab>
                   maxLines: 4,
                 ),
               )
-            : Container(
-                child: ListView.builder(
-                    itemCount: credits!.episodeGuestStars!.length,
+            : ListView.builder(
+                itemCount: credits!.episodeGuestStars!.length,
                     itemBuilder: (BuildContext context, int index) {
                       return GestureDetector(
                           onTap: () {
@@ -191,7 +190,7 @@ class TVEpisodeGuestStarsTabState extends State<TVEpisodeGuestStarsTab>
                                   ],
                                 ),
                               )));
-                    }));
+                    });
   }
 
   Widget searchedPersonShimmer(String themeMode) => ListView.builder(

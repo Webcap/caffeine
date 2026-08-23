@@ -63,8 +63,8 @@ class _TVDetailOptionsState extends State<TVDetailOptions> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+  Widget build(BuildContext bContext) {
+    final isDark = Theme.of(bContext).brightness == Brightness.dark;
     final elevated = isDark ? _C.bgElevatedDark : _C.bgElevatedLight;
     final border = isDark ? _C.borderDark : _C.borderLight;
     final textSec = isDark ? _C.textSecDark : _C.textSecLight;
@@ -78,7 +78,7 @@ class _TVDetailOptionsState extends State<TVDetailOptions> {
 
 
     return Consumer<BookmarksProvider>(
-      builder: (context, provider, _) {
+      builder: (ctx, provider, _) {
         // ── Format Genres ───────────────────────────────────────────────
         final genres = tvDetails?.genres?.map((g) => g.genreName).where((n) => n != null && n.isNotEmpty).take(3).join('  •  ');
         
@@ -165,7 +165,8 @@ class _TVDetailOptionsState extends State<TVDetailOptions> {
                           await provider.addTV(widget.tvSeries);
                           if (mounted) setState(() => isBookmarked = true);
                         } catch (_) {
-                          if (mounted && provider.errorMessage != null) {
+                          if (!mounted) return;
+                          if (provider.errorMessage != null) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(content: Text(provider.errorMessage!)),
                             );
@@ -177,7 +178,8 @@ class _TVDetailOptionsState extends State<TVDetailOptions> {
                           await provider.removeTV(widget.tvSeries.id!);
                           if (mounted) setState(() => isBookmarked = false);
                         } catch (_) {
-                          if (mounted && provider.errorMessage != null) {
+                          if (!mounted) return;
+                          if (provider.errorMessage != null) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(content: Text(provider.errorMessage!)),
                             );

@@ -28,7 +28,7 @@ abstract class AppPages {
     ),
     GetPage(
       name: Routes.dash,
-      page: caffieneHomePage.new,
+      page: CaffieneHomePage.new,
       transition: Transition.downToUp,
     ),
     GetPage(

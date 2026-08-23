@@ -120,7 +120,7 @@ void main() {
     try {
       await Supabase.initialize(
         url: supabaseUrl,
-        anonKey: dotenv.env['SUPABASE_ANNON_KEY']!,
+        publishableKey: dotenv.env['SUPABASE_ANNON_KEY']!,
         debug: false,
       );
     } catch (_) {

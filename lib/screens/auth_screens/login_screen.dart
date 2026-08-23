@@ -83,7 +83,7 @@ class _LoginScreenState extends State<LoginScreen> {
       if (!mounted) return;
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const caffieneHomePage()),
+        MaterialPageRoute(builder: (_) => const CaffieneHomePage()),
       );
     } on AuthException catch (error) {
       if (!mounted) return;

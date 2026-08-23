@@ -63,7 +63,12 @@ class CaffeinePlayerController extends ChangeNotifier {
 
   CaffeinePlayerController() {
     player = Player();
-    videoController = VideoController(player);
+    videoController = VideoController(
+      player,
+      configuration: const VideoControllerConfiguration(
+        hwdec: 'mediacodec-copy',
+      ),
+    );
     _setupListeners();
   }
 
@@ -229,11 +234,14 @@ class CaffeinePlayerController extends ChangeNotifier {
 
     debugPrint('[PlayerController] headers: $playHeaders');
 
+    // Performance and stability optimizations for Android
+    (player.platform as dynamic).setProperty('vd-lavc-dr', 'no'); // MUST be 'no' on Android to prevent SELinux dmabuf AVC denials
+    (player.platform as dynamic).setProperty('hwdec', 'mediacodec-copy');
+
     if (liveStream) {
       // Stability optimizations for live streams
       (player.platform as dynamic).setProperty('demuxer-readahead-secs', '10');
       (player.platform as dynamic).setProperty('cache-secs', '15');
-      (player.platform as dynamic).setProperty('hwdec', 'mediacodec');
     }
 
     // Handle subtitles

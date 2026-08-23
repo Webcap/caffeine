@@ -47,14 +47,14 @@ class _C {
 
 // ─── Shell ───────────────────────────────────────────────────────────────────
 
-class caffieneHomePage extends StatefulWidget {
-  const caffieneHomePage({super.key});
+class CaffieneHomePage extends StatefulWidget {
+  const CaffieneHomePage({super.key});
 
   @override
-  State<caffieneHomePage> createState() => _caffieneHomePageState();
+  State<CaffieneHomePage> createState() => _CaffieneHomePageState();
 }
 
-class _caffieneHomePageState extends State<caffieneHomePage> {
+class _CaffieneHomePageState extends State<CaffieneHomePage> {
   late int selectedIndex;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 

@@ -90,24 +90,22 @@ class TVSeasonImagesDisplayState extends State<TVSeasonImagesDisplay> {
                   ),
                 ],
               ),
-        Container(
-          child: SizedBox(
-            width: double.infinity,
-            height: 200,
-            child: tvImages == null
-                ? detailImageShimmer(themeMode)
-                : CarouselSlider(
-                    options: CarouselOptions(
-                      disableCenter: false,
-                      viewportFraction: 0.4,
-                      enlargeCenterPage: false,
-                      autoPlay: false,
-                      enableInfiniteScroll: false,
-                    ),
-                    items: [
-                      Container(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
+        SizedBox(
+          width: double.infinity,
+          height: 200,
+          child: tvImages == null
+              ? detailImageShimmer(themeMode)
+              : CarouselSlider(
+                  options: CarouselOptions(
+                    disableCenter: false,
+                    viewportFraction: 0.4,
+                    enlargeCenterPage: false,
+                    autoPlay: false,
+                    enableInfiniteScroll: false,
+                  ),
+                  items: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
                           child: Stack(
                             alignment: Alignment.bottomLeft,
                             children: [
@@ -185,11 +183,9 @@ class TVSeasonImagesDisplayState extends State<TVSeasonImagesDisplay> {
                             ],
                           ),
                         ),
-                      ),
                     ],
                   ),
           ),
-        ),
       ],
     );
   }

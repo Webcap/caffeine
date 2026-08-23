@@ -5,7 +5,7 @@ class WatchHistoryV2 extends StatefulWidget {
   const WatchHistoryV2({super.key});
 
   @override
-  _WatchHistoryV2State createState() => _WatchHistoryV2State();
+  State<WatchHistoryV2> createState() => _WatchHistoryV2State();
 }
 
 class _WatchHistoryV2State extends State<WatchHistoryV2> {

@@ -47,10 +47,9 @@ class MovieSocialLinksState extends State<MovieSocialLinks> {
     final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Container(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
@@ -137,7 +136,6 @@ class MovieSocialLinksState extends State<MovieSocialLinks> {
             ),
           ],
         ),
-      ),
     );
   }
 }

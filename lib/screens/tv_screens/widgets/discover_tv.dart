@@ -137,40 +137,38 @@ class DiscoverTVState extends State<DiscoverTV>
                           (BuildContext context, int index, int pageViewIndex) {
                         final heroTag =
                             '${tvList![index].id}-${widget.discoverType}-$index-$pageViewIndex';
-                        return Container(
-                          child: GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => TVDetailPage(
-                                          tvSeries: tvList![index],
-                                          heroId: heroTag)));
-                            },
-                            child: Hero(
-                              tag: heroTag,
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(8.0),
-                                child: CachedPosterImage(
-                                  cacheManager: cacheProp(),
-                                  preset: CachePreset.posterLarge,
-                                  imageUrl: tvList![index].posterPath == null
-                                      ? ''
-                                      : buildImageUrl(
-                                              tmdbBaseImageUrl,
-                                              proxyUrl,
-                                              isProxyEnabled,
-                                              context) +
-                                          imageQuality +
-                                          tvList![index].posterPath!,
-                                  themeMode: themeMode,
-                                  placeholder: (context, url) =>
-                                      discoverImageShimmer(themeMode),
-                                  errorWidget: (context, url, error) =>
-                                      Image.asset(
-                                    'assets/images/na_logo.png',
-                                    fit: BoxFit.cover,
-                                  ),
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => TVDetailPage(
+                                        tvSeries: tvList![index],
+                                        heroId: heroTag)));
+                          },
+                          child: Hero(
+                            tag: heroTag,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(8.0),
+                              child: CachedPosterImage(
+                                cacheManager: cacheProp(),
+                                preset: CachePreset.posterLarge,
+                                imageUrl: tvList![index].posterPath == null
+                                    ? ''
+                                    : buildImageUrl(
+                                            tmdbBaseImageUrl,
+                                            proxyUrl,
+                                            isProxyEnabled,
+                                            context) +
+                                        imageQuality +
+                                        tvList![index].posterPath!,
+                                themeMode: themeMode,
+                                placeholder: (context, url) =>
+                                    discoverImageShimmer(themeMode),
+                                errorWidget: (context, url, error) =>
+                                    Image.asset(
+                                  'assets/images/na_logo.png',
+                                  fit: BoxFit.cover,
                                 ),
                               ),
                             ),

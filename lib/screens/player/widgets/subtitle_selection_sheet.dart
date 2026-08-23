@@ -115,7 +115,7 @@ class _SubtitleSelectionSheetState extends State<SubtitleSelectionSheet> {
                 _buildSubtitleTile(
                   context,
                   title: widget.isLoading
-                      ? tr("searching") + "..."
+                      ? '${tr("searching")}...'
                       : tr("search_more_subtitles"),
                   icon: widget.isLoading ? null : Icons.search,
                   trailing: widget.isLoading

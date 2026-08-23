@@ -15,7 +15,7 @@ const Map<String, String> appNames = {
 
 class _AppConfig {
   const _AppConfig();
-  final String app_icon = 'assets/images/app_icon.jpg';
+  final String appIcon = 'assets/images/app_icon.jpg';
 }
 
 const appConfig = _AppConfig();

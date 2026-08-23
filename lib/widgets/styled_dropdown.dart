@@ -29,9 +29,9 @@ class StyledDropdown<T> extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 10),
           decoration: BoxDecoration(
-            color: textPrim.withOpacity(0.06),
+            color: textPrim.withValues(alpha: 0.06),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: textPrim.withOpacity(0.08)),
+            border: Border.all(color: textPrim.withValues(alpha: 0.08)),
           ),
           child: DropdownButton<T>(
             value: value,

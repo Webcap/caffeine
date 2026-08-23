@@ -270,10 +270,14 @@ class AppDependencyProvider extends ChangeNotifier {
   }
 
   bool _enableADS = true;
-  bool get enableADS => getFlag<bool>('simulate_ads', false) || getFlag<bool>(
-        'ads_enabled',
-        getFlag<bool>('enable_ads',
-            getFlag<bool>('global_ads', _enableADS)));
+  bool get enableADS {
+    if (getFlag<bool>('simulate_ads', false)) return true;
+    if (!_enableADS) return false;
+    if (getFlag<bool>('ads_enabled', true) == false) return false;
+    if (getFlag<bool>('enable_ads', true) == false) return false;
+    if (getFlag<bool>('global_ads', true) == false) return false;
+    return true;
+  }
   set enableADS(bool value) {
     if (_enableADS == value) return;
     _enableADS = value;

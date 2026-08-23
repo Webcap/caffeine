@@ -30,10 +30,8 @@ class CastTabState extends State<CastTab>
     final isProxyEnabled = Provider.of<SettingsProvider>(context).enableProxy;
     final proxyUrl = Provider.of<AppDependencyProvider>(context).tmdbProxy;
     return widget.credits.cast!.isEmpty
-        ? Container(
-            child: Center(
-              child: Text(tr("no_cast_movie")),
-            ),
+        ? Center(
+            child: Text(tr("no_cast_movie")),
           )
         : Container(
             padding: const EdgeInsets.only(top: 8),

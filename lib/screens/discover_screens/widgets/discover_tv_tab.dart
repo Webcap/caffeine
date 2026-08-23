@@ -49,7 +49,7 @@ class _DiscoverTVTabState extends State<DiscoverTVTab> {
   final List<String> providersName = <String>[];
   final List<String> providersId = <String>[];
 
-  void setSliderValue(newValue) =>
+  void setSliderValue(double newValue) =>
       setState(() => tvTotalRatingSlider = newValue);
   void joinGenreStrings() => setState(() => joinedIds = genreIds.join(','));
   void joinProviderStrings() =>

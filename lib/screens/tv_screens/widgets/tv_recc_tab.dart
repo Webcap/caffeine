@@ -86,10 +86,9 @@ class TVRecommendationsTabState extends State<TVRecommendationsTab>
     super.build(context);
     final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
-    return Container(
-      child: Column(
-        children: <Widget>[
-          Row(
+    return Column(
+      children: <Widget>[
+        Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Expanded(
@@ -149,8 +148,7 @@ class TVRecommendationsTabState extends State<TVRecommendationsTab>
             indent: 10,
           ),
         ],
-      ),
-    );
+      );
   }
 
   @override

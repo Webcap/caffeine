@@ -42,9 +42,8 @@ class _EpisodeAboutState extends State<EpisodeAbout> {
   @override
   Widget build(BuildContext context) {
     final lang = Provider.of<SettingsProvider>(context).appLanguage;
-    return Container(
-      child: SingleChildScrollView(
-        child: Column(
+    return SingleChildScrollView(
+      child: Column(
           children: <Widget>[
             Row(
               children: <Widget>[
@@ -151,7 +150,6 @@ class _EpisodeAboutState extends State<EpisodeAbout> {
             // ),
           ],
         ),
-      ),
-    );
+      );
   }
 }

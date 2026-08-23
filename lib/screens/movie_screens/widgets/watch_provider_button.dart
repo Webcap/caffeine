@@ -47,7 +47,7 @@ class _WatchProvidersButtonState extends State<WatchProvidersButton> {
       child: TextButton(
         style: ButtonStyle(
             backgroundColor: WidgetStateProperty.all(
-              Theme.of(context).colorScheme.primary.withOpacity(0.3),
+              Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
             ),
             maximumSize: WidgetStateProperty.all(const Size(200, 60)),
             shape: WidgetStateProperty.all<RoundedRectangleBorder>(

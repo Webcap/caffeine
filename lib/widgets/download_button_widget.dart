@@ -33,9 +33,8 @@ class DownloadMovie extends StatelessWidget {
     bool? isVisible = false;
     double? buttonWidth = 150;
     final fetchRoute = Provider.of<AppDependencyProvider>(context).fetchRoute;
-    return Container(
-      child: TextButton(
-        style: ButtonStyle(
+    return TextButton(
+      style: ButtonStyle(
           maximumSize: WidgetStateProperty.all(Size(buttonWidth, 50)),
         ).copyWith(
             backgroundColor: WidgetStateProperty.all(
@@ -102,7 +101,6 @@ class DownloadMovie extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
+      );
   }
 }

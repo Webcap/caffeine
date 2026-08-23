@@ -1,0 +1,209 @@
+name: ReelRiot Mobile Release Pipeline
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      flavor:
+        description: 'Product flavor to build'
+        required: true
+        default: 'prod'
+        type: choice
+        options:
+          - 'prod'
+          - 'dev'
+      build_target:
+        description: 'Build Target'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - 'all'
+          - 'appbundle'
+          - 'apk'
+      bump_build_number:
+        description: 'Auto-bump build number (+1 and CalVer date)'
+        required: false
+        default: false
+        type: boolean
+      release_notes:
+        description: 'Custom release notes / changelog'
+        required: false
+        default: ''
+        type: string
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  quality-gate:
+    name: Quality Gate & Validation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Restore Dependencies
+        run: flutter pub get
+
+      - name: Sync App Version
+        run: dart tools/build_number_gen.dart --sync
+
+      - name: Static Code Analysis
+        run: flutter analyze
+
+      - name: Run SVG Asset Validation
+        run: flutter test test/svg_rigorous_validation_test.dart
+
+  build-android:
+    name: Build Android Binaries
+    needs: quality-gate
+    runs-on: ubuntu-latest
+    env:
+      BUILD_FLAVOR: ${{ inputs.flavor || 'prod' }}
+      BUILD_TARGET: ${{ inputs.build_target || 'all' }}
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Restore Dependencies
+        run: flutter pub get
+
+      - name: Bump Version (if enabled)
+        if: ${{ inputs.bump_build_number == true }}
+        run: |
+          dart tools/build_number_gen.dart --mode auto
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add pubspec.yaml lib/utils/app_version.g.dart
+          git commit -m "chore(release): bump build version [skip ci]" || echo "No version changes to commit"
+          git push origin HEAD:${{ github.ref_name }} || echo "Push skipped"
+
+      - name: Sync Version File
+        if: ${{ inputs.bump_build_number != true }}
+        run: dart tools/build_number_gen.dart --sync
+
+      - name: Reconstruct Environment (.env)
+        run: |
+          cat << 'EOF' > .env
+          TMDB_API_KEY=${{ secrets.TMDB_API_KEY }}
+          CAFFEINE_API_URL=${{ secrets.CAFFEINE_API_URL }}
+          CAFFEINE_API_KEY=${{ secrets.CAFFEINE_API_KEY }}
+          CONSUMET_URL=${{ secrets.CONSUMET_URL }}
+          OPENSUBTITLES_API_KEY=${{ secrets.OPENSUBTITLES_API_KEY }}
+          MIXPANEL_API_KEY=${{ secrets.MIXPANEL_API_KEY }}
+          SUPABASE_URL=${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANNON_KEY=${{ secrets.SUPABASE_ANNON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          REVENUECAT_PUBLIC_SDK_KEY_ANDROID=${{ secrets.REVENUECAT_PUBLIC_SDK_KEY_ANDROID }}
+          REVENUECAT_PUBLIC_SDK_KEY_IOS=${{ secrets.REVENUECAT_PUBLIC_SDK_KEY_IOS }}
+          REVENUECAT_ENTITLEMENT_ID=${{ secrets.REVENUECAT_ENTITLEMENT_ID || 'premium' }}
+          EOF
+
+      - name: Configure Keystore & Signing Properties
+        if: env.KEYSTORE_BASE64 != ''
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+        run: |
+          echo "$KEYSTORE_BASE64" | base64 --decode > android/app/upload-keystore.jks
+          cat << EOF > android/key.properties
+          storePassword=$STORE_PASSWORD
+          keyPassword=$KEY_PASSWORD
+          keyAlias=$KEY_ALIAS
+          storeFile=upload-keystore.jks
+          EOF
+
+      - name: Build App Bundle (AAB)
+        if: env.BUILD_TARGET == 'all' || env.BUILD_TARGET == 'appbundle'
+        run: |
+          TARGET_ENTRY="lib/main.dart"
+          if [ "$BUILD_FLAVOR" = "dev" ]; then TARGET_ENTRY="lib/main_dev.dart"; fi
+          flutter build appbundle --flavor "$BUILD_FLAVOR" -t "$TARGET_ENTRY" --release
+
+      - name: Build Universal APK
+        if: env.BUILD_TARGET == 'all' || env.BUILD_TARGET == 'apk'
+        run: |
+          TARGET_ENTRY="lib/main.dart"
+          if [ "$BUILD_FLAVOR" = "dev" ]; then TARGET_ENTRY="lib/main_dev.dart"; fi
+          flutter build apk --flavor "$BUILD_FLAVOR" -t "$TARGET_ENTRY" --release
+
+      - name: Build Split-per-ABI APKs
+        if: env.BUILD_TARGET == 'all' || env.BUILD_TARGET == 'apk'
+        run: |
+          TARGET_ENTRY="lib/main.dart"
+          if [ "$BUILD_FLAVOR" = "dev" ]; then TARGET_ENTRY="lib/main_dev.dart"; fi
+          flutter build apk --flavor "$BUILD_FLAVOR" -t "$TARGET_ENTRY" --release --split-per-abi
+
+      - name: Organize Release Artifacts
+        id: organize_artifacts
+        run: |
+          mkdir -p dist/
+          VERSION_NAME=$(grep '^version:' pubspec.yaml | sed 's/version: //' | tr -d '\r\n')
+          echo "APP_VERSION=$VERSION_NAME" >> $GITHUB_OUTPUT
+          
+          # Collect AABs
+          find build/app/outputs/bundle -name "*.aab" -exec cp {} dist/ \; 2>/dev/null || true
+          
+          # Collect APKs
+          find build/app/outputs/flutter-apk -name "*.apk" -exec cp {} dist/ \; 2>/dev/null || true
+          
+          ls -la dist/
+
+      - name: Archive CI Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: reelriot-mobile-${{ env.BUILD_FLAVOR }}-${{ steps.organize_artifacts.outputs.APP_VERSION }}
+          path: dist/*
+          if-no-files-found: error
+
+      - name: Publish GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
+          name: "ReelRiot Mobile v${{ steps.organize_artifacts.outputs.APP_VERSION }}"
+          body: |
+            ## ReelRiot Mobile Release `v${{ steps.organize_artifacts.outputs.APP_VERSION }}`
+            
+            ### Artifacts Included:
+            - **Google Play App Bundle**: `app-${{ env.BUILD_FLAVOR }}-release.aab`
+            - **Universal APK**: `app-${{ env.BUILD_FLAVOR }}-release.apk`
+            - **Optimized ABI APKs**: `arm64-v8a`, `armeabi-v7a`, `x86_64`
+            
+            ${{ inputs.release_notes }}
+          draft: false
+          prerelease: ${{ env.BUILD_FLAVOR == 'dev' }}

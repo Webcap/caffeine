@@ -307,7 +307,7 @@ class ShimmerBase extends StatelessWidget {
           ? Colors.grey.shade900
           : Colors.grey.shade300,
       highlightColor: themeMode == "dark" || themeMode == "amoled"
-          ? Colors.grey.shade800.withOpacity(0.1)
+          ? Colors.grey.shade800.withValues(alpha: 0.1)
           : Colors.grey.shade200,
       child: child,
     );

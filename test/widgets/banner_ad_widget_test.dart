@@ -24,12 +24,13 @@ void main() {
     mockAppDependencyProvider = MockAppDependencyProvider();
 
     when(() => mockAdService.isBannerAdLoading).thenReturn(false);
+    when(() => mockAdService.isEnabled).thenReturn(true);
   });
 
   testWidgets('BannerAdWidget does not show anything when ads are disabled',
       (WidgetTester tester) async {
     when(() => mockAppDependencyProvider.enableADS).thenReturn(false);
-    when(() => mockAdService.bannerAd).thenReturn(null);
+    when(() => mockAdService.loadNewBannerAd()).thenAnswer((_) async => null);
 
     await tester.pumpWidget(createTestableWidget(
       child: const BannerAdWidget(),
@@ -45,7 +46,7 @@ void main() {
       (WidgetTester tester) async {
     final mockBanner = FakeStartAppBannerAd();
     when(() => mockAppDependencyProvider.enableADS).thenReturn(true);
-    when(() => mockAdService.bannerAd).thenReturn(mockBanner);
+    when(() => mockAdService.loadNewBannerAd()).thenAnswer((_) async => mockBanner);
 
     // We use a custom pump to avoid the internal crash of StartAppBanner in unit tests
     // by just checking if the widget is part of the tree.
@@ -54,6 +55,8 @@ void main() {
       adService: mockAdService,
       appDependencyProvider: mockAppDependencyProvider,
     ));
+
+    await tester.pump();
 
     // If it crashes because of StartAppBanner's internal _id access,
     // we can use a more resilient check or catch the exception.
