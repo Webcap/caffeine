@@ -112,6 +112,9 @@ class ScrollingMoviesState extends State<ScrollingMovies>
     final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     final isProxyEnabled = Provider.of<SettingsProvider>(context).enableProxy;
     final proxyUrl = Provider.of<AppDependencyProvider>(context).tmdbProxy;
+    if (moviesList != null && moviesList!.isEmpty) {
+      return const SizedBox.shrink();
+    }
     return Column(
       children: <Widget>[
         Row(

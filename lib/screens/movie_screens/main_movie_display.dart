@@ -352,10 +352,8 @@ class _MainMoviesDisplayState extends State<MainMoviesDisplay>
   }
 
   String _upcomingUrl(String lang, String region) {
-    final today = DateTime.now().toIso8601String().split('T')[0];
-    return '$tmdbApiBaseUrl/discover/movie?api_key=$tmdbApiKey'
-        '&language=$lang&region=$region&sort_by=primary_release_date.asc'
-        '&primary_release_date.gte=$today&include_adult=false';
+    final regionParam = region.isNotEmpty ? '&region=$region' : '';
+    return '$tmdbApiBaseUrl/movie/upcoming?api_key=$tmdbApiKey&language=$lang$regionParam';
   }
 
   @override

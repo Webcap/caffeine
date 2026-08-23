@@ -46,11 +46,9 @@ class Endpoints {
         '&include_adult=$includeAdult&language=$l';
   }
 
-  static String upcomingMoviesUrl(String l, [String region = 'US']) {
-    final today = DateTime.now().toIso8601String().split('T')[0];
-    return '$tmdbApiBaseUrl/discover/movie?api_key=$tmdbApiKey'
-        '&language=$l&region=$region&sort_by=primary_release_date.asc'
-        '&primary_release_date.gte=$today&include_adult=false';
+  static String upcomingMoviesUrl(String l, [String region = '']) {
+    final regionParam = region.isNotEmpty ? '&region=$region' : '';
+    return '$tmdbApiBaseUrl/movie/upcoming?api_key=$tmdbApiKey&language=$l$regionParam';
   }
 
   static String movieDetailsUrl(int movieId, String l) {
