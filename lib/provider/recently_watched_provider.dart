@@ -583,30 +583,44 @@ class RecentProvider extends ChangeNotifier {
   }
 
   /// Watch time (minutes) in last 2 weeks for movies.
-  /// Strictly counts completed items (remaining == 0).
   int get movieWatchTimeMinutesLast2Weeks {
-    if (_apiMovieWatchTimeMinutes != null) return _apiMovieWatchTimeMinutes!;
-    int total = 0;
+    int localTotalMs = 0;
     for (final m in _movies) {
       if (!_isWithinLast2Weeks(m.dateTime)) continue;
-      // Only count completed movies
-      if (m.remaining != 0) continue;
-      total += _ensureMs(m.elapsed);
+      // Count completed movies
+      if (m.remaining == 0 || (m.elapsed != null && m.elapsed! > 0 && (m.remaining == null || m.remaining == 0))) {
+        int ms = _ensureMs(m.elapsed);
+        if (ms <= 0) ms = 7200000; // 2h fallback
+        localTotalMs += ms;
+      }
     }
-    return total ~/ 60000;
+    final int localMins = localTotalMs ~/ 60000;
+    if (_apiMovieWatchTimeMinutes != null && _apiMovieWatchTimeMinutes! > 0) {
+      return _apiMovieWatchTimeMinutes! > localMins
+          ? _apiMovieWatchTimeMinutes!
+          : localMins;
+    }
+    return localMins;
   }
 
   /// Watch time (minutes) in last 2 weeks for TV episodes.
-  /// Strictly counts completed items (remaining == 0).
   int get tvWatchTimeMinutesLast2Weeks {
-    if (_apiTvWatchTimeMinutes != null) return _apiTvWatchTimeMinutes!;
-    int total = 0;
+    int localTotalMs = 0;
     for (final e in _episodes) {
       if (!_isWithinLast2Weeks(e.dateTime)) continue;
-      // Only count completed episodes
-      if (e.remaining != 0) continue;
-      total += _ensureMs(e.elapsed);
+      // Count completed episodes
+      if (e.remaining == 0 || (e.elapsed != null && e.elapsed! > 0 && (e.remaining == null || e.remaining == 0))) {
+        int ms = _ensureMs(e.elapsed);
+        if (ms <= 0) ms = 2700000; // 45m fallback
+        localTotalMs += ms;
+      }
     }
-    return total ~/ 60000;
+    final int localMins = localTotalMs ~/ 60000;
+    if (_apiTvWatchTimeMinutes != null && _apiTvWatchTimeMinutes! > 0) {
+      return _apiTvWatchTimeMinutes! > localMins
+          ? _apiTvWatchTimeMinutes!
+          : localMins;
+    }
+    return localMins;
   }
 }
