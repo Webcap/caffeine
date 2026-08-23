@@ -281,19 +281,35 @@ class CaffeinePlayerController extends ChangeNotifier {
       play: false,
     );
 
-    if (startAt > Duration.zero) {
-      await player.seek(startAt);
+    await player.play();
 
-      StreamSubscription<Duration>? sub;
-      sub = player.stream.duration.listen((d) {
+    if (startAt > Duration.zero) {
+      // Wait until the player reports a valid duration before seeking.
+      // For HLS streams, duration is not known until the manifest is parsed
+      // after playback begins, so any pre-play seek gets reset to 0.
+      StreamSubscription<Duration>? durationSub;
+      bool seekDone = false;
+
+      Future<void> doSeek() async {
+        if (seekDone) return;
+        seekDone = true;
+        durationSub?.cancel();
+        try {
+          await player.seek(startAt);
+          debugPrint('[PlayerController] ▶️ Resumed at ${startAt.inSeconds}s');
+        } catch (_) {}
+      }
+
+      durationSub = player.stream.duration.listen((d) {
         if (d > Duration.zero) {
-          player.seek(startAt);
-          sub?.cancel();
+          doSeek();
         }
       });
-    }
 
-    await player.play();
+      // Fallback: if duration stream doesn't fire within 2s (e.g. some MP4s),
+      // seek anyway.
+      Future.delayed(const Duration(milliseconds: 2000), doSeek);
+    }
 
     _emit(CaffeinePlayerEventType.initialized);
   }
