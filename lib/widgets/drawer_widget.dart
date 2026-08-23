@@ -1,5 +1,4 @@
 import 'package:reelriot/provider/app_dependency_provider.dart';
-import 'package:reelriot/screens/common/server_status_screen.dart';
 import 'package:reelriot/screens/tv_screens/live_tv_screen.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -101,18 +100,6 @@ class DrawerWidget extends StatelessWidget {
                   onTap: () {
                     Navigator.pop(context);
                     nextScreen(context, const UpdateScreen(isForced: false));
-                  },
-                ),
-                _DrawerItem(
-                  icon: Icons.dns_rounded,
-                  label: tr('check_server'),
-                  isDark: isDark,
-                  surface: surface,
-                  border: border,
-                  textPrim: textPrim,
-                  onTap: () {
-                    Navigator.pop(context);
-                    nextScreen(context, const ServerStatusScreen());
                   },
                 ),
                 _DrawerItem(
