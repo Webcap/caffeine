@@ -349,17 +349,40 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       ),
                       const SizedBox(height: 22),
                       Center(
-                        child: TextButton(
-                          onPressed: () {
-                            Get.toNamed(Routes.signup);
-                          },
-                          child: const Text(
-                            'Create a new account',
-                            style: TextStyle(
-                              color: _primaryColor,
-                              fontWeight: FontWeight.w700,
+                        child: Column(
+                          children: [
+                            TextButton(
+                              onPressed: () {
+                                Get.toNamed(Routes.signup);
+                              },
+                              child: const Text(
+                                'Create a new account',
+                                style: TextStyle(
+                                  color: _primaryColor,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
                             ),
-                          ),
+                            const SizedBox(height: 4),
+                            TextButton.icon(
+                              onPressed: () {
+                                Get.offAllNamed(Routes.dash);
+                              },
+                              icon: const Icon(
+                                Icons.arrow_forward_rounded,
+                                size: 16,
+                                color: _textSecondary,
+                              ),
+                              label: const Text(
+                                'Continue as Guest',
+                                style: TextStyle(
+                                  color: _textSecondary,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                       const Spacer(),

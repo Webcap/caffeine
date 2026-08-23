@@ -160,14 +160,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
     final bg = isDark ? _C.bgCanvasDark : _C.bgCanvasLight;
 
-    if (!sp.isSignedIn) {
-      return Scaffold(
-        backgroundColor: bg,
-        body: Center(
-          child: CircularProgressIndicator(color: _C.primary),
-        ),
-      );
-    }
+    final bool isGuest = !sp.isSignedIn || userAnonymous == true || _auth.currentUser == null;
 
     final surface = isDark ? _C.bgSurfaceDark : _C.bgSurfaceLight;
     final elevated = isDark ? _C.bgElevatedDark : _C.bgElevatedLight;
@@ -176,64 +169,19 @@ class _ProfilePageState extends State<ProfilePage> {
     final textSec = isDark ? _C.textSecDark : _C.textSecLight;
     final textTert = isDark ? _C.textTertDark : _C.textTertLight;
 
-    if (userAnonymous == null) {
-      return Scaffold(
-        backgroundColor: bg,
-        body: Center(
-          child: CircularProgressIndicator(color: _C.primary),
-        ),
-      );
-    }
-
-    if (userAnonymous == true) {
-      return Scaffold(
-        backgroundColor: bg,
-        body: SafeArea(
-          child: Center(
-            child: Padding(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    tr('current_account_anonymous'),
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 15,
-                      color: textSec,
-                      fontFamily: 'Poppins',
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  FilledButton(
-                    onPressed: () async {
-                      final sp =
-                          Provider.of<SignInProvider>(context, listen: false);
-                      await sp.userSignOut();
-                      if (context.mounted) {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (_) => const WelcomeScreen()),
-                        );
-                      }
-                    },
-                    style: FilledButton.styleFrom(
-                      backgroundColor: _C.primary,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 24, vertical: 14),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                    ),
-                    child: Text(tr('login_signup')),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
+    if (isGuest) {
+      return _buildGuestProfileContent(
+        context: context,
+        isDark: isDark,
+        bg: bg,
+        surface: surface,
+        elevated: elevated,
+        border: border,
+        textPrim: textPrim,
+        textSec: textSec,
+        textTert: textTert,
+        recent: recent,
+        appDep: appDep,
       );
     }
 
@@ -643,6 +591,344 @@ class _ProfilePageState extends State<ProfilePage> {
       backgroundColor: surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+    );
+  }
+
+  Widget _buildGuestProfileContent({
+    required BuildContext context,
+    required bool isDark,
+    required Color bg,
+    required Color surface,
+    required Color elevated,
+    required Color border,
+    required Color textPrim,
+    required Color textSec,
+    required Color textTert,
+    required RecentProvider recent,
+    required AppDependencyProvider appDep,
+  }) {
+    final moviesMin = recent.movieWatchTimeMinutesLast2Weeks;
+    final tvMin = recent.tvWatchTimeMinutesLast2Weeks;
+    final moviesFormatted = recent.formatWatchTime(moviesMin);
+    final tvFormatted = recent.formatWatchTime(tvMin);
+
+    final showActivateTv =
+        appDep.isFeatureEnabled('toggle_tv_activate_button', defaultValue: true);
+    final filteredSettings = settingdata
+        .where((item) =>
+            item.tital != tr("edit_profile") &&
+            (showActivateTv || item.tital != tr("pair_tv")))
+        .toList();
+
+    return Scaffold(
+      backgroundColor: bg,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 20, 16, 32),
+            child: Column(
+              children: [
+                // ── Guest Avatar & Header ─────────────────────────
+                Container(
+                  width: 96,
+                  height: 96,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: _C.primary.withValues(alpha: 0.12),
+                    border: Border.all(color: border, width: 2),
+                  ),
+                  child: const Center(
+                    child: Icon(
+                      Icons.person_rounded,
+                      size: 48,
+                      color: _C.primary,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Guest User',
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w700,
+                    color: textPrim,
+                    fontFamily: 'PoppinsSB',
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Using ReelRiot in Guest Mode',
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: textSec,
+                    fontFamily: 'Poppins',
+                  ),
+                ),
+
+                // ── Sync Prompt Card ─────────────────────────────
+                const SizedBox(height: 20),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(18),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: isDark
+                          ? [
+                              const Color(0xFF1E1B4B).withValues(alpha: 0.6),
+                              const Color(0xFF311042).withValues(alpha: 0.6),
+                            ]
+                          : [
+                              const Color(0xFFEEF2FF),
+                              const Color(0xFFFAF5FF),
+                            ],
+                    ),
+                    borderRadius: BorderRadius.circular(18),
+                    border: Border.all(
+                      color: _C.secondary.withValues(alpha: 0.3),
+                      width: 1,
+                    ),
+                  ),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: _C.secondary.withValues(alpha: 0.15),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: const Icon(
+                              Icons.cloud_sync_rounded,
+                              color: _C.secondary,
+                              size: 24,
+                            ),
+                          ),
+                          const SizedBox(width: 14),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Sync Across Devices',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w700,
+                                    color: textPrim,
+                                    fontFamily: 'PoppinsSB',
+                                  ),
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  'Sign in to backup your watch history and watchlist.',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: textSec,
+                                    height: 1.3,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      SizedBox(
+                        width: double.infinity,
+                        child: FilledButton(
+                          onPressed: () {
+                            Get.toNamed(Routes.login);
+                          },
+                          style: FilledButton.styleFrom(
+                            backgroundColor: _C.primary,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                            elevation: 0,
+                          ),
+                          child: const Text(
+                            'Sign In or Create Account',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 14,
+                              fontFamily: 'PoppinsSB',
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // ── Watch time stats ─────────────────────────────
+                const SizedBox(height: 24),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: elevated,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: border, width: 1),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.history_rounded,
+                            size: 20,
+                            color: _C.secondary,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            tr('last_2_weeks'),
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: textPrim,
+                              fontFamily: 'PoppinsSB',
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _WatchStatCard(
+                              icon: Icons.movie_creation_rounded,
+                              label: tr('movies'),
+                              value: moviesFormatted,
+                              isDark: isDark,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: _WatchStatCard(
+                              icon: Icons.live_tv_rounded,
+                              label: tr('tv_series'),
+                              value: tvFormatted,
+                              isDark: isDark,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+
+                // ── Settings list ────────────────────────────────
+                const SizedBox(height: 24),
+                Container(
+                  decoration: BoxDecoration(
+                    color: elevated,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: border, width: 1),
+                  ),
+                  child: ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: filteredSettings.length,
+                    separatorBuilder: (_, __) => Divider(
+                      height: 1,
+                      color: border,
+                      indent: 56,
+                      endIndent: 16,
+                    ),
+                    itemBuilder: (context, i) {
+                      return InkWell(
+                        onTap: filteredSettings[i].onTap,
+                        borderRadius: BorderRadius.circular(16),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 14),
+                          child: Row(
+                            children: [
+                              SvgPicture.asset(
+                                filteredSettings[i].iconImage,
+                                colorFilter: ColorFilter.mode(
+                                  textPrim,
+                                  BlendMode.srcIn,
+                                ),
+                                height: 22,
+                              ),
+                              const SizedBox(width: 14),
+                              Expanded(
+                                child: Text(
+                                  filteredSettings[i].tital,
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
+                                    color: textPrim,
+                                    fontFamily: 'PoppinsSB',
+                                  ),
+                                ),
+                              ),
+                              if (filteredSettings[i].subTital != null)
+                                Text(
+                                  '${filteredSettings[i].subTital}',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    color: textSec,
+                                  ),
+                                ),
+                              const SizedBox(width: 8),
+                              Icon(
+                                Icons.arrow_forward_ios_rounded,
+                                size: 14,
+                                color: textTert,
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+
+                // ── Bottom Sign In Action ────────────────────────
+                const SizedBox(height: 20),
+                InkWell(
+                  onTap: () => Get.toNamed(Routes.login),
+                  borderRadius: BorderRadius.circular(12),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 4, vertical: 12),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(
+                          Icons.login_rounded,
+                          color: _C.primary,
+                          size: 20,
+                        ),
+                        const SizedBox(width: 10),
+                        Text(
+                          tr('login_signup'),
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                            color: _C.primary,
+                            fontFamily: 'PoppinsSB',
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 32),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
