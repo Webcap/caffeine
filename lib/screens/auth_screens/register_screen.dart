@@ -39,7 +39,6 @@ class _SignupScreenState extends State<SignupScreen> {
   bool _obscureText = true;
   String _emailAddress = '';
   String _password = '';
-  String _fullName = '';
   String _userName = '';
   bool _isUserVerified = false;
   final _formKey = GlobalKey<FormState>();
@@ -231,7 +230,6 @@ class _SignupScreenState extends State<SignupScreen> {
         email: _emailAddress.toLowerCase().trim(),
         password: _password.trim(),
         data: {
-          'full_name': _fullName,
           'username': _userName.trim().toLowerCase(),
           'profile_id': selectedProfile,
           'avatar': selectedProfile, // Added for Dual-Source Sync
@@ -254,7 +252,7 @@ class _SignupScreenState extends State<SignupScreen> {
         return;
       }
 
-      sharedPrefsSingleton.setString('name', _fullName);
+      sharedPrefsSingleton.setString('name', _userName.trim().toLowerCase());
       sharedPrefsSingleton.setString('email', _emailAddress);
       sharedPrefsSingleton.setString(
         'username',
@@ -264,25 +262,74 @@ class _SignupScreenState extends State<SignupScreen> {
       sharedPrefsSingleton.setString('provider', 'email');
       debugPrint('[Signup] Local prefs saved for uid=$uid');
 
-      debugPrint('[Signup] Inserting username record...');
-      await _supabase.from('usernames').insert({
-        'username': _userName.trim().toLowerCase(),
-        'user_id': uid,
-      });
+      final hasSession = res.session != null;
+      if (hasSession) {
+        try {
+          debugPrint('[Signup] Inserting username record...');
+          await _supabase.from('usernames').insert({
+            'username': _userName.trim().toLowerCase(),
+            'user_id': uid,
+          });
+        } catch (e) {
+          debugPrint('[Signup] Notice: usernames insert: $e');
+        }
 
-      debugPrint('[Signup] Inserting bookmarks record...');
-      await _supabase.from('bookmarks').insert({
-        'user_id': uid,
-        'movies': [],
-        'tv_shows': [],
-      });
+        try {
+          debugPrint('[Signup] Inserting bookmarks record...');
+          await _supabase.from('bookmarks').insert({
+            'user_id': uid,
+            'movies': [],
+            'tv_shows': [],
+          });
+        } catch (e) {
+          debugPrint('[Signup] Notice: bookmarks insert: $e');
+        }
 
-      debugPrint('[Signup] All DB records created – signup complete');
-      if (!mounted) return;
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const CaffieneHomePage()),
-      );
+        debugPrint('[Signup] All DB records created – signup complete');
+        if (!mounted) return;
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const CaffieneHomePage()),
+        );
+      } else {
+        // Email confirmation is required by Supabase Auth – show verification notice dialog
+        debugPrint('[Signup] Email confirmation required. Showing verification notice dialog.');
+        if (!mounted) return;
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (ctx) => AlertDialog(
+            backgroundColor: const Color(0xFF1E293B),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            title: const Row(
+              children: [
+                Icon(Icons.mark_email_read_rounded, color: Color(0xFFDC2626), size: 28),
+                SizedBox(width: 12),
+                Text(
+                  "Check Your Email",
+                  style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+            content: Text(
+              "We've sent a verification link to $_emailAddress. Please confirm your email to complete registration, then log in.",
+              style: const TextStyle(color: Colors.white70, fontSize: 14),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(ctx).pop();
+                  Navigator.of(context).pop(); // Return to Login Screen
+                },
+                child: const Text(
+                  "Go to Login",
+                  style: TextStyle(color: Color(0xFFDC2626), fontWeight: FontWeight.bold),
+                ),
+              ),
+            ],
+          ),
+        );
+      }
     } on AuthException catch (error) {
       debugPrint(
         '[Signup] AuthException: ${error.message} (statusCode=${error.statusCode})',
@@ -471,34 +518,6 @@ class _SignupScreenState extends State<SignupScreen> {
                           _buildProfilePicker(),
                           const SizedBox(height: 18),
                           TextFormField(
-                            key: const ValueKey('name'),
-                            validator: (value) {
-                              if (value!.isEmpty) {
-                                return tr("name_empty");
-                              } else if (value.length > 40 ||
-                                  value.length < 2) {
-                                return tr("name_short_long");
-                              }
-                              return null;
-                            },
-                            textInputAction: TextInputAction.next,
-                            onEditingComplete: () => FocusScope.of(context)
-                                .requestFocus(_emailFocusNode),
-                            keyboardType: TextInputType.name,
-                            style: const TextStyle(color: _textPrimary),
-                            decoration: _inputDecoration(
-                              label: tr("full_name"),
-                              icon: Icons.person_outline_rounded,
-                            ),
-                            onSaved: (value) {
-                              _fullName = value!;
-                            },
-                            onChanged: (value) {
-                              _fullName = value;
-                            },
-                          ),
-                          const SizedBox(height: 16),
-                          TextFormField(
                             key: const ValueKey('email'),
                             focusNode: _emailFocusNode,
                             validator: (value) {
@@ -669,23 +688,17 @@ class _SignupScreenState extends State<SignupScreen> {
                                     ),
                             ),
                           ),
-                          const SizedBox(height: 12),
+                          const SizedBox(height: 16),
                           Center(
-                            child: TextButton.icon(
-                              onPressed: () {
-                                Get.offAllNamed(Routes.dash);
-                              },
-                              icon: const Icon(
-                                Icons.arrow_forward_rounded,
-                                size: 16,
-                                color: _textSecondary,
-                              ),
-                              label: const Text(
-                                'Continue as Guest',
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 8),
+                              child: Text(
+                                tr("terms_privacy_agreement"),
+                                textAlign: TextAlign.center,
                                 style: TextStyle(
-                                  color: _textSecondary,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
+                                  color: _textSecondary.withValues(alpha: 0.7),
+                                  fontSize: 12,
+                                  height: 1.4,
                                 ),
                               ),
                             ),

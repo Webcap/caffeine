@@ -605,5 +605,9 @@
     "default_filter": "Predeterminado",
     "newest": "Más nuevos",
     "install_permission_title": "Permiso de instalación",
-    "install_permission_msg": "Para instalar la actualización, Reelriot necesita tu permiso para instalar aplicaciones desconocidas. Activa esto en la siguiente pantalla."
+    "install_permission_msg": "Para instalar la actualización, Reelriot necesita tu permiso para instalar aplicaciones desconocidas. Activa esto en la siguiente pantalla.",
+    "system_offline": "SISTEMA FUERA DE LÍNEA",
+    "retry_connection": "REINTENTAR CONEXIÓN",
+    "outage_default_message": "El servicio no está disponible actualmente. Estamos trabajando para restablecerlo.",
+    "terms_privacy_agreement": "Al registrarte aceptas los Términos de servicio y la Política de privacidad."
 }

@@ -80,6 +80,20 @@ class _LoginScreenState extends State<LoginScreen> {
       if (!mounted) return;
 
       try {
+        final uid = _auth.currentUser?.id;
+        final username = _auth.currentUser?.userMetadata?['username'] as String?;
+        if (uid != null && username != null && username.isNotEmpty) {
+          await Supabase.instance.client.from('usernames').upsert({
+            'username': username.toLowerCase(),
+            'user_id': uid,
+          }, onConflict: 'user_id');
+        }
+      } catch (e) {
+        debugPrint('[Login] Notice: username ensure error: $e');
+      }
+
+      if (!mounted) return;
+      try {
         await Provider.of<RecentProvider>(context, listen: false).syncFromCloud();
       } catch (e) {
         debugPrint('[Login] Notice: syncFromCloud background error: $e');
