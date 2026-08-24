@@ -1,3 +1,6 @@
+import 'package:provider/provider.dart';
+import 'package:reelriot/provider/bookmarks_provider.dart';
+import 'package:reelriot/provider/recently_watched_provider.dart';
 import 'package:reelriot/functions/functions.dart';
 import 'package:reelriot/utils/theme/textStyle.dart';
 import 'package:reelriot/utils/globals.dart';
@@ -283,6 +286,15 @@ class _SignupScreenState extends State<SignupScreen> {
           });
         } catch (e) {
           debugPrint('[Signup] Notice: bookmarks insert: $e');
+        }
+
+        if (mounted) {
+          try {
+            await Provider.of<RecentProvider>(context, listen: false).clearLocalData();
+            if (mounted) {
+              await Provider.of<BookmarksProvider>(context, listen: false).clearAllLocalBookmarks();
+            }
+          } catch (_) {}
         }
 
         debugPrint('[Signup] All DB records created – signup complete');

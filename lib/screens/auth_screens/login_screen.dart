@@ -1,4 +1,5 @@
 import 'package:reelriot/functions/functions.dart';
+import 'package:reelriot/provider/bookmarks_provider.dart';
 import 'package:reelriot/provider/recently_watched_provider.dart';
 import 'package:reelriot/provider/settings_provider.dart';
 import 'package:reelriot/screens/auth_screens/forgot_password.dart';
@@ -94,7 +95,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if (!mounted) return;
       try {
-        await Provider.of<RecentProvider>(context, listen: false).syncFromCloud();
+        await Provider.of<RecentProvider>(context, listen: false).syncFromCloud(forceReplace: true);
+        if (mounted) {
+          await Provider.of<BookmarksProvider>(context, listen: false).syncFromCloud(forceReplace: true);
+        }
       } catch (e) {
         debugPrint('[Login] Notice: syncFromCloud background error: $e');
       }

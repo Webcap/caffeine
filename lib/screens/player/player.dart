@@ -105,6 +105,7 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
   bool _isEmbed = false;
   bool _isEmbedFullscreen = false;
   String _embedUrl = '';
+  int _embedCurrentPositionMs = 0;
 
   static bool isEmbedUrl(String url) {
     if (url.isEmpty) return false;
@@ -113,6 +114,14 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
       return false;
     }
     return u.contains('/embed') || u.contains('vixsrc.to/');
+  }
+
+  static String formatEmbedUrl(String rawUrl, int elapsedMs) {
+    if (rawUrl.isEmpty) return rawUrl;
+    final startSec = elapsedMs ~/ 1000;
+    if (startSec <= 3) return rawUrl;
+    final sep = rawUrl.contains('?') ? '&' : '?';
+    return '$rawUrl${sep}startAt=$startSec&start=$startSec&time=$startSec&t=$startSec#t=$startSec';
   }
 
   Timer? _periodicSaveTimer;
@@ -128,10 +137,12 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
     _periodicSaveTimer = Timer.periodic(const Duration(seconds: 30), (timer) {
       if (_betterPlayerController.isVideoInitialized() == true || _isEmbed) {
         final elapsed = _isEmbed
-            ? ((widget.mediaType == MediaType.movie
-                    ? (widget.movieMetadata?.elapsed ?? 0)
-                    : (widget.tvMetadata?.elapsed ?? 0)) +
-                playbackDurationInSeconds * 1000)
+            ? (_embedCurrentPositionMs > 0
+                ? _embedCurrentPositionMs
+                : ((widget.mediaType == MediaType.movie
+                        ? (widget.movieMetadata?.elapsed ?? 0)
+                        : (widget.tvMetadata?.elapsed ?? 0)) +
+                    playbackDurationInSeconds * 1000))
             : _betterPlayerController.player.state.position.inMilliseconds;
         if (widget.mediaType == MediaType.movie) {
           insertRecentMovieData(manualElapsed: elapsed);
@@ -176,7 +187,7 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
 
     if (link != null && isEmbedUrl(link)) {
       _isEmbed = true;
-      _embedUrl = link;
+      _embedUrl = formatEmbedUrl(link, initialElapsed);
       startDurationTimer();
     } else {
       _isEmbed = false;
@@ -365,7 +376,8 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
 
         if (isEmbedUrl(link)) {
           _isEmbed = true;
-          _embedUrl = link;
+          final elapsed = await _currentElapsedMilliseconds;
+          _embedUrl = formatEmbedUrl(link, elapsed);
           if (_betterPlayerController.isPlaying()) {
             _betterPlayerController.pause();
           }
@@ -447,16 +459,19 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
 
     int elapsed = manualElapsed ??
         (_isEmbed
-            ? ((widget.movieMetadata?.elapsed ?? 0) +
-                playbackDurationInSeconds * 1000)
+            ? (_embedCurrentPositionMs > 0
+                ? _embedCurrentPositionMs
+                : ((widget.movieMetadata?.elapsed ?? 0) +
+                    playbackDurationInSeconds * 1000))
             : (_betterPlayerController.isVideoInitialized() == true
                 ? _betterPlayerController.player.state.position.inMilliseconds
                 : 0));
 
     if (elapsed < 3000 && playbackDurationInSeconds < 3) return;
 
-    final int playerDur =
-        _betterPlayerController.player.state.duration.inMilliseconds;
+    final int playerDur = _isEmbed
+        ? duration
+        : _betterPlayerController.player.state.duration.inMilliseconds;
     final int effectiveDuration = playerDur > 0
         ? playerDur
         : (duration > 0 ? duration : 7200000); // 2h fallback
@@ -479,7 +494,7 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
         title: widget.movieMetadata?.movieName ?? '',
         backdropPath: widget.movieMetadata?.backdropPath ?? '');
 
-    final bool isCompleted = _betterPlayerController.player.state.completed ||
+    final bool isCompleted = (!_isEmbed && _betterPlayerController.player.state.completed) ||
         (effectiveDuration > 0 && (elapsed / effectiveDuration) >= 0.9) ||
         (effectiveDuration > 60000 && remaining <= 45000);
 
@@ -509,16 +524,19 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
 
     int elapsed = manualElapsed ??
         (_isEmbed
-            ? ((widget.tvMetadata?.elapsed ?? 0) +
-                playbackDurationInSeconds * 1000)
+            ? (_embedCurrentPositionMs > 0
+                ? _embedCurrentPositionMs
+                : ((widget.tvMetadata?.elapsed ?? 0) +
+                    playbackDurationInSeconds * 1000))
             : (_betterPlayerController.isVideoInitialized() == true
                 ? _betterPlayerController.player.state.position.inMilliseconds
                 : 0));
 
     if (elapsed < 3000 && playbackDurationInSeconds < 3) return;
 
-    final int playerDur =
-        _betterPlayerController.player.state.duration.inMilliseconds;
+    final int playerDur = _isEmbed
+        ? duration
+        : _betterPlayerController.player.state.duration.inMilliseconds;
     final int effectiveDuration = playerDur > 0
         ? playerDur
         : (duration > 0 ? duration : 2700000); // 45m fallback
@@ -543,7 +561,7 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
         seasonNum: widget.tvMetadata?.seasonNumber ?? 0,
         seriesId: widget.tvMetadata?.tvId ?? 0);
 
-    final bool isCompleted = _betterPlayerController.player.state.completed ||
+    final bool isCompleted = (!_isEmbed && _betterPlayerController.player.state.completed) ||
         (effectiveDuration > 0 && (elapsed / effectiveDuration) >= 0.9) ||
         (effectiveDuration > 60000 && remaining <= 45000);
 
@@ -608,19 +626,22 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
       if (!initialized && !_isEmbed) return;
 
       final int elapsed = _isEmbed
-          ? ((widget.mediaType == MediaType.movie
-                  ? (widget.movieMetadata?.elapsed ?? 0)
-                  : (widget.tvMetadata?.elapsed ?? 0)) +
-              playbackDurationInSeconds * 1000)
+          ? (_embedCurrentPositionMs > 0
+              ? _embedCurrentPositionMs
+              : ((widget.mediaType == MediaType.movie
+                      ? (widget.movieMetadata?.elapsed ?? 0)
+                      : (widget.tvMetadata?.elapsed ?? 0)) +
+                  playbackDurationInSeconds * 1000))
           : _betterPlayerController.player.state.position.inMilliseconds;
 
       // Don't save if we barely started (< 3s)
       if (elapsed < 3000 && playbackDurationInSeconds < 3) return;
 
       final bool playerCompleted =
-          _betterPlayerController.player.state.completed;
-      final int playerDur =
-          _betterPlayerController.player.state.duration.inMilliseconds;
+          !_isEmbed && _betterPlayerController.player.state.completed;
+      final int playerDur = _isEmbed
+          ? duration
+          : _betterPlayerController.player.state.duration.inMilliseconds;
       final int effectiveDuration = playerDur > 0
           ? playerDur
           : (duration > 0
@@ -792,6 +813,13 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
   }
 
   Future<int> get _currentElapsedMilliseconds async {
+    if (_isEmbed) {
+      if (_embedCurrentPositionMs > 0) return _embedCurrentPositionMs;
+      final initialElapsed = widget.mediaType == MediaType.movie
+          ? (widget.movieMetadata?.elapsed ?? 0)
+          : (widget.tvMetadata?.elapsed ?? 0);
+      return initialElapsed + (playbackDurationInSeconds * 1000);
+    }
     if (!(_betterPlayerController.isVideoInitialized() == true)) return 0;
     return _betterPlayerController.player.state.position.inMilliseconds;
   }
@@ -1029,10 +1057,12 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
 
         if (_betterPlayerController.isVideoInitialized() == true || _isEmbed) {
           final elapsed = _isEmbed
-              ? ((widget.mediaType == MediaType.movie
-                      ? (widget.movieMetadata?.elapsed ?? 0)
-                      : (widget.tvMetadata?.elapsed ?? 0)) +
-                  playbackDurationInSeconds * 1000)
+              ? (_embedCurrentPositionMs > 0
+                  ? _embedCurrentPositionMs
+                  : ((widget.mediaType == MediaType.movie
+                          ? (widget.movieMetadata?.elapsed ?? 0)
+                          : (widget.tvMetadata?.elapsed ?? 0)) +
+                      playbackDurationInSeconds * 1000))
               : _betterPlayerController.player.state.position.inMilliseconds;
 
           if (widget.mediaType == MediaType.movie) {
@@ -1057,17 +1087,30 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
                   embedded: true,
                   blockAds: true,
                   tryExtractHls: true,
+                  startAtSeconds: ((widget.mediaType == MediaType.movie
+                              ? (widget.movieMetadata?.elapsed ?? 0)
+                              : (widget.tvMetadata?.elapsed ?? 0)) ~/
+                          1000) +
+                      playbackDurationInSeconds,
+                  onProgressUpdate: (currSec, durSec) {
+                    _embedCurrentPositionMs = (currSec * 1000).toInt();
+                    if (durSec > 0 && duration <= 0) {
+                      duration = (durSec * 1000).toInt();
+                    }
+                  },
                   onFullscreenChanged: (isFull) {
                     setState(() {
                       _isEmbedFullscreen = isFull;
                     });
                   },
-                  onHlsExtracted: (hls) {
+                  onHlsExtracted: (hls) async {
                     debugPrint('[Player] 🎯 HLS stream extracted from embed: $hls');
+                    final elapsed = await _currentElapsedMilliseconds;
                     _isEmbed = false;
                     _betterPlayerController.setDataSource(
                       hls,
                       subtitles: _currentSubs,
+                      startAt: Duration(milliseconds: elapsed),
                     );
                     if (mounted) setState(() {});
                   },
