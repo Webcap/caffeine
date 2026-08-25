@@ -99,6 +99,9 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
   final int _retryProviderIndex = 0;
   bool _isRetrying = false;
 
+  /// Guards against writing a completion record more than once per session.
+  bool _completionSaved = false;
+
   DateTime? _loadStartTime;
   DateTime? _bufferingStartTime;
 
@@ -133,8 +136,8 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
 
     WidgetsBinding.instance.addObserver(this);
 
-    // Periodic save every 30 seconds
-    _periodicSaveTimer = Timer.periodic(const Duration(seconds: 30), (timer) {
+    // Periodic save every 10 seconds to minimise progress loss on hard-kill.
+    _periodicSaveTimer = Timer.periodic(const Duration(seconds: 10), (timer) {
       if (_betterPlayerController.isVideoInitialized() == true || _isEmbed) {
         final elapsed = _isEmbed
             ? (_embedCurrentPositionMs > 0
@@ -232,15 +235,33 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
       }
     });
 
+    // Completed event — intentionally NOT guarded by `mounted` because many OEM
+    // Android ROMs unmount the widget before this fires at end of stream.
     _betterPlayerController.player.stream.completed.listen((completed) {
-      if (completed && mounted) {
+      if (completed) {
         debugPrint('[Player] 🏁 Stream completed event fired');
-        if (widget.mediaType == MediaType.movie) {
-          insertRecentMovieData(manualElapsed: duration > 0 ? duration : 7200000);
-        } else {
-          insertRecentEpisodeData(manualElapsed: duration > 0 ? duration : 2700000);
+        if (!_completionSaved) {
+          _completionSaved = true;
+          _saveProgressOnExit(); // context-free, safe without mounted
+          _invalidateWatchStatsCache();
         }
-        _invalidateWatchStatsCache();
+      }
+    });
+
+    // Position-based near-end completion trigger (≥ 92% watched).
+    // Fires before the player reaches 100% so the record is saved even if the
+    // user exits slightly early or the `completed` event is swallowed by the OS.
+    _betterPlayerController.player.stream.position.listen((pos) {
+      if (_completionSaved || _isEmbed) return;
+      final dur = _betterPlayerController.player.state.duration;
+      if (dur > Duration.zero) {
+        final pct = pos.inMilliseconds / dur.inMilliseconds;
+        if (pct >= 0.92) {
+          _completionSaved = true;
+          debugPrint('[Player] ✅ Near-end threshold reached (${(pct * 100).toStringAsFixed(1)}%) — marking completed');
+          _saveProgressOnExit();
+          _invalidateWatchStatsCache();
+        }
       }
     });
 

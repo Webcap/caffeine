@@ -308,7 +308,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ],
                         ),
-                        child: Form(
+                        child: AutofillGroup(
+                          onDisposeAction: AutofillContextAction.commit,
+                          child: Form(
                           key: formKey,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -333,6 +335,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               const SizedBox(height: 20),
                               TextFormField(
                                 key: const ValueKey('email'),
+                                autofillHints: const [AutofillHints.email],
                                 validator: (value) {
                                   if (value!.isEmpty || !value.contains('@')) {
                                     return tr("invalid_email");
@@ -355,6 +358,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               const SizedBox(height: 16),
                               TextFormField(
                                 key: const ValueKey('Password'),
+                                autofillHints: const [AutofillHints.password],
                                 validator: (value) {
                                   if (value!.isEmpty || value.length < 7) {
                                     return tr("weak_password");
@@ -450,8 +454,9 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                             ],
                           ),
-                        ),
-                      ),
+                        ),        // closes Form
+                       ),         // closes AutofillGroup
+                      ),          // closes Container
                       const Spacer(),
                       const SizedBox(height: 24),
                       Center(

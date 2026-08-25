@@ -522,15 +522,18 @@ class _SignupScreenState extends State<SignupScreen> {
                         ),
                       ],
                     ),
-                    child: Form(
-                      key: _formKey,
-                      child: Column(
+                    child: AutofillGroup(
+                      onDisposeAction: AutofillContextAction.commit,
+                      child: Form(
+                       key: _formKey,
+                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           _buildProfilePicker(),
                           const SizedBox(height: 18),
                           TextFormField(
                             key: const ValueKey('email'),
+                            autofillHints: const [AutofillHints.email],
                             focusNode: _emailFocusNode,
                             validator: (value) {
                               if (value!.isEmpty || !value.contains('@')) {
@@ -594,6 +597,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           const SizedBox(height: 16),
                           TextFormField(
                             key: const ValueKey('Password'),
+                            autofillHints: const [AutofillHints.newPassword],
                             validator: (value) {
                               if (value!.isEmpty || value.length < 7) {
                                 return tr("invalid_password");
@@ -637,6 +641,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           const SizedBox(height: 16),
                           TextFormField(
                             key: const ValueKey('VerifyPassword'),
+                            autofillHints: const [AutofillHints.newPassword],
                             validator: (value) {
                               if (value != _password) {
                                 return tr("password_mismatch");
@@ -716,9 +721,10 @@ class _SignupScreenState extends State<SignupScreen> {
                             ),
                           ),
                         ],
-                      ),
-                    ),
-                  ),
+                       ),
+                      ),      // closes Form
+                    ),        // closes AutofillGroup
+                  ),          // closes Container
                 ],
               ),
             ),
