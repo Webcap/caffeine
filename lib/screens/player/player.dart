@@ -107,6 +107,32 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
   /// [player.state.position] temporarily resets to zero.
   int _lastKnownPositionMs = 0;
 
+  /// Returns the current playback position in milliseconds.
+  /// Prefers active position, falling back to [_lastKnownPositionMs] so seeks
+  /// and buffering gaps never cause position loss.
+  int get _currentElapsedMs {
+    if (_isEmbed) {
+      if (_embedCurrentPositionMs > 0) {
+        return _embedCurrentPositionMs > _lastKnownPositionMs
+            ? _embedCurrentPositionMs
+            : _lastKnownPositionMs;
+      }
+      final initialElapsed = widget.mediaType == MediaType.movie
+          ? (widget.movieMetadata?.elapsed ?? 0)
+          : (widget.tvMetadata?.elapsed ?? 0);
+      final fallback = initialElapsed + (playbackDurationInSeconds * 1000);
+      return fallback > _lastKnownPositionMs ? fallback : _lastKnownPositionMs;
+    }
+
+    final statePos = _betterPlayerController.isVideoInitialized() == true
+        ? _betterPlayerController.player.state.position.inMilliseconds
+        : 0;
+    if (statePos > 0) {
+      return statePos > _lastKnownPositionMs ? statePos : _lastKnownPositionMs;
+    }
+    return _lastKnownPositionMs;
+  }
+
   DateTime? _loadStartTime;
   DateTime? _bufferingStartTime;
 
@@ -144,14 +170,7 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
     // Periodic save every 10 seconds to minimise progress loss on hard-kill.
     _periodicSaveTimer = Timer.periodic(const Duration(seconds: 10), (timer) {
       if (_betterPlayerController.isVideoInitialized() == true || _isEmbed) {
-        final elapsed = _isEmbed
-            ? (_embedCurrentPositionMs > 0
-                ? _embedCurrentPositionMs
-                : ((widget.mediaType == MediaType.movie
-                        ? (widget.movieMetadata?.elapsed ?? 0)
-                        : (widget.tvMetadata?.elapsed ?? 0)) +
-                    playbackDurationInSeconds * 1000))
-            : _betterPlayerController.player.state.position.inMilliseconds;
+        final elapsed = _currentElapsedMs;
         if (widget.mediaType == MediaType.movie) {
           insertRecentMovieData(manualElapsed: elapsed);
         } else {
@@ -487,17 +506,9 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
   Future<void> insertRecentMovieData({int? manualElapsed}) async {
     if (!mounted || widget.movieMetadata == null) return;
 
-    int elapsed = manualElapsed ??
-        (_isEmbed
-            ? (_embedCurrentPositionMs > 0
-                ? _embedCurrentPositionMs
-                : ((widget.movieMetadata?.elapsed ?? 0) +
-                    playbackDurationInSeconds * 1000))
-            : (_betterPlayerController.isVideoInitialized() == true
-                ? _betterPlayerController.player.state.position.inMilliseconds
-                : 0));
+    int elapsed = manualElapsed ?? _currentElapsedMs;
 
-    if (elapsed < 3000 && playbackDurationInSeconds < 3) return;
+    if (elapsed < 3000 && _lastKnownPositionMs < 3000 && playbackDurationInSeconds < 3) return;
 
     final int playerDur = _isEmbed
         ? duration
@@ -552,17 +563,9 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
   Future<void> insertRecentEpisodeData({int? manualElapsed}) async {
     if (!mounted || widget.tvMetadata == null) return;
 
-    int elapsed = manualElapsed ??
-        (_isEmbed
-            ? (_embedCurrentPositionMs > 0
-                ? _embedCurrentPositionMs
-                : ((widget.tvMetadata?.elapsed ?? 0) +
-                    playbackDurationInSeconds * 1000))
-            : (_betterPlayerController.isVideoInitialized() == true
-                ? _betterPlayerController.player.state.position.inMilliseconds
-                : 0));
+    int elapsed = manualElapsed ?? _currentElapsedMs;
 
-    if (elapsed < 3000 && playbackDurationInSeconds < 3) return;
+    if (elapsed < 3000 && _lastKnownPositionMs < 3000 && playbackDurationInSeconds < 3) return;
 
     final int playerDur = _isEmbed
         ? duration
@@ -655,20 +658,7 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
       final bool initialized = _betterPlayerController.isVideoInitialized();
       if (!initialized && !_isEmbed) return;
 
-      // Prefer player.state.position but fall back to _lastKnownPositionMs
-      // when the player is buffering after a seek (state.position resets to 0
-      // during the buffer window and the user may exit before it catches up).
-      final int elapsed = _isEmbed
-          ? (_embedCurrentPositionMs > 0
-              ? _embedCurrentPositionMs
-              : ((widget.mediaType == MediaType.movie
-                      ? (widget.movieMetadata?.elapsed ?? 0)
-                      : (widget.tvMetadata?.elapsed ?? 0)) +
-                  playbackDurationInSeconds * 1000))
-          : (() {
-              final statePos = _betterPlayerController.player.state.position.inMilliseconds;
-              return statePos > 0 ? statePos : _lastKnownPositionMs;
-            })();
+      final int elapsed = _currentElapsedMs;
 
       // Don't save if we barely started (< 3s) — UNLESS we have a meaningful
       // last-known position (e.g., user seeked to credits and immediately exited).
@@ -850,15 +840,7 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
   }
 
   Future<int> get _currentElapsedMilliseconds async {
-    if (_isEmbed) {
-      if (_embedCurrentPositionMs > 0) return _embedCurrentPositionMs;
-      final initialElapsed = widget.mediaType == MediaType.movie
-          ? (widget.movieMetadata?.elapsed ?? 0)
-          : (widget.tvMetadata?.elapsed ?? 0);
-      return initialElapsed + (playbackDurationInSeconds * 1000);
-    }
-    if (!(_betterPlayerController.isVideoInitialized() == true)) return 0;
-    return _betterPlayerController.player.state.position.inMilliseconds;
+    return _currentElapsedMs;
   }
 
   void _openCastSheet() async {
@@ -1093,14 +1075,7 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
         final navigator = Navigator.of(context);
 
         if (_betterPlayerController.isVideoInitialized() == true || _isEmbed) {
-          final elapsed = _isEmbed
-              ? (_embedCurrentPositionMs > 0
-                  ? _embedCurrentPositionMs
-                  : ((widget.mediaType == MediaType.movie
-                          ? (widget.movieMetadata?.elapsed ?? 0)
-                          : (widget.tvMetadata?.elapsed ?? 0)) +
-                      playbackDurationInSeconds * 1000))
-              : _betterPlayerController.player.state.position.inMilliseconds;
+          final elapsed = _currentElapsedMs;
 
           if (widget.mediaType == MediaType.movie) {
             await insertRecentMovieData(manualElapsed: elapsed);
