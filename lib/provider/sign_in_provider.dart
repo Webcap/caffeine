@@ -148,7 +148,9 @@ class SignInProvider extends ChangeNotifier {
     _name = user.userMetadata?['full_name'] as String? ??
         user.userMetadata?['name'] as String?;
     _imageUrl = user.userMetadata?['avatar_url'] as String?;
-    _profileId = int.tryParse(user.userMetadata?['avatar']?.toString() ?? '');
+    _profileId = int.tryParse(user.userMetadata?['avatar']?.toString() ??
+        user.userMetadata?['profile_id']?.toString() ??
+        '');
     _isSignedIn = true;
     notifyListeners();
 
@@ -287,7 +289,7 @@ class SignInProvider extends ChangeNotifier {
         _email = data['email'] as String?;
         _imageUrl = data['image_url'] as String?;
         final dbProfileId = int.tryParse(data['profile_id']?.toString() ?? '');
-        if (dbProfileId != null && dbProfileId != 0) {
+        if (dbProfileId != null) {
           _profileId = dbProfileId;
         }
         _provider = data['provider'] as String?;
