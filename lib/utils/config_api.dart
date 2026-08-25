@@ -8,6 +8,8 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'package:reelriot/utils/config.dart';
+
 Future<void> fetchConfigFromApi(
     AppDependencyProvider appDependencyProvider, {bool skipUpdateFields = false}) async {
   try {
@@ -186,6 +188,7 @@ Future<AppUpdateInfo> fetchUpdateInfoFromApi(
     final uri = Uri.parse('$baseUrl/v1/updates').replace(queryParameters: {
       'platform': platform,
       'environment': env,
+      'client_version': currentAppVersion,
       if (userId != null) 'userId': userId,
       if (anonymousId.isNotEmpty) 'anonymousId': anonymousId,
     });
