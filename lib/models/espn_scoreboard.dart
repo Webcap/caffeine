@@ -124,17 +124,31 @@ class EspnScoreboardGame {
     return null;
   }
 
+  /// True if combat sport (UFC, MMA, Boxing) where points scoreboards should not be shown.
+  bool get isCombatSport {
+    final s = shortName.toUpperCase();
+    final n = name.toUpperCase();
+    final cType = competitionType?.toUpperCase() ?? '';
+    return s.contains('UFC') ||
+        s.contains('MMA') ||
+        s.contains('BOXING') ||
+        n.contains('UFC') ||
+        n.contains('MMA') ||
+        n.contains('CONTENDER SERIES') ||
+        n.contains('DANA WHITE') ||
+        cType == 'MMA' ||
+        cType == 'UFC' ||
+        (competitors.isNotEmpty &&
+            competitors.any((c) => c.displayName.contains(' vs ')));
+  }
+
   /// Thumbnail from first team logo
   String? get thumbnailUrl => away?.logoUrl ?? home?.logoUrl;
 
   /// Score line e.g. "101 - 115"
   String? get scoreLine {
     // UFC/MMA usually show as 0 - 0 until final, which is cluttered
-    final isCombat = shortName.toUpperCase().contains('UFC') || 
-                    name.toUpperCase().contains('UFC') ||
-                    (competitors.isNotEmpty && competitors.any((c) => c.displayName.contains(' vs ')));
-                    
-    if (isCombat) return null;
+    if (isCombatSport) return null;
 
     final a = away?.score;
     final h = home?.score;
@@ -294,3 +308,32 @@ class EspnStatus {
     );
   }
 }
+
+/// Helper to detect MMA, UFC, Boxing and combat events across sports/leagues/titles/games.
+bool isMmaOrCombatSport({
+  String? sport,
+  String? league,
+  EspnScoreboardGame? game,
+  String? title,
+}) {
+  final s = sport?.toUpperCase() ?? '';
+  final l = league?.toUpperCase() ?? '';
+  final t = title?.toUpperCase() ?? '';
+
+  if (s == 'MMA' ||
+      s == 'UFC' ||
+      s == 'BOXING' ||
+      l == 'UFC' ||
+      l == 'MMA' ||
+      t.contains('UFC') ||
+      t.contains('CONTENDER SERIES') ||
+      t.contains('DANA WHITE') ||
+      t.contains('FIGHT NIGHT')) {
+    return true;
+  }
+  if (game != null && game.isCombatSport) {
+    return true;
+  }
+  return false;
+}
+

@@ -66,7 +66,13 @@ String formatLiveEventTitle(String raw) {
   body = body.replaceAll(RegExp(r'\s+vs\s+at\s+', caseSensitive: false), ' vs ');
   body = body.replaceAll(RegExp(r'\s+at\s+vs\s+', caseSensitive: false), ' vs ');
 
-  if (body.isNotEmpty && !body.toLowerCase().contains(' vs ')) {
+  final isNamedEvent = body.contains(':') ||
+      body.contains(',') ||
+      RegExp(r'(series|season|week|fight night|grand prix|championship|tournament)',
+              caseSensitive: false)
+          .hasMatch(body);
+
+  if (body.isNotEmpty && !body.toLowerCase().contains(' vs ') && !isNamedEvent) {
     final words = body.split(RegExp(r'\s+'));
     if (words.length == 2 && words[0].isNotEmpty && words[1].isNotEmpty) {
       body = '${words[0]} vs ${words[1]}';
@@ -840,9 +846,12 @@ class _MatchCard extends StatelessWidget {
   final bool hasStream;
   final VoidCallback onTap;
 
-  bool get _isMma =>
-      event.sport.toUpperCase() == 'MMA' ||
-      event.league.toUpperCase() == 'UFC';
+  bool get _isMma => isMmaOrCombatSport(
+        sport: event.sport,
+        league: event.league,
+        game: event.game,
+        title: event.game.name,
+      );
 
   @override
   Widget build(BuildContext context) {

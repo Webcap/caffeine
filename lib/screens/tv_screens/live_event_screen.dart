@@ -628,11 +628,17 @@ class _EventInfoSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final displayGame = scoreGame ?? espnGame;
+    final isCombat = isMmaOrCombatSport(
+      sport: event.sport,
+      game: displayGame,
+      title: event.title,
+    );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (displayGame != null &&
+        if (!isCombat &&
+            displayGame != null &&
             (displayGame.isLive || displayGame.isEffectivelyCompleted)) ...[
           _ScoreRow(game: displayGame),
           const SizedBox(height: 16),
@@ -793,6 +799,7 @@ class _ScoreRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (game.isCombatSport) return const SizedBox.shrink();
     final away = game.away;
     final home = game.home;
     final status = game.status;
