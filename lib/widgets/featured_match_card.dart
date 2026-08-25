@@ -119,7 +119,7 @@ class FeaturedMatchCard extends StatelessWidget {
                         MaterialPageRoute(
                           builder: (_) => LiveEventScreen(
                             event: StreameastEvent(
-                              id: 'featured_yankees',
+                              id: event.id,
                               title: event.title,
                               url: '',
                               logoUrl: event.thumbnailUrl,

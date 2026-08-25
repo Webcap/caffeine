@@ -86,6 +86,7 @@ class StreameastStreamResponse {
 }
 
 class FeaturedEvent {
+  final String id;
   final String title;
   final String thumbnailUrl;
   final String videoUrl;
@@ -93,6 +94,7 @@ class FeaturedEvent {
   final String? referrer;
 
   FeaturedEvent({
+    required this.id,
     required this.title,
     required this.thumbnailUrl,
     required this.videoUrl,

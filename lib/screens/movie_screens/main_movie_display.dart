@@ -547,7 +547,7 @@ class _SportHeroSlide extends StatelessWidget {
         MaterialPageRoute(
           builder: (_) => LiveEventScreen(
             event: StreameastEvent(
-              id: 'hero_sports',
+              id: event.id,
               title: event.title,
               url: '',
               logoUrl: event.thumbnailUrl,
