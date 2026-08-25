@@ -54,6 +54,12 @@ class AuthService {
     }
   }
 
+  /// Verifies the current session on app resume, refreshing it if it's near
+  /// or past expiry. Call this from an `AppLifecycleState.resumed` hook so a
+  /// long-backgrounded app doesn't sit on a stale token until something else
+  /// happens to touch auth.
+  Future<void> checkSessionOnResume() => _verifySessionHealth();
+
   /// Verifies if the current session is still valid and attempts a refresh if needed.
   /// This helps prevent the "daily sign-in" issue by proactively fixing stale sessions.
   Future<void> _verifySessionHealth() async {

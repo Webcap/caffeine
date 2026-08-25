@@ -29,8 +29,19 @@ class NetworkStatusService extends GetxService {
     } else {
       if (_wasOffline) {
         _wasOffline = false;
-        WidgetsBinding.instance.addPostFrameCallback((_) {
+        WidgetsBinding.instance.addPostFrameCallback((_) async {
           final auth = Supabase.instance.client.auth;
+          if (auth.currentSession == null) {
+            // Session may not have finished restoring/refreshing yet right
+            // after connectivity returns — give it one chance before
+            // concluding the user is actually signed out.
+            try {
+              await auth.refreshSession();
+            } catch (_) {
+              // No session to refresh, or refresh failed — fall through to
+              // the currentSession check below.
+            }
+          }
           if (auth.currentSession != null) {
             Get.offAllNamed(Routes.dash);
           } else {

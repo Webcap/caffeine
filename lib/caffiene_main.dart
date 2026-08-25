@@ -6,6 +6,7 @@ import 'package:reelriot/provider/premium_provider.dart';
 import 'package:reelriot/provider/settings_provider.dart';
 import 'package:reelriot/provider/sign_in_provider.dart';
 import 'package:reelriot/services/ad_service.dart';
+import 'package:reelriot/services/auth_service.dart';
 import 'package:reelriot/services/cast_service.dart';
 import 'package:reelriot/utils/config_api.dart';
 import 'package:reelriot/utils/routes/app_pages.dart';
@@ -58,6 +59,7 @@ class _CaffeineState extends State<Caffeine>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       refreshConfig(widget.appDependencyProvider);
+      AuthService.instance.checkSessionOnResume();
     }
   }
 
