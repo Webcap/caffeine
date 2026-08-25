@@ -68,6 +68,23 @@ class Player extends StatefulWidget {
       this.headers,
       super.key});
 
+  static bool isEmbedUrl(String url) {
+    if (url.isEmpty) return false;
+    final u = url.toLowerCase();
+    if (u.contains('.m3u8') || u.contains('.mp4') || u.contains('.mkv') || u.contains('.webm')) {
+      return false;
+    }
+    return u.contains('/embed') || u.contains('vixsrc.to/');
+  }
+
+  static String formatEmbedUrl(String rawUrl, int elapsedMs) {
+    if (rawUrl.isEmpty) return rawUrl;
+    final startSec = elapsedMs ~/ 1000;
+    if (startSec <= 3) return rawUrl;
+    final sep = rawUrl.contains('?') ? '&' : '?';
+    return '$rawUrl${sep}startAt=$startSec&start=$startSec&time=$startSec&t=$startSec#t=$startSec';
+  }
+
   @override
   State<Player> createState() => _PlayerState();
 }
