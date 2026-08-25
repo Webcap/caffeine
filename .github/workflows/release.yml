@@ -202,18 +202,19 @@ jobs:
           # Copy & Standardize AABs
           find build/app/outputs/bundle -name "*.aab" -exec cp {} "dist/ReelRiot-${BUILD_FLAVOR}-v${VERSION_CLEAN}.aab" \; 2>/dev/null || true
 
-          # Copy & Standardize APKs
-          if [ -f "build/app/outputs/flutter-apk/app-${BUILD_FLAVOR}-release.apk" ]; then
-            cp "build/app/outputs/flutter-apk/app-${BUILD_FLAVOR}-release.apk" "dist/ReelRiot-${BUILD_FLAVOR}-v${VERSION_CLEAN}-universal.apk"
-          fi
+          # Copy & Standardize APKs (arm64-v8a 46MB build as primary)
           if [ -f "build/app/outputs/flutter-apk/app-arm64-v8a-${BUILD_FLAVOR}-release.apk" ]; then
             cp "build/app/outputs/flutter-apk/app-arm64-v8a-${BUILD_FLAVOR}-release.apk" "dist/ReelRiot-${BUILD_FLAVOR}-v${VERSION_CLEAN}-arm64-v8a.apk"
+            cp "build/app/outputs/flutter-apk/app-arm64-v8a-${BUILD_FLAVOR}-release.apk" "dist/ReelRiot-${BUILD_FLAVOR}-v${VERSION_CLEAN}.apk"
           fi
           if [ -f "build/app/outputs/flutter-apk/app-armeabi-v7a-${BUILD_FLAVOR}-release.apk" ]; then
             cp "build/app/outputs/flutter-apk/app-armeabi-v7a-${BUILD_FLAVOR}-release.apk" "dist/ReelRiot-${BUILD_FLAVOR}-v${VERSION_CLEAN}-armeabi-v7a.apk"
           fi
           if [ -f "build/app/outputs/flutter-apk/app-x86_64-${BUILD_FLAVOR}-release.apk" ]; then
             cp "build/app/outputs/flutter-apk/app-x86_64-${BUILD_FLAVOR}-release.apk" "dist/ReelRiot-${BUILD_FLAVOR}-v${VERSION_CLEAN}-x86_64.apk"
+          fi
+          if [ -f "build/app/outputs/flutter-apk/app-${BUILD_FLAVOR}-release.apk" ]; then
+            cp "build/app/outputs/flutter-apk/app-${BUILD_FLAVOR}-release.apk" "dist/ReelRiot-${BUILD_FLAVOR}-v${VERSION_CLEAN}-universal.apk"
           fi
 
           # Generate SHA256 Checksums
@@ -257,7 +258,7 @@ jobs:
           VERSION_RAW="${{ steps.organize_artifacts.outputs.APP_VERSION }}"
           VERSION_CLEAN=$(echo "$VERSION_RAW" | tr '+' '_')
           REPO_NAME="${{ github.repository }}"
-          DOWNLOAD_URL="https://github.com/${REPO_NAME}/releases/download/v${VERSION_RAW}/ReelRiot-${BUILD_FLAVOR}-v${VERSION_CLEAN}-universal.apk"
+          DOWNLOAD_URL="https://github.com/${REPO_NAME}/releases/download/v${VERSION_RAW}/ReelRiot-${BUILD_FLAVOR}-v${VERSION_CLEAN}-arm64-v8a.apk"
 
           dart tools/sync_update_center.dart \
             --platform android \
