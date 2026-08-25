@@ -218,7 +218,16 @@ class _EventChatroomState extends State<EventChatroom> {
               final msg = ChatMessage.fromJson(newRecord);
               if (mounted) {
                 setState(() {
-                  if (!_messages.any((m) => m.id == msg.id)) {
+                  // If we have an optimistic temp message matching this record, replace it
+                  final tempIdx = _messages.indexWhere(
+                    (m) =>
+                        m.id.startsWith('temp_') &&
+                        m.userId == msg.userId &&
+                        m.content == msg.content,
+                  );
+                  if (tempIdx != -1) {
+                    _messages[tempIdx] = msg;
+                  } else if (!_messages.any((m) => m.id == msg.id)) {
                     _messages.add(msg);
                   }
                 });
@@ -321,6 +330,20 @@ class _EventChatroomState extends State<EventChatroom> {
 
           if (res.statusCode == 200 || res.statusCode == 201) {
             sent = true;
+            try {
+              final data = jsonDecode(res.body);
+              if (data is Map<String, dynamic> && data['id'] != null) {
+                final serverMsg = ChatMessage.fromJson(data);
+                if (mounted) {
+                  setState(() {
+                    final idx = _messages.indexWhere((m) => m.id == tempId);
+                    if (idx != -1) {
+                      _messages[idx] = serverMsg;
+                    }
+                  });
+                }
+              }
+            } catch (_) {}
           }
         } catch (e) {
           debugPrint('[Chatroom] Caffeine API chat send failed, falling back: $e');
@@ -329,18 +352,35 @@ class _EventChatroomState extends State<EventChatroom> {
 
       // 2. Fallback directly to Supabase if not sent via API
       if (!sent) {
-        await Supabase.instance.client.from('messages').insert({
-          'room_id': widget.roomId,
-          'user_id': _currentUserId ?? 'anon',
-          'username': _currentUsername,
-          'message': text,
-          'role': _currentUserRole ?? 'user',
-          'created_at': DateTime.now().toIso8601String(),
-        });
+        final inserted = await Supabase.instance.client
+            .from('messages')
+            .insert({
+              'room_id': widget.roomId,
+              'user_id': _currentUserId ?? 'anon',
+              'username': _currentUsername,
+              'message': text,
+              'role': _currentUserRole ?? 'user',
+              'created_at': DateTime.now().toIso8601String(),
+            })
+            .select()
+            .maybeSingle();
+
+        if (inserted != null && mounted) {
+          final serverMsg = ChatMessage.fromJson(inserted);
+          setState(() {
+            final idx = _messages.indexWhere((m) => m.id == tempId);
+            if (idx != -1) {
+              _messages[idx] = serverMsg;
+            }
+          });
+        }
       }
     } catch (e) {
       debugPrint('[Chatroom] Failed to insert message: $e');
       if (mounted) {
+        setState(() {
+          _messages.removeWhere((m) => m.id == tempId);
+        });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Failed to send message: $e'),
