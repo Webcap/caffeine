@@ -243,6 +243,10 @@ class _EventChatroomState extends State<EventChatroom> {
                   } else if (!_messages.any((m) => m.id == msg.id)) {
                     _messages.add(msg);
                   }
+                  // Cap local message buffer to prevent memory growth during long streams
+                  if (_messages.length > 150) {
+                    _messages.removeRange(0, _messages.length - 150);
+                  }
                 });
                 _scrollToBottom();
               }
