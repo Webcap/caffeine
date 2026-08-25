@@ -23,17 +23,22 @@ class ChatMessage {
     this.role = 'user',
   });
 
-  factory ChatMessage.fromJson(Map<String, dynamic> json) {
+  factory ChatMessage.fromJson(Map<dynamic, dynamic> json) {
     DateTime date;
     try {
-      date = DateTime.parse(json['created_at'].toString());
+      final rawDate = json['created_at']?.toString();
+      if (rawDate != null && rawDate.isNotEmpty) {
+        date = DateTime.parse(rawDate);
+      } else {
+        date = DateTime.now();
+      }
     } catch (_) {
       date = DateTime.now();
     }
 
     return ChatMessage(
       id: json['id']?.toString() ?? '',
-      userId: json['user_id']?.toString() ?? '',
+      userId: json['user_id']?.toString() ?? json['userId']?.toString() ?? '',
       username: json['username']?.toString() ?? 'Anonymous',
       content: json['message']?.toString() ?? json['content']?.toString() ?? '',
       createdAt: date,
@@ -150,7 +155,7 @@ class _EventChatroomState extends State<EventChatroom> {
 
   Future<void> _fetchMessages() async {
     try {
-      final res = await Supabase.instance.client
+      final dynamic res = await Supabase.instance.client
           .from('messages')
           .select()
           .eq('room_id', widget.roomId)
@@ -159,21 +164,29 @@ class _EventChatroomState extends State<EventChatroom> {
 
       if (!mounted) return;
 
-      final List<ChatMessage> fetched = (res as List)
-          .map((m) => ChatMessage.fromJson(m as Map<String, dynamic>))
-          .toList()
-          .reversed
-          .toList();
+      if (res is List) {
+        final List<ChatMessage> fetched = res
+            .map((m) => ChatMessage.fromJson(m is Map ? Map<String, dynamic>.from(m) : {}))
+            .toList()
+            .reversed
+            .toList();
 
-      setState(() {
-        _messages.clear();
-        _messages.addAll(fetched);
-        _loading = false;
-      });
+        setState(() {
+          final tempMessages = _messages.where((m) => m.id.startsWith('temp_')).toList();
+          _messages.clear();
+          _messages.addAll(fetched);
+          for (final temp in tempMessages) {
+            if (!_messages.any((m) => m.userId == temp.userId && m.content == temp.content)) {
+              _messages.add(temp);
+            }
+          }
+          _loading = false;
+        });
 
-      _scrollToBottom();
-    } catch (e) {
-      debugPrint('[Chatroom] Error fetching messages: $e');
+        _scrollToBottom();
+      }
+    } catch (e, stack) {
+      debugPrint('[Chatroom] Error fetching messages: $e\n$stack');
       if (mounted) setState(() => _loading = false);
     }
   }

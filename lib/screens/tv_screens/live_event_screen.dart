@@ -431,24 +431,31 @@ class _LiveEventScreenState extends State<LiveEventScreen> {
           ),
         // Content Area: Chat or Match Info
         Expanded(
-          child: isChatEnabled && _selectedMobileTab == 0
-              ? EventChatroom(
+          child: IndexedStack(
+            index: isChatEnabled ? _selectedMobileTab : 1,
+            children: [
+              if (isChatEnabled)
+                EventChatroom(
                   roomId: widget.event.id,
                   roomName: widget.event.title,
                   showHeader: false,
                 )
-              : SingleChildScrollView(
-                  padding: const EdgeInsets.all(16),
-                  child: _EventInfoSection(
-                    event: widget.event,
-                    espnGame: widget.espnGame,
-                    parsed: parsed,
-                    scoreGame: _scoreGame,
-                    sources: _sources,
-                    currentUrl: _currentUrl,
-                    onSourceChanged: _switchSource,
-                  ),
+              else
+                const SizedBox.shrink(),
+              SingleChildScrollView(
+                padding: const EdgeInsets.all(16),
+                child: _EventInfoSection(
+                  event: widget.event,
+                  espnGame: widget.espnGame,
+                  parsed: parsed,
+                  scoreGame: _scoreGame,
+                  sources: _sources,
+                  currentUrl: _currentUrl,
+                  onSourceChanged: _switchSource,
                 ),
+              ),
+            ],
+          ),
         ),
       ],
     );
