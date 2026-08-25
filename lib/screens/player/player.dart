@@ -102,6 +102,11 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
   /// Guards against writing a completion record more than once per session.
   bool _completionSaved = false;
 
+  /// The most recent playback position reported by the player or the WebView
+  /// JS bridge. Persists through seek-buffering gaps where
+  /// [player.state.position] temporarily resets to zero.
+  int _lastKnownPositionMs = 0;
+
   DateTime? _loadStartTime;
   DateTime? _bufferingStartTime;
 
@@ -252,6 +257,10 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
     // Fires before the player reaches 100% so the record is saved even if the
     // user exits slightly early or the `completed` event is swallowed by the OS.
     _betterPlayerController.player.stream.position.listen((pos) {
+      // Always track last known position (survives seek-buffering resets).
+      if (pos.inMilliseconds > 0) {
+        _lastKnownPositionMs = pos.inMilliseconds;
+      }
       if (_completionSaved || _isEmbed) return;
       final dur = _betterPlayerController.player.state.duration;
       if (dur > Duration.zero) {
@@ -646,6 +655,9 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
       final bool initialized = _betterPlayerController.isVideoInitialized();
       if (!initialized && !_isEmbed) return;
 
+      // Prefer player.state.position but fall back to _lastKnownPositionMs
+      // when the player is buffering after a seek (state.position resets to 0
+      // during the buffer window and the user may exit before it catches up).
       final int elapsed = _isEmbed
           ? (_embedCurrentPositionMs > 0
               ? _embedCurrentPositionMs
@@ -653,10 +665,14 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
                       ? (widget.movieMetadata?.elapsed ?? 0)
                       : (widget.tvMetadata?.elapsed ?? 0)) +
                   playbackDurationInSeconds * 1000))
-          : _betterPlayerController.player.state.position.inMilliseconds;
+          : (() {
+              final statePos = _betterPlayerController.player.state.position.inMilliseconds;
+              return statePos > 0 ? statePos : _lastKnownPositionMs;
+            })();
 
-      // Don't save if we barely started (< 3s)
-      if (elapsed < 3000 && playbackDurationInSeconds < 3) return;
+      // Don't save if we barely started (< 3s) — UNLESS we have a meaningful
+      // last-known position (e.g., user seeked to credits and immediately exited).
+      if (elapsed < 3000 && _lastKnownPositionMs < 3000 && playbackDurationInSeconds < 3) return;
 
       final bool playerCompleted =
           !_isEmbed && _betterPlayerController.player.state.completed;
@@ -1114,7 +1130,12 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
                           1000) +
                       playbackDurationInSeconds,
                   onProgressUpdate: (currSec, durSec) {
-                    _embedCurrentPositionMs = (currSec * 1000).toInt();
+                    final posMs = (currSec * 1000).toInt();
+                    _embedCurrentPositionMs = posMs;
+                    // Mirror into _lastKnownPositionMs so seek-then-exit is captured.
+                    if (posMs > _lastKnownPositionMs) {
+                      _lastKnownPositionMs = posMs;
+                    }
                     if (durSec > 0 && duration <= 0) {
                       duration = (durSec * 1000).toInt();
                     }

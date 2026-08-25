@@ -274,47 +274,109 @@ class UrlWebPageState extends State<UrlWebPage> {
 
   static const String _attachProgressJs = r'''
     (function() {
-      function hookVideos() {
+      function sendProgress(cur, dur) {
         try {
-          var vids = document.querySelectorAll('video');
-          vids.forEach(function(v) {
-            if (!v.__rr_tracked) {
-              v.__rr_tracked = true;
-              v.addEventListener('timeupdate', function() {
-                try {
-                  if (typeof PlaybackProgress !== 'undefined' && v.currentTime > 0) {
-                    PlaybackProgress.postMessage(JSON.stringify({
-                      currentTime: v.currentTime,
-                      duration: v.duration || 0
-                    }));
-                  }
-                } catch(e) {}
-              });
-            }
-          });
-          if (typeof jwplayer === 'function') {
-            try {
-              var jw = jwplayer();
-              if (jw && jw.on && !jw.__rr_tracked) {
-                jw.__rr_tracked = true;
-                jw.on('time', function(e) {
-                  try {
-                    if (typeof PlaybackProgress !== 'undefined' && e && e.position > 0) {
-                      PlaybackProgress.postMessage(JSON.stringify({
-                        currentTime: e.position,
-                        duration: e.duration || 0
-                      }));
-                    }
-                  } catch(err) {}
-                });
-              }
-            } catch(e) {}
+          if (typeof PlaybackProgress !== 'undefined' && cur > 0) {
+            PlaybackProgress.postMessage(JSON.stringify({
+              currentTime: cur,
+              duration: dur || 0
+            }));
           }
         } catch(e) {}
       }
+
+      // Hook native <video> elements: timeupdate + seeked
+      function hookVideos() {
+        try {
+          document.querySelectorAll('video').forEach(function(v) {
+            if (!v.__rr_tracked) {
+              v.__rr_tracked = true;
+              // timeupdate fires while playing (~4Hz)
+              v.addEventListener('timeupdate', function() {
+                sendProgress(v.currentTime, v.duration || 0);
+              });
+              // seeked fires immediately when user drags the seek bar
+              v.addEventListener('seeked', function() {
+                sendProgress(v.currentTime, v.duration || 0);
+              });
+            }
+          });
+        } catch(e) {}
+
+        // JWPlayer
+        try {
+          if (typeof jwplayer === 'function') {
+            var jw = jwplayer();
+            if (jw && jw.on && !jw.__rr_tracked) {
+              jw.__rr_tracked = true;
+              jw.on('time', function(e) {
+                if (e && e.position > 0) sendProgress(e.position, e.duration || 0);
+              });
+              jw.on('seek', function(e) {
+                if (e && e.offset > 0) sendProgress(e.offset, jw.getDuration ? jw.getDuration() : 0);
+              });
+            }
+          }
+        } catch(e) {}
+
+        // Video.js
+        try {
+          if (typeof videojs !== 'undefined' && videojs.getPlayers) {
+            var players = videojs.getPlayers();
+            for (var k in players) {
+              var p = players[k];
+              if (p && !p.__rr_tracked) {
+                p.__rr_tracked = true;
+                p.on('timeupdate', function() {
+                  try { sendProgress(this.currentTime(), this.duration()); } catch(e) {}
+                });
+                p.on('seeked', function() {
+                  try { sendProgress(this.currentTime(), this.duration()); } catch(e) {}
+                });
+              }
+            }
+          }
+        } catch(e) {}
+      }
+
       hookVideos();
       if (!window.__rr_progress_interval) {
         window.__rr_progress_interval = setInterval(hookVideos, 1500);
+      }
+
+      // Cross-frame: vixsrc and most embed players emit window.postMessage events
+      // with their own currentTime. Intercept them and forward to Flutter.
+      if (!window.__rr_msg_tracked) {
+        window.__rr_msg_tracked = true;
+        window.addEventListener('message', function(e) {
+          try {
+            var d = e.data;
+            if (typeof d === 'string') {
+              try { d = JSON.parse(d); } catch(_) { return; }
+            }
+            if (!d || typeof d !== 'object') return;
+            // vixsrc / plyr / various players use these key names
+            var cur = d.currentTime || d.current_time || d.position || d.time;
+            var dur = d.duration || d.totalTime || d.total_time || 0;
+            if (cur && cur > 0) sendProgress(cur, dur);
+          } catch(ex) {}
+        });
+      }
+
+      // Poll cross-origin iframes by asking them for their currentTime
+      if (!window.__rr_iframe_poll) {
+        window.__rr_iframe_poll = setInterval(function() {
+          try {
+            document.querySelectorAll('iframe').forEach(function(f) {
+              try {
+                if (f.contentWindow) {
+                  f.contentWindow.postMessage({ type: 'getPosition' }, '*');
+                  f.contentWindow.postMessage({ type: 'getCurrentTime' }, '*');
+                }
+              } catch(e) {}
+            });
+          } catch(e) {}
+        }, 3000);
       }
     })();
   ''';
