@@ -285,54 +285,68 @@ class UrlWebPageState extends State<UrlWebPage> {
         } catch(e) {}
       }
 
-      // Hook native <video> elements: timeupdate + seeked
+      function getAllVideos(rootDoc) {
+        var videos = [];
+        try {
+          var vids = (rootDoc || document).querySelectorAll('video');
+          vids.forEach(function(v) { videos.push(v); });
+        } catch(e) {}
+
+        try {
+          var iframes = (rootDoc || document).querySelectorAll('iframe');
+          iframes.forEach(function(f) {
+            try {
+              var doc = f.contentDocument || (f.contentWindow && f.contentWindow.document);
+              if (doc) {
+                var subVids = getAllVideos(doc);
+                subVids.forEach(function(v) { videos.push(v); });
+              }
+            } catch(e) {}
+          });
+        } catch(e) {}
+
+        return videos;
+      }
+
       function hookVideos() {
         try {
-          document.querySelectorAll('video').forEach(function(v) {
+          var allVids = getAllVideos(document);
+          allVids.forEach(function(v) {
             if (!v.__rr_tracked) {
               v.__rr_tracked = true;
-              // timeupdate fires while playing (~4Hz)
-              v.addEventListener('timeupdate', function() {
-                sendProgress(v.currentTime, v.duration || 0);
+              var events = ['timeupdate', 'seeked', 'seeking', 'pause', 'play', 'ended', 'ratechange'];
+              events.forEach(function(ev) {
+                v.addEventListener(ev, function() {
+                  sendProgress(v.currentTime, v.duration || 0);
+                });
               });
-              // seeked fires immediately when user drags the seek bar
-              v.addEventListener('seeked', function() {
-                sendProgress(v.currentTime, v.duration || 0);
-              });
+            }
+            if (v.currentTime > 0) {
+              sendProgress(v.currentTime, v.duration || 0);
             }
           });
         } catch(e) {}
 
-        // JWPlayer
         try {
           if (typeof jwplayer === 'function') {
             var jw = jwplayer();
-            if (jw && jw.on && !jw.__rr_tracked) {
-              jw.__rr_tracked = true;
-              jw.on('time', function(e) {
-                if (e && e.position > 0) sendProgress(e.position, e.duration || 0);
-              });
-              jw.on('seek', function(e) {
-                if (e && e.offset > 0) sendProgress(e.offset, jw.getDuration ? jw.getDuration() : 0);
-              });
+            if (jw && jw.getPosition) {
+              var pos = jw.getPosition();
+              var dur = jw.getDuration ? jw.getDuration() : 0;
+              if (pos > 0) sendProgress(pos, dur);
             }
           }
         } catch(e) {}
 
-        // Video.js
         try {
           if (typeof videojs !== 'undefined' && videojs.getPlayers) {
             var players = videojs.getPlayers();
             for (var k in players) {
               var p = players[k];
-              if (p && !p.__rr_tracked) {
-                p.__rr_tracked = true;
-                p.on('timeupdate', function() {
-                  try { sendProgress(this.currentTime(), this.duration()); } catch(e) {}
-                });
-                p.on('seeked', function() {
-                  try { sendProgress(this.currentTime(), this.duration()); } catch(e) {}
-                });
+              if (p && p.currentTime) {
+                var cur = p.currentTime();
+                var dur = p.duration ? p.duration() : 0;
+                if (cur > 0) sendProgress(cur, dur);
               }
             }
           }
@@ -341,11 +355,9 @@ class UrlWebPageState extends State<UrlWebPage> {
 
       hookVideos();
       if (!window.__rr_progress_interval) {
-        window.__rr_progress_interval = setInterval(hookVideos, 1500);
+        window.__rr_progress_interval = setInterval(hookVideos, 1000);
       }
 
-      // Cross-frame: vixsrc and most embed players emit window.postMessage events
-      // with their own currentTime. Intercept them and forward to Flutter.
       if (!window.__rr_msg_tracked) {
         window.__rr_msg_tracked = true;
         window.addEventListener('message', function(e) {
@@ -355,28 +367,11 @@ class UrlWebPageState extends State<UrlWebPage> {
               try { d = JSON.parse(d); } catch(_) { return; }
             }
             if (!d || typeof d !== 'object') return;
-            // vixsrc / plyr / various players use these key names
             var cur = d.currentTime || d.current_time || d.position || d.time;
             var dur = d.duration || d.totalTime || d.total_time || 0;
             if (cur && cur > 0) sendProgress(cur, dur);
           } catch(ex) {}
         });
-      }
-
-      // Poll cross-origin iframes by asking them for their currentTime
-      if (!window.__rr_iframe_poll) {
-        window.__rr_iframe_poll = setInterval(function() {
-          try {
-            document.querySelectorAll('iframe').forEach(function(f) {
-              try {
-                if (f.contentWindow) {
-                  f.contentWindow.postMessage({ type: 'getPosition' }, '*');
-                  f.contentWindow.postMessage({ type: 'getCurrentTime' }, '*');
-                }
-              } catch(e) {}
-            });
-          } catch(e) {}
-        }, 3000);
       }
     })();
   ''';

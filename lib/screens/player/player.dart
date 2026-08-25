@@ -113,9 +113,7 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
   int get _currentElapsedMs {
     if (_isEmbed) {
       if (_embedCurrentPositionMs > 0) {
-        return _embedCurrentPositionMs > _lastKnownPositionMs
-            ? _embedCurrentPositionMs
-            : _lastKnownPositionMs;
+        return _embedCurrentPositionMs;
       }
       final initialElapsed = widget.mediaType == MediaType.movie
           ? (widget.movieMetadata?.elapsed ?? 0)
@@ -128,7 +126,7 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
         ? _betterPlayerController.player.state.position.inMilliseconds
         : 0;
     if (statePos > 0) {
-      return statePos > _lastKnownPositionMs ? statePos : _lastKnownPositionMs;
+      return statePos;
     }
     return _lastKnownPositionMs;
   }
@@ -1107,10 +1105,7 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
                   onProgressUpdate: (currSec, durSec) {
                     final posMs = (currSec * 1000).toInt();
                     _embedCurrentPositionMs = posMs;
-                    // Mirror into _lastKnownPositionMs so seek-then-exit is captured.
-                    if (posMs > _lastKnownPositionMs) {
-                      _lastKnownPositionMs = posMs;
-                    }
+                    _lastKnownPositionMs = posMs;
                     if (durSec > 0 && duration <= 0) {
                       duration = (durSec * 1000).toInt();
                     }
