@@ -124,15 +124,6 @@ Future<void> fetchFeatureFlagsFromApi(AppDependencyProvider provider) async {
     final base = provider.caffeineAPIURL;
     final baseUrl = base.endsWith('/') ? base.substring(0, base.length - 1) : base;
     
-    String getPlatformString() {
-      if (kIsWeb) return 'web';
-      switch (defaultTargetPlatform) {
-        case TargetPlatform.android: return 'android';
-        case TargetPlatform.iOS: return 'ios';
-        default: return 'tv';
-      }
-    }
-    
     final platform = getPlatformString();
     final env = FlavorConfig.instance.flavor.name;
     final userId = Supabase.instance.client.auth.currentSession?.user.id;
@@ -170,15 +161,6 @@ Future<AppUpdateInfo> fetchUpdateInfoFromApi(
     final base = appDependencyProvider.caffeineAPIURL;
     final baseUrl = base.endsWith('/') ? base.substring(0, base.length - 1) : base;
     
-    String getPlatformString() {
-      if (kIsWeb) return 'web';
-      switch (defaultTargetPlatform) {
-        case TargetPlatform.android: return 'android';
-        case TargetPlatform.iOS: return 'ios';
-        default: return 'tv';
-      }
-    }
-
     final platform = getPlatformString();
     final env = FlavorConfig.instance.flavor.name;
 
@@ -264,6 +246,57 @@ Future<void> fetchProviderHealthFromApi(AppDependencyProvider provider) async {
     debugPrint('[ProviderHealth] Updated health state: $healthMap');
   } catch (e) {
     debugPrint('[ProviderHealth] Background health check error: $e');
+  }
+}
+
+/// Helper to return current platform string key.
+String getPlatformString() {
+  if (kIsWeb) return 'web';
+  switch (defaultTargetPlatform) {
+    case TargetPlatform.android:
+      return 'android';
+    case TargetPlatform.iOS:
+      return 'ios';
+    default:
+      return 'tv';
+  }
+}
+
+/// Sends update telemetry events (e.g. forced_prompt_shown, update_download_clicked) to Caffeine API.
+Future<void> sendUpdateTelemetry(
+  AppDependencyProvider provider, {
+  required String eventType,
+  bool isForced = false,
+}) async {
+  try {
+    final base = provider.caffeineAPIURL;
+    final baseUrl = base.endsWith('/') ? base.substring(0, base.length - 1) : base;
+    if (baseUrl.isEmpty) return;
+
+    final platform = getPlatformString();
+    final env = FlavorConfig.instance.flavor.name;
+    final userId = Supabase.instance.client.auth.currentSession?.user.id;
+    final anonymousId = provider.anonymousId;
+
+    final uri = Uri.parse('$baseUrl/v1/updates/telemetry');
+    await http.post(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        ...caffeineApiHeaders,
+      },
+      body: jsonEncode({
+        'platform': platform,
+        'environment': env,
+        'client_version': currentAppVersion,
+        'event_type': eventType,
+        'is_forced_prompt': isForced,
+        if (userId != null) 'user_id': userId,
+        if (anonymousId.isNotEmpty) 'device_id': anonymousId,
+      }),
+    ).timeout(const Duration(seconds: 5));
+  } catch (e) {
+    debugPrint('[Telemetry] Failed to send update telemetry: $e');
   }
 }
 

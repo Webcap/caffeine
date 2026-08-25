@@ -235,6 +235,10 @@ class _UpdateScreenState extends State<UpdateScreen>
       }
       dir ??= await getApplicationSupportDirectory();
 
+      if (info.forcedUpdate || widget.isForced) {
+        sendUpdateTelemetry(provider, eventType: 'forced_prompt_shown', isForced: true);
+      }
+
       if (!mounted) return;
       setState(() {
         _updateInfo = info;
@@ -582,6 +586,10 @@ class _UpdateScreenState extends State<UpdateScreen>
 
   // ── Actions ──────────────────────────────────
   Future<void> _openStore(String url) async {
+    try {
+      final provider = Provider.of<AppDependencyProvider>(context, listen: false);
+      sendUpdateTelemetry(provider, eventType: 'update_download_clicked', isForced: widget.isForced);
+    } catch (_) {}
     final uri = Uri.tryParse(url);
     if (uri != null && await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
@@ -596,6 +604,10 @@ class _UpdateScreenState extends State<UpdateScreen>
   }
 
   void _onDownloadAction(String url) async {
+    try {
+      final provider = Provider.of<AppDependencyProvider>(context, listen: false);
+      sendUpdateTelemetry(provider, eventType: 'update_download_clicked', isForced: widget.isForced);
+    } catch (_) {}
     final targetPath = "$savedDir/${_getSafeApkFileName(url)}";
     final task = downloadManager.getDownload(url);
 

@@ -381,6 +381,16 @@ class Endpoints {
     return '$base?dates=$d';
   }
 
+  /// Caffeine API Scoreboard - All leagues aggregated or per-league.
+  static String getCaffeineScoreboardUrl(String baseUrl, {String? sport, String? league, DateTime? date}) {
+    final base = baseUrl.endsWith('/') ? baseUrl.substring(0, baseUrl.length - 1) : baseUrl;
+    final dateParam = date != null ? '?date=${date.year}${date.month.toString().padLeft(2, '0')}${date.day.toString().padLeft(2, '0')}' : '';
+    if (sport != null && league != null) {
+      return '$base/sports/$sport/$league/scoreboard$dateParam';
+    }
+    return '$base/sports/scoreboard/all$dateParam';
+  }
+
   /// FlixQuest Scraper API - https://github.com/BeamlakAschalew/flixquest-scraper
   /// Providers: vixsrc, vidsrc, vidzee, uhdmovies, showbox, 4khdhub
   static String getFlixQuestStreamMovie(String baseUrl, String tmdbId,
