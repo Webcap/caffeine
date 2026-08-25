@@ -22,6 +22,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:reelriot/utils/version_helper.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:reelriot/translations/locale_keys.g.dart';
 
 // ─────────────────────────────────────────────
@@ -197,7 +198,23 @@ class _UpdateScreenState extends State<UpdateScreen>
       task.status.addListener(_updateWakelock);
     }
     _updateWakelock();
+    _loadDeviceAbis();
     WidgetsBinding.instance.addPostFrameCallback((_) => _checkUpdate());
+  }
+
+  List<String> _supportedAbis = [];
+
+  Future<void> _loadDeviceAbis() async {
+    if (Platform.isAndroid) {
+      try {
+        final androidInfo = await DeviceInfoPlugin().androidInfo;
+        if (mounted) {
+          setState(() {
+            _supportedAbis = androidInfo.supportedAbis;
+          });
+        }
+      } catch (_) {}
+    }
   }
 
   void _updateWakelock() {
@@ -494,18 +511,22 @@ class _UpdateScreenState extends State<UpdateScreen>
               const SizedBox(height: 12),
           ],
 
-          // APK download card
-          if (info.updateDownloadUrl != null &&
-              info.updateDownloadUrl!.isNotEmpty)
-            _DownloadCard(
-              appVersion: info.latestVersion,
-              url: info.updateDownloadUrl!,
-              downloadTask:
-                  downloadManager.getDownload(info.updateDownloadUrl!),
-              onDownloadPlayPausedPressed: _onDownloadAction,
-              onOpen: _onOpenFile,
-              onDelete: _onDeleteFile,
+          // APK download card (recommends optimal ABI for device CPU architecture)
+          if (info.getBestDownloadUrl(supportedAbis: _supportedAbis).isNotEmpty) ...[
+            Builder(
+              builder: (context) {
+                final downloadUrl = info.getBestDownloadUrl(supportedAbis: _supportedAbis);
+                return _DownloadCard(
+                  appVersion: info.latestVersion,
+                  url: downloadUrl,
+                  downloadTask: downloadManager.getDownload(downloadUrl),
+                  onDownloadPlayPausedPressed: _onDownloadAction,
+                  onOpen: _onOpenFile,
+                  onDelete: _onDeleteFile,
+                );
+              },
             ),
+          ],
         ],
       ),
     );
