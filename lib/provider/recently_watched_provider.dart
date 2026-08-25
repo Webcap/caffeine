@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:reelriot/utils/constant.dart';
@@ -54,6 +55,63 @@ class RecentProvider extends ChangeNotifier {
   String _proxyUrl = '';
   String _language = 'en';
 
+  // ---------------------------------------------------------------------------
+  // Supabase Realtime
+  // ---------------------------------------------------------------------------
+
+  /// Active Realtime channel subscription (one per user session).
+  RealtimeChannel? _realtimeChannel;
+
+  /// Debounce timer that coalesces rapid Realtime events into a single sync.
+  Timer? _realtimeSyncDebounce;
+
+  /// Set to true once the Realtime channel is subscribed to avoid duplicates.
+  bool _realtimeSubscribed = false;
+
+  final SupabaseClient _supabase = Supabase.instance.client;
+
+  /// Subscribes to INSERT/UPDATE events on [completed_watch_history] for the
+  /// current user and triggers a debounced [syncFromCloud] on each event.
+  void _subscribeRealtime(String uid) {
+    if (_realtimeSubscribed) return;
+    _realtimeSubscribed = true;
+
+    _realtimeChannel = _supabase
+        .channel('watch-history-$uid')
+        .onPostgresChanges(
+          event: PostgresChangeEvent.all,
+          schema: 'public',
+          table: 'completed_watch_history',
+          filter: PostgresChangeFilter(
+            type: PostgresChangeFilterType.eq,
+            column: 'user_id',
+            value: uid,
+          ),
+          callback: (_) {
+            debugPrint('[RecentProvider] 🔔 Realtime event — debouncing sync');
+            _realtimeSyncDebounce?.cancel();
+            _realtimeSyncDebounce = Timer(
+              const Duration(seconds: 2),
+              () => syncFromCloud(),
+            );
+          },
+        )
+        .subscribe();
+
+    debugPrint('[RecentProvider] 📡 Realtime channel subscribed for user $uid');
+  }
+
+  /// Tears down the Realtime subscription and any pending debounce timer.
+  Future<void> unsubscribeRealtime() async {
+    _realtimeSyncDebounce?.cancel();
+    _realtimeSyncDebounce = null;
+    if (_realtimeChannel != null) {
+      await _supabase.removeChannel(_realtimeChannel!);
+      _realtimeChannel = null;
+    }
+    _realtimeSubscribed = false;
+  }
+
   void updateConfig(
       {required bool isProxyEnabled,
       required String proxyUrl,
@@ -74,6 +132,8 @@ class RecentProvider extends ChangeNotifier {
     await sharedPrefsSingleton.remove('cached_movie_watch_mins');
     await sharedPrefsSingleton.remove('cached_tv_watch_mins');
     await sharedPrefsSingleton.remove('last_synced_user_id');
+    // Tear down Realtime subscription so a new session gets a fresh channel.
+    await unsubscribeRealtime();
     notifyListeners();
   }
 
@@ -168,6 +228,10 @@ class RecentProvider extends ChangeNotifier {
 
     await fetchMovies();
     await fetchEpisodes();
+
+    // Subscribe to Realtime after the first successful sync so cross-device
+    // progress updates are reflected instantly without a full app restart.
+    _subscribeRealtime(uid);
   }
 
   List<RecentMovie> _mergeMovies(

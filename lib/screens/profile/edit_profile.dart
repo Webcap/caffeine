@@ -216,9 +216,12 @@ class _ProfileEditState extends State<ProfileEdit> {
     HapticFeedback.mediumImpact();
 
     try {
-      // 1. Dual-Source Sync: Update Auth Metadata first
+      // 1. Dual-Source Sync: Update Auth Metadata first (both avatar and profile_id keys)
       await _auth.updateUser(UserAttributes(
-        data: {'avatar': _selectedProfileId},
+        data: {
+          'avatar': _selectedProfileId,
+          'profile_id': _selectedProfileId,
+        },
       ));
 
       // 2. Update profiles table (name and avatar)

@@ -278,7 +278,8 @@ class DeleteAccountScreenState extends State<DeleteAccountScreen> {
         try {
           final uri = Uri.parse('$caffeineApiUrl/user/account');
           final headers = {
-            ...caffeineApiHeaders,
+            'Content-Type': 'application/json',
+            if (caffeineApiKey.isNotEmpty) 'x-api-key': caffeineApiKey,
             'Authorization': 'Bearer $accessToken',
           };
           final response = await http
@@ -313,7 +314,7 @@ class DeleteAccountScreenState extends State<DeleteAccountScreen> {
         await safeDelete('bookmarks', 'user_id', _uid!);
         await safeDelete('usernames', 'user_id', _uid!);
         await safeDelete('messages', 'user_id', _uid!);
-        await _supabase.from('profiles').delete().eq('id', _uid!);
+        await safeDelete('profiles', 'id', _uid!);
       }
 
       if (!mounted) return;

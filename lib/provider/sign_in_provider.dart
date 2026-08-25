@@ -1,3 +1,5 @@
+import 'package:reelriot/main.dart';
+import 'package:reelriot/provider/bookmarks_provider.dart';
 import 'package:reelriot/services/auth_service.dart';
 import 'package:reelriot/services/analytics_service.dart';
 import 'package:reelriot/controller/bookmark_database_controller.dart';
@@ -146,13 +148,37 @@ class SignInProvider extends ChangeNotifier {
     _name = user.userMetadata?['full_name'] as String? ??
         user.userMetadata?['name'] as String?;
     _imageUrl = user.userMetadata?['avatar_url'] as String?;
-    _profileId = int.tryParse(user.userMetadata?['avatar']?.toString() ?? '');
+    _profileId = int.tryParse(user.userMetadata?['avatar']?.toString() ??
+        user.userMetadata?['profile_id']?.toString() ??
+        '');
     _isSignedIn = true;
     notifyListeners();
 
     // Fetch extended profile in background (username, etc.)
     getUserDataFromFirestore(user.id).catchError((e) {
       debugPrint('[Auth] ⚠️ Could not fetch profile in background: $e');
+    });
+
+    // Check if user changed from previous session; if so, clear stale local bookmarks & watch history
+    SharedPreferences.getInstance().then((s) {
+      final lastBookmarkUid = s.getString('last_synced_bookmark_uid');
+      if (lastBookmarkUid != null && lastBookmarkUid != user.id) {
+        MovieDatabaseController().clearAll();
+        TVDatabaseController().clearAll();
+        s.remove('last_synced_bookmark_uid');
+        try {
+          BookmarksProvider.instance.clearAllLocalBookmarks();
+        } catch (_) {}
+      }
+      final lastWatchUid = s.getString('last_synced_user_id');
+      if (lastWatchUid != null && lastWatchUid != user.id) {
+        RecentlyWatchedMoviesController().clearAllMovies();
+        RecentlyWatchedEpisodeController().clearAllEpisodes();
+        s.remove('last_synced_user_id');
+        try {
+          recentProvider.clearLocalData();
+        } catch (_) {}
+      }
     });
   }
 
@@ -263,7 +289,7 @@ class SignInProvider extends ChangeNotifier {
         _email = data['email'] as String?;
         _imageUrl = data['image_url'] as String?;
         final dbProfileId = int.tryParse(data['profile_id']?.toString() ?? '');
-        if (dbProfileId != null && dbProfileId != 0) {
+        if (dbProfileId != null) {
           _profileId = dbProfileId;
         }
         _provider = data['provider'] as String?;
@@ -331,15 +357,31 @@ class SignInProvider extends ChangeNotifier {
     await s.remove('firstRun');
     await s.remove('caffeine_recent_searches');
     await s.remove('adultStatus-v2');
+    await s.remove('adultStatus');
     await s.remove('cached_movie_watch_mins');
     await s.remove('cached_tv_watch_mins');
     await s.remove('last_synced_user_id');
     await s.remove('last_synced_bookmark_uid');
 
-    // Clear local watch data so new user does not see previous user's data.
+    // Clear local watch data and bookmark SQLite tables
     await RecentlyWatchedMoviesController().clearAllMovies();
     await RecentlyWatchedEpisodeController().clearAllEpisodes();
     await MovieDatabaseController().clearAll();
     await TVDatabaseController().clearAll();
+
+    // Clear in-memory providers so active screens don't retain previous user data
+    try {
+      await recentProvider.clearLocalData();
+    } catch (_) {}
+
+    try {
+      await BookmarksProvider.instance.clearAllLocalBookmarks();
+    } catch (_) {}
+
+    // Flush Flutter in-memory image cache
+    try {
+      PaintingBinding.instance.imageCache.clear();
+      PaintingBinding.instance.imageCache.clearLiveImages();
+    } catch (_) {}
   }
 }

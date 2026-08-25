@@ -24,6 +24,11 @@ class RecentlyWatchedMoviesController {
 
   RecentlyWatchedMoviesController._createInstance();
 
+  /// Timestamp of the last successful cloud write. Used to debounce the API
+  /// so progress saves during active playback don't hammer the server
+  /// (periodic saves happen every 10 s). Completion writes always bypass this.
+  DateTime? _lastCloudSync;
+
   factory RecentlyWatchedMoviesController() {
     _recentlyWatchedMoviesController ??=
         RecentlyWatchedMoviesController._createInstance();
@@ -147,6 +152,16 @@ class RecentlyWatchedMoviesController {
       final isFinished =
           remaining == 0 && elapsed > 0 || (total > 0 && (elapsed / total) >= 0.9);
 
+      // Debounce: skip non-completion syncs that happened within the last 15 s.
+      // This prevents hammering the API every 10 s during active playback.
+      final now = DateTime.now();
+      if (!isFinished &&
+          _lastCloudSync != null &&
+          now.difference(_lastCloudSync!).inSeconds < 15) {
+        return;
+      }
+      _lastCloudSync = now;
+
       final base = caffeineApiUrl.replaceAll(RegExp(r'/+$'), '');
       final url = Uri.parse('$base/v1/user/$uid/history');
 
@@ -221,6 +236,11 @@ class RecentlyWatchedEpisodeController {
   String? get uid => _auth.currentUser?.id;
 
   GoTrueClient get _auth => Supabase.instance.client.auth;
+
+  /// Timestamp of the last successful cloud write. Used to debounce the API
+  /// so progress saves during active playback don’t hammer the server
+  /// (periodic saves happen every 10 s). Completion writes always bypass this.
+  DateTime? _lastCloudSync;
 
   factory RecentlyWatchedEpisodeController() {
     _recentlyWatchedEpisodeController ??=
@@ -353,6 +373,16 @@ class RecentlyWatchedEpisodeController {
       final total = elapsed + remaining;
       final isFinished =
           remaining == 0 && elapsed > 0 || (total > 0 && (elapsed / total) >= 0.9);
+
+      // Debounce: skip non-completion syncs that happened within the last 15 s.
+      // This prevents hammering the API every 10 s during active playback.
+      final now = DateTime.now();
+      if (!isFinished &&
+          _lastCloudSync != null &&
+          now.difference(_lastCloudSync!).inSeconds < 15) {
+        return;
+      }
+      _lastCloudSync = now;
 
       final base = caffeineApiUrl.replaceAll(RegExp(r'/+$'), '');
       final url = Uri.parse('$base/v1/user/$uid/history');

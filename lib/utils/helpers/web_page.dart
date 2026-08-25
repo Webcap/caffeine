@@ -1,5 +1,4 @@
-// ignore_for_file: must_be_immutable
-
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -8,78 +7,8 @@ import 'package:get/get.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 
-// class UrlWebPage extends StatefulWidget {
-//   String url;
-//   UrlWebPage({super.key, required this.url});
-
-//   @override
-//   _UrlWebPageState createState() => _UrlWebPageState();
-// }
-
-// class _UrlWebPageState extends State<UrlWebPage> {
-//   late final WebViewController _controller;
-
-//   @override
-//   void initState() {
-//     super.initState();
-
-//     _controller = WebViewController()
-//       ..setJavaScriptMode(JavaScriptMode.unrestricted)
-//       ..loadRequest(Uri.parse(widget.url))
-//       ..addJavaScriptChannel(
-//         'Toaster',
-//         onMessageReceived: (JavaScriptMessage message) {
-//           ScaffoldMessenger.of(context).showSnackBar(
-//             SnackBar(content: Text(message.message)),
-//           );
-//         },
-//       );
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     log("Web Url :: ${widget.url}");
-//     return WillPopScope(
-//       onWillPop: () async {
-//         if (await _controller.canGoBack()) {
-//           _controller.goBack();
-//         } else {
-//           Get.back();
-//         }
-//         return false;
-//       },
-//       child: Scaffold(
-//         appBar: AppBar(
-//           elevation: 0,
-//           leading: IconButton(
-//             icon: const Icon(
-//               Icons.arrow_back,
-//             ),
-//             onPressed: () async {
-//               if (await _controller.canGoBack()) {
-//                 _controller.goBack();
-//               } else {
-//                 Get.back();
-//               }
-//             },
-//           ),
-//         ),
-//         body: Stack(
-//           children: [
-//             Builder(builder: (BuildContext context) {
-//               return WebViewWidget(
-//                 controller: _controller,
-//               );
-//             }),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
-
 class UrlWebPage extends StatefulWidget {
-  String url;
+  final String url;
 
   /// When true, only the WebView is shown (no AppBar). Use when embedding inside another screen (e.g. live event default view).
   final bool embedded;
@@ -90,18 +19,26 @@ class UrlWebPage extends StatefulWidget {
   /// When true, runs JS to extract HLS (m3u8) from the page and calls [onHlsExtracted]. Runs on load and retries.
   final bool tryExtractHls;
 
+  /// Optional initial playback timestamp in seconds to seek HTML5 video / embedded players upon loading.
+  final int? startAtSeconds;
+
+  /// Called when live playback progress is detected from HTML5 video / player inside WebView.
+  final void Function(double currentTime, double duration)? onProgressUpdate;
+
   /// Called when HLS URL is extracted via JS (only if [tryExtractHls] is true).
   final void Function(String hls)? onHlsExtracted;
 
   /// Called when the webview enters or exits fullscreen custom view.
   final void Function(bool isFullscreen)? onFullscreenChanged;
 
-  UrlWebPage({
+  const UrlWebPage({
     super.key,
     required this.url,
     this.embedded = false,
     this.blockAds = false,
     this.tryExtractHls = false,
+    this.startAtSeconds,
+    this.onProgressUpdate,
     this.onHlsExtracted,
     this.onFullscreenChanged,
   });
@@ -335,6 +272,110 @@ class UrlWebPageState extends State<UrlWebPage> {
     })();
   ''';
 
+  static const String _attachProgressJs = r'''
+    (function() {
+      function sendProgress(cur, dur) {
+        try {
+          if (typeof PlaybackProgress !== 'undefined' && cur > 0) {
+            PlaybackProgress.postMessage(JSON.stringify({
+              currentTime: cur,
+              duration: dur || 0
+            }));
+          }
+        } catch(e) {}
+      }
+
+      function getAllVideos(rootDoc) {
+        var videos = [];
+        try {
+          var vids = (rootDoc || document).querySelectorAll('video');
+          vids.forEach(function(v) { videos.push(v); });
+        } catch(e) {}
+
+        try {
+          var iframes = (rootDoc || document).querySelectorAll('iframe');
+          iframes.forEach(function(f) {
+            try {
+              var doc = f.contentDocument || (f.contentWindow && f.contentWindow.document);
+              if (doc) {
+                var subVids = getAllVideos(doc);
+                subVids.forEach(function(v) { videos.push(v); });
+              }
+            } catch(e) {}
+          });
+        } catch(e) {}
+
+        return videos;
+      }
+
+      function hookVideos() {
+        try {
+          var allVids = getAllVideos(document);
+          allVids.forEach(function(v) {
+            if (!v.__rr_tracked) {
+              v.__rr_tracked = true;
+              var events = ['timeupdate', 'seeked', 'seeking', 'pause', 'play', 'ended', 'ratechange'];
+              events.forEach(function(ev) {
+                v.addEventListener(ev, function() {
+                  sendProgress(v.currentTime, v.duration || 0);
+                });
+              });
+            }
+            if (v.currentTime > 0) {
+              sendProgress(v.currentTime, v.duration || 0);
+            }
+          });
+        } catch(e) {}
+
+        try {
+          if (typeof jwplayer === 'function') {
+            var jw = jwplayer();
+            if (jw && jw.getPosition) {
+              var pos = jw.getPosition();
+              var dur = jw.getDuration ? jw.getDuration() : 0;
+              if (pos > 0) sendProgress(pos, dur);
+            }
+          }
+        } catch(e) {}
+
+        try {
+          if (typeof videojs !== 'undefined' && videojs.getPlayers) {
+            var players = videojs.getPlayers();
+            for (var k in players) {
+              var p = players[k];
+              if (p && p.currentTime) {
+                var cur = p.currentTime();
+                var dur = p.duration ? p.duration() : 0;
+                if (cur > 0) sendProgress(cur, dur);
+              }
+            }
+          }
+        } catch(e) {}
+      }
+
+      hookVideos();
+      if (!window.__rr_progress_interval) {
+        window.__rr_progress_interval = setInterval(hookVideos, 1000);
+      }
+
+      if (!window.__rr_msg_tracked) {
+        window.__rr_msg_tracked = true;
+        window.addEventListener('message', function(e) {
+          try {
+            var d = e.data;
+            if (typeof d === 'string') {
+              try { d = JSON.parse(d); } catch(_) { return; }
+            }
+            if (!d || typeof d !== 'object') return;
+            var cur = d.currentTime || d.current_time || d.position || d.time;
+            var dur = d.duration || d.totalTime || d.total_time || 0;
+            if (cur && cur > 0) sendProgress(cur, dur);
+          } catch(ex) {}
+        });
+      }
+    })();
+  ''';
+
   void _runAdBlock() {
     if (!mounted || !widget.blockAds) return;
     controller.runJavaScript(_adBlockJs);
@@ -354,6 +395,64 @@ class UrlWebPageState extends State<UrlWebPage> {
     controller.runJavaScript(_extractHlsJs);
   }
 
+  void _runProgressJs() {
+    if (!mounted || widget.onProgressUpdate == null) return;
+    controller.runJavaScript(_attachProgressJs);
+  }
+
+  void _runSeekJs() {
+    if (!mounted || widget.startAtSeconds == null || widget.startAtSeconds! <= 3) return;
+    final sec = widget.startAtSeconds!;
+    final seekScript = '''
+      (function() {
+        var targetTime = $sec;
+        function performSeek() {
+          try {
+            var videos = document.querySelectorAll('video');
+            videos.forEach(function(v) {
+              if (v && Math.abs(v.currentTime - targetTime) > 4) {
+                try {
+                  v.currentTime = targetTime;
+                  v.play().catch(function(){});
+                } catch(e) {}
+              }
+            });
+            if (typeof jwplayer === 'function') {
+              try {
+                var jw = jwplayer();
+                if (jw && jw.seek && Math.abs(jw.getPosition() - targetTime) > 4) {
+                  jw.seek(targetTime);
+                }
+              } catch(e) {}
+            }
+            if (typeof videojs !== 'undefined' && videojs.getPlayers) {
+              try {
+                var players = videojs.getPlayers();
+                for (var k in players) {
+                  if (players[k] && players[k].currentTime) {
+                    players[k].currentTime(targetTime);
+                  }
+                }
+              } catch(e) {}
+            }
+            var frames = document.querySelectorAll('iframe');
+            frames.forEach(function(f) {
+              try {
+                if (f.contentWindow) {
+                  f.contentWindow.postMessage({ type: 'seek', time: targetTime }, '*');
+                  f.contentWindow.postMessage({ event: 'seek', value: targetTime }, '*');
+                  f.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'seekTo', args: [targetTime, true] }), '*');
+                }
+              } catch(e) {}
+            });
+          } catch(e) {}
+        }
+        performSeek();
+      })();
+    ''';
+    controller.runJavaScript(seekScript);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -367,6 +466,26 @@ class UrlWebPageState extends State<UrlWebPage> {
           );
         },
       );
+
+    if (widget.onProgressUpdate != null) {
+      controller.addJavaScriptChannel(
+        'PlaybackProgress',
+        onMessageReceived: (JavaScriptMessage message) {
+          try {
+            final data = jsonDecode(message.message);
+            if (data is Map) {
+              final double cur =
+                  (data['currentTime'] as num?)?.toDouble() ?? 0.0;
+              final double dur =
+                  (data['duration'] as num?)?.toDouble() ?? 0.0;
+              if (cur > 0) {
+                widget.onProgressUpdate!(cur, dur);
+              }
+            }
+          } catch (_) {}
+        },
+      );
+    }
 
     if (controller.platform is AndroidWebViewController) {
       final androidController =
@@ -541,6 +660,20 @@ class UrlWebPageState extends State<UrlWebPage> {
               for (final ms in [500, 1500, 3500, 6000, 10000]) {
                 Future<void>.delayed(
                     Duration(milliseconds: ms), _runExtractHls);
+              }
+            }
+            if (widget.onProgressUpdate != null) {
+              _runProgressJs();
+              for (final ms in [1000, 2500, 5000]) {
+                Future<void>.delayed(
+                    Duration(milliseconds: ms), _runProgressJs);
+              }
+            }
+            if (widget.startAtSeconds != null && widget.startAtSeconds! > 3) {
+              _runSeekJs();
+              for (final ms in [600, 1500, 3000, 5000, 8000]) {
+                Future<void>.delayed(
+                    Duration(milliseconds: ms), _runSeekJs);
               }
             }
           },

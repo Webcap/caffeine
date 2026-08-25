@@ -8,6 +8,13 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 /// Manages bookmarks state (movies + TV), local SQLite, and Supabase sync.
 class BookmarksProvider extends ChangeNotifier {
+  static BookmarksProvider? _instance;
+  static BookmarksProvider get instance => _instance ??= BookmarksProvider();
+
+  BookmarksProvider() {
+    _instance = this;
+  }
+
   final MovieDatabaseController _movieDb = MovieDatabaseController();
   final TVDatabaseController _tvDb = TVDatabaseController();
   final _auth = Supabase.instance.client.auth;
@@ -170,6 +177,16 @@ class BookmarksProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> clearAllLocalBookmarks() async {
+    _movies = [];
+    _tvList = [];
+    await _movieDb.clearAll();
+    await _tvDb.clearAll();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('last_synced_bookmark_uid');
+    notifyListeners();
+  }
+
   Future<bool> _checkIfBookmarksExists(String uid) async {
     try {
       final res = await _supabase
@@ -179,11 +196,11 @@ class BookmarksProvider extends ChangeNotifier {
           .limit(1);
       return res.isNotEmpty;
     } catch (e) {
-      rethrow;
+      return false;
     }
   }
 
-  Future<void> syncFromCloud() async {
+  Future<void> syncFromCloud({bool forceReplace = false}) async {
     final user = _auth.currentUser;
     final uid = user?.id;
     if (uid == null || user?.isAnonymous == true) return;
@@ -200,12 +217,28 @@ class BookmarksProvider extends ChangeNotifier {
         return;
       }
 
-      if (!await _checkIfBookmarksExists(uid)) {
-        await _supabase.from('bookmarks').insert({
-          'user_id': uid,
-          'movies': [],
-          'tv_shows': [],
-        });
+      final prefs = await SharedPreferences.getInstance();
+      final lastSyncedUid = prefs.getString('last_synced_bookmark_uid');
+      final bool isUserSwitch = lastSyncedUid != null && lastSyncedUid != uid;
+      final bool shouldClearLocal = forceReplace || isUserSwitch || (lastSyncedUid == null) || (lastSyncedUid != uid);
+
+      if (shouldClearLocal) {
+        await _movieDb.clearAll();
+        await _tvDb.clearAll();
+        _movies = [];
+        _tvList = [];
+        notifyListeners();
+      }
+
+      final exists = await _checkIfBookmarksExists(uid);
+      if (!exists) {
+        try {
+          await _supabase.from('bookmarks').upsert({
+            'user_id': uid,
+            'movies': [],
+            'tv_shows': [],
+          }, onConflict: 'user_id');
+        } catch (_) {}
       }
 
       final res = await _supabase
@@ -214,37 +247,29 @@ class BookmarksProvider extends ChangeNotifier {
           .eq('user_id', uid)
           .limit(1);
 
-      if (res.isEmpty) return;
-      final data = res[0];
+      if (res.isNotEmpty) {
+        final data = res[0];
+        final moviesList = data['movies'] as List<dynamic>? ?? [];
+        final tvShowsList = data['tv_shows'] as List<dynamic>? ?? [];
 
-      final prefs = await SharedPreferences.getInstance();
-      final lastSyncedUid = prefs.getString('last_synced_bookmark_uid');
-      final bool isUserSwitch = lastSyncedUid != null && lastSyncedUid != uid;
-      if (isUserSwitch) {
-        await _movieDb.clearAll();
-        await _tvDb.clearAll();
-      }
-
-      final moviesList = data['movies'] as List<dynamic>? ?? [];
-      final tvShowsList = data['tv_shows'] as List<dynamic>? ?? [];
-
-      for (var element in moviesList) {
-        if (element != null) {
-          final movie =
-              Movie.fromJson(Map<String, dynamic>.from(element as Map));
-          final exists = await _movieDb.contain(movie.id!);
-          if (!exists) {
-            await _movieDb.insertMovie(movie);
+        for (var element in moviesList) {
+          if (element != null) {
+            final movie =
+                Movie.fromJson(Map<String, dynamic>.from(element as Map));
+            final exists = await _movieDb.contain(movie.id!);
+            if (!exists) {
+              await _movieDb.insertMovie(movie);
+            }
           }
         }
-      }
 
-      for (var element in tvShowsList) {
-        if (element != null) {
-          final tv = TV.fromJson(Map<String, dynamic>.from(element as Map));
-          final exists = await _tvDb.contain(tv.id!);
-          if (!exists) {
-            await _tvDb.insertTV(tv);
+        for (var element in tvShowsList) {
+          if (element != null) {
+            final tv = TV.fromJson(Map<String, dynamic>.from(element as Map));
+            final exists = await _tvDb.contain(tv.id!);
+            if (!exists) {
+              await _tvDb.insertTV(tv);
+            }
           }
         }
       }
@@ -266,6 +291,14 @@ class BookmarksProvider extends ChangeNotifier {
     final user = _auth.currentUser;
     final uid = user?.id;
     if (uid == null || user?.isAnonymous == true) return;
+
+    final prefs = await SharedPreferences.getInstance();
+    final lastSyncedUid = prefs.getString('last_synced_bookmark_uid');
+    // If local bookmarks belong to a different account, wipe local & download this account's bookmarks first
+    if (lastSyncedUid != null && lastSyncedUid != uid) {
+      await syncFromCloud(forceReplace: true);
+      return;
+    }
 
     _isSyncing = true;
     _errorMessage = null;

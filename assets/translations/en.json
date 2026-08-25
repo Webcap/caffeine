@@ -611,5 +611,6 @@
     "install_permission_msg": "To install the update, Reelriot needs your permission to install unknown apps. Please enable this in the next screen.",
     "system_offline": "SYSTEM OFFLINE",
     "retry_connection": "RETRY CONNECTION",
-    "outage_default_message": "The service is currently unavailable. We are working to bring it back online."
+    "outage_default_message": "The service is currently unavailable. We are working to bring it back online.",
+    "terms_privacy_agreement": "By signing up you agree to the Terms of Service and Privacy Policy."
 }

@@ -1,4 +1,5 @@
 import 'package:reelriot/functions/functions.dart';
+import 'package:reelriot/provider/bookmarks_provider.dart';
 import 'package:reelriot/provider/recently_watched_provider.dart';
 import 'package:reelriot/provider/settings_provider.dart';
 import 'package:reelriot/screens/auth_screens/forgot_password.dart';
@@ -79,7 +80,29 @@ class _LoginScreenState extends State<LoginScreen> {
       );
       if (!mounted) return;
 
-      await Provider.of<RecentProvider>(context, listen: false).syncFromCloud();
+      try {
+        final uid = _auth.currentUser?.id;
+        final username = _auth.currentUser?.userMetadata?['username'] as String?;
+        if (uid != null && username != null && username.isNotEmpty) {
+          await Supabase.instance.client.from('usernames').upsert({
+            'username': username.toLowerCase(),
+            'user_id': uid,
+          }, onConflict: 'user_id');
+        }
+      } catch (e) {
+        debugPrint('[Login] Notice: username ensure error: $e');
+      }
+
+      if (!mounted) return;
+      try {
+        await Provider.of<RecentProvider>(context, listen: false).syncFromCloud(forceReplace: true);
+        if (mounted) {
+          await Provider.of<BookmarksProvider>(context, listen: false).syncFromCloud(forceReplace: true);
+        }
+      } catch (e) {
+        debugPrint('[Login] Notice: syncFromCloud background error: $e');
+      }
+
       if (!mounted) return;
       Navigator.pushReplacement(
         context,
@@ -102,6 +125,10 @@ class _LoginScreenState extends State<LoginScreen> {
       } else {
         globalMethods.authErrorHandle(error.message, context);
       }
+    } catch (error) {
+      if (!mounted) return;
+      debugPrint('[Login] Unexpected error during login: $error');
+      globalMethods.authErrorHandle(error.toString(), context);
     } finally {
       if (mounted) {
         setState(() {
@@ -281,7 +308,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ],
                         ),
-                        child: Form(
+                        child: AutofillGroup(
+                          onDisposeAction: AutofillContextAction.commit,
+                          child: Form(
                           key: formKey,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -306,6 +335,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               const SizedBox(height: 20),
                               TextFormField(
                                 key: const ValueKey('email'),
+                                autofillHints: const [AutofillHints.email],
                                 validator: (value) {
                                   if (value!.isEmpty || !value.contains('@')) {
                                     return tr("invalid_email");
@@ -328,6 +358,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               const SizedBox(height: 16),
                               TextFormField(
                                 key: const ValueKey('Password'),
+                                autofillHints: const [AutofillHints.password],
                                 validator: (value) {
                                   if (value!.isEmpty || value.length < 7) {
                                     return tr("weak_password");
@@ -423,8 +454,9 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                             ],
                           ),
-                        ),
-                      ),
+                        ),        // closes Form
+                       ),         // closes AutofillGroup
+                      ),          // closes Container
                       const Spacer(),
                       const SizedBox(height: 24),
                       Center(

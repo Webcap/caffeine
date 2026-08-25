@@ -52,73 +52,100 @@ class GlobalMethods {
   }
 
   Future<void> authErrorHandle(String subtitle, BuildContext context) async {
-    showDialog(
-        context: context,
-        builder: (BuildContext ctx) {
-          return AlertDialog(
-            title: Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(tr("error_occured")),
+    try {
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const Icon(Icons.error_outline_rounded, color: Colors.white, size: 20),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  subtitle,
+                  style: const TextStyle(
+                    fontFamily: 'Poppins',
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
-              ],
-            ),
-            content: Text(subtitle),
-            actions: [
-              TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: Text(tr("ok")))
+              ),
             ],
-          );
-        });
+          ),
+          backgroundColor: const Color(0xFFDC2626),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          duration: const Duration(seconds: 4),
+        ),
+      );
+    } catch (_) {}
   }
 
   Future<void> checkMessage(String subtitle, BuildContext context) async {
-    showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (BuildContext ctx) {
-          return AlertDialog(
-            content: Text(subtitle),
-            actions: [
-              TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                    Navigator.pop(context);
-                  },
-                  child: Text(tr("ok")))
+    try {
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const Icon(Icons.info_outline_rounded, color: Colors.white, size: 20),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  subtitle,
+                  style: const TextStyle(
+                    fontFamily: 'Poppins',
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
             ],
-          );
-        });
+          ),
+          backgroundColor: const Color(0xFF1E293B),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          duration: const Duration(seconds: 3),
+        ),
+      );
+    } catch (_) {}
   }
 
   Future<void> passwordResetException(
       String subtitle, BuildContext context) async {
-    showDialog(
-        context: context,
-        builder: (BuildContext ctx) {
-          return AlertDialog(
-            title: Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(tr("error_occured")),
+    try {
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const Icon(Icons.error_outline_rounded, color: Colors.white, size: 20),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  subtitle,
+                  style: const TextStyle(
+                    fontFamily: 'Poppins',
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
-              ],
-            ),
-            content: Text(subtitle),
-            actions: [
-              TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: Text(tr("ok")))
+              ),
             ],
-          );
-        });
+          ),
+          backgroundColor: const Color(0xFFDC2626),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          duration: const Duration(seconds: 4),
+        ),
+      );
+    } catch (_) {}
   }
 
   static void showErrorScaffoldMessengerMediaLoad(
