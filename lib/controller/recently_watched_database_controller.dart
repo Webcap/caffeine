@@ -166,6 +166,7 @@ class RecentlyWatchedMoviesController {
       final url = Uri.parse('$base/v1/user/$uid/history');
 
       final payload = {
+        'session_id': rMovie.sessionId,
         'media_type': 'movie',
         'media_id': rMovie.id,
         'title': rMovie.title,
@@ -174,6 +175,8 @@ class RecentlyWatchedMoviesController {
         'elapsed_ms': elapsed,
         'duration_ms': total,
         'completed': isFinished,
+        'started_at': rMovie.startedAt ?? rMovie.dateTime,
+        'platform': Platform.isAndroid ? 'mobile_android' : (Platform.isIOS ? 'mobile_ios' : 'mobile'),
       };
 
       await http
@@ -388,6 +391,7 @@ class RecentlyWatchedEpisodeController {
       final url = Uri.parse('$base/v1/user/$uid/history');
 
       final payload = {
+        'session_id': rEpisode.sessionId,
         'media_type': 'tv',
         'media_id': rEpisode.seriesId ?? rEpisode.id,
         'season_num': rEpisode.seasonNum,
@@ -399,6 +403,8 @@ class RecentlyWatchedEpisodeController {
         'elapsed_ms': elapsed,
         'duration_ms': total,
         'completed': isFinished,
+        'started_at': rEpisode.startedAt ?? rEpisode.dateTime,
+        'platform': Platform.isAndroid ? 'mobile_android' : (Platform.isIOS ? 'mobile_ios' : 'mobile'),
       };
 
       await http
