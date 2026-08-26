@@ -180,7 +180,6 @@ class _ProfilePageState extends State<ProfilePage> {
         textPrim: textPrim,
         textSec: textSec,
         textTert: textTert,
-        recent: recent,
         appDep: appDep,
       );
     }
@@ -210,6 +209,20 @@ class _ProfilePageState extends State<ProfilePage> {
         final moviesFormatted = recent.formatWatchTime(moviesMin);
         final tvFormatted = recent.formatWatchTime(tvMin);
 
+        final currentUser = _auth.currentUser;
+        final bool isEmailVerified = data['verified'] == true ||
+            currentUser?.emailConfirmedAt != null ||
+            currentUser?.userMetadata?['email_verified'] == true ||
+            currentUser?.appMetadata['provider'] == 'google';
+
+        if (isEmailVerified && data['verified'] != true && currentUser != null) {
+          _supabase
+              .from('profiles')
+              .update({'verified': true})
+              .eq('id', currentUser.id)
+              .catchError((_) => null);
+        }
+
         return Scaffold(
           backgroundColor: bg,
           body: SafeArea(
@@ -224,28 +237,34 @@ class _ProfilePageState extends State<ProfilePage> {
                       builder: (context) {
                         final authProvider = Provider.of<SignInProvider>(context, listen: false);
                         final dbProfileId = data['profile_id']?.toString();
-                        final dbImageUrl = data['image_url']?.toString();
+                        final authProfileId = authProvider.profileId?.toString();
                         
-                        // The "Fry" avatar is ID 5. If DB says 0 but Auth says 5, use 5.
-                        final metadataId = authProvider.profileId?.toString();
-                        final avatarId = (dbProfileId != null && dbProfileId != '0') 
+                        // Pick the active avatar ID (prefer non-null, valid ID)
+                        final avatarId = (dbProfileId != null && dbProfileId.isNotEmpty) 
                             ? dbProfileId 
-                            : (metadataId ?? '0');
-                        
-                        debugPrint('[Avatar Sync] 🎯 Final decision: db=$dbProfileId, metadata=$metadataId -> choosing=$avatarId');
-                        
-                        final imageUrl = (dbImageUrl != null && dbImageUrl.isNotEmpty)
-                            ? dbImageUrl
-                            : (authProvider.imageUrl ?? '');
+                            : (authProfileId != null && authProfileId.isNotEmpty ? authProfileId : '0');
 
-                        return ClipRRect(
-                          borderRadius: BorderRadius.circular(48),
-                          child: imageUrl.isNotEmpty
+                        return Container(
+                          width: 96,
+                          height: 96,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(color: border, width: 2),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.1),
+                                blurRadius: 12,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: (data['image_url'] != null && data['image_url'].toString().isNotEmpty)
                               ? CachedNetworkImage(
-                                  imageUrl: imageUrl,
-                                  width: 96,
-                                  height: 96,
-                                  fit: BoxFit.cover,
+                                  imageUrl: data['image_url'],
+                                  imageBuilder: (_, imageProvider) => CircleAvatar(
+                                    backgroundImage: imageProvider,
+                                    radius: 48,
+                                  ),
                                   memCacheWidth: 192,
                                   memCacheHeight: 192,
                                   placeholder: (_, __) => const SizedBox(
@@ -293,14 +312,14 @@ class _ProfilePageState extends State<ProfilePage> {
                       alignment: WrapAlignment.center,
                       children: [
                         Text(
-                          data['email'] ?? '',
+                          data['email'] ?? currentUser?.email ?? '',
                           style: TextStyle(
                             fontSize: 13,
                             color: textSec,
                             fontFamily: 'Poppins',
                           ),
                         ),
-                        if (data['verified'] == true)
+                        if (isEmailVerified)
                           Icon(
                             Icons.verified_rounded,
                             size: 18,
@@ -605,14 +624,8 @@ class _ProfilePageState extends State<ProfilePage> {
     required Color textPrim,
     required Color textSec,
     required Color textTert,
-    required RecentProvider recent,
     required AppDependencyProvider appDep,
   }) {
-    final moviesMin = recent.movieWatchTimeMinutesLast2Weeks;
-    final tvMin = recent.tvWatchTimeMinutesLast2Weeks;
-    final moviesFormatted = recent.formatWatchTime(moviesMin);
-    final tvFormatted = recent.formatWatchTime(tvMin);
-
     final showActivateTv =
         appDep.isFeatureEnabled('toggle_tv_activate_button', defaultValue: true);
     final filteredSettings = settingdata
@@ -766,14 +779,14 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 ),
 
-                // ── Watch time stats ─────────────────────────────
+                // ── Watch time stats (Disabled for Guest Mode) ──
                 const SizedBox(height: 24),
                 Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(18),
                   decoration: BoxDecoration(
                     color: elevated,
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(18),
                     border: Border.all(color: border, width: 1),
                   ),
                   child: Column(
@@ -784,7 +797,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           Icon(
                             Icons.history_rounded,
                             size: 20,
-                            color: _C.secondary,
+                            color: textTert,
                           ),
                           const SizedBox(width: 8),
                           Text(
@@ -792,33 +805,132 @@ class _ProfilePageState extends State<ProfilePage> {
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
-                              color: textPrim,
+                              color: textSec,
                               fontFamily: 'PoppinsSB',
+                            ),
+                          ),
+                          const Spacer(),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 3,
+                            ),
+                            decoration: BoxDecoration(
+                              color: _C.primary.withValues(alpha: 0.12),
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(
+                                color: _C.primary.withValues(alpha: 0.25),
+                                width: 1,
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(
+                                  Icons.lock_outline_rounded,
+                                  size: 12,
+                                  color: _C.primary,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  'SIGN IN TO TRACK',
+                                  style: const TextStyle(
+                                    fontSize: 9,
+                                    fontWeight: FontWeight.w700,
+                                    color: _C.primary,
+                                    letterSpacing: 0.5,
+                                    fontFamily: 'PoppinsSB',
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ],
                       ),
                       const SizedBox(height: 16),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: _WatchStatCard(
-                              icon: Icons.movie_creation_rounded,
-                              label: tr('movies'),
-                              value: moviesFormatted,
-                              isDark: isDark,
+                      // Dimmed / Disabled Stat Cards
+                      Opacity(
+                        opacity: 0.45,
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: _WatchStatCard(
+                                icon: Icons.movie_creation_rounded,
+                                label: tr('movies'),
+                                value: '--',
+                                isDark: isDark,
+                              ),
                             ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: _WatchStatCard(
-                              icon: Icons.live_tv_rounded,
-                              label: tr('tv_series'),
-                              value: tvFormatted,
-                              isDark: isDark,
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: _WatchStatCard(
+                                icon: Icons.live_tv_rounded,
+                                label: tr('tv_series'),
+                                value: '--',
+                                isDark: isDark,
+                              ),
                             ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 14),
+                      // Friendly callout prompt
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? Colors.white.withValues(alpha: 0.04)
+                              : Colors.black.withValues(alpha: 0.03),
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(
+                            color: border,
+                            width: 1,
                           ),
-                        ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(6),
+                                  decoration: BoxDecoration(
+                                    color: _C.primary.withValues(alpha: 0.12),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Icon(
+                                    Icons.auto_graph_rounded,
+                                    size: 16,
+                                    color: _C.primary,
+                                  ),
+                                ),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: Text(
+                                    'Track Your Viewing Habits',
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w700,
+                                      color: textPrim,
+                                      fontFamily: 'PoppinsSB',
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              'Sign in or create an account to unlock your personal watch time statistics, episode logs, and viewing history across all your devices.',
+                              style: TextStyle(
+                                fontSize: 11.5,
+                                color: textSec,
+                                height: 1.4,
+                                fontFamily: 'Poppins',
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),

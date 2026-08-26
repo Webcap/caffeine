@@ -98,6 +98,10 @@ class AppDependencyProvider extends ChangeNotifier {
     return getFlag<bool>(key, defaultValue);
   }
 
+  /// Check if mobile live event chatroom is enabled
+  bool get isMobileChatroomEnabled =>
+      isFeatureEnabled('mobile_chatroom', defaultValue: true);
+
   // --- API / URLs ---
   String _caffeineAPIUrl = caffeineApiUrl;
   String get caffeineAPIURL {
@@ -432,6 +436,7 @@ class AppDependencyProvider extends ChangeNotifier {
 
       _featuredEvents = (response as List)
           .map((e) => FeaturedEvent(
+                id: e['id']?.toString() ?? '',
                 title: e['title'] ?? '',
                 thumbnailUrl: e['poster_url']?.toString() ?? e['thumbnail_url']?.toString() ?? '',
                 videoUrl: e['video_url'] ?? '',

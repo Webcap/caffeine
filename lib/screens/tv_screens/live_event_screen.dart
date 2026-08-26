@@ -8,6 +8,9 @@ import 'package:reelriot/models/espn_scoreboard.dart';
 import 'package:reelriot/models/live_tv.dart';
 import 'package:reelriot/screens/tv_screens/live_tv_screen.dart';
 import 'package:reelriot/utils/helpers/web_page.dart';
+import 'package:reelriot/widgets/event_chatroom.dart';
+import 'package:reelriot/provider/app_dependency_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -16,12 +19,14 @@ import 'package:url_launcher/url_launcher.dart';
 abstract class _Design {
   static const Color bgCanvasDark = Color(0xFF030712); // gray-950
   static const Color bgSurfaceDark = Color(0xFF0B0F14); // gray-900
+  static const Color bgSurfaceElevated = Color(0xFF111827); // gray-800
   static const Color primaryCta = Color(0xFFDC2626); // primary-600
   static const Color textPrimary = Color(0xFFFFFFFF);
-  static const Color textSecondary =
-      Color(0xB8FFFFFF); // rgba(255,255,255,0.72)
+  static const Color textSecondary = Color(0xB8FFFFFF); // rgba(255,255,255,0.72)
+  static const Color textTertiary = Color(0x66FFFFFF);
   static const Color borderSubtle = Color(0x14FFFFFF);
   static const double radiusSm = 12.0;
+  static const double radiusPill = 9999.0;
   static const double space4 = 16.0;
   static const double space5 = 20.0;
   static const double space6 = 24.0;
@@ -66,7 +71,6 @@ class LiveEventScreen extends StatefulWidget {
       'ft'
     };
 
-
     final left = vs[0]
         .trim()
         .toLowerCase()
@@ -100,7 +104,6 @@ class LiveEventScreen extends StatefulWidget {
 
 class _LiveEventScreenState extends State<LiveEventScreen> {
   CaffeinePlayerController? _controller;
-  final GlobalKey _playerKey = GlobalKey();
   EspnScoreboardGame? _scoreGame;
   String? _currentUrl;
   String? _currentReferrer;
@@ -108,6 +111,7 @@ class _LiveEventScreenState extends State<LiveEventScreen> {
   List<dynamic> _sources = [];
   bool _isEmbed = false;
   String? _embedUrl;
+  int _selectedMobileTab = 0; // 0 = Chat, 1 = Info & Mirrors
 
   static bool isEmbedUrl(String url) {
     final lower = url.toLowerCase();
@@ -142,8 +146,6 @@ class _LiveEventScreenState extends State<LiveEventScreen> {
     if (_hasStream) _initPlayer();
     if (widget.event.sport?.toLowerCase() == 'nba') _loadNbaScore();
   }
-
-  // Removed _checkSupabaseStream and HLS extraction fallbacks.
 
   Future<void> _loadNbaScore() async {
     final response = await fetchNbaScoreboard();
@@ -194,7 +196,7 @@ class _LiveEventScreenState extends State<LiveEventScreen> {
       _isEmbed = false;
       _embedUrl = null;
     });
-    
+
     final c = CaffeinePlayerController();
     c.addEventsListener((event) {
       if (event.type == CaffeinePlayerEventType.error) {
@@ -215,7 +217,7 @@ class _LiveEventScreenState extends State<LiveEventScreen> {
     );
     _controller = c;
   }
-  
+
   String _getOrigin(String url) {
     try {
       final uri = Uri.parse(url);
@@ -241,88 +243,306 @@ class _LiveEventScreenState extends State<LiveEventScreen> {
   @override
   Widget build(BuildContext context) {
     final parsed = parseLiveEventTitle(widget.event.title);
-    return Scaffold(
-      backgroundColor: _Design.bgCanvasDark,
-      appBar: AppBar(
-        backgroundColor: _Design.bgSurfaceDark,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        leading: Padding(
-          padding: const EdgeInsets.only(left: _Design.space4),
-          child: Material(
-            color: _Design.borderSubtle,
-            shape: const CircleBorder(),
-            clipBehavior: Clip.antiAlias,
-            child: InkWell(
-              onTap: () => Navigator.maybePop(context),
-              customBorder: const CircleBorder(),
-              child: const Padding(
-                padding: EdgeInsets.all(10),
-                child: Icon(Icons.arrow_back_rounded,
-                    size: 22, color: _Design.textPrimary),
+    final appDep = Provider.of<AppDependencyProvider>(context);
+    final isChatEnabled = appDep.isMobileChatroomEnabled;
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isLargeScreen = constraints.maxWidth >= 720;
+
+        return Scaffold(
+          backgroundColor: _Design.bgCanvasDark,
+          appBar: AppBar(
+            backgroundColor: _Design.bgSurfaceDark,
+            elevation: 0,
+            scrolledUnderElevation: 0,
+            leading: Padding(
+              padding: const EdgeInsets.only(left: 12),
+              child: Material(
+                color: _Design.borderSubtle,
+                shape: const CircleBorder(),
+                clipBehavior: Clip.antiAlias,
+                child: InkWell(
+                  onTap: () => Navigator.maybePop(context),
+                  customBorder: const CircleBorder(),
+                  child: const Padding(
+                    padding: EdgeInsets.all(10),
+                    child: Icon(Icons.arrow_back_rounded,
+                        size: 20, color: _Design.textPrimary),
+                  ),
+                ),
               ),
             ),
+            centerTitle: !isLargeScreen,
+            title: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 8,
+                  height: 8,
+                  decoration: const BoxDecoration(
+                    color: _Design.primaryCta,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Flexible(
+                  child: Text(
+                    parsed.title,
+                    style: const TextStyle(
+                      color: _Design.textPrimary,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+            actions: [
+              if (!isLargeScreen && isChatEnabled)
+                Padding(
+                  padding: const EdgeInsets.only(right: 12),
+                  child: IconButton(
+                    icon: Icon(
+                      _selectedMobileTab == 0
+                          ? Icons.info_outline_rounded
+                          : Icons.chat_bubble_outline_rounded,
+                      color: _Design.textPrimary,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _selectedMobileTab = _selectedMobileTab == 0 ? 1 : 0;
+                      });
+                    },
+                    tooltip: _selectedMobileTab == 0 ? 'Match Details' : 'Live Chat',
+                  ),
+                ),
+            ],
+            iconTheme: const IconThemeData(color: _Design.textPrimary),
+          ),
+          body: isLargeScreen
+              ? _buildLargeScreenLayout(parsed, isChatEnabled)
+              : _buildMobileLayout(parsed, isChatEnabled),
+        );
+      },
+    );
+  }
+
+  // ── Large Screen Dual-Pane Layout (Tablet / Foldable / Desktop) ──
+  Widget _buildLargeScreenLayout(LiveEventTitleParsed parsed, bool isChatEnabled) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        // Left Column (60-65%): Video Player + Score Card + Mirrors
+        Expanded(
+          flex: 6,
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(_Design.radiusSm),
+                  child: AspectRatio(
+                    aspectRatio: 16 / 9,
+                    child: _buildVideoPlayer(),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                _EventInfoSection(
+                  event: widget.event,
+                  espnGame: widget.espnGame,
+                  parsed: parsed,
+                  scoreGame: _scoreGame,
+                  sources: _sources,
+                  currentUrl: _currentUrl,
+                  onSourceChanged: _switchSource,
+                ),
+              ],
+            ),
           ),
         ),
-        centerTitle: true,
-        title: Text(
-          'Reelriot Live',
-          style: TextStyle(
-            color: _Design.textPrimary,
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-          ),
+        // Vertical Divider
+        Container(width: 1, color: _Design.borderSubtle),
+        // Right Column (35-40%): Dedicated Full-Height Chatroom
+        Expanded(
+          flex: 4,
+          child: isChatEnabled
+              ? EventChatroom(
+                  roomId: widget.event.id,
+                  roomName: widget.event.title,
+                  showHeader: true,
+                )
+              : Container(
+                  color: _Design.bgSurfaceDark,
+                  child: const Center(
+                    child: Text(
+                      'Chatroom disabled',
+                      style: TextStyle(color: _Design.textTertiary),
+                    ),
+                  ),
+                ),
         ),
-        iconTheme: const IconThemeData(color: _Design.textPrimary),
-      ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Expanded(
-            flex: 1,
-            child: _isEmbed && _embedUrl != null
-                ? UrlWebPage(url: _embedUrl!)
-                : (_hasStream && _controller != null
-                    ? Container(
-                        color: Colors.black,
-                        child: mkv.Video(
-                          controller: _controller!.videoController,
-                          controls: mkv.MaterialVideoControls,
-                        ),
-                      )
-                    : _NoStreamPlaceholder(eventPageUrl: widget.event.url)),
-          ),
+      ],
+    );
+  }
+
+  // ── Mobile Single-Column Layout (Phone Portrait) ──
+  Widget _buildMobileLayout(LiveEventTitleParsed parsed, bool isChatEnabled) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        // Video Player pinned on top in 16:9
+        AspectRatio(
+          aspectRatio: 16 / 9,
+          child: _buildVideoPlayer(),
+        ),
+        // Tab Selector (Chat vs Match Info) if chat is enabled
+        if (isChatEnabled)
           Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(
-                horizontal: _Design.space5, vertical: _Design.space6),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: const BoxDecoration(
               color: _Design.bgSurfaceDark,
-              border: Border(
-                  top: BorderSide(color: _Design.borderSubtle, width: 1)),
+              border: Border(bottom: BorderSide(color: _Design.borderSubtle)),
             ),
-            child: _EventInfoSection(
-              event: widget.event,
-              espnGame: widget.espnGame,
-              parsed: parsed,
-              scoreGame: _scoreGame,
-              sources: _sources,
-              currentUrl: _currentUrl,
-              onSourceChanged: (source) {
-                final url = source['url']?.toString();
-                final ref = source['referrer']?.toString() ?? '';
-                final ua = source['user_agent']?.toString();
-                if (url == null || url == _currentUrl) return;
-                setState(() {
-                  _currentUrl = url;
-                  _currentReferrer = ref;
-                  if (ua != null && ua.isNotEmpty) _currentUserAgent = ua;
-                });
-                _initPlayer();
-              },
+            child: Row(
+              children: [
+                Expanded(
+                  child: _MobileTabButton(
+                    label: 'LIVE CHAT',
+                    icon: Icons.chat_bubble_rounded,
+                    isSelected: _selectedMobileTab == 0,
+                    onTap: () => setState(() => _selectedMobileTab = 0),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: _MobileTabButton(
+                    label: 'MATCH & SERVERS',
+                    icon: Icons.sports_rounded,
+                    isSelected: _selectedMobileTab == 1,
+                    onTap: () => setState(() => _selectedMobileTab = 1),
+                  ),
+                ),
+              ],
             ),
           ),
-        ],
+        // Content Area: Chat or Match Info
+        Expanded(
+          child: IndexedStack(
+            index: isChatEnabled ? _selectedMobileTab : 1,
+            children: [
+              if (isChatEnabled)
+                EventChatroom(
+                  roomId: widget.event.id,
+                  roomName: widget.event.title,
+                  showHeader: false,
+                )
+              else
+                const SizedBox.shrink(),
+              SingleChildScrollView(
+                padding: const EdgeInsets.all(16),
+                child: _EventInfoSection(
+                  event: widget.event,
+                  espnGame: widget.espnGame,
+                  parsed: parsed,
+                  scoreGame: _scoreGame,
+                  sources: _sources,
+                  currentUrl: _currentUrl,
+                  onSourceChanged: _switchSource,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildVideoPlayer() {
+    if (_isEmbed && _embedUrl != null) {
+      return UrlWebPage(url: _embedUrl!);
+    }
+    if (_hasStream && _controller != null) {
+      return Container(
+        color: Colors.black,
+        child: mkv.Video(
+          controller: _controller!.videoController,
+          controls: mkv.MaterialVideoControls,
+        ),
+      );
+    }
+    return _NoStreamPlaceholder(eventPageUrl: widget.event.url);
+  }
+
+  void _switchSource(Map<String, dynamic> source) {
+    final url = source['url']?.toString();
+    final ref = source['referrer']?.toString() ?? '';
+    final ua = source['user_agent']?.toString();
+    if (url == null || url == _currentUrl) return;
+    setState(() {
+      _currentUrl = url;
+      _currentReferrer = ref;
+      if (ua != null && ua.isNotEmpty) _currentUserAgent = ua;
+    });
+    _initPlayer();
+  }
+}
+
+class _MobileTabButton extends StatelessWidget {
+  const _MobileTabButton({
+    required this.label,
+    required this.icon,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  final String label;
+  final IconData icon;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(8),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          decoration: BoxDecoration(
+            color: isSelected
+                ? _Design.primaryCta.withValues(alpha: 0.15)
+                : Colors.transparent,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color: isSelected ? _Design.primaryCta : Colors.transparent,
+            ),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                icon,
+                size: 15,
+                color: isSelected ? _Design.primaryCta : _Design.textSecondary,
+              ),
+              const SizedBox(width: 6),
+              Text(
+                label,
+                style: TextStyle(
+                  color: isSelected ? _Design.textPrimary : _Design.textSecondary,
+                  fontSize: 11,
+                  fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+                  letterSpacing: 0.5,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -345,32 +565,32 @@ class _NoStreamPlaceholder extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.live_tv_rounded, size: 64, color: _Design.textSecondary),
-            const SizedBox(height: _Design.space4),
-            Text(
+            const Icon(Icons.live_tv_rounded, size: 56, color: _Design.textSecondary),
+            const SizedBox(height: 12),
+            const Text(
               'No stream available',
               style: TextStyle(
-                color: _Design.textSecondary,
-                fontSize: 15,
-                fontWeight: FontWeight.w500,
+                color: _Design.textPrimary,
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
               ),
             ),
             const SizedBox(height: 4),
             Text(
               hasEventPage
                   ? 'Open the event page to watch in browser or in-app.'
-                  : 'Try again later or choose another event',
-              style: TextStyle(
-                color: _Design.textSecondary.withValues(alpha: 0.8),
+                  : 'Try again later or choose another mirror.',
+              style: const TextStyle(
+                color: _Design.textTertiary,
                 fontSize: 13,
               ),
               textAlign: TextAlign.center,
             ),
             if (hasEventPage) ...[
-              const SizedBox(height: _Design.space5),
+              const SizedBox(height: 16),
               OutlinedButton.icon(
                 onPressed: () => _openInBrowser(context, eventPageUrl!),
-                icon: const Icon(Icons.open_in_browser_rounded, size: 20),
+                icon: const Icon(Icons.open_in_browser_rounded, size: 18),
                 label: const Text('Open in browser'),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: _Design.primaryCta,
@@ -392,6 +612,7 @@ class _NoStreamPlaceholder extends StatelessWidget {
     }
   }
 }
+
 class _EventInfoSection extends StatelessWidget {
   final StreameastEvent event;
   final EspnScoreboardGame? espnGame;
@@ -414,85 +635,101 @@ class _EventInfoSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final displayGame = scoreGame ?? espnGame;
+    final isCombat = isMmaOrCombatSport(
+      sport: event.sport,
+      game: displayGame,
+      title: event.title,
+    );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (displayGame != null &&
+        if (!isCombat &&
+            displayGame != null &&
             (displayGame.isLive || displayGame.isEffectivelyCompleted)) ...[
           _ScoreRow(game: displayGame),
-          const SizedBox(height: _Design.space4),
+          const SizedBox(height: 16),
         ],
-        if (parsed.status != null && parsed.status!.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.only(bottom: 6),
-            child: Text(
-              parsed.status!,
-              style: const TextStyle(
-                color: _Design.primaryCta,
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                letterSpacing: 0.3,
-              ),
-            ),
+        // Match Header Card
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: _Design.bgSurfaceDark,
+            borderRadius: BorderRadius.circular(_Design.radiusSm),
+            border: Border.all(color: _Design.borderSubtle),
           ),
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildLogo(),
-            const SizedBox(width: _Design.space4),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    parsed.title,
-                    style: const TextStyle(
-                      color: _Design.textPrimary,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                      height: 1.25,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildLogo(),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (parsed.status != null && parsed.status!.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 4),
+                        child: Text(
+                          parsed.status!,
+                          style: const TextStyle(
+                            color: _Design.primaryCta,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                      ),
+                    Text(
+                      parsed.title,
+                      style: const TextStyle(
+                        color: _Design.textPrimary,
+                        fontSize: 17,
+                        fontWeight: FontWeight.w700,
+                        height: 1.25,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  if (event.sport != null && event.sport!.isNotEmpty) ...[
                     const SizedBox(height: 6),
                     Text(
-                      event.sport!.toUpperCase(),
+                      (espnGame != null && espnGame!.competitionType != null)
+                          ? '${espnGame!.competitionType} · ${event.sport ?? ""}'.toUpperCase()
+                          : (event.sport ?? "").toUpperCase(),
                       style: const TextStyle(
-                        color: _Design.textSecondary,
-                        fontSize: 12,
+                        color: _Design.textTertiary,
+                        fontSize: 11,
                         fontWeight: FontWeight.w600,
-                        letterSpacing: 0.5,
+                        letterSpacing: 0.6,
                       ),
                     ),
                   ],
-                ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
+        // Available Mirrors Section
         if (sources != null && sources!.isNotEmpty) ...[
-          const SizedBox(height: _Design.space6),
+          const SizedBox(height: 20),
           const Text(
-            'AVAILABLE MIRRORS',
+            'AVAILABLE SERVERS & MIRRORS',
             style: TextStyle(
-              color: _Design.textSecondary,
-              fontSize: 12,
-              fontWeight: FontWeight.w700,
+              color: _Design.textTertiary,
+              fontSize: 11,
+              fontWeight: FontWeight.w800,
               letterSpacing: 1.2,
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 10),
           SizedBox(
-            height: 48,
+            height: 44,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: sources!.length,
               itemBuilder: (context, index) {
                 final source = sources![index];
-                final name = source['name'] ?? 'Source ${index + 1}';
+                final name = source['name'] ?? 'Server ${index + 1}';
                 final url = source['url'] ?? '';
                 final isSelected = url == currentUrl;
                 return Padding(
@@ -503,7 +740,7 @@ class _EventInfoSection extends StatelessWidget {
                     onSelected: (selected) {
                       if (selected) onSourceChanged(source);
                     },
-                    backgroundColor: _Design.bgCanvasDark,
+                    backgroundColor: _Design.bgSurfaceDark,
                     selectedColor: _Design.primaryCta,
                     showCheckmark: false,
                     shape: RoundedRectangleBorder(
@@ -518,7 +755,7 @@ class _EventInfoSection extends StatelessWidget {
                       color: isSelected ? Colors.white : _Design.textSecondary,
                       fontSize: 13,
                       fontWeight:
-                          isSelected ? FontWeight.w600 : FontWeight.w400,
+                          isSelected ? FontWeight.w700 : FontWeight.w500,
                     ),
                   ),
                 );
@@ -537,8 +774,8 @@ class _EventInfoSection extends StatelessWidget {
         borderRadius: BorderRadius.circular(_Design.radiusSm),
         child: CachedNetworkImage(
           imageUrl: url,
-          width: 56,
-          height: 56,
+          width: 52,
+          height: 52,
           fit: BoxFit.cover,
           placeholder: (_, __) => _logoPlaceholder(),
           errorWidget: (_, __, ___) => _logoPlaceholder(),
@@ -550,14 +787,14 @@ class _EventInfoSection extends StatelessWidget {
 
   Widget _logoPlaceholder() {
     return Container(
-      width: 56,
-      height: 56,
+      width: 52,
+      height: 52,
       decoration: BoxDecoration(
-        color: _Design.primaryCta.withValues(alpha: 0.2),
+        color: _Design.primaryCta.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(_Design.radiusSm),
       ),
       child: const Icon(Icons.live_tv_rounded,
-          color: _Design.primaryCta, size: 28),
+          color: _Design.primaryCta, size: 26),
     );
   }
 }
@@ -569,59 +806,70 @@ class _ScoreRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (game.isCombatSport) return const SizedBox.shrink();
     final away = game.away;
     final home = game.home;
     final status = game.status;
     if (away == null && home == null) return const SizedBox.shrink();
+
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
       decoration: BoxDecoration(
-        color: _Design.bgCanvasDark,
+        color: _Design.bgSurfaceDark,
         borderRadius: BorderRadius.circular(_Design.radiusSm),
         border: Border.all(color: _Design.borderSubtle),
       ),
-      child: Row(
+      child: Column(
         children: [
-          Expanded(
-            child: _TeamScore(
-              name: away?.displayName ?? '',
-              score: away?.score ?? '0',
-              logoUrl: away?.logoUrl,
-            ),
-          ),
-          Column(
-            mainAxisSize: MainAxisSize.min,
+          Row(
             children: [
-              Text(
-                '@',
-                style: TextStyle(
-                  color: _Design.textSecondary.withValues(alpha: 0.7),
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
+              Expanded(
+                child: _TeamScore(
+                  name: away?.displayName ?? 'Away',
+                  score: away?.score ?? '0',
+                  logoUrl: away?.logoUrl,
                 ),
               ),
-              if (status != null && status.shortDetail.isNotEmpty)
-                Padding(
-                  padding: const EdgeInsets.only(top: 4),
-                  child: Text(
-                    status.shortDetail,
-                    style: const TextStyle(
-                      color: _Design.primaryCta,
-                      fontSize: 10,
-                      fontWeight: FontWeight.w600,
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'VS',
+                      style: TextStyle(
+                        color: _Design.textTertiary,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 1.0,
+                      ),
                     ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
+                    if (status != null && status.shortDetail.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4),
+                        child: Text(
+                          status.shortDetail,
+                          style: const TextStyle(
+                            color: _Design.primaryCta,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                  ],
                 ),
+              ),
+              Expanded(
+                child: _TeamScore(
+                  name: home?.displayName ?? 'Home',
+                  score: home?.score ?? '0',
+                  logoUrl: home?.logoUrl,
+                  isHome: true,
+                ),
+              ),
             ],
-          ),
-          Expanded(
-            child: _TeamScore(
-              name: home?.displayName ?? '',
-              score: home?.score ?? '0',
-              logoUrl: home?.logoUrl,
-            ),
           ),
         ],
       ),
@@ -634,35 +882,28 @@ class _TeamScore extends StatelessWidget {
     required this.name,
     required this.score,
     this.logoUrl,
+    this.isHome = false,
   });
 
   final String name;
   final String score;
   final String? logoUrl;
+  final bool isHome;
 
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment:
+          isHome ? MainAxisAlignment.end : MainAxisAlignment.start,
       children: [
-        if (logoUrl != null && logoUrl!.isNotEmpty)
-          ClipRRect(
-            borderRadius: BorderRadius.circular(6),
-            child: CachedNetworkImage(
-              imageUrl: logoUrl!,
-              width: 32,
-              height: 32,
-              fit: BoxFit.contain,
-              placeholder: (_, __) => _smallLogoPlaceholder(),
-              errorWidget: (_, __, ___) => _smallLogoPlaceholder(),
-            ),
-          )
-        else
-          _smallLogoPlaceholder(),
-        const SizedBox(width: 8),
-        Expanded(
+        if (!isHome) ...[
+          _buildLogo(),
+          const SizedBox(width: 10),
+        ],
+        Flexible(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment:
+                isHome ? CrossAxisAlignment.end : CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
@@ -675,31 +916,54 @@ class _TeamScore extends StatelessWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
+              const SizedBox(height: 2),
               Text(
                 score,
                 style: const TextStyle(
-                  color: _Design.textSecondary,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
+                  color: Colors.white,
+                  fontSize: 22,
+                  fontWeight: FontWeight.w800,
                 ),
               ),
             ],
           ),
         ),
+        if (isHome) ...[
+          const SizedBox(width: 10),
+          _buildLogo(),
+        ],
       ],
     );
   }
 
+  Widget _buildLogo() {
+    if (logoUrl != null && logoUrl!.isNotEmpty) {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: CachedNetworkImage(
+          imageUrl: logoUrl!,
+          width: 36,
+          height: 36,
+          fit: BoxFit.contain,
+          placeholder: (_, __) => _smallLogoPlaceholder(),
+          errorWidget: (_, __, ___) => _smallLogoPlaceholder(),
+        ),
+      );
+    }
+    return _smallLogoPlaceholder();
+  }
+
   Widget _smallLogoPlaceholder() {
     return Container(
-      width: 32,
-      height: 32,
+      width: 36,
+      height: 36,
       decoration: BoxDecoration(
-        color: _Design.borderSubtle,
-        borderRadius: BorderRadius.circular(6),
+        color: Colors.white.withValues(alpha: 0.05),
+        borderRadius: BorderRadius.circular(8),
       ),
-      child: const Icon(Icons.sports_basketball_rounded,
+      child: const Icon(Icons.sports_rounded,
           color: _Design.textSecondary, size: 18),
     );
   }
 }
+

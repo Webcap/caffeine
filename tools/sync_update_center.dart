@@ -25,10 +25,10 @@ Future<void> main(List<String> args) async {
 
   final flavor = (environment == 'development') ? 'dev' : 'prod';
 
-  // Enforce Universal APK link for the update center
+  // Default primary APK link for the update center (ARM64-v8A 46MB optimized build)
   String downloadUrl = options['download-url'] ?? '';
   if (downloadUrl.isEmpty) {
-    downloadUrl = 'https://github.com/$repoName/releases/download/v$version/ReelRiot-$flavor-v$versionClean-universal.apk';
+    downloadUrl = 'https://github.com/$repoName/releases/download/v$version/ReelRiot-$flavor-v$versionClean-arm64-v8a.apk';
   }
 
   final storeUrl = options['store-url'] ??
@@ -46,10 +46,11 @@ Future<void> main(List<String> args) async {
   }
 
   final downloadUrls = <String, String>{
-    'universal': downloadUrl,
+    'primary': downloadUrl,
     'arm64_v8a': 'https://github.com/$repoName/releases/download/v$version/ReelRiot-$flavor-v$versionClean-arm64-v8a.apk',
     'armeabi_v7a': 'https://github.com/$repoName/releases/download/v$version/ReelRiot-$flavor-v$versionClean-armeabi-v7a.apk',
     'x86_64': 'https://github.com/$repoName/releases/download/v$version/ReelRiot-$flavor-v$versionClean-x86_64.apk',
+    'universal': 'https://github.com/$repoName/releases/download/v$version/ReelRiot-$flavor-v$versionClean-universal.apk',
   };
 
   stdout.writeln('======================================================');
@@ -58,7 +59,7 @@ Future<void> main(List<String> args) async {
   stdout.writeln(' Platform   : $platform');
   stdout.writeln(' Environment: $environment');
   stdout.writeln(' Version    : $version');
-  stdout.writeln(' Package    : Universal APK (All ABIs)');
+  stdout.writeln(' Package    : ARM64-v8A APK (46 MB Optimized)');
   stdout.writeln(' DownloadUrl: $downloadUrl');
   stdout.writeln(' Forced     : $isForced');
   stdout.writeln('======================================================');

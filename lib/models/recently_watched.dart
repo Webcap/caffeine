@@ -17,15 +17,19 @@ bool shouldShowInContinueWatching(int? elapsed, int? remaining) {
 }
 
 class RecentMovie {
-  RecentMovie(
-      {required this.backdropPath,
-      required this.dateTime,
-      required this.elapsed,
-      required this.id,
-      required this.posterPath,
-      required this.releaseYear,
-      required this.remaining,
-      required this.title});
+  RecentMovie({
+    required this.backdropPath,
+    required this.dateTime,
+    required this.elapsed,
+    required this.id,
+    required this.posterPath,
+    required this.releaseYear,
+    required this.remaining,
+    required this.title,
+    this.sessionId,
+    this.startedAt,
+    this.completedAt,
+  });
 
   int? id;
   String? title;
@@ -37,6 +41,9 @@ class RecentMovie {
   String? dateTime;
   String? posterPath;
   String? backdropPath;
+  String? sessionId;
+  String? startedAt;
+  String? completedAt;
 
   Map<String, dynamic> toMap() {
     var map = <String, dynamic>{};
@@ -48,6 +55,9 @@ class RecentMovie {
     map['date_watched'] = dateTime;
     map['poster_path'] = posterPath;
     map['backdrop_path'] = backdropPath;
+    if (sessionId != null) map['session_id'] = sessionId;
+    if (startedAt != null) map['started_at'] = startedAt;
+    if (completedAt != null) map['completed_at'] = completedAt;
     return map;
   }
 
@@ -60,6 +70,9 @@ class RecentMovie {
     dateTime = map['date_watched'];
     posterPath = map['poster_path'];
     backdropPath = map['backdrop_path'];
+    sessionId = map['session_id'];
+    startedAt = map['started_at'];
+    completedAt = map['completed_at'];
   }
 }
 
@@ -76,18 +89,25 @@ class RecentEpisode {
   /// Remaining time in milliseconds
   int? remaining;
   int? seriesId;
+  String? sessionId;
+  String? startedAt;
+  String? completedAt;
 
-  RecentEpisode(
-      {required this.dateTime,
-      required this.elapsed,
-      required this.episodeName,
-      required this.episodeNum,
-      required this.id,
-      required this.posterPath,
-      required this.remaining,
-      required this.seasonNum,
-      required this.seriesName,
-      required this.seriesId});
+  RecentEpisode({
+    required this.dateTime,
+    required this.elapsed,
+    required this.episodeName,
+    required this.episodeNum,
+    required this.id,
+    required this.posterPath,
+    required this.remaining,
+    required this.seasonNum,
+    required this.seriesName,
+    required this.seriesId,
+    this.sessionId,
+    this.startedAt,
+    this.completedAt,
+  });
 
   Map<String, dynamic> toMap() {
     var map = <String, dynamic>{};
@@ -101,6 +121,9 @@ class RecentEpisode {
     map['remaining'] = remaining;
     map['date_added'] = dateTime;
     map['series_id'] = seriesId;
+    if (sessionId != null) map['session_id'] = sessionId;
+    if (startedAt != null) map['started_at'] = startedAt;
+    if (completedAt != null) map['completed_at'] = completedAt;
     return map;
   }
 
@@ -115,5 +138,8 @@ class RecentEpisode {
     remaining = map['remaining'];
     dateTime = map['date_added'];
     seriesId = map['series_id'];
+    sessionId = map['session_id'];
+    startedAt = map['started_at'];
+    completedAt = map['completed_at'];
   }
 }

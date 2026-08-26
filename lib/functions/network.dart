@@ -488,17 +488,31 @@ const List<_EspnLeagueConfig> _espnLeagues = [
   _EspnLeagueConfig('soccer', 'conmebol.libertadores', 'Soccer', 'Copa Libertadores'),
 ];
 
-/// Fetches ESPN scoreboard for a league on a date.
+/// Fetches ESPN scoreboard for a league on a date (prefers Caffeine API with direct fallback).
 Future<EspnScoreboardResponse?> fetchEspnScoreboard(
-    String sport, String league, DateTime date) async {
+    String sport, String league, DateTime date, {String? caffeineBaseUrl}) async {
   try {
-    final url = Endpoints.getEspnScoreboardUrl(sport, league, date);
-    final res =
-        await http.get(Uri.parse(url)).timeout(const Duration(seconds: 10));
-    if (res.statusCode != 200) return null;
-    final decoded = jsonDecode(res.body);
-    if (decoded is! Map<String, dynamic>) return null;
-    return EspnScoreboardResponse.fromJson(decoded);
+    final String url = caffeineBaseUrl != null && caffeineBaseUrl.trim().isNotEmpty
+        ? Endpoints.getCaffeineScoreboardUrl(caffeineBaseUrl, sport: sport, league: league, date: date)
+        : Endpoints.getEspnScoreboardUrl(sport, league, date);
+    final res = await http.get(Uri.parse(url), headers: caffeineApiHeaders).timeout(const Duration(seconds: 8));
+    if (res.statusCode == 200) {
+      final decoded = jsonDecode(res.body);
+      if (decoded is Map<String, dynamic>) {
+        return EspnScoreboardResponse.fromJson(decoded);
+      }
+    }
+    
+    // Direct ESPN fallback if Caffeine API returned non-200
+    final fallbackUrl = Endpoints.getEspnScoreboardUrl(sport, league, date);
+    final fallbackRes = await http.get(Uri.parse(fallbackUrl)).timeout(const Duration(seconds: 8));
+    if (fallbackRes.statusCode == 200) {
+      final decodedFallback = jsonDecode(fallbackRes.body);
+      if (decodedFallback is Map<String, dynamic>) {
+        return EspnScoreboardResponse.fromJson(decodedFallback);
+      }
+    }
+    return null;
   } catch (_) {
     return null;
   }

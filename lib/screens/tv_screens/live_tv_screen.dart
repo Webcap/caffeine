@@ -66,7 +66,13 @@ String formatLiveEventTitle(String raw) {
   body = body.replaceAll(RegExp(r'\s+vs\s+at\s+', caseSensitive: false), ' vs ');
   body = body.replaceAll(RegExp(r'\s+at\s+vs\s+', caseSensitive: false), ' vs ');
 
-  if (body.isNotEmpty && !body.toLowerCase().contains(' vs ')) {
+  final isNamedEvent = body.contains(':') ||
+      body.contains(',') ||
+      RegExp(r'(series|season|week|fight night|grand prix|championship|tournament)',
+              caseSensitive: false)
+          .hasMatch(body);
+
+  if (body.isNotEmpty && !body.toLowerCase().contains(' vs ') && !isNamedEvent) {
     final words = body.split(RegExp(r'\s+'));
     if (words.length == 2 && words[0].isNotEmpty && words[1].isNotEmpty) {
       body = '${words[0]} vs ${words[1]}';
@@ -108,16 +114,23 @@ class LiveEventTitleParsed {
 abstract class _LiveTvDesign {
   static const Color bgCanvasDark = Color(0xFF030712);
   static const Color bgSurfaceDark = Color(0xFF0B0F14);
+  static const Color bgSurfaceElevated = Color(0xFF111827);
   static const Color primaryCta = Color(0xFFDC2626);
   static const Color textPrimary = Color(0xFFFFFFFF);
   static const Color textSecondary = Color(0xB8FFFFFF);
+  static const Color textTertiary = Color(0x66FFFFFF);
   static const Color borderSubtle = Color(0x14FFFFFF);
+  static const Color liveGlow = Color(0x33DC2626);
   static const double radiusCard = 20.0;
   static const double radiusSm = 12.0;
   static const double radiusPill = 9999.0;
   static const double ctaHeight = 52.0;
   static const List<BoxShadow> shadowCard = [
     BoxShadow(color: Color(0x38000000), blurRadius: 30, offset: Offset(0, 10)),
+  ];
+  static const List<BoxShadow> shadowLive = [
+    BoxShadow(color: Color(0x22DC2626), blurRadius: 24, offset: Offset(0, 8)),
+    BoxShadow(color: Color(0x28000000), blurRadius: 30, offset: Offset(0, 10)),
   ];
 }
 
@@ -144,6 +157,12 @@ class ChannelListState extends State<ChannelList> {
   Future<void> loadTodayEvents() async {
     if (!mounted) return;
     setState(() => _loadFailed = false);
+    
+    // Refresh featured sports from Supabase (runs concurrently with ESPN load)
+    try {
+      context.read<AppDependencyProvider>().fetchSportsStreams();
+    } catch (_) {}
+
     // Use device local date/time so "today" and live games match the user's timezone.
     final date = DateTime.now();
     debugPrint(
@@ -306,11 +325,12 @@ class ChannelListState extends State<ChannelList> {
       backgroundColor: isDark ? _LiveTvDesign.bgCanvasDark : null,
       appBar: AppBar(
         title: Text(
-          tr("channels"),
+          'Live Sports',
           style: TextStyle(
             color: isDark ? _LiveTvDesign.textPrimary : null,
-            fontWeight: FontWeight.w600,
-            fontSize: 18,
+            fontWeight: FontWeight.w700,
+            fontSize: 20,
+            letterSpacing: -0.3,
           ),
         ),
         backgroundColor: isDark ? _LiveTvDesign.bgCanvasDark : null,
@@ -386,14 +406,14 @@ class ChannelListState extends State<ChannelList> {
                         children: [
                           if (cats['live']!.isNotEmpty) ...[
                             _buildSectionHeader(isDark, "LIVE NOW",
-                                color: _LiveTvDesign.primaryCta),
+                                color: _LiveTvDesign.primaryCta, isLive: true),
                             ...cats['live']!.map((event) => _buildEventTile(event, isDark)),
-                            const SizedBox(height: 16),
+                            const SizedBox(height: 20),
                           ],
                           if (cats['upcoming']!.isNotEmpty) ...[
                             _buildSectionHeader(isDark, "UPCOMING"),
                             ...cats['upcoming']!.map((event) => _buildEventTile(event, isDark)),
-                            const SizedBox(height: 16),
+                            const SizedBox(height: 20),
                           ],
                           if (cats['completed']!.isNotEmpty) ...[
                             _buildSectionHeader(isDark, "COMPLETED"),
@@ -408,47 +428,90 @@ class ChannelListState extends State<ChannelList> {
   }
 
   Widget _buildEmptyState(bool isDark, String message) {
+    final isNoResults = message.toLowerCase().contains('search');
     return SingleChildScrollView(
       physics: const AlwaysScrollableScrollPhysics(),
       child: Container(
-        height: 500,
+        height: 400,
         alignment: Alignment.center,
-        child: Text(
-          message,
-          style: TextStyle(
-            color: isDark ? _LiveTvDesign.textSecondary : null,
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-          ),
-          textAlign: TextAlign.center,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 72,
+              height: 72,
+              decoration: BoxDecoration(
+                color: isDark
+                    ? _LiveTvDesign.primaryCta.withValues(alpha: 0.1)
+                    : Colors.grey.shade100,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                isNoResults
+                    ? Icons.search_off_rounded
+                    : Icons.sports_rounded,
+                size: 32,
+                color: isDark
+                    ? _LiveTvDesign.textSecondary
+                    : Colors.grey.shade500,
+              ),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              message,
+              style: TextStyle(
+                color: isDark ? _LiveTvDesign.textPrimary : Colors.black87,
+                fontSize: 17,
+                fontWeight: FontWeight.w600,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              isNoResults
+                  ? 'Try a different search term or filter'
+                  : 'Pull down to refresh or check back later',
+              style: TextStyle(
+                color: isDark
+                    ? _LiveTvDesign.textTertiary
+                    : Colors.grey.shade500,
+                fontSize: 14,
+                fontWeight: FontWeight.w400,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildSectionHeader(bool isDark, String title, {Color? color}) {
+  Widget _buildSectionHeader(bool isDark, String title, {Color? color, bool isLive = false}) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12, top: 4),
+      padding: const EdgeInsets.only(bottom: 14, top: 8),
       child: Row(
         children: [
-          if (color != null) ...[
+          if (isLive) ...[
+            const _LivePulse(size: 10),
+            const SizedBox(width: 10),
+          ] else if (color != null) ...[
             Container(
               width: 4,
-              height: 16,
+              height: 18,
               decoration: BoxDecoration(
                 color: color,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: 10),
           ],
           Text(
             title,
             style: TextStyle(
-              color: color ?? (isDark ? _LiveTvDesign.textSecondary : Colors.black54),
+              color: color ?? (isDark ? _LiveTvDesign.textTertiary : Colors.black45),
               fontSize: 13,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 1.2,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 1.4,
             ),
           ),
         ],
@@ -459,7 +522,7 @@ class ChannelListState extends State<ChannelList> {
   Widget _buildEventTile(EspnListEvent event, bool isDark) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
-      child: _EspnEventTile(
+      child: _MatchCard(
         event: event,
         isDark: isDark,
         hasStream: _activeStreamIds.contains(event.game.id),
@@ -703,9 +766,81 @@ class ChannelListState extends State<ChannelList> {
   }
 }
 
-/// Card-based tile for one ESPN event; shows Away vs Home with scores.
-class _EspnEventTile extends StatelessWidget {
-  const _EspnEventTile({
+/// Animated pulsing live indicator dot.
+class _LivePulse extends StatefulWidget {
+  const _LivePulse({this.size = 8});
+  final double size;
+
+  @override
+  State<_LivePulse> createState() => _LivePulseState();
+}
+
+class _LivePulseState extends State<_LivePulse>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _ctrl;
+  late Animation<double> _fade;
+  late Animation<double> _scale;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1400),
+    )..repeat();
+    _fade = Tween<double>(begin: 0.7, end: 0.0).animate(
+        CurvedAnimation(parent: _ctrl, curve: Curves.easeOut));
+    _scale = Tween<double>(begin: 1.0, end: 2.4).animate(
+        CurvedAnimation(parent: _ctrl, curve: Curves.easeOut));
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: widget.size * 2.6,
+      height: widget.size * 2.6,
+      child: Center(
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            FadeTransition(
+              opacity: _fade,
+              child: ScaleTransition(
+                scale: _scale,
+                child: Container(
+                  width: widget.size,
+                  height: widget.size,
+                  decoration: const BoxDecoration(
+                    color: _LiveTvDesign.primaryCta,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+              ),
+            ),
+            Container(
+              width: widget.size,
+              height: widget.size,
+              decoration: const BoxDecoration(
+                color: _LiveTvDesign.primaryCta,
+                shape: BoxShape.circle,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Redesigned match card with sport-specific layouts.
+class _MatchCard extends StatelessWidget {
+  const _MatchCard({
     required this.event,
     required this.isDark,
     required this.hasStream,
@@ -717,10 +852,18 @@ class _EspnEventTile extends StatelessWidget {
   final bool hasStream;
   final VoidCallback onTap;
 
+  bool get _isMma => isMmaOrCombatSport(
+        sport: event.sport,
+        league: event.league,
+        game: event.game,
+        title: event.game.name,
+      );
+
   @override
   Widget build(BuildContext context) {
     final g = event.game;
-    final accentColor = _LiveTvDesign.primaryCta;
+    final isLive = g.isActuallyLive;
+    final isCompleted = g.isEffectivelyCompleted;
 
     return Material(
       color: Colors.transparent,
@@ -729,106 +872,189 @@ class _EspnEventTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(_LiveTvDesign.radiusSm),
         child: Container(
           width: double.infinity,
-          padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: isDark
                 ? _LiveTvDesign.bgSurfaceDark
                 : Theme.of(context).cardColor,
             borderRadius: BorderRadius.circular(_LiveTvDesign.radiusSm),
             border: Border.all(
-                color: isDark
-                    ? _LiveTvDesign.borderSubtle
-                    : Colors.grey.shade200),
-            boxShadow: isDark ? _LiveTvDesign.shadowCard : null,
+              color: isLive
+                  ? _LiveTvDesign.primaryCta.withValues(alpha: 0.35)
+                  : (isDark
+                      ? _LiveTvDesign.borderSubtle
+                      : Colors.grey.shade200),
+            ),
+            boxShadow: isLive
+                ? _LiveTvDesign.shadowLive
+                : (isDark ? _LiveTvDesign.shadowCard : null),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Row(
             children: [
-              // Status Row
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
+              // Red accent strip for live events
+              if (isLive)
+                Container(
+                  width: 3,
+                  height: 120,
+                  decoration: BoxDecoration(
+                    color: _LiveTvDesign.primaryCta,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(_LiveTvDesign.radiusSm),
+                      bottomLeft: Radius.circular(_LiveTvDesign.radiusSm),
+                    ),
+                  ),
+                ),
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.only(
+                    left: isLive ? 13 : 16,
+                    right: 16,
+                    top: 14,
+                    bottom: 14,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      if (g.isActuallyLive) ...[
-                        _LiveBadgeSmall(),
-                        const SizedBox(width: 8),
+                      // Status Row
+                      _buildStatusRow(g, isLive, isCompleted),
+                      // MMA subtitle (card name / fight info)
+                      if (_isMma) ...[
+                        const SizedBox(height: 6),
+                        Text(
+                          (g.name.contains(':')
+                                  ? g.name.split(':').last.trim()
+                                  : g.name)
+                              .toUpperCase(),
+                          style: TextStyle(
+                            color: _LiveTvDesign.primaryCta,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 0.5,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ],
+                      const SizedBox(height: 14),
+                      // Teams / Fighters
+                      _buildCompetitorRow(
+                        g.away?.displayName ?? 'TBD',
+                        g.away?.logoUrl,
+                        (!_isMma && (isLive || isCompleted))
+                            ? g.away?.score
+                            : null,
+                      ),
+                      const SizedBox(height: 10),
+                      _buildCompetitorRow(
+                        g.home?.displayName ?? 'TBD',
+                        g.home?.logoUrl,
+                        (!_isMma && (isLive || isCompleted))
+                            ? g.home?.score
+                            : null,
+                      ),
+                      const SizedBox(height: 12),
+                      // Footer: league / sport / type
                       Text(
-                        _getStatusText(g),
+                        '${event.league} · ${event.sport}${g.competitionType != null ? " · ${g.competitionType}" : ""}'
+                            .toUpperCase(),
                         style: TextStyle(
-                          color: g.isActuallyLive
-                              ? accentColor
-                              : (isDark
-                                  ? _LiveTvDesign.textSecondary
-                                  : Colors.grey.shade600),
-                          fontSize: 12,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 0.5,
+                          color: isDark
+                              ? _LiveTvDesign.textTertiary
+                              : Colors.grey.shade400,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 0.8,
                         ),
                       ),
                     ],
                   ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              if (event.sport.toUpperCase() == 'MMA' ||
-                  event.league.toUpperCase() == 'UFC') ...[
-                Text(
-                  (g.name.contains(':')
-                          ? g.name.split(':').last.trim()
-                          : g.name)
-                      .toUpperCase(),
-                  style: TextStyle(
-                    color: isDark
-                        ? _LiveTvDesign.primaryCta
-                        : _LiveTvDesign.primaryCta,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 0.5,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 12),
-              ],
-              // Away Team Row
-              _TeamRow(
-                name: g.away?.displayName ?? 'Away',
-                logoUrl: g.away?.logoUrl,
-                score: (!(event.sport.toUpperCase() == 'MMA' || event.league.toUpperCase() == 'UFC') && (g.isLive || g.isEffectivelyCompleted))
-                    ? g.away?.score
-                    : null,
-                isDark: isDark,
-              ),
-              const SizedBox(height: 12),
-              // Home Team Row
-              _TeamRow(
-                name: g.home?.displayName ?? 'Home',
-                logoUrl: g.home?.logoUrl,
-                score: (!(event.sport.toUpperCase() == 'MMA' || event.league.toUpperCase() == 'UFC') && (g.isLive || g.isEffectivelyCompleted))
-                    ? g.home?.score
-                    : null,
-                isDark: isDark,
-              ),
-              const SizedBox(height: 12),
-              // League / Sport footer
-              Text(
-                '${event.league} · ${event.sport}${g.competitionType != null ? " · ${g.competitionType}" : ""}'
-                    .toUpperCase(),
-                style: TextStyle(
-                  color: isDark
-                      ? _LiveTvDesign.textSecondary.withValues(alpha: 0.5)
-                      : Colors.grey.shade400,
-                  fontSize: 10,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 0.8,
                 ),
               ),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildStatusRow(
+      EspnScoreboardGame g, bool isLive, bool isCompleted) {
+    return Row(
+      children: [
+        if (isLive) ...[
+          const _LivePulse(size: 8),
+          const SizedBox(width: 6),
+          Text(
+            'LIVE',
+            style: TextStyle(
+              color: _LiveTvDesign.primaryCta,
+              fontSize: 11,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 0.8,
+            ),
+          ),
+          const SizedBox(width: 10),
+        ],
+        Expanded(
+          child: Text(
+            _getStatusText(g),
+            style: TextStyle(
+              color: isLive
+                  ? _LiveTvDesign.primaryCta
+                  : (isDark
+                      ? _LiveTvDesign.textSecondary
+                      : Colors.grey.shade600),
+              fontSize: 12,
+              fontWeight: isLive ? FontWeight.w700 : FontWeight.w600,
+              letterSpacing: 0.3,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCompetitorRow(
+      String name, String? logoUrl, String? score) {
+    return Row(
+      children: [
+        _CompetitorLogo(logoUrl: logoUrl, isDark: isDark, isMma: _isMma),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Text(
+            name,
+            style: TextStyle(
+              color: isDark ? _LiveTvDesign.textPrimary : Colors.black87,
+              fontSize: 15,
+              fontWeight: FontWeight.w600,
+              height: 1.2,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        if (score != null)
+          Container(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            decoration: BoxDecoration(
+              color: isDark
+                  ? _LiveTvDesign.bgSurfaceElevated
+                  : Colors.grey.shade100,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(
+              score,
+              style: TextStyle(
+                color: isDark ? _LiveTvDesign.textPrimary : Colors.black,
+                fontSize: 18,
+                fontWeight: FontWeight.w800,
+                fontFeatures: const [
+                  FontFeature.tabularFigures(),
+                ],
+              ),
+            ),
+          ),
+      ],
     );
   }
 
@@ -839,87 +1065,34 @@ class _EspnEventTile extends StatelessWidget {
   }
 }
 
-class _LiveBadgeSmall extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 8,
-      height: 8,
-      decoration: const BoxDecoration(
-        color: _LiveTvDesign.primaryCta,
-        shape: BoxShape.circle,
-      ),
-    );
-  }
-}
-
-class _TeamRow extends StatelessWidget {
-  const _TeamRow({
-    required this.name,
-    this.logoUrl,
-    this.score,
-    required this.isDark,
-  });
-
-  final String name;
-  final String? logoUrl;
-  final String? score;
-  final bool isDark;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        _TeamLogo(logoUrl: logoUrl, isDark: isDark),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Text(
-            name,
-            style: TextStyle(
-              color: isDark ? _LiveTvDesign.textPrimary : Colors.black87,
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-            ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
-        if (score != null)
-          Text(
-            score!,
-            style: TextStyle(
-              color: isDark ? _LiveTvDesign.textPrimary : Colors.black,
-              fontSize: 18,
-              fontWeight: FontWeight.w800,
-            ),
-          ),
-      ],
-    );
-  }
-}
-
-class _TeamLogo extends StatelessWidget {
-  const _TeamLogo({this.logoUrl, required this.isDark});
+/// Competitor logo — circular for MMA headshots, rounded square for teams.
+class _CompetitorLogo extends StatelessWidget {
+  const _CompetitorLogo(
+      {this.logoUrl, required this.isDark, this.isMma = false});
   final String? logoUrl;
   final bool isDark;
+  final bool isMma;
 
   @override
   Widget build(BuildContext context) {
+    final radius = isMma ? 999.0 : 8.0;
     return Container(
-      width: 32,
-      height: 32,
+      width: 34,
+      height: 34,
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.shade100,
-        borderRadius: BorderRadius.circular(8),
+        color: isDark
+            ? Colors.white.withValues(alpha: 0.06)
+            : Colors.grey.shade100,
+        borderRadius: BorderRadius.circular(radius),
       ),
       child: logoUrl != null && logoUrl!.isNotEmpty
           ? ClipRRect(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(radius),
               child: CachedNetworkImage(
                 imageUrl: logoUrl!,
-                width: 32,
-                height: 32,
-                fit: BoxFit.contain,
+                width: 34,
+                height: 34,
+                fit: isMma ? BoxFit.cover : BoxFit.contain,
                 placeholder: (_, __) => _placeholder(),
                 errorWidget: (_, __, ___) => _placeholder(),
               ),
@@ -930,7 +1103,7 @@ class _TeamLogo extends StatelessWidget {
 
   Widget _placeholder() {
     return Icon(
-      Icons.sports_rounded,
+      isMma ? Icons.person_rounded : Icons.sports_rounded,
       size: 18,
       color: isDark ? _LiveTvDesign.textSecondary : Colors.grey,
     );
@@ -959,12 +1132,14 @@ class _FilterChip extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(_LiveTvDesign.radiusPill),
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 150),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          duration: const Duration(milliseconds: 180),
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 9),
           decoration: BoxDecoration(
-                color: selected
-                    ? _LiveTvDesign.primaryCta
-                    : (isDark ? _LiveTvDesign.bgSurfaceDark : Colors.grey.shade200),
+            color: selected
+                ? _LiveTvDesign.primaryCta
+                : (isDark
+                    ? _LiveTvDesign.bgSurfaceDark
+                    : Colors.grey.shade200),
             borderRadius: BorderRadius.circular(_LiveTvDesign.radiusPill),
             border: Border.all(
               color: selected
@@ -974,6 +1149,16 @@ class _FilterChip extends StatelessWidget {
                       : Colors.grey.shade400),
               width: selected ? 0 : 1,
             ),
+            boxShadow: selected
+                ? [
+                    BoxShadow(
+                      color:
+                          _LiveTvDesign.primaryCta.withValues(alpha: 0.3),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    ),
+                  ]
+                : null,
           ),
           child: Center(
             child: Text(
@@ -985,7 +1170,8 @@ class _FilterChip extends StatelessWidget {
                         ? _LiveTvDesign.textPrimary
                         : Colors.grey.shade800),
                 fontSize: 13,
-                fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+                fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+                letterSpacing: 0.3,
               ),
             ),
           ),
