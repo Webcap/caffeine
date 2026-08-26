@@ -61,19 +61,19 @@ class _FeaturedMatchCardState extends State<FeaturedMatchCard>
           ),
         ],
         border: Border.all(
-          color: Colors.white.withValues(alpha: 0.12),
-          width: 1,
+          color: theme.accentColor.withValues(alpha: 0.4),
+          width: 1.2,
         ),
       ),
-      child: Stack(
-        children: [
-          // Background thumbnail (if available)
-          if (widget.event.thumbnailUrl.isNotEmpty)
-            Positioned.fill(
-              child: Opacity(
-                opacity: 0.2,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(19),
+        child: Stack(
+          children: [
+            // Background thumbnail (if available)
+            if (widget.event.thumbnailUrl.isNotEmpty)
+              Positioned.fill(
+                child: Opacity(
+                  opacity: 0.2,
                   child: CachedNetworkImage(
                     imageUrl: widget.event.thumbnailUrl,
                     fit: BoxFit.cover,
@@ -81,21 +81,20 @@ class _FeaturedMatchCardState extends State<FeaturedMatchCard>
                   ),
                 ),
               ),
-            ),
 
-          // Sport watermark icon on right side
-          Positioned(
-            right: -10,
-            bottom: -15,
-            child: Opacity(
-              opacity: 0.12,
-              child: Icon(
-                theme.icon,
-                size: 160,
-                color: Colors.white,
+            // Sport watermark icon on right side
+            Positioned(
+              right: -10,
+              bottom: -15,
+              child: Opacity(
+                opacity: 0.12,
+                child: Icon(
+                  theme.icon,
+                  size: 160,
+                  color: Colors.white,
+                ),
               ),
             ),
-          ),
 
           // Card content
           Padding(
@@ -242,6 +241,7 @@ class _FeaturedMatchCardState extends State<FeaturedMatchCard>
           ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
 }
