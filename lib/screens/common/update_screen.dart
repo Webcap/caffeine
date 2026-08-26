@@ -499,18 +499,6 @@ class _UpdateScreenState extends State<UpdateScreen>
             const SizedBox(height: 12),
           ],
 
-          // Store update button
-          if (info.updateStoreUrl != null &&
-              info.updateStoreUrl!.isNotEmpty) ...[
-            _PrimaryButton(
-              label: tr("update"),
-              onPressed: () => _openStore(info.updateStoreUrl!),
-            ),
-            if (info.updateDownloadUrl != null &&
-                info.updateDownloadUrl!.isNotEmpty)
-              const SizedBox(height: 12),
-          ],
-
           // APK download card (recommends optimal ABI for device CPU architecture)
           if (info.getBestDownloadUrl(supportedAbis: _supportedAbis).isNotEmpty) ...[
             Builder(
@@ -525,6 +513,12 @@ class _UpdateScreenState extends State<UpdateScreen>
                   onDelete: _onDeleteFile,
                 );
               },
+            ),
+          ] else if (info.updateStoreUrl != null &&
+              info.updateStoreUrl!.isNotEmpty) ...[
+            _PrimaryButton(
+              label: tr("update"),
+              onPressed: () => _openStore(info.updateStoreUrl!),
             ),
           ],
         ],

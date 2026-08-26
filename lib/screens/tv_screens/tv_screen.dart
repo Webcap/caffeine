@@ -25,27 +25,55 @@ class MainTVDisplay extends StatefulWidget {
 }
 
 class _MainTVDisplayState extends State<MainTVDisplay> {
-  @override
-  void initState() {
-    super.initState();
+  Key _refreshKey = UniqueKey();
+
+  Future<void> _refreshData() async {
+    final recent = Provider.of<RecentProvider>(context, listen: false);
+    final appDep = Provider.of<AppDependencyProvider>(context, listen: false);
+
+    await Future.wait([
+      recent.fetchEpisodes(),
+      recent.fetchWatchStatsFromApi(),
+      appDep.fetchSportsStreams(),
+    ]).catchError((e) {
+      debugPrint('[MainTVDisplay] Refresh error: $e');
+      return <void>[];
+    });
+
+    if (mounted) {
+      setState(() {
+        _refreshKey = UniqueKey();
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    var rEpisodes = Provider.of<RecentProvider>(context).upNextEpisodes;
-    var inProgress = Provider.of<RecentProvider>(context).inProgressEpisodes;
-    final lang = Provider.of<SettingsProvider>(context).appLanguage;
+    final settings = Provider.of<SettingsProvider>(context);
+    final isDark = settings.appTheme == 'dark' || settings.appTheme == 'amoled';
+    final rEpisodes = Provider.of<RecentProvider>(context).upNextEpisodes;
+    final inProgress = Provider.of<RecentProvider>(context).inProgressEpisodes;
+    final lang = settings.appLanguage;
     final featuredEvent =
         Provider.of<AppDependencyProvider>(context).featuredEvent;
-    return ListView(
-      children: [
+
+    return RefreshIndicator(
+      onRefresh: _refreshData,
+      color: const Color(0xFFDC2626),
+      backgroundColor: isDark ? const Color(0xFF030712) : const Color(0xFFF8FAFC),
+      child: ListView(
+        physics: const AlwaysScrollableScrollPhysics(
+          parent: BouncingScrollPhysics(),
+        ),
+        children: [
           if (featuredEvent != null)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
               child: FeaturedMatchCard(event: featuredEvent),
             ),
           DiscoverTV(
-            includeAdult: Provider.of<SettingsProvider>(context).isAdult,
+            key: ValueKey('discover_${_refreshKey.toString()}'),
+            includeAdult: settings.isAdult,
             discoverType: 'discover',
           ),
           const UpdateBottom(),
@@ -60,7 +88,8 @@ class _MainTVDisplayState extends State<MainTVDisplay> {
               title: tr("up_next"),
             ),
           ScrollingTV(
-            includeAdult: Provider.of<SettingsProvider>(context).isAdult,
+            key: ValueKey('popular_${_refreshKey.toString()}'),
+            includeAdult: settings.isAdult,
             title: tr("popular"),
             api: Endpoints.popularTVUrl(lang),
             discoverType: 'popular',
@@ -68,36 +97,46 @@ class _MainTVDisplayState extends State<MainTVDisplay> {
           ),
           const BannerAdWidget(),
           ScrollingTV(
-            includeAdult: Provider.of<SettingsProvider>(context).isAdult,
+            key: ValueKey('trending_${_refreshKey.toString()}'),
+            includeAdult: settings.isAdult,
             title: tr("trending_this_week"),
             api: Endpoints.trendingTVUrl(lang),
             discoverType: 'trending',
             isTrending: true,
           ),
           ScrollingTV(
-            includeAdult: Provider.of<SettingsProvider>(context).isAdult,
+            key: ValueKey('top_rated_${_refreshKey.toString()}'),
+            includeAdult: settings.isAdult,
             title: tr("top_rated"),
             api: Endpoints.topRatedTVUrl(lang),
             discoverType: 'top_rated',
             isTrending: false,
           ),
           ScrollingTV(
-            includeAdult: Provider.of<SettingsProvider>(context).isAdult,
+            key: ValueKey('airing_today_${_refreshKey.toString()}'),
+            includeAdult: settings.isAdult,
             title: tr("airing_today"),
             api: Endpoints.airingTodayUrl(lang),
             discoverType: 'airing_today',
             isTrending: false,
           ),
           ScrollingTV(
-            includeAdult: Provider.of<SettingsProvider>(context).isAdult,
+            key: ValueKey('on_the_air_${_refreshKey.toString()}'),
+            includeAdult: settings.isAdult,
             title: tr("on_the_air"),
             api: Endpoints.onTheAirUrl(lang),
             discoverType: 'on_the_air',
             isTrending: false,
           ),
-          TVGenreListGrid(api: Endpoints.tvGenresUrl(lang)),
-          const TVShowsFromWatchProviders(),
+          TVGenreListGrid(
+            key: ValueKey('genres_${_refreshKey.toString()}'),
+            api: Endpoints.tvGenresUrl(lang),
+          ),
+          TVShowsFromWatchProviders(
+            key: ValueKey('providers_${_refreshKey.toString()}'),
+          ),
         ],
-      );
+      ),
+    );
   }
 }
