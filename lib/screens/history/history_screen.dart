@@ -14,6 +14,10 @@ import 'package:reelriot/utils/constant.dart';
 import 'package:reelriot/utils/globals.dart';
 import 'package:reelriot/utils/globlal_methods.dart';
 import 'package:reelriot/utils/theme/textStyle.dart';
+import 'package:reelriot/models/movie_models.dart';
+import 'package:reelriot/models/tv.dart';
+import 'package:reelriot/screens/movie_screens/movie_details.dart';
+import 'package:reelriot/screens/tv_screens/tv_detail_page.dart';
 import 'package:reelriot/widgets/mobile_context_menu.dart';
 import 'package:reelriot/widgets/shimmer_widget.dart';
 import 'package:reelriot/widgets/unified_video_loader.dart';
@@ -286,43 +290,22 @@ class _MoviesHistoryTab extends StatelessWidget {
                       ? tr('completed')
                       : '${(progress * 100).toInt()}% • ${recentPrv.formatWatchTime(elapsed ~/ 60000)} / ${recentPrv.formatWatchTime(total ~/ 60000)}',
                   isDark: isDark,
-                  onTap: () async {
-                    final connected = await checkConnection();
-                    if (!context.mounted) return;
-                    if (connected) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => UnifiedVideoLoader(
-                            mediaType: MediaType.movie,
-                            download: false,
-                            route: appDep.fetchRoute == 'flixHQ'
-                                ? StreamRoute.flixHQ
-                                : StreamRoute.tmDB,
-                            movieMetadata: MovieStreamMetadata(
-                              backdropPath: movie.backdropPath,
-                              elapsed: movie.elapsed,
-                              isAdult: null,
-                              movieId: movie.id,
-                              movieName: movie.title,
-                              posterPath: movie.posterPath,
-                              releaseYear: movie.releaseYear,
-                              releaseDate: null,
-                            ),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => MovieDetailPage(
+                          movie: Movie(
+                            id: movie.id,
+                            title: movie.title,
+                            posterPath: movie.posterPath,
+                            backdropPath: movie.backdropPath,
+                            releaseDate: movie.releaseYear?.toString(),
                           ),
+                          heroId: 'history_movie_${movie.id}',
                         ),
-                      );
-                    } else {
-                      GlobalMethods.showCustomScaffoldMessage(
-                        SnackBar(
-                          content: Text(
-                            tr('check_connection'),
-                            style: kTextSmallBodyStyle,
-                          ),
-                        ),
-                        context,
-                      );
-                    }
+                      ),
+                    );
                   },
                   onLongPress: () {
                     MobileContextMenu.show(
@@ -431,44 +414,20 @@ class _TvHistoryTab extends StatelessWidget {
                       ? tr('completed')
                       : '${(progress * 100).toInt()}% • ${recentPrv.formatWatchTime(elapsed ~/ 60000)} / ${recentPrv.formatWatchTime(total ~/ 60000)}',
                   isDark: isDark,
-                  onTap: () async {
-                    final connected = await checkConnection();
-                    if (!context.mounted) return;
-                    if (connected) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => UnifiedVideoLoader(
-                            mediaType: MediaType.tvShow,
-                            download: false,
-                            route: appDep.fetchRoute == 'flixHQ'
-                                ? StreamRoute.flixHQ
-                                : StreamRoute.tmDB,
-                            tvMetadata: TVStreamMetadata(
-                              tvId: episode.seriesId,
-                              seriesName: episode.seriesName,
-                              seasonNumber: episode.seasonNum,
-                              episodeNumber: episode.episodeNum,
-                              episodeName: episode.episodeName,
-                              posterPath: episode.posterPath,
-                              airDate: null,
-                              episodeId: episode.id,
-                              elapsed: episode.elapsed,
-                            ),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => TVDetailPage(
+                          tvSeries: TV(
+                            id: episode.seriesId,
+                            name: episode.seriesName,
+                            posterPath: episode.posterPath,
                           ),
+                          heroId: 'history_tv_${episode.seriesId}',
                         ),
-                      );
-                    } else {
-                      GlobalMethods.showCustomScaffoldMessage(
-                        SnackBar(
-                          content: Text(
-                            tr('check_connection'),
-                            style: kTextSmallBodyStyle,
-                          ),
-                        ),
-                        context,
-                      );
-                    }
+                      ),
+                    );
                   },
                   onLongPress: () {
                     MobileContextMenu.show(
