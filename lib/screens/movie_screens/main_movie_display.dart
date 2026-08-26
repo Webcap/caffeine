@@ -33,6 +33,7 @@ import 'package:reelriot/widgets/unified_video_loader.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:reelriot/utils/sports_helpers.dart';
 import 'package:reelriot/screens/movie_screens/widgets/main_movie_list.dart';
 import 'package:reelriot/widgets/mobile_context_menu.dart';
 
@@ -541,6 +542,11 @@ class _SportHeroSlide extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = resolveSportTheme(
+      sport: event.sport,
+      title: event.title,
+    );
+
     return GestureDetector(
       onTap: () => Navigator.push(
         context,
@@ -560,95 +566,129 @@ class _SportHeroSlide extends StatelessWidget {
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(16),
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            event.thumbnailUrl.isNotEmpty
-                ? CachedNetworkImage(
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            gradient: LinearGradient(
+              colors: theme.gradientColors,
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.12),
+              width: 1,
+            ),
+          ),
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              // Background thumbnail (if available)
+              if (event.thumbnailUrl.isNotEmpty)
+                Opacity(
+                  opacity: 0.25,
+                  child: CachedNetworkImage(
                     imageUrl: event.thumbnailUrl,
                     fit: BoxFit.cover,
-                    errorWidget: (_, __, ___) => Container(
-                      decoration: const BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [Color(0xFF7C3AED), Color(0xFFDC2626)],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                      ),
-                    ),
-                  )
-                : Container(
-                    decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Color(0xFF7C3AED), Color(0xFFDC2626)],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                    ),
+                    errorWidget: (_, __, ___) => const SizedBox.shrink(),
                   ),
-            Positioned.fill(
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      Colors.transparent,
-                      Colors.black.withValues(alpha: 0.82),
-                    ],
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
+                ),
+
+              // Sport watermark silhouette on the right
+              Positioned(
+                right: -10,
+                bottom: -15,
+                child: Opacity(
+                  opacity: 0.12,
+                  child: Icon(
+                    theme.icon,
+                    size: 150,
+                    color: Colors.white,
                   ),
                 ),
               ),
-            ),
-            // LIVE badge + title
-            Positioned(
-              left: 14,
-              right: 14,
-              bottom: 14,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                    decoration: BoxDecoration(
-                      color: _C.primary,
-                      borderRadius: BorderRadius.circular(6),
+
+              // Dark gradient overlay for text readability
+              Positioned.fill(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Colors.transparent,
+                        Colors.black.withValues(alpha: 0.85),
+                      ],
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
                     ),
-                    child: Row(
+                  ),
+                ),
+              ),
+
+              // LIVE badge + title + tag
+              Positioned(
+                left: 14,
+                right: 14,
+                bottom: 14,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.circle, size: 7, color: Colors.white),
-                        const SizedBox(width: 5),
-                        Text(
-                          (event.sport ?? 'LIVE').toUpperCase(),
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 10,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 0.5,
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withValues(alpha: 0.4),
+                            borderRadius: BorderRadius.circular(6),
+                            border: Border.all(
+                              color: theme.accentColor.withValues(alpha: 0.6),
+                              width: 0.8,
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                width: 6,
+                                height: 6,
+                                decoration: BoxDecoration(
+                                  color: theme.accentColor,
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                              const SizedBox(width: 5),
+                              Text(
+                                '${theme.label} · LIVE NOW',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w800,
+                                  letterSpacing: 0.6,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
                     ),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    event.title,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w800,
-                      fontFamily: 'PoppinsSB',
-                      shadows: [Shadow(color: Colors.black54, blurRadius: 4)],
+                    const SizedBox(height: 6),
+                    Text(
+                      event.title,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w800,
+                        fontFamily: 'PoppinsSB',
+                        shadows: [Shadow(color: Colors.black87, blurRadius: 6)],
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
