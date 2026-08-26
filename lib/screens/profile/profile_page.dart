@@ -13,6 +13,7 @@ import 'package:reelriot/utils/routes/app_pages.dart';
 import 'package:reelriot/widgets/premium_banner.dart';
 import 'package:reelriot/widgets/watch_stat_card.dart';
 import 'package:reelriot/widgets/guest_profile_content.dart';
+import 'package:reelriot/widgets/sign_out_sheet.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -476,7 +477,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     // ── Logout ───────────────────────────────────────────
                     const SizedBox(height: 20),
                     InkWell(
-                      onTap: () => _showSignOutSheet(context, sp),
+                      onTap: () => SignOutBottomSheet.show(context, sp),
                       borderRadius: BorderRadius.circular(12),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
@@ -514,105 +515,6 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
         );
       },
-    );
-  }
-
-  void _showSignOutSheet(BuildContext context, SignInProvider sp) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final surface = isDark ? _C.bgSurfaceDark : _C.bgSurfaceLight;
-    final textPrim = isDark ? _C.textPrimDark : _C.textPrimLight;
-
-    Get.bottomSheet(
-      Container(
-        padding: const EdgeInsets.fromLTRB(24, 20, 24, 32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 36,
-              height: 4,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(2),
-                color: isDark ? _C.textTertDark : _C.textTertLight,
-              ),
-            ),
-            const SizedBox(height: 20),
-            Text(
-              tr('sign_out'),
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w700,
-                color: _C.primary,
-                fontFamily: 'PoppinsSB',
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              tr('want_to_sign_out'),
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 15,
-                color: textPrim,
-                fontFamily: 'Poppins',
-              ),
-            ),
-            const SizedBox(height: 24),
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: () => Get.back(),
-                    style: OutlinedButton.styleFrom(
-                      side: BorderSide(color: _C.borderDark),
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                    ),
-                    child: Text(
-                      tr('cancel'),
-                      style: TextStyle(
-                        color: textPrim,
-                        fontWeight: FontWeight.w600,
-                        fontFamily: 'PoppinsSB',
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: FilledButton(
-                    onPressed: () async {
-                      await sp.userSignOut();
-                      Get.back();
-                      Get.offNamed(Routes.login);
-                    },
-                    style: FilledButton.styleFrom(
-                      backgroundColor: _C.primary,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                    ),
-                    child: Text(
-                      tr('yes_sign_out'),
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontFamily: 'PoppinsSB',
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-      backgroundColor: surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
     );
   }
 }

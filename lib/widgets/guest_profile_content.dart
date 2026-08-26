@@ -71,7 +71,7 @@ class GuestProfileContent extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'Guest User',
+                  tr('guest_user'),
                   style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.w700,
@@ -82,7 +82,7 @@ class GuestProfileContent extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Using ReelRiot in Guest Mode',
+                  tr('guest_mode_subtitle'),
                   style: TextStyle(
                     fontSize: 13,
                     color: textSec,
@@ -137,7 +137,7 @@ class GuestProfileContent extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Sync Across Devices',
+                                  tr('sync_across_devices'),
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w700,
@@ -147,7 +147,7 @@ class GuestProfileContent extends StatelessWidget {
                                 ),
                                 const SizedBox(height: 2),
                                 Text(
-                                  'Sign in to backup your watch history and watchlist.',
+                                  tr('sync_devices_desc'),
                                   style: TextStyle(
                                     fontSize: 12,
                                     color: textSec,
@@ -175,9 +175,9 @@ class GuestProfileContent extends StatelessWidget {
                             ),
                             elevation: 0,
                           ),
-                          child: const Text(
-                            'Sign In or Create Account',
-                            style: TextStyle(
+                          child: Text(
+                            tr('sign_in_or_create_account'),
+                            style: const TextStyle(
                               fontWeight: FontWeight.w700,
                               fontSize: 14,
                               fontFamily: 'PoppinsSB',
@@ -243,7 +243,7 @@ class GuestProfileContent extends StatelessWidget {
                                 ),
                                 const SizedBox(width: 4),
                                 Text(
-                                  'SIGN IN TO TRACK',
+                                  tr('sign_in_to_track'),
                                   style: const TextStyle(
                                     fontSize: 9,
                                     fontWeight: FontWeight.w700,
@@ -318,7 +318,7 @@ class GuestProfileContent extends StatelessWidget {
                                 const SizedBox(width: 10),
                                 Expanded(
                                   child: Text(
-                                    'Track Your Viewing Habits',
+                                    tr('track_viewing_habits'),
                                     style: TextStyle(
                                       fontSize: 13,
                                       fontWeight: FontWeight.w700,
@@ -331,7 +331,7 @@ class GuestProfileContent extends StatelessWidget {
                             ),
                             const SizedBox(height: 6),
                             Text(
-                              'Sign in or create an account to unlock your personal watch time statistics, episode logs, and viewing history across all your devices.',
+                              tr('track_viewing_habits_desc'),
                               style: TextStyle(
                                 fontSize: 11.5,
                                 color: textSec,
