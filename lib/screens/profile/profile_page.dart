@@ -180,7 +180,6 @@ class _ProfilePageState extends State<ProfilePage> {
         textPrim: textPrim,
         textSec: textSec,
         textTert: textTert,
-        recent: recent,
         appDep: appDep,
       );
     }
@@ -605,14 +604,8 @@ class _ProfilePageState extends State<ProfilePage> {
     required Color textPrim,
     required Color textSec,
     required Color textTert,
-    required RecentProvider recent,
     required AppDependencyProvider appDep,
   }) {
-    final moviesMin = recent.movieWatchTimeMinutesLast2Weeks;
-    final tvMin = recent.tvWatchTimeMinutesLast2Weeks;
-    final moviesFormatted = recent.formatWatchTime(moviesMin);
-    final tvFormatted = recent.formatWatchTime(tvMin);
-
     final showActivateTv =
         appDep.isFeatureEnabled('toggle_tv_activate_button', defaultValue: true);
     final filteredSettings = settingdata
@@ -766,14 +759,14 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 ),
 
-                // ── Watch time stats ─────────────────────────────
+                // ── Watch time stats (Disabled for Guest Mode) ──
                 const SizedBox(height: 24),
                 Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(18),
                   decoration: BoxDecoration(
                     color: elevated,
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(18),
                     border: Border.all(color: border, width: 1),
                   ),
                   child: Column(
@@ -784,7 +777,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           Icon(
                             Icons.history_rounded,
                             size: 20,
-                            color: _C.secondary,
+                            color: textTert,
                           ),
                           const SizedBox(width: 8),
                           Text(
@@ -792,33 +785,163 @@ class _ProfilePageState extends State<ProfilePage> {
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
-                              color: textPrim,
+                              color: textSec,
                               fontFamily: 'PoppinsSB',
+                            ),
+                          ),
+                          const Spacer(),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 3,
+                            ),
+                            decoration: BoxDecoration(
+                              color: _C.primary.withValues(alpha: 0.12),
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(
+                                color: _C.primary.withValues(alpha: 0.25),
+                                width: 1,
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(
+                                  Icons.lock_outline_rounded,
+                                  size: 12,
+                                  color: _C.primary,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  'SIGN IN TO TRACK',
+                                  style: const TextStyle(
+                                    fontSize: 9,
+                                    fontWeight: FontWeight.w700,
+                                    color: _C.primary,
+                                    letterSpacing: 0.5,
+                                    fontFamily: 'PoppinsSB',
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ],
                       ),
                       const SizedBox(height: 16),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: _WatchStatCard(
-                              icon: Icons.movie_creation_rounded,
-                              label: tr('movies'),
-                              value: moviesFormatted,
-                              isDark: isDark,
+                      // Dimmed / Disabled Stat Cards
+                      Opacity(
+                        opacity: 0.45,
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: _WatchStatCard(
+                                icon: Icons.movie_creation_rounded,
+                                label: tr('movies'),
+                                value: '--',
+                                isDark: isDark,
+                              ),
                             ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: _WatchStatCard(
-                              icon: Icons.live_tv_rounded,
-                              label: tr('tv_series'),
-                              value: tvFormatted,
-                              isDark: isDark,
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: _WatchStatCard(
+                                icon: Icons.live_tv_rounded,
+                                label: tr('tv_series'),
+                                value: '--',
+                                isDark: isDark,
+                              ),
                             ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 14),
+                      // Friendly callout prompt
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? Colors.white.withValues(alpha: 0.04)
+                              : Colors.black.withValues(alpha: 0.03),
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(
+                            color: border,
+                            width: 1,
                           ),
-                        ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(6),
+                                  decoration: BoxDecoration(
+                                    color: _C.primary.withValues(alpha: 0.12),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Icon(
+                                    Icons.auto_graph_rounded,
+                                    size: 16,
+                                    color: _C.primary,
+                                  ),
+                                ),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: Text(
+                                    'Track Your Viewing Habits',
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w700,
+                                      color: textPrim,
+                                      fontFamily: 'PoppinsSB',
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              'Sign in or create an account to unlock your personal watch time statistics, episode logs, and viewing history across all your devices.',
+                              style: TextStyle(
+                                fontSize: 11.5,
+                                color: textSec,
+                                height: 1.4,
+                                fontFamily: 'Poppins',
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            SizedBox(
+                              width: double.infinity,
+                              child: OutlinedButton.icon(
+                                onPressed: () => Get.toNamed(Routes.login),
+                                icon: const Icon(
+                                  Icons.login_rounded,
+                                  size: 16,
+                                  color: _C.primary,
+                                ),
+                                label: const Text(
+                                  'Sign In or Sign Up to Track',
+                                  style: TextStyle(
+                                    fontSize: 12.5,
+                                    fontWeight: FontWeight.w700,
+                                    color: _C.primary,
+                                    fontFamily: 'PoppinsSB',
+                                  ),
+                                ),
+                                style: OutlinedButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(vertical: 10),
+                                  side: BorderSide(
+                                    color: _C.primary.withValues(alpha: 0.4),
+                                    width: 1.2,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
