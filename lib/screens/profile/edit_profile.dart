@@ -65,8 +65,8 @@ class _ProfileEditState extends State<ProfileEdit> {
   final ProfileImages _profileImages = ProfileImages();
   final _formKey = GlobalKey<FormState>();
 
-  final TextEditingController _nameController = TextEditingController();
-  final FocusNode _nameFocusNode = FocusNode();
+  final TextEditingController _emailController = TextEditingController();
+  final FocusNode _emailFocusNode = FocusNode();
 
   bool _isLoading = true;
   bool _isSaving = false;
@@ -79,7 +79,7 @@ class _ProfileEditState extends State<ProfileEdit> {
   int? _joinedAtYear;
   bool? _isVerified;
 
-  String _initialName = '';
+  String _initialEmail = '';
   int _initialProfileId = 0;
   int _selectedProfileId = 0;
 
@@ -116,26 +116,27 @@ class _ProfileEditState extends State<ProfileEdit> {
   @override
   void initState() {
     super.initState();
-    _nameController.addListener(_onFormDirtyCheck);
+    _emailController.addListener(_onFormDirtyCheck);
     _fetchUserData();
   }
 
   @override
   void dispose() {
-    _nameController.removeListener(_onFormDirtyCheck);
-    _nameController.dispose();
-    _nameFocusNode.dispose();
+    _emailController.removeListener(_onFormDirtyCheck);
+    _emailController.dispose();
+    _emailFocusNode.dispose();
     super.dispose();
-  }
-
-  bool get _isDirty {
-    final nameChanged = _nameController.text.trim() != _initialName.trim();
-    final avatarChanged = _selectedProfileId != _initialProfileId;
-    return nameChanged || avatarChanged;
   }
 
   void _onFormDirtyCheck() {
     setState(() {});
+  }
+
+  bool get _isDirty {
+    final avatarChanged = _selectedProfileId != _initialProfileId;
+    final emailChanged = _emailController.text.trim().toLowerCase() !=
+        _initialEmail.trim().toLowerCase();
+    return avatarChanged || emailChanged;
   }
 
   Future<void> _fetchUserData() async {
@@ -157,25 +158,47 @@ class _ProfileEditState extends State<ProfileEdit> {
       return;
     }
 
+    final sp = Provider.of<SignInProvider>(context, listen: false);
+    final fallbackEmail = (user.email != null && user.email!.isNotEmpty)
+        ? user.email!
+        : (sp.email ?? '');
+
+    _email = fallbackEmail;
+    _initialEmail = fallbackEmail;
+    _emailController.text = fallbackEmail;
+
     try {
       final res =
           await _supabase.from('profiles').select().eq('id', _uid!).limit(1);
 
       if (res.isNotEmpty && mounted) {
         final data = res[0];
-        final fetchedName = (data['name'] as String?) ?? '';
         final fetchedUsername = (data['username'] as String?) ?? '';
         final fetchedProfileId = (data['profile_id'] as int?) ?? 0;
 
-        _initialName = fetchedName;
         _initialProfileId = fetchedProfileId;
         _selectedProfileId = fetchedProfileId;
 
-        _nameController.text = fetchedName;
         _username = fetchedUsername;
 
-        _email = (data['email'] as String?) ?? user.email;
-        _isVerified = data['verified'] as bool?;
+        final dataEmail = (data['email'] as String?);
+        _email = (dataEmail != null && dataEmail.trim().isNotEmpty)
+            ? dataEmail
+            : fallbackEmail;
+        _initialEmail = _email ?? '';
+        _emailController.text = _initialEmail;
+        _isVerified = (data['verified'] == true) ||
+            user.emailConfirmedAt != null ||
+            user.userMetadata?['email_verified'] == true ||
+            user.appMetadata['provider'] == 'google';
+
+        if (_isVerified == true && data['verified'] != true) {
+          _supabase
+              .from('profiles')
+              .update({'verified': true})
+              .eq('id', _uid!)
+              .catchError((_) => null);
+        }
 
         final joinedAtStr = data['joined_at'] as String?;
         if (joinedAtStr != null) {
@@ -197,6 +220,7 @@ class _ProfileEditState extends State<ProfileEdit> {
     }
 
     if (mounted) {
+      _emailController.text = _initialEmail;
       setState(() {
         _userAnonymous = false;
         _isLoading = false;
@@ -205,30 +229,46 @@ class _ProfileEditState extends State<ProfileEdit> {
   }
 
   Future<void> _saveProfile() async {
-    final isValid = _formKey.currentState?.validate() ?? false;
+    final isValid = _formKey.currentState?.validate() ?? true;
     if (!isValid || _uid == null || !_isDirty) return;
 
-    _nameFocusNode.unfocus();
+    _emailFocusNode.unfocus();
 
-    final newName = _nameController.text.trim();
+    final avatarChanged = _selectedProfileId != _initialProfileId;
+    final targetEmail = _emailController.text.trim();
+    final emailChanged = targetEmail.toLowerCase() !=
+        _initialEmail.trim().toLowerCase();
+
+    if (emailChanged && !_canSendVerificationEmail()) {
+      return;
+    }
 
     setState(() => _isSaving = true);
     HapticFeedback.mediumImpact();
 
     try {
-      // 1. Dual-Source Sync: Update Auth Metadata first (both avatar and profile_id keys)
-      await _auth.updateUser(UserAttributes(
-        data: {
-          'avatar': _selectedProfileId,
-          'profile_id': _selectedProfileId,
-        },
-      ));
+      if (avatarChanged) {
+        // 1. Dual-Source Sync: Update Auth Metadata first (both avatar and profile_id keys)
+        await _auth.updateUser(UserAttributes(
+          data: {
+            'avatar': _selectedProfileId,
+            'profile_id': _selectedProfileId,
+          },
+        ));
 
-      // 2. Update profiles table (name and avatar)
-      await _supabase.from('profiles').update({
-        'name': newName,
-        'profile_id': _selectedProfileId,
-      }).eq('id', _uid!);
+        // 2. Update profiles table (avatar / profile_id)
+        await _supabase.from('profiles').update({
+          'profile_id': _selectedProfileId,
+        }).eq('id', _uid!);
+      }
+
+      if (emailChanged) {
+        // Trigger email update and verification email dispatch via Resend
+        await _auth.updateUser(
+          UserAttributes(email: targetEmail),
+          emailRedirectTo: kIsWeb ? null : 'io.reelriot.app://login-callback/',
+        );
+      }
 
       if (!mounted) return;
 
@@ -237,17 +277,34 @@ class _ProfileEditState extends State<ProfileEdit> {
           .getUserDataFromFirestore(_uid);
 
       if (mounted) {
+        final successMsg = emailChanged
+            ? tr("email_confirmation_sent")
+            : tr("profile_updated_successfully");
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              tr("profile_updated_successfully"),
+              successMsg,
               style: kTextSmallBodyStyle,
             ),
-            duration: const Duration(seconds: 3),
+            duration: const Duration(seconds: 4),
             behavior: SnackBarBehavior.floating,
           ),
         );
         Navigator.pop(context);
+      }
+    } on AuthException catch (e) {
+      if (mounted) {
+        setState(() => _isSaving = false);
+        final msg = e.message.toLowerCase();
+        if (msg.contains('rate') ||
+            msg.contains('limit') ||
+            msg.contains('too many')) {
+          _globalMethods.authErrorHandle(
+              tr("rate_limit_exceeded"), context);
+        } else {
+          _globalMethods.authErrorHandle(e.message, context);
+        }
       }
     } catch (e) {
       if (mounted) {
@@ -437,245 +494,7 @@ class _ProfileEditState extends State<ProfileEdit> {
     );
   }
 
-  void _openChangeEmailSheet({
-    required BuildContext context,
-    required Color surface,
-    required Color border,
-    required Color textPrim,
-    required Color textSec,
-  }) {
-    final emailController = TextEditingController();
-    final emailFormKey = GlobalKey<FormState>();
-    bool isEmailUpdating = false;
 
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius:
-            BorderRadius.vertical(top: Radius.circular(_Design.radiusLg)),
-      ),
-      builder: (sheetContext) {
-        return StatefulBuilder(
-          builder: (modalContext, setModalState) {
-            return Padding(
-              padding: EdgeInsets.only(
-                left: _Design.screenPadH,
-                right: _Design.screenPadH,
-                top: _Design.space4,
-                bottom: MediaQuery.of(sheetContext).viewInsets.bottom +
-                    _Design.space5,
-              ),
-              child: Form(
-                key: emailFormKey,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Center(
-                      child: Container(
-                        width: 40,
-                        height: 4,
-                        decoration: BoxDecoration(
-                          color: textSec.withValues(alpha: 0.3),
-                          borderRadius: BorderRadius.circular(2),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: _Design.space4),
-                    Text(
-                      tr("change_email"),
-                      style: TextStyle(
-                        color: textPrim,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: _Design.space2),
-                    Text(
-                      tr("enter_new_email"),
-                      style: TextStyle(
-                        color: textSec,
-                        fontSize: 14,
-                      ),
-                    ),
-                    const SizedBox(height: _Design.space4),
-                    TextFormField(
-                      controller: emailController,
-                      keyboardType: TextInputType.emailAddress,
-                      autocorrect: false,
-                      style: TextStyle(color: textPrim, fontSize: 15),
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return tr("invalid_email");
-                        }
-                        if (!value.contains('@') || !value.contains('.')) {
-                          return tr("invalid_email");
-                        }
-                        return null;
-                      },
-                      decoration: InputDecoration(
-                        labelText: tr("new_email"),
-                        labelStyle: TextStyle(color: textSec),
-                        prefixIcon: Icon(
-                          Icons.email_outlined,
-                          color: textSec,
-                          size: 22,
-                        ),
-                        filled: true,
-                        fillColor: surface,
-                        border: OutlineInputBorder(
-                          borderRadius:
-                              BorderRadius.circular(_Design.radiusSm),
-                          borderSide: BorderSide(color: border),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius:
-                              BorderRadius.circular(_Design.radiusSm),
-                          borderSide: const BorderSide(
-                            color: _Design.primary,
-                            width: 1.5,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: _Design.space5),
-                    SizedBox(
-                      height: _Design.ctaHeight,
-                      child: ElevatedButton(
-                        onPressed: isEmailUpdating
-                            ? null
-                            : () async {
-                                final valid =
-                                    emailFormKey.currentState?.validate() ??
-                                        false;
-                                if (!valid) return;
-
-                                if (!_canSendVerificationEmail(
-                                    targetContext: sheetContext)) {
-                                  return;
-                                }
-
-                                final targetEmail = emailController.text.trim();
-                                setModalState(() => isEmailUpdating = true);
-                                try {
-                                  // Trigger email update and verification email dispatch via Resend
-                                  await _auth.updateUser(
-                                    UserAttributes(email: targetEmail),
-                                    emailRedirectTo: kIsWeb
-                                        ? null
-                                        : 'io.reelriot.app://login-callback/',
-                                  );
-                                  if (!sheetContext.mounted) return;
-                                  Navigator.of(sheetContext).pop();
-                                  if (!context.mounted) return;
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        tr("email_confirmation_sent"),
-                                        style: kTextSmallBodyStyle,
-                                      ),
-                                      duration: const Duration(seconds: 4),
-                                      behavior: SnackBarBehavior.floating,
-                                      action: SnackBarAction(
-                                        label: tr("resend"),
-                                        textColor: Colors.white,
-                                        onPressed: () async {
-                                          if (!_canSendVerificationEmail(
-                                              targetContext: context)) {
-                                            return;
-                                          }
-                                          try {
-                                            await _auth.resend(
-                                              type: OtpType.emailChange,
-                                              email: targetEmail,
-                                              emailRedirectTo: kIsWeb
-                                                  ? null
-                                                  : 'io.reelriot.app://login-callback/',
-                                            );
-                                          } on AuthException catch (err) {
-                                            if (context.mounted) {
-                                              final msg =
-                                                  err.message.toLowerCase();
-                                              if (msg.contains('rate') ||
-                                                  msg.contains('limit') ||
-                                                  msg.contains('too many')) {
-                                                _globalMethods.authErrorHandle(
-                                                    tr("rate_limit_exceeded"),
-                                                    context);
-                                              } else {
-                                                _globalMethods.authErrorHandle(
-                                                    err.message, context);
-                                              }
-                                            }
-                                          } catch (_) {}
-                                        },
-                                      ),
-                                    ),
-                                  );
-                                } on AuthException catch (e) {
-                                  if (sheetContext.mounted) {
-                                    setModalState(() => isEmailUpdating = false);
-                                  }
-                                  if (context.mounted) {
-                                    final msg = e.message.toLowerCase();
-                                    if (msg.contains('rate') ||
-                                        msg.contains('limit') ||
-                                        msg.contains('too many')) {
-                                      _globalMethods.authErrorHandle(
-                                          tr("rate_limit_exceeded"), context);
-                                    } else {
-                                      _globalMethods.authErrorHandle(
-                                          e.message, context);
-                                    }
-                                  }
-                                } catch (e) {
-                                  if (sheetContext.mounted) {
-                                    setModalState(() => isEmailUpdating = false);
-                                  }
-                                  if (context.mounted) {
-                                    _globalMethods.authErrorHandle(
-                                        e.toString(), context);
-                                  }
-                                }
-                              },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: _Design.primary,
-                          foregroundColor: Colors.white,
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.circular(_Design.radiusMd),
-                          ),
-                        ),
-                        child: isEmailUpdating
-                            ? const SizedBox(
-                                height: 22,
-                                width: 22,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: Colors.white,
-                                ),
-                              )
-                            : Text(
-                                tr("update_email"),
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -759,8 +578,8 @@ class _ProfileEditState extends State<ProfileEdit> {
 
                 const SizedBox(height: _Design.space5),
 
-                // ─── Form Inputs Card ─────────────────────────────────────────
-                _buildFormCard(
+                // ─── Standard Email Input Card ────────────────────────────────
+                _buildEmailCard(
                   surface: surface,
                   border: border,
                   textPrim: textPrim,
@@ -1018,7 +837,9 @@ class _ProfileEditState extends State<ProfileEdit> {
     );
   }
 
-  Widget _buildFormCard({
+
+
+  Widget _buildEmailCard({
     required Color surface,
     required Color border,
     required Color textPrim,
@@ -1035,37 +856,50 @@ class _ProfileEditState extends State<ProfileEdit> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Full Name
           TextFormField(
-            controller: _nameController,
-            focusNode: _nameFocusNode,
+            controller: _emailController,
+            focusNode: _emailFocusNode,
+            keyboardType: TextInputType.emailAddress,
+            autocorrect: false,
             textInputAction: TextInputAction.done,
             style: TextStyle(color: textPrim, fontSize: 15),
             validator: (value) {
               if (value == null || value.trim().isEmpty) {
-                return tr("name_empty");
+                return tr("invalid_email");
               }
-              if (value.trim().length > 40 || value.trim().length < 2) {
-                return tr("name_short_long");
+              if (!value.contains('@') || !value.contains('.')) {
+                return tr("invalid_email");
               }
               return null;
             },
             decoration: InputDecoration(
-              labelText: tr("full_name"),
+              labelText: tr("email"),
               labelStyle: TextStyle(color: textSec),
               prefixIcon: Icon(
-                Icons.person_outline_rounded,
+                Icons.email_outlined,
                 color: textSec,
                 size: 22,
               ),
-              suffixIcon: _nameController.text.isNotEmpty
-                  ? IconButton(
-                      icon: Icon(Icons.clear_rounded, size: 18, color: textSec),
-                      onPressed: () {
-                        _nameController.clear();
-                      },
+              suffixIcon: _isVerified == true &&
+                      _emailController.text.trim().toLowerCase() ==
+                          _initialEmail.trim().toLowerCase()
+                  ? const Padding(
+                      padding: EdgeInsets.only(right: 12),
+                      child: Icon(
+                        Icons.verified_rounded,
+                        color: Colors.green,
+                        size: 20,
+                      ),
                     )
-                  : null,
+                  : _emailController.text.isNotEmpty
+                      ? IconButton(
+                          icon: Icon(Icons.clear_rounded,
+                              size: 18, color: textSec),
+                          onPressed: () {
+                            _emailController.clear();
+                          },
+                        )
+                      : null,
               filled: true,
               fillColor: surface,
               border: OutlineInputBorder(
@@ -1133,24 +967,6 @@ class _ProfileEditState extends State<ProfileEdit> {
               child: Divider(height: 1, color: border),
             ),
           ],
-          _buildInfoRow(
-            icon: Icons.email_outlined,
-            label: tr("change_email"),
-            value: _email ?? 'N/A',
-            textPrim: textPrim,
-            textSec: textSec,
-            trailing: (_isVerified == true)
-                ? const Icon(
-                    Icons.verified_rounded,
-                    color: Colors.green,
-                    size: 18,
-                  )
-                : null,
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: _Design.space2),
-            child: Divider(height: 1, color: border),
-          ),
           _buildInfoRow(
             icon: Icons.calendar_today_rounded,
             label: tr("member_since"),
@@ -1238,20 +1054,6 @@ class _ProfileEditState extends State<ProfileEdit> {
                 ),
               );
             },
-            textPrim: textPrim,
-            textSec: textSec,
-          ),
-          Divider(height: 1, color: border),
-          _ActionTile(
-            icon: Icons.mail_outline_rounded,
-            label: tr("change_email"),
-            onTap: () => _openChangeEmailSheet(
-              context: context,
-              surface: surface,
-              border: border,
-              textPrim: textPrim,
-              textSec: textSec,
-            ),
             textPrim: textPrim,
             textSec: textSec,
           ),

@@ -209,6 +209,20 @@ class _ProfilePageState extends State<ProfilePage> {
         final moviesFormatted = recent.formatWatchTime(moviesMin);
         final tvFormatted = recent.formatWatchTime(tvMin);
 
+        final currentUser = _auth.currentUser;
+        final bool isEmailVerified = data['verified'] == true ||
+            currentUser?.emailConfirmedAt != null ||
+            currentUser?.userMetadata?['email_verified'] == true ||
+            currentUser?.appMetadata['provider'] == 'google';
+
+        if (isEmailVerified && data['verified'] != true && currentUser != null) {
+          _supabase
+              .from('profiles')
+              .update({'verified': true})
+              .eq('id', currentUser.id)
+              .catchError((_) => null);
+        }
+
         return Scaffold(
           backgroundColor: bg,
           body: SafeArea(
@@ -223,28 +237,34 @@ class _ProfilePageState extends State<ProfilePage> {
                       builder: (context) {
                         final authProvider = Provider.of<SignInProvider>(context, listen: false);
                         final dbProfileId = data['profile_id']?.toString();
-                        final dbImageUrl = data['image_url']?.toString();
+                        final authProfileId = authProvider.profileId?.toString();
                         
-                        // The "Fry" avatar is ID 5. If DB says 0 but Auth says 5, use 5.
-                        final metadataId = authProvider.profileId?.toString();
-                        final avatarId = (dbProfileId != null && dbProfileId != '0') 
+                        // Pick the active avatar ID (prefer non-null, valid ID)
+                        final avatarId = (dbProfileId != null && dbProfileId.isNotEmpty) 
                             ? dbProfileId 
-                            : (metadataId ?? '0');
-                        
-                        debugPrint('[Avatar Sync] 🎯 Final decision: db=$dbProfileId, metadata=$metadataId -> choosing=$avatarId');
-                        
-                        final imageUrl = (dbImageUrl != null && dbImageUrl.isNotEmpty)
-                            ? dbImageUrl
-                            : (authProvider.imageUrl ?? '');
+                            : (authProfileId != null && authProfileId.isNotEmpty ? authProfileId : '0');
 
-                        return ClipRRect(
-                          borderRadius: BorderRadius.circular(48),
-                          child: imageUrl.isNotEmpty
+                        return Container(
+                          width: 96,
+                          height: 96,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(color: border, width: 2),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.1),
+                                blurRadius: 12,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: (data['image_url'] != null && data['image_url'].toString().isNotEmpty)
                               ? CachedNetworkImage(
-                                  imageUrl: imageUrl,
-                                  width: 96,
-                                  height: 96,
-                                  fit: BoxFit.cover,
+                                  imageUrl: data['image_url'],
+                                  imageBuilder: (_, imageProvider) => CircleAvatar(
+                                    backgroundImage: imageProvider,
+                                    radius: 48,
+                                  ),
                                   memCacheWidth: 192,
                                   memCacheHeight: 192,
                                   placeholder: (_, __) => const SizedBox(
@@ -292,14 +312,14 @@ class _ProfilePageState extends State<ProfilePage> {
                       alignment: WrapAlignment.center,
                       children: [
                         Text(
-                          data['email'] ?? '',
+                          data['email'] ?? currentUser?.email ?? '',
                           style: TextStyle(
                             fontSize: 13,
                             color: textSec,
                             fontFamily: 'Poppins',
                           ),
                         ),
-                        if (data['verified'] == true)
+                        if (isEmailVerified)
                           Icon(
                             Icons.verified_rounded,
                             size: 18,
