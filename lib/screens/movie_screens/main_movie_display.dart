@@ -106,9 +106,11 @@ class _MainMoviesDisplayState extends State<MainMoviesDisplay>
     final settings = context.read<SettingsProvider>();
     final signIn = context.read<SignInProvider>();
 
-    // 1. Fetch sports if enabled (in parallel)
-    if (appDep.displayOTTDrawer && appDep.featuredEvents.isEmpty) {
-      appDep.fetchSportsStreams();
+    // 1. Fetch sports if enabled (unconditionally on load & pull-to-refresh)
+    if (appDep.displayOTTDrawer) {
+      appDep.fetchSportsStreams().then((_) {
+        if (mounted) _buildHeroSlides();
+      });
     }
 
     // 2. Fetch discovery feed

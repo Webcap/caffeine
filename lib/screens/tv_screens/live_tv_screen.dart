@@ -157,6 +157,12 @@ class ChannelListState extends State<ChannelList> {
   Future<void> loadTodayEvents() async {
     if (!mounted) return;
     setState(() => _loadFailed = false);
+    
+    // Refresh featured sports from Supabase (runs concurrently with ESPN load)
+    try {
+      context.read<AppDependencyProvider>().fetchSportsStreams();
+    } catch (_) {}
+
     // Use device local date/time so "today" and live games match the user's timezone.
     final date = DateTime.now();
     debugPrint(
