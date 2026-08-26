@@ -909,37 +909,6 @@ class _ProfilePageState extends State<ProfilePage> {
                                 fontFamily: 'Poppins',
                               ),
                             ),
-                            const SizedBox(height: 12),
-                            SizedBox(
-                              width: double.infinity,
-                              child: OutlinedButton.icon(
-                                onPressed: () => Get.toNamed(Routes.login),
-                                icon: const Icon(
-                                  Icons.login_rounded,
-                                  size: 16,
-                                  color: _C.primary,
-                                ),
-                                label: const Text(
-                                  'Sign In or Sign Up to Track',
-                                  style: TextStyle(
-                                    fontSize: 12.5,
-                                    fontWeight: FontWeight.w700,
-                                    color: _C.primary,
-                                    fontFamily: 'PoppinsSB',
-                                  ),
-                                ),
-                                style: OutlinedButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(vertical: 10),
-                                  side: BorderSide(
-                                    color: _C.primary.withValues(alpha: 0.4),
-                                    width: 1.2,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                ),
-                              ),
-                            ),
                           ],
                         ),
                       ),
