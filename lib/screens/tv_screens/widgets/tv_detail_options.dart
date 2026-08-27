@@ -76,147 +76,159 @@ class _TVDetailOptionsState extends State<TVDetailOptions> {
             : avg.toStringAsFixed(1))
         : null;
 
+    final screenWidth = MediaQuery.sizeOf(bContext).width;
+    final isTablet = screenWidth >= 600;
 
     return Consumer<BookmarksProvider>(
       builder: (ctx, provider, _) {
         // ── Format Genres ───────────────────────────────────────────────
         final genres = tvDetails?.genres?.map((g) => g.genreName).where((n) => n != null && n.isNotEmpty).take(3).join('  •  ');
         
-        return Padding(
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // ── Genres Row ────────────────────────────────────────────
-              if (genres != null && genres.isNotEmpty)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 12),
-                  child: Text(
-                    genres,
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
-                      color: textSec,
-                      fontFamily: 'Poppins',
-                      letterSpacing: 0.3,
-                    ),
-                  ),
-                ),
-                
-              // ── Meta Row + Heart ──────────────────────────────────────
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
+        return Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 1200),
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(
+                isTablet ? 32 : 16,
+                12,
+                isTablet ? 32 : 16,
+                8,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Meta items
-                  Expanded(
-                    child: Wrap(
-                      spacing: 12,
-                      runSpacing: 8,
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      children: [
-                        if (tvDetails?.numberOfSeasons != null && tvDetails!.numberOfSeasons! > 0)
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(Icons.layers_rounded, size: 14, color: textSec),
-                              const SizedBox(width: 4),
-                              Text(
-                                '${tvDetails!.numberOfSeasons} ${tvDetails!.numberOfSeasons == 1 ? tr("season") : tr("seasons")}',
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w500,
-                                  color: textSec,
-                                  fontFamily: 'Poppins',
+                  // ── Genres Row ────────────────────────────────────────────
+                  if (genres != null && genres.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: Text(
+                        genres,
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                          color: textSec,
+                          fontFamily: 'Poppins',
+                          letterSpacing: 0.3,
+                        ),
+                      ),
+                    ),
+                    
+                  // ── Meta Row + Bookmark ───────────────────────────────────
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      // Meta items
+                      Expanded(
+                        child: Wrap(
+                          spacing: 12,
+                          runSpacing: 8,
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          children: [
+                            if (tvDetails?.numberOfSeasons != null && tvDetails!.numberOfSeasons! > 0)
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(Icons.layers_rounded, size: 14, color: textSec),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    '${tvDetails!.numberOfSeasons} ${tvDetails!.numberOfSeasons == 1 ? tr("season") : tr("seasons")}',
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w500,
+                                      color: textSec,
+                                      fontFamily: 'Poppins',
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              
+                            // Badges
+                            _Badge(text: 'TV-14', textSec: textSec, border: border, elevated: elevated),
+                            _Badge(text: 'FHD', textSec: textSec, border: border, elevated: Colors.red.withValues(alpha: 0.2), textColor: _C.primary),
+                            
+                            if (ratingStr != null)
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: _C.ratingGold.withValues(alpha: 0.2),
+                                  borderRadius: BorderRadius.circular(4),
                                 ),
+                                child: Text(
+                                  'IMDb - $ratingStr/10',
+                                  style: const TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w700,
+                                    color: _C.ratingGold,
+                                    fontFamily: 'PoppinsSB',
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                      
+                      // Bookmark button
+                      GestureDetector(
+                        onTap: () async {
+                          if (isBookmarked == false) {
+                            try {
+                              await provider.addTV(widget.tvSeries);
+                              if (mounted) setState(() => isBookmarked = true);
+                            } catch (_) {
+                              if (!mounted) return;
+                              if (provider.errorMessage != null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text(provider.errorMessage!)),
+                                );
+                                provider.clearError();
+                              }
+                            }
+                          } else if (isBookmarked == true) {
+                            try {
+                              await provider.removeTV(widget.tvSeries.id!);
+                              if (mounted) setState(() => isBookmarked = false);
+                            } catch (_) {
+                              if (!mounted) return;
+                              if (provider.errorMessage != null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text(provider.errorMessage!)),
+                                );
+                                provider.clearError();
+                              }
+                            }
+                          }
+                        },
+                        child: Container(
+                          width: 44,
+                          height: 44,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: elevated,
+                            border: Border.all(color: border, width: 1),
+                            boxShadow: [
+                              BoxShadow(
+                                color: (isBookmarked == true
+                                        ? _C.primary
+                                        : Colors.transparent)
+                                    .withValues(alpha: 0.2),
+                                blurRadius: isBookmarked == true ? 10 : 0,
                               ),
                             ],
                           ),
-                          
-                        // Hardcoded for UI showcase as per screenshot
-                        _Badge(text: 'TV-14', textSec: textSec, border: border, elevated: elevated),
-                        _Badge(text: 'FHD', textSec: textSec, border: border, elevated: Colors.red.withValues(alpha: 0.2), textColor: _C.primary),
-                        
-                        if (ratingStr != null)
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                            decoration: BoxDecoration(
-                              color: _C.ratingGold.withValues(alpha: 0.2),
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: Text(
-                              'IMDb - $ratingStr/10',
-                              style: const TextStyle(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w700,
-                                color: _C.ratingGold,
-                                fontFamily: 'PoppinsSB',
-                              ),
-                            ),
+                          child: Icon(
+                            isBookmarked == true
+                                ? Icons.bookmark_rounded
+                                : Icons.bookmark_border_rounded,
+                            size: 20,
+                            color: isBookmarked == true ? _C.primary : textSec,
                           ),
-                      ],
-                    ),
-                  ),
-                  
-                  // Bookmark button
-                  GestureDetector(
-                    onTap: () async {
-                      if (isBookmarked == false) {
-                        try {
-                          await provider.addTV(widget.tvSeries);
-                          if (mounted) setState(() => isBookmarked = true);
-                        } catch (_) {
-                          if (!mounted) return;
-                          if (provider.errorMessage != null) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text(provider.errorMessage!)),
-                            );
-                            provider.clearError();
-                          }
-                        }
-                      } else if (isBookmarked == true) {
-                        try {
-                          await provider.removeTV(widget.tvSeries.id!);
-                          if (mounted) setState(() => isBookmarked = false);
-                        } catch (_) {
-                          if (!mounted) return;
-                          if (provider.errorMessage != null) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text(provider.errorMessage!)),
-                            );
-                            provider.clearError();
-                          }
-                        }
-                      }
-                    },
-                    child: Container(
-                      width: 44,
-                      height: 44,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: elevated,
-                        border: Border.all(color: border, width: 1),
-                        boxShadow: [
-                          BoxShadow(
-                            color: (isBookmarked == true
-                                    ? _C.primary
-                                    : Colors.transparent)
-                                .withValues(alpha: 0.2),
-                            blurRadius: isBookmarked == true ? 10 : 0,
-                          ),
-                        ],
+                        ),
                       ),
-                      child: Icon(
-                        isBookmarked == true
-                            ? Icons.bookmark_rounded
-                            : Icons.bookmark_border_rounded,
-                        size: 20,
-                        color: isBookmarked == true ? _C.primary : textSec,
-                      ),
-                    ),
+                    ],
                   ),
                 ],
               ),
-            ],
+            ),
           ),
         );
       },

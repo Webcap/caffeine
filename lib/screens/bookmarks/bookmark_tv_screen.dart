@@ -22,6 +22,8 @@ class _C {
   static const borderLight = Color(0x140F172A);
   static const textPrimDark = Color(0xFFFFFFFF);
   static const textPrimLight = Color(0xFF0B0F14);
+  static const textSecDark = Color(0xB8FFFFFF);
+  static const textSecLight = Color(0xFF64748B);
   static const textTertDark = Color(0x80FFFFFF);
   static const textTertLight = Color(0xFF94A3B8);
 }
@@ -54,27 +56,54 @@ class _TVBookmarkState extends State<TVBookmark> {
 
   Widget _buildEmptyState(bool isDark) {
     final textPrim = isDark ? _C.textPrimDark : _C.textPrimLight;
-    final textTert = isDark ? _C.textTertDark : _C.textTertLight;
+    final textSec = isDark ? _C.textSecDark : _C.textSecLight;
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.bookmark_border_rounded,
-            size: 72,
-            color: textTert.withValues(alpha: 0.6),
-          ),
-          const SizedBox(height: 20),
-          Text(
-            tr("no_tv_bookmarked"),
-            textAlign: TextAlign.center,
-            style: kTextSmallHeaderStyle.copyWith(
-              color: textPrim,
-              fontWeight: FontWeight.w600,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                color: _C.primary.withValues(alpha: 0.12),
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: _C.primary.withValues(alpha: 0.25),
+                  width: 1.5,
+                ),
+              ),
+              child: const Icon(
+                Icons.bookmark_border_rounded,
+                size: 38,
+                color: _C.primary,
+              ),
             ),
-            maxLines: 4,
-          ),
-        ],
+            const SizedBox(height: 20),
+            Text(
+              tr("no_tv_bookmarked"),
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: textPrim,
+                fontSize: 17,
+                fontWeight: FontWeight.w700,
+                fontFamily: 'PoppinsSB',
+              ),
+              maxLines: 4,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Save your favorite TV shows to keep track of new episodes.',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: textSec,
+                fontSize: 13.5,
+                fontFamily: 'Poppins',
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -473,7 +502,11 @@ class _TVBookmarkState extends State<TVBookmark> {
     final viewType = Provider.of<SettingsProvider>(context).defaultView;
     final isProxyEnabled = Provider.of<SettingsProvider>(context).enableProxy;
     final proxyUrl = Provider.of<AppDependencyProvider>(context).tmdbProxy;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = themeMode == 'dark' || themeMode == 'amoled';
+
+    final screenWidth = MediaQuery.sizeOf(context).width;
+    final isTablet = screenWidth >= 600;
+
     if (widget.tvList == null && viewType == 'grid') {
       return moviesAndTVShowGridShimmer(themeMode);
     }
@@ -492,44 +525,57 @@ class _TVBookmarkState extends State<TVBookmark> {
     }
 
     return Padding(
-      padding: const EdgeInsets.only(top: 8.0),
+      padding: EdgeInsets.symmetric(
+        horizontal: isTablet ? 20.0 : 4.0,
+        vertical: 8.0,
+      ),
       child: RefreshIndicator(
         onRefresh: _onRefresh,
         child: viewType == 'grid'
-            ? GridView.builder(
-                controller: _scrollController,
-                physics: const AlwaysScrollableScrollPhysics(
-                  parent: BouncingScrollPhysics(),
-                ),
-                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                  maxCrossAxisExtent: 150,
-                  childAspectRatio: 0.48,
-                  crossAxisSpacing: 5,
-                  mainAxisSpacing: 5,
-                ),
-                itemCount: tvList.length,
-                itemBuilder: (context, index) => _buildGridCard(
-                  tv: tvList[index],
-                  themeMode: themeMode,
-                  imageQuality: imageQuality,
-                  isProxyEnabled: isProxyEnabled,
-                  proxyUrl: proxyUrl,
-                  isDark: isDark,
+            ? Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 1200),
+                  child: GridView.builder(
+                    controller: _scrollController,
+                    physics: const AlwaysScrollableScrollPhysics(
+                      parent: BouncingScrollPhysics(),
+                    ),
+                    gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                      maxCrossAxisExtent: isTablet ? 190 : 155,
+                      childAspectRatio: isTablet ? 0.58 : 0.52,
+                      crossAxisSpacing: isTablet ? 12 : 6,
+                      mainAxisSpacing: isTablet ? 12 : 6,
+                    ),
+                    itemCount: tvList.length,
+                    itemBuilder: (context, index) => _buildGridCard(
+                      tv: tvList[index],
+                      themeMode: themeMode,
+                      imageQuality: imageQuality,
+                      isProxyEnabled: isProxyEnabled,
+                      proxyUrl: proxyUrl,
+                      isDark: isDark,
+                    ),
+                  ),
                 ),
               )
-            : ListView.builder(
-                controller: _scrollController,
-                physics: const AlwaysScrollableScrollPhysics(
-                  parent: BouncingScrollPhysics(),
-                ),
-                itemCount: tvList.length,
-                itemBuilder: (context, index) => _buildListCard(
-                  tv: tvList[index],
-                  themeMode: themeMode,
-                  imageQuality: imageQuality,
-                  isProxyEnabled: isProxyEnabled,
-                  proxyUrl: proxyUrl,
-                  isDark: isDark,
+            : Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 880),
+                  child: ListView.builder(
+                    controller: _scrollController,
+                    physics: const AlwaysScrollableScrollPhysics(
+                      parent: BouncingScrollPhysics(),
+                    ),
+                    itemCount: tvList.length,
+                    itemBuilder: (context, index) => _buildListCard(
+                      tv: tvList[index],
+                      themeMode: themeMode,
+                      imageQuality: imageQuality,
+                      isProxyEnabled: isProxyEnabled,
+                      proxyUrl: proxyUrl,
+                      isDark: isDark,
+                    ),
+                  ),
                 ),
               ),
       ),

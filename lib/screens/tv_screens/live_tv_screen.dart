@@ -11,6 +11,7 @@ import 'package:reelriot/screens/tv_screens/live_event_screen.dart';
 import 'package:reelriot/widgets/featured_match_card.dart';
 import 'package:provider/provider.dart';
 import 'package:reelriot/provider/app_dependency_provider.dart';
+import 'package:reelriot/provider/settings_provider.dart';
 import 'package:reelriot/services/ad_service.dart';
 import 'package:startapp_sdk/startapp.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -113,10 +114,12 @@ class LiveEventTitleParsed {
 // Design tokens from design.json (cinematic, dark-first, primary red CTA)
 abstract class _LiveTvDesign {
   static const Color bgCanvasDark = Color(0xFF030712);
+  static const Color bgCanvasLight = Color(0xFFF8FAFC);
   static const Color bgSurfaceDark = Color(0xFF0B0F14);
   static const Color bgSurfaceElevated = Color(0xFF111827);
   static const Color primaryCta = Color(0xFFDC2626);
   static const Color textPrimary = Color(0xFFFFFFFF);
+  static const Color textPrimaryLight = Color(0xFF0B0F14);
   static const Color textSecondary = Color(0xB8FFFFFF);
   static const Color textTertiary = Color(0x66FFFFFF);
   static const Color borderSubtle = Color(0x14FFFFFF);
@@ -327,33 +330,58 @@ class ChannelListState extends State<ChannelList> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
+    final isDark = themeMode == 'dark' || themeMode == 'amoled';
+
+    final screenWidth = MediaQuery.sizeOf(context).width;
+    final isTablet = screenWidth >= 600;
+
     return Scaffold(
-      backgroundColor: isDark ? _LiveTvDesign.bgCanvasDark : null,
+      backgroundColor: isDark ? _LiveTvDesign.bgCanvasDark : _LiveTvDesign.bgCanvasLight,
       appBar: AppBar(
         title: Text(
           'Live Sports',
           style: TextStyle(
-            color: isDark ? _LiveTvDesign.textPrimary : null,
+            color: isDark ? _LiveTvDesign.textPrimary : _LiveTvDesign.textPrimaryLight,
             fontWeight: FontWeight.w700,
-            fontSize: 20,
+            fontSize: isTablet ? 20 : 18,
+            fontFamily: 'PoppinsSB',
             letterSpacing: -0.3,
           ),
         ),
-        backgroundColor: isDark ? _LiveTvDesign.bgCanvasDark : null,
+        centerTitle: isTablet,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios_new_rounded,
+            color: isDark ? _LiveTvDesign.textPrimary : _LiveTvDesign.textPrimaryLight,
+            size: 20,
+          ),
+          onPressed: () => Navigator.maybePop(context),
+          tooltip: tr("back"),
+        ),
+        backgroundColor: isDark ? _LiveTvDesign.bgCanvasDark : _LiveTvDesign.bgCanvasLight,
         elevation: 0,
         scrolledUnderElevation: 0,
-        iconTheme:
-            IconThemeData(color: isDark ? _LiveTvDesign.textPrimary : null),
+        iconTheme: IconThemeData(
+          color: isDark ? _LiveTvDesign.textPrimary : _LiveTvDesign.textPrimaryLight,
+        ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-        child: _buildBody(isDark),
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1200),
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: isTablet ? 32 : 20,
+              vertical: isTablet ? 20 : 16,
+            ),
+            child: _buildBody(isDark, isTablet),
+          ),
+        ),
       ),
     );
   }
 
-  Widget _buildBody(bool isDark) {
+  Widget _buildBody(bool isDark, bool isTablet) {
     final appDep = Provider.of<AppDependencyProvider>(context);
     if (!appDep.displayOTTDrawer) {
       return _buildEmptyState(isDark, "Live sports are currently disabled");
@@ -419,23 +447,58 @@ class ChannelListState extends State<ChannelList> {
                           if (cats['live']!.isNotEmpty) ...[
                             _buildSectionHeader(isDark, "LIVE NOW",
                                 color: _LiveTvDesign.primaryCta, isLive: true),
-                            ...cats['live']!.map((event) => _buildEventTile(event, isDark)),
+                            _buildEventListOrGrid(cats['live']!, isDark, isTablet),
                             const SizedBox(height: 20),
                           ],
                           if (cats['upcoming']!.isNotEmpty) ...[
                             _buildSectionHeader(isDark, "UPCOMING"),
-                            ...cats['upcoming']!.map((event) => _buildEventTile(event, isDark)),
+                            _buildEventListOrGrid(cats['upcoming']!, isDark, isTablet),
                             const SizedBox(height: 20),
                           ],
                           if (cats['completed']!.isNotEmpty) ...[
                             _buildSectionHeader(isDark, "COMPLETED"),
-                            ...cats['completed']!.map((event) => _buildEventTile(event, isDark)),
+                            _buildEventListOrGrid(cats['completed']!, isDark, isTablet),
                           ],
                         ],
                       ),
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildEventListOrGrid(List<EspnListEvent> events, bool isDark, bool isTablet) {
+    if (!isTablet) {
+      return Column(
+        children: events.map((event) => _buildEventTile(event, isDark)).toList(),
+      );
+    }
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final useGrid = constraints.maxWidth >= 720;
+        if (!useGrid) {
+          return Column(
+            children: events.map((event) => _buildEventTile(event, isDark)).toList(),
+          );
+        }
+        return GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+            maxCrossAxisExtent: 580,
+            mainAxisExtent: 205,
+            crossAxisSpacing: 14,
+            mainAxisSpacing: 14,
+          ),
+          itemCount: events.length,
+          itemBuilder: (context, index) => _MatchCard(
+            event: events[index],
+            isDark: isDark,
+            hasStream: _activeStreamIds.contains(events[index].game.id),
+            onTap: () => _openEvent(events[index]),
+          ),
+        );
+      },
     );
   }
 
@@ -900,21 +963,22 @@ class _MatchCard extends StatelessWidget {
                 ? _LiveTvDesign.shadowLive
                 : (isDark ? _LiveTvDesign.shadowCard : null),
           ),
-          child: Row(
-            children: [
-              // Red accent strip for live events
-              if (isLive)
-                Container(
-                  width: 3,
-                  height: 120,
-                  decoration: BoxDecoration(
-                    color: _LiveTvDesign.primaryCta,
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(_LiveTvDesign.radiusSm),
-                      bottomLeft: Radius.circular(_LiveTvDesign.radiusSm),
+          child: IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Red accent strip for live events
+                if (isLive)
+                  Container(
+                    width: 3,
+                    decoration: BoxDecoration(
+                      color: _LiveTvDesign.primaryCta,
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(_LiveTvDesign.radiusSm),
+                        bottomLeft: Radius.circular(_LiveTvDesign.radiusSm),
+                      ),
                     ),
                   ),
-                ),
               Expanded(
                 child: Padding(
                   padding: EdgeInsets.only(
@@ -985,8 +1049,9 @@ class _MatchCard extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildStatusRow(
       EspnScoreboardGame g, bool isLive, bool isCompleted) {

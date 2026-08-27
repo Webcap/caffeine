@@ -29,20 +29,22 @@ class _TVAboutState extends State<TVAbout> {
   @override
   Widget build(BuildContext context) {
     final lang = Provider.of<SettingsProvider>(context).appLanguage;
-    return SingleChildScrollView(
-      //  physics: const BouncingScrollPhysics(),
-      child: Container(
-        decoration: const BoxDecoration(
-            borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(8.0),
-                bottomRight: Radius.circular(8.0))),
-        child: Column(
-          children: <Widget>[
+    final screenWidth = MediaQuery.sizeOf(context).width;
+    final isTablet = screenWidth >= 600;
 
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-              child: widget.tvSeries.overview!.isEmpty ||
-                      widget.tvSeries.overview == null
+    return SingleChildScrollView(
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1200),
+          child: Column(
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: isTablet ? 32.0 : 16.0,
+                  vertical: 8.0,
+                ),
+                child: widget.tvSeries.overview!.isEmpty ||
+                        widget.tvSeries.overview == null
                   ? Text(tr("no_overview_tv"))
                   : ReadMoreText(
                       widget.tvSeries.overview!,
@@ -128,6 +130,7 @@ class _TVAboutState extends State<TVAbout> {
           ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }

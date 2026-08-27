@@ -39,19 +39,22 @@ class _MovieAboutState extends State<MovieAbout> {
   @override
   Widget build(BuildContext context) {
     final lang = Provider.of<SettingsProvider>(context).appLanguage;
+    final screenWidth = MediaQuery.sizeOf(context).width;
+    final isTablet = screenWidth >= 600;
+
     return SingleChildScrollView(
-      // physics: const BouncingScrollPhysics(),
-      child: Container(
-        decoration: const BoxDecoration(
-            borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(8.0),
-                bottomRight: Radius.circular(8.0))),
-        child: Column(
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-              child: widget.movie.overview == null ||
-                      widget.movie.overview!.isEmpty
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1200),
+          child: Column(
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: isTablet ? 32.0 : 16.0,
+                  vertical: 8.0,
+                ),
+                child: widget.movie.overview == null ||
+                        widget.movie.overview!.isEmpty
                   ? Text(tr("no_overview_movie"))
                   : ReadMoreText(
                       widget.movie.overview!,
@@ -135,6 +138,7 @@ class _MovieAboutState extends State<MovieAbout> {
           ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }

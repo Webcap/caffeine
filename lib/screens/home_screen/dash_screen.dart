@@ -235,6 +235,12 @@ class _GreetingTitle extends StatelessWidget {
     final textSec = isDark ? const Color(0xB8FFFFFF) : const Color(0xFF64748B);
     final isTablet = MediaQuery.sizeOf(context).width >= 600;
 
+    final avatarSize = isTablet ? 48.0 : 42.0;
+    final isSignedIn = signIn.isSignedIn;
+    final hasCustomImage =
+        isSignedIn && (signIn.imageUrl != null && signIn.imageUrl!.isNotEmpty);
+    final hasProfileAvatar = isSignedIn && (signIn.profileId != null);
+
     return Padding(
       padding: EdgeInsets.only(left: isTablet ? 16 : 4),
       child: Row(
@@ -243,8 +249,8 @@ class _GreetingTitle extends StatelessWidget {
           GestureDetector(
             onTap: () => scaffoldKey.currentState?.openDrawer(),
             child: Container(
-              width: isTablet ? 48 : 42,
-              height: isTablet ? 48 : 42,
+              width: avatarSize,
+              height: avatarSize,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: _C.primary.withValues(alpha: 0.15),
@@ -253,13 +259,41 @@ class _GreetingTitle extends StatelessWidget {
                   width: 1.5,
                 ),
               ),
-              child: Center(
-                child: Icon(
-                  Icons.person_rounded,
-                  size: isTablet ? 24 : 20,
-                  color: _C.primary,
-                ),
-              ),
+              child: hasCustomImage
+                  ? ClipOval(
+                      child: CachedNetworkImage(
+                        imageUrl: signIn.imageUrl!,
+                        fit: BoxFit.cover,
+                        errorWidget: (_, __, ___) => Center(
+                          child: Icon(
+                            Icons.person_rounded,
+                            size: isTablet ? 24 : 20,
+                            color: _C.primary,
+                          ),
+                        ),
+                      ),
+                    )
+                  : hasProfileAvatar
+                      ? ClipOval(
+                          child: Image.asset(
+                            'assets/images/profiles/${signIn.profileId}.png',
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, __, ___) => Center(
+                              child: Icon(
+                                Icons.person_rounded,
+                                size: isTablet ? 24 : 20,
+                                color: _C.primary,
+                              ),
+                            ),
+                          ),
+                        )
+                      : Center(
+                          child: Icon(
+                            Icons.person_rounded,
+                            size: isTablet ? 24 : 20,
+                            color: _C.primary,
+                          ),
+                        ),
             ),
           ),
           const SizedBox(width: 12),
@@ -511,11 +545,68 @@ class _TabButton extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              meta.icon,
-              size: isTablet ? 23 : 18,
-              color: isActive ? _C.primary : inactiveColor,
-            ),
+            if (meta.label == 'Profile') ...[
+              Builder(
+                builder: (context) {
+                  final signIn = context.watch<SignInProvider>();
+                  final iconSize = isTablet ? 23.0 : 19.0;
+                  final isSignedIn = signIn.isSignedIn;
+                  final hasCustomImage = isSignedIn &&
+                      (signIn.imageUrl != null && signIn.imageUrl!.isNotEmpty);
+                  final hasProfileAvatar =
+                      isSignedIn && (signIn.profileId != null);
+
+                  if (hasCustomImage || hasProfileAvatar) {
+                    return Container(
+                      width: iconSize,
+                      height: iconSize,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: isActive
+                              ? _C.primary
+                              : inactiveColor.withValues(alpha: 0.6),
+                          width: isActive ? 1.5 : 1.0,
+                        ),
+                      ),
+                      child: ClipOval(
+                        child: hasCustomImage
+                            ? CachedNetworkImage(
+                                imageUrl: signIn.imageUrl!,
+                                fit: BoxFit.cover,
+                                errorWidget: (_, __, ___) => Icon(
+                                  Icons.person_rounded,
+                                  size: iconSize * 0.7,
+                                  color: isActive ? _C.primary : inactiveColor,
+                                ),
+                              )
+                            : Image.asset(
+                                'assets/images/profiles/${signIn.profileId}.png',
+                                fit: BoxFit.cover,
+                                errorBuilder: (_, __, ___) => Icon(
+                                  Icons.person_rounded,
+                                  size: iconSize * 0.7,
+                                  color: isActive ? _C.primary : inactiveColor,
+                                ),
+                              ),
+                      ),
+                    );
+                  }
+
+                  return Icon(
+                    meta.icon,
+                    size: isTablet ? 23 : 18,
+                    color: isActive ? _C.primary : inactiveColor,
+                  );
+                },
+              ),
+            ] else ...[
+              Icon(
+                meta.icon,
+                size: isTablet ? 23 : 18,
+                color: isActive ? _C.primary : inactiveColor,
+              ),
+            ],
             AnimatedSize(
               duration: const Duration(milliseconds: 260),
               curve: Curves.easeInOut,

@@ -54,91 +54,86 @@ class _MainTVDisplayState extends State<MainTVDisplay> {
     final rEpisodes = Provider.of<RecentProvider>(context).upNextEpisodes;
     final inProgress = Provider.of<RecentProvider>(context).inProgressEpisodes;
     final lang = settings.appLanguage;
-    final appDep = Provider.of<AppDependencyProvider>(context);
-    final featuredEvent = appDep.featuredEvent;
-    final showFeatured = appDep.displayOTTDrawer &&
-        featuredEvent != null &&
-        !appDep.isSportRowHidden(featuredEvent.sport, title: featuredEvent.title);
 
     return RefreshIndicator(
       onRefresh: _refreshData,
       color: const Color(0xFFDC2626),
       backgroundColor: isDark ? const Color(0xFF030712) : const Color(0xFFF8FAFC),
-      child: ListView(
-        physics: const AlwaysScrollableScrollPhysics(
-          parent: BouncingScrollPhysics(),
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1200),
+          child: ListView(
+            physics: const AlwaysScrollableScrollPhysics(
+              parent: BouncingScrollPhysics(),
+            ),
+            children: [
+              DiscoverTV(
+                key: ValueKey('discover_${_refreshKey.toString()}'),
+                includeAdult: settings.isAdult,
+                discoverType: 'discover',
+              ),
+              const UpdateBottom(),
+              if (inProgress.isNotEmpty)
+                ScrollingRecentEpisodes(
+                  episodesList: inProgress,
+                  title: tr("recently_watched"),
+                ),
+              if (rEpisodes.isNotEmpty)
+                ScrollingRecentEpisodes(
+                  episodesList: rEpisodes,
+                  title: tr("up_next"),
+                ),
+              ScrollingTV(
+                key: ValueKey('popular_${_refreshKey.toString()}'),
+                includeAdult: settings.isAdult,
+                title: tr("popular"),
+                api: Endpoints.popularTVUrl(lang),
+                discoverType: 'popular',
+                isTrending: false,
+              ),
+              const BannerAdWidget(),
+              ScrollingTV(
+                key: ValueKey('trending_${_refreshKey.toString()}'),
+                includeAdult: settings.isAdult,
+                title: tr("trending_this_week"),
+                api: Endpoints.trendingTVUrl(lang),
+                discoverType: 'trending',
+                isTrending: true,
+              ),
+              ScrollingTV(
+                key: ValueKey('top_rated_${_refreshKey.toString()}'),
+                includeAdult: settings.isAdult,
+                title: tr("top_rated"),
+                api: Endpoints.topRatedTVUrl(lang),
+                discoverType: 'top_rated',
+                isTrending: false,
+              ),
+              ScrollingTV(
+                key: ValueKey('airing_today_${_refreshKey.toString()}'),
+                includeAdult: settings.isAdult,
+                title: tr("airing_today"),
+                api: Endpoints.airingTodayUrl(lang),
+                discoverType: 'airing_today',
+                isTrending: false,
+              ),
+              ScrollingTV(
+                key: ValueKey('on_the_air_${_refreshKey.toString()}'),
+                includeAdult: settings.isAdult,
+                title: tr("on_the_air"),
+                api: Endpoints.onTheAirUrl(lang),
+                discoverType: 'on_the_air',
+                isTrending: false,
+              ),
+              TVGenreListGrid(
+                key: ValueKey('genres_${_refreshKey.toString()}'),
+                api: Endpoints.tvGenresUrl(lang),
+              ),
+              TVShowsFromWatchProviders(
+                key: ValueKey('providers_${_refreshKey.toString()}'),
+              ),
+            ],
+          ),
         ),
-        children: [
-          if (showFeatured)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-              child: FeaturedMatchCard(event: featuredEvent),
-            ),
-          DiscoverTV(
-            key: ValueKey('discover_${_refreshKey.toString()}'),
-            includeAdult: settings.isAdult,
-            discoverType: 'discover',
-          ),
-          const UpdateBottom(),
-          if (inProgress.isNotEmpty)
-            ScrollingRecentEpisodes(
-              episodesList: inProgress,
-              title: tr("recently_watched"),
-            ),
-          if (rEpisodes.isNotEmpty)
-            ScrollingRecentEpisodes(
-              episodesList: rEpisodes,
-              title: tr("up_next"),
-            ),
-          ScrollingTV(
-            key: ValueKey('popular_${_refreshKey.toString()}'),
-            includeAdult: settings.isAdult,
-            title: tr("popular"),
-            api: Endpoints.popularTVUrl(lang),
-            discoverType: 'popular',
-            isTrending: false,
-          ),
-          const BannerAdWidget(),
-          ScrollingTV(
-            key: ValueKey('trending_${_refreshKey.toString()}'),
-            includeAdult: settings.isAdult,
-            title: tr("trending_this_week"),
-            api: Endpoints.trendingTVUrl(lang),
-            discoverType: 'trending',
-            isTrending: true,
-          ),
-          ScrollingTV(
-            key: ValueKey('top_rated_${_refreshKey.toString()}'),
-            includeAdult: settings.isAdult,
-            title: tr("top_rated"),
-            api: Endpoints.topRatedTVUrl(lang),
-            discoverType: 'top_rated',
-            isTrending: false,
-          ),
-          ScrollingTV(
-            key: ValueKey('airing_today_${_refreshKey.toString()}'),
-            includeAdult: settings.isAdult,
-            title: tr("airing_today"),
-            api: Endpoints.airingTodayUrl(lang),
-            discoverType: 'airing_today',
-            isTrending: false,
-          ),
-          ScrollingTV(
-            key: ValueKey('on_the_air_${_refreshKey.toString()}'),
-            includeAdult: settings.isAdult,
-            title: tr("on_the_air"),
-            api: Endpoints.onTheAirUrl(lang),
-            discoverType: 'on_the_air',
-            isTrending: false,
-          ),
-          TVGenreListGrid(
-            key: ValueKey('genres_${_refreshKey.toString()}'),
-            api: Endpoints.tvGenresUrl(lang),
-          ),
-          TVShowsFromWatchProviders(
-            key: ValueKey('providers_${_refreshKey.toString()}'),
-          ),
-        ],
       ),
     );
   }
