@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:reelriot/functions/functions.dart';
 import 'package:reelriot/widgets/cached_image.dart';
 import 'package:reelriot/functions/network.dart';
@@ -16,6 +17,10 @@ import 'package:reelriot/utils/config.dart';
 import 'package:reelriot/widgets/shimmer_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:reelriot/utils/constant.dart';
+
+class _C {
+  static const primary = Color(0xFFDC2626);
+}
 
 class DiscoverTV extends StatefulWidget {
   final bool includeAdult;
@@ -83,18 +88,22 @@ class DiscoverTVState extends State<DiscoverTV>
     });
   }
 
+  int _currentPage = 0;
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
     deviceHeight = MediaQuery.of(context).size.height;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
     final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     final isProxyEnabled = Provider.of<SettingsProvider>(context).enableProxy;
     final proxyUrl = Provider.of<AppDependencyProvider>(context).tmdbProxy;
     final screenWidth = MediaQuery.sizeOf(context).width;
     final isTablet = screenWidth >= 600;
-    final double carouselHeight = isTablet ? 380.0 : 350.0;
-    final double viewportFraction = isTablet ? 0.48 : 0.6;
+    final isLargeTablet = screenWidth >= 1000;
+    final double carouselHeight = isLargeTablet ? 380.0 : (isTablet ? 340.0 : 230.0);
+    final double viewportFraction = isLargeTablet ? 0.94 : (isTablet ? 0.92 : 0.88);
 
     return Column(
       children: <Widget>[
@@ -133,56 +142,343 @@ class DiscoverTVState extends State<DiscoverTV>
                     )
                   : CarouselSlider.builder(
                       options: CarouselOptions(
-                        disableCenter: true,
+                        height: carouselHeight,
                         viewportFraction: viewportFraction,
                         enlargeCenterPage: true,
-                        autoPlay: true,
+                        enlargeFactor: isTablet ? 0.12 : 0.10,
+                        enableInfiniteScroll: tvList!.length > 2,
+                        autoPlay: tvList!.length > 1,
+                        autoPlayInterval: const Duration(seconds: 5),
+                        autoPlayCurve: Curves.easeInOut,
+                        onPageChanged: (i, _) => setState(() => _currentPage = i),
                       ),
-                      itemBuilder:
-                          (BuildContext context, int index, int pageViewIndex) {
+                      itemCount: tvList!.length.clamp(0, 10),
+                      itemBuilder: (BuildContext context, int index, int _) {
+                        final tv = tvList![index];
                         final heroTag =
-                            '${tvList![index].id}-${widget.discoverType}-$index-$pageViewIndex';
+                            '${tv.id}-${widget.discoverType}-$index';
+                        final imgBase = buildImageUrl(
+                            tmdbBaseImageUrl, proxyUrl, isProxyEnabled, context);
+                        final backdropUrl = (tv.backdropPath != null && tv.backdropPath!.isNotEmpty)
+                            ? '$imgBase$imageQuality${tv.backdropPath}'
+                            : (tv.posterPath != null && tv.posterPath!.isNotEmpty
+                                ? '$imgBase$imageQuality${tv.posterPath}'
+                                : '');
+                        final rating = tv.voteAverage != null && tv.voteAverage! > 0
+                            ? tv.voteAverage!.toStringAsFixed(1)
+                            : '';
+                        final releaseYear = tv.firstAirDate != null && tv.firstAirDate!.length >= 4
+                            ? tv.firstAirDate!.substring(0, 4)
+                            : '';
+                        final overview = tv.overview?.trim() ?? '';
+
                         return GestureDetector(
                           onTap: () {
                             Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => TVDetailPage(
-                                        tvSeries: tvList![index],
-                                        heroId: heroTag)));
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => TVDetailPage(
+                                  tvSeries: tv,
+                                  heroId: heroTag,
+                                ),
+                              ),
+                            );
                           },
                           child: Hero(
                             tag: heroTag,
                             child: ClipRRect(
-                              borderRadius: BorderRadius.circular(isTablet ? 14.0 : 8.0),
-                              child: CachedPosterImage(
-                                cacheManager: cacheProp(),
-                                preset: CachePreset.posterLarge,
-                                imageUrl: tvList![index].posterPath == null
-                                    ? ''
-                                    : buildImageUrl(
-                                            tmdbBaseImageUrl,
-                                            proxyUrl,
-                                            isProxyEnabled,
-                                            context) +
-                                        imageQuality +
-                                        tvList![index].posterPath!,
-                                themeMode: themeMode,
-                                placeholder: (context, url) =>
-                                    discoverImageShimmer(themeMode),
-                                errorWidget: (context, url, error) =>
-                                    Image.asset(
-                                  'assets/images/na_logo.png',
-                                  fit: BoxFit.cover,
-                                ),
+                              borderRadius: BorderRadius.circular(isTablet ? 20.0 : 16.0),
+                              child: Stack(
+                                fit: StackFit.expand,
+                                children: [
+                                  // Backdrop image
+                                  backdropUrl.isEmpty
+                                      ? Image.asset('assets/images/na_logo.png', fit: BoxFit.cover)
+                                      : CachedNetworkImage(
+                                          imageUrl: backdropUrl,
+                                          fit: BoxFit.cover,
+                                          cacheManager: cacheProp(),
+                                          placeholder: (_, __) => discoverImageShimmer(themeMode),
+                                          errorWidget: (_, __, ___) => Image.asset(
+                                            'assets/images/na_logo.png',
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+
+                                  // Multi-layer Dark Gradient
+                                  Positioned.fill(
+                                    child: DecoratedBox(
+                                      decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                          colors: [
+                                            Colors.transparent,
+                                            Colors.black.withValues(alpha: isTablet ? 0.45 : 0.4),
+                                            Colors.black.withValues(alpha: isTablet ? 0.92 : 0.88),
+                                          ],
+                                          stops: const [0.0, 0.45, 1.0],
+                                          begin: Alignment.topCenter,
+                                          end: Alignment.bottomCenter,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  if (isTablet)
+                                    Positioned.fill(
+                                      child: DecoratedBox(
+                                        decoration: BoxDecoration(
+                                          gradient: LinearGradient(
+                                            colors: [
+                                              Colors.black.withValues(alpha: 0.82),
+                                              Colors.black.withValues(alpha: 0.45),
+                                              Colors.transparent,
+                                            ],
+                                            stops: const [0.0, 0.55, 1.0],
+                                            begin: Alignment.centerLeft,
+                                            end: Alignment.centerRight,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+
+                                  // Foreground content
+                                  Positioned(
+                                    left: isTablet ? 24 : 16,
+                                    right: isTablet ? 24 : 16,
+                                    bottom: isTablet ? 22 : 14,
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        // Badge: FEATURED TV + Rating + Year
+                                        Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Container(
+                                              padding: EdgeInsets.symmetric(
+                                                horizontal: isTablet ? 10 : 8,
+                                                vertical: isTablet ? 4 : 3,
+                                              ),
+                                              decoration: BoxDecoration(
+                                                color: _C.primary.withValues(alpha: 0.25),
+                                                borderRadius: BorderRadius.circular(6),
+                                                border: Border.all(
+                                                  color: _C.primary.withValues(alpha: 0.6),
+                                                  width: 1,
+                                                ),
+                                              ),
+                                              child: Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Container(
+                                                    width: isTablet ? 7 : 6,
+                                                    height: isTablet ? 7 : 6,
+                                                    decoration: const BoxDecoration(
+                                                      color: Color(0xFFDC2626),
+                                                      shape: BoxShape.circle,
+                                                    ),
+                                                  ),
+                                                  SizedBox(width: isTablet ? 6 : 5),
+                                                  Text(
+                                                    'FEATURED TV',
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: isTablet ? 11 : 10,
+                                                      fontWeight: FontWeight.w800,
+                                                      letterSpacing: 0.8,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            if (rating.isNotEmpty) ...[
+                                              const SizedBox(width: 8),
+                                              Container(
+                                                padding: EdgeInsets.symmetric(
+                                                  horizontal: isTablet ? 8 : 6,
+                                                  vertical: isTablet ? 4 : 3,
+                                                ),
+                                                decoration: BoxDecoration(
+                                                  color: Colors.black.withValues(alpha: 0.5),
+                                                  borderRadius: BorderRadius.circular(6),
+                                                  border: Border.all(
+                                                    color: const Color(0xFFFACC15).withValues(alpha: 0.4),
+                                                    width: 0.8,
+                                                  ),
+                                                ),
+                                                child: Row(
+                                                  mainAxisSize: MainAxisSize.min,
+                                                  children: [
+                                                    Icon(
+                                                      Icons.star_rounded,
+                                                      size: isTablet ? 14 : 12,
+                                                      color: const Color(0xFFFACC15),
+                                                    ),
+                                                    const SizedBox(width: 3),
+                                                    Text(
+                                                      rating,
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: isTablet ? 11 : 10,
+                                                        fontWeight: FontWeight.w700,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                            if (releaseYear.isNotEmpty) ...[
+                                              const SizedBox(width: 8),
+                                              Text(
+                                                releaseYear,
+                                                style: TextStyle(
+                                                  color: Colors.white70,
+                                                  fontSize: isTablet ? 12 : 11,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                            ],
+                                          ],
+                                        ),
+                                        SizedBox(height: isTablet ? 8 : 6),
+
+                                        // Title
+                                        Text(
+                                          tv.name ?? '',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: isTablet ? 26 : 18,
+                                            fontWeight: FontWeight.w800,
+                                            fontFamily: 'PoppinsSB',
+                                            letterSpacing: -0.3,
+                                            shadows: const [Shadow(color: Colors.black87, blurRadius: 8)],
+                                          ),
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+
+                                        // Overview on tablets
+                                        if (isTablet && overview.isNotEmpty) ...[
+                                          const SizedBox(height: 6),
+                                          ConstrainedBox(
+                                            constraints: const BoxConstraints(maxWidth: 580),
+                                            child: Text(
+                                              overview,
+                                              style: const TextStyle(
+                                                color: Color(0xCCFFFFFF),
+                                                fontSize: 13,
+                                                height: 1.35,
+                                                fontWeight: FontWeight.w400,
+                                                shadows: [Shadow(color: Colors.black54, blurRadius: 4)],
+                                              ),
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                        ],
+
+                                        // Action buttons
+                                        if (isTablet) ...[
+                                          const SizedBox(height: 14),
+                                          Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Container(
+                                                padding: const EdgeInsets.symmetric(
+                                                  horizontal: 16,
+                                                  vertical: 8,
+                                                ),
+                                                decoration: BoxDecoration(
+                                                  color: _C.primary,
+                                                  borderRadius: BorderRadius.circular(20),
+                                                  boxShadow: [
+                                                    BoxShadow(
+                                                      color: _C.primary.withValues(alpha: 0.4),
+                                                      blurRadius: 10,
+                                                      offset: const Offset(0, 3),
+                                                    ),
+                                                  ],
+                                                ),
+                                                child: const Row(
+                                                  mainAxisSize: MainAxisSize.min,
+                                                  children: [
+                                                    Icon(Icons.play_arrow_rounded, color: Colors.white, size: 20),
+                                                    SizedBox(width: 6),
+                                                    Text(
+                                                      'Watch Now',
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontWeight: FontWeight.w700,
+                                                        fontSize: 13,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              const SizedBox(width: 10),
+                                              Container(
+                                                padding: const EdgeInsets.symmetric(
+                                                  horizontal: 14,
+                                                  vertical: 8,
+                                                ),
+                                                decoration: BoxDecoration(
+                                                  color: Colors.white.withValues(alpha: 0.15),
+                                                  borderRadius: BorderRadius.circular(20),
+                                                  border: Border.all(
+                                                    color: Colors.white30,
+                                                    width: 1,
+                                                  ),
+                                                ),
+                                                child: const Row(
+                                                  mainAxisSize: MainAxisSize.min,
+                                                  children: [
+                                                    Icon(Icons.info_outline_rounded, color: Colors.white, size: 17),
+                                                    SizedBox(width: 6),
+                                                    Text(
+                                                      'Details',
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontWeight: FontWeight.w600,
+                                                        fontSize: 13,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ],
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ),
                         );
                       },
-                      itemCount: tvList!.length,
                     ),
         ),
+        const SizedBox(height: 10),
+        if (tvList != null && tvList!.isNotEmpty)
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(tvList!.length.clamp(0, 10), (i) {
+              final active = i == _currentPage;
+              return AnimatedContainer(
+                duration: const Duration(milliseconds: 260),
+                margin: const EdgeInsets.symmetric(horizontal: 3),
+                width: active ? (isTablet ? 26 : 20) : (isTablet ? 8 : 6),
+                height: isTablet ? 8 : 6,
+                decoration: BoxDecoration(
+                  color: active
+                      ? _C.primary
+                      : (isDark ? Colors.white30 : Colors.black26),
+                  borderRadius: BorderRadius.circular(999),
+                ),
+              );
+            }),
+          ),
+        const SizedBox(height: 12),
       ],
     );
   }

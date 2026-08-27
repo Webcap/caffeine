@@ -226,295 +226,523 @@ class _ProfilePageState extends State<ProfilePage> {
               .catchError((_) => null);
         }
 
+        final screenWidth = MediaQuery.sizeOf(context).width;
+        final isTablet = screenWidth >= 600;
+
         return Scaffold(
           backgroundColor: bg,
           body: SafeArea(
             child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 20, 16, 32),
-                child: Column(
-                  children: [
-                    // ── Avatar & name ─────────────────────────────────────
-                    // Smart resolution: Prioritize DB stream, fallback to Provider metadata
-                    Builder(
-                      builder: (context) {
-                        final authProvider = Provider.of<SignInProvider>(context, listen: false);
-                        final dbProfileId = data['profile_id']?.toString();
-                        final authProfileId = authProvider.profileId?.toString();
-                        
-                        // Pick the active avatar ID (prefer non-null, valid ID)
-                        final avatarId = (dbProfileId != null && dbProfileId.isNotEmpty) 
-                            ? dbProfileId 
-                            : (authProfileId != null && authProfileId.isNotEmpty ? authProfileId : '0');
-
-                        return Container(
-                          width: 96,
-                          height: 96,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(color: border, width: 2),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.1),
-                                blurRadius: 12,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: (data['image_url'] != null && data['image_url'].toString().isNotEmpty)
-                              ? CachedNetworkImage(
-                                  imageUrl: data['image_url'],
-                                  imageBuilder: (_, imageProvider) => CircleAvatar(
-                                    backgroundImage: imageProvider,
-                                    radius: 48,
-                                  ),
-                                  memCacheWidth: 192,
-                                  memCacheHeight: 192,
-                                  placeholder: (_, __) => const SizedBox(
-                                    width: 96,
-                                    height: 96,
-                                  ),
-                                  errorWidget: (_, __, ___) => const Icon(
-                                    Icons.person,
-                                    size: 48,
-                                  ),
-                                )
-                              : Image.asset(
-                                  'assets/images/profiles/$avatarId.png',
-                                  width: 96,
-                                  height: 96,
-                                  fit: BoxFit.cover,
-                                ),
-                        );
-                      }
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      data['name'] ?? data['username'] ?? 'caffeineUser123',
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.w700,
-                        color: textPrim,
-                        fontFamily: 'PoppinsSB',
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      '${tr('joined')}: ${month ?? ''} ${year ?? ''}',
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: textTert,
-                        fontFamily: 'Poppins',
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Wrap(
-                      spacing: 6,
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      alignment: WrapAlignment.center,
-                      children: [
-                        Text(
-                          data['email'] ?? currentUser?.email ?? '',
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: textSec,
-                            fontFamily: 'Poppins',
-                          ),
+              padding: EdgeInsets.symmetric(
+                horizontal: isTablet ? 24 : 16,
+                vertical: isTablet ? 24 : 20,
+              ),
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 880),
+                  child: Column(
+                    children: [
+                      // ── 1. Avatar & Profile Header ────────────────────────
+                      if (isTablet)
+                        _buildTabletHeader(
+                          context,
+                          data: data,
+                          currentUser: currentUser,
+                          isEmailVerified: isEmailVerified,
+                          border: border,
+                          textPrim: textPrim,
+                          textSec: textSec,
+                          textTert: textTert,
+                          elevated: elevated,
+                        )
+                      else
+                        _buildPhoneHeader(
+                          context,
+                          data: data,
+                          currentUser: currentUser,
+                          isEmailVerified: isEmailVerified,
+                          border: border,
+                          textPrim: textPrim,
+                          textSec: textSec,
+                          textTert: textTert,
                         ),
-                        if (isEmailVerified)
-                          Icon(
-                            Icons.verified_rounded,
-                            size: 18,
-                            color: _C.primary,
-                          ),
+
+                      // ── 2. Premium Banner (if enabled on mobile/tablet) ───
+                      if (!isTablet && appDep.displayPremiumBanner) ...[
+                        const SizedBox(height: 20),
+                        PremiumBanner(
+                          onTap: () => Get.toNamed(Routes.premium),
+                          isDark: isDark,
+                        ),
                       ],
-                    ),
 
-                    // ── Premium Banner ────────────────────────────────────
-                    if (appDep.displayPremiumBanner) ...[
-                      const SizedBox(height: 24),
-                      PremiumBanner(
-                        onTap: () => Get.toNamed(Routes.premium),
-                        isDark: isDark,
-                      ),
-                    ],
-
-                    // ── Watch time stats (last 2 weeks) ───────────────────
-                    const SizedBox(height: 24),
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: elevated,
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: border, width: 1),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.history_rounded,
-                                size: 20,
-                                color: _C.secondary,
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                tr('last_2_weeks'),
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                  color: textPrim,
-                                  fontFamily: 'PoppinsSB',
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 16),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: WatchStatCard(
-                                  icon: Icons.movie_creation_rounded,
-                                  label: tr('movies'),
-                                  value: moviesFormatted,
-                                  isDark: isDark,
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: WatchStatCard(
-                                  icon: Icons.live_tv_rounded,
-                                  label: tr('tv_series'),
-                                  value: tvFormatted,
-                                  isDark: isDark,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    // ── Settings list ────────────────────────────────────
-                    const SizedBox(height: 24),
-                    Builder(
-                      builder: (context) {
-                        final showActivateTv = appDep.isFeatureEnabled('toggle_tv_activate_button', defaultValue: true);
-                        final filteredSettings = settingdata.where((item) => showActivateTv || item.tital != tr("pair_tv")).toList();
-                        return Container(
-                          decoration: BoxDecoration(
-                            color: elevated,
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(color: border, width: 1),
-                          ),
-                          child: ListView.separated(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount: filteredSettings.length,
-                            separatorBuilder: (_, __) => Divider(
-                              height: 1,
-                              color: border,
-                              indent: 56,
-                              endIndent: 16,
-                            ),
-                            itemBuilder: (context, i) {
-                              return InkWell(
-                                onTap: filteredSettings[i].onTap,
-                                borderRadius: BorderRadius.circular(16),
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 16, vertical: 14),
-                                  child: Row(
-                                    children: [
-                                      SvgPicture.asset(
-                                        filteredSettings[i].iconImage,
-                                        colorFilter: ColorFilter.mode(
-                                          textPrim,
-                                          BlendMode.srcIn,
-                                        ),
-                                        height: 22,
-                                      ),
-                                      const SizedBox(width: 14),
-                                      Expanded(
-                                        child: Text(
-                                          filteredSettings[i].tital,
-                                          style: TextStyle(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w600,
-                                            color: textPrim,
-                                            fontFamily: 'PoppinsSB',
-                                          ),
-                                        ),
-                                      ),
-                                      if (filteredSettings[i].subTital != null)
-                                        Text(
-                                          '${filteredSettings[i].subTital}',
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w600,
-                                            color: textSec,
-                                          ),
-                                        ),
-                                      const SizedBox(width: 8),
-                                      Icon(
-                                        Icons.arrow_forward_ios_rounded,
-                                        size: 14,
-                                        color: textTert,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        );
-                      }
-                    ),
-
-                    // ── Logout ───────────────────────────────────────────
-                    const SizedBox(height: 20),
-                    InkWell(
-                      onTap: () => SignOutBottomSheet.show(context, sp),
-                      borderRadius: BorderRadius.circular(12),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 4, vertical: 12),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                      // ── 3. Main Content (Dual-column on tablet, Single on phone) ──
+                      SizedBox(height: isTablet ? 24 : 24),
+                      if (isTablet)
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            SvgPicture.asset(
-                              MovixIcon.logOut,
-                              colorFilter: ColorFilter.mode(
-                                _C.primary,
-                                BlendMode.srcIn,
+                            // Left Column: Premium + Watch Stats
+                            Expanded(
+                              flex: 5,
+                              child: Column(
+                                children: [
+                                  if (appDep.displayPremiumBanner) ...[
+                                    PremiumBanner(
+                                      onTap: () => Get.toNamed(Routes.premium),
+                                      isDark: isDark,
+                                    ),
+                                    const SizedBox(height: 20),
+                                  ],
+                                  _buildWatchStatsCard(
+                                    elevated: elevated,
+                                    border: border,
+                                    textPrim: textPrim,
+                                    moviesFormatted: moviesFormatted,
+                                    tvFormatted: tvFormatted,
+                                    isDark: isDark,
+                                  ),
+                                ],
                               ),
-                              height: 20,
                             ),
-                            const SizedBox(width: 10),
-                            Text(
-                              tr('sign_out'),
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w700,
-                                color: _C.primary,
-                                fontFamily: 'PoppinsSB',
+                            const SizedBox(width: 20),
+                            // Right Column: Settings + Sign Out
+                            Expanded(
+                              flex: 6,
+                              child: Column(
+                                children: [
+                                  _buildSettingsList(appDep, elevated, border, textPrim, textSec, textTert),
+                                  const SizedBox(height: 18),
+                                  _buildSignOutButton(context, sp),
+                                ],
                               ),
                             ),
                           ],
+                        )
+                      else ...[
+                        _buildWatchStatsCard(
+                          elevated: elevated,
+                          border: border,
+                          textPrim: textPrim,
+                          moviesFormatted: moviesFormatted,
+                          tvFormatted: tvFormatted,
+                          isDark: isDark,
                         ),
-                      ),
-                    ),
-                    const SizedBox(height: 32),
-                  ],
+                        const SizedBox(height: 24),
+                        _buildSettingsList(appDep, elevated, border, textPrim, textSec, textTert),
+                        const SizedBox(height: 20),
+                        _buildSignOutButton(context, sp),
+                      ],
+
+                      const SizedBox(height: 32),
+                    ],
+                  ),
                 ),
               ),
             ),
           ),
         );
       },
+    );
+  }
+
+  // ── Header for Tablet (Landscape card layout) ──────────────────────────────
+  Widget _buildTabletHeader(
+    BuildContext context, {
+    required Map<String, dynamic> data,
+    required User? currentUser,
+    required bool isEmailVerified,
+    required Color border,
+    required Color textPrim,
+    required Color textSec,
+    required Color textTert,
+    required Color elevated,
+  }) {
+    final authProvider = Provider.of<SignInProvider>(context, listen: false);
+    final dbProfileId = data['profile_id']?.toString();
+    final authProfileId = authProvider.profileId?.toString();
+    final avatarId = (dbProfileId != null && dbProfileId.isNotEmpty)
+        ? dbProfileId
+        : (authProfileId != null && authProfileId.isNotEmpty ? authProfileId : '0');
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(22),
+      decoration: BoxDecoration(
+        color: elevated,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: border, width: 1),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 80,
+            height: 80,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(color: border, width: 2),
+            ),
+            child: (data['image_url'] != null && data['image_url'].toString().isNotEmpty)
+                ? CachedNetworkImage(
+                    imageUrl: data['image_url'],
+                    imageBuilder: (_, imageProvider) => CircleAvatar(
+                      backgroundImage: imageProvider,
+                      radius: 40,
+                    ),
+                    memCacheWidth: 160,
+                    memCacheHeight: 160,
+                    errorWidget: (_, __, ___) => const Icon(Icons.person, size: 40),
+                  )
+                : Image.asset(
+                    'assets/images/profiles/$avatarId.png',
+                    width: 80,
+                    height: 80,
+                    fit: BoxFit.cover,
+                  ),
+          ),
+          const SizedBox(width: 20),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  data['name'] ?? data['username'] ?? 'caffeineUser123',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w700,
+                    color: textPrim,
+                    fontFamily: 'PoppinsSB',
+                  ),
+                ),
+                const SizedBox(height: 3),
+                Row(
+                  children: [
+                    Text(
+                      data['email'] ?? currentUser?.email ?? '',
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: textSec,
+                        fontFamily: 'Poppins',
+                      ),
+                    ),
+                    if (isEmailVerified) ...[
+                      const SizedBox(width: 6),
+                      const Icon(
+                        Icons.verified_rounded,
+                        size: 16,
+                        color: _C.primary,
+                      ),
+                    ],
+                  ],
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  '${tr('joined')}: ${month ?? ''} ${year ?? ''}',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: textTert,
+                    fontFamily: 'Poppins',
+                  ),
+                ),
+              ],
+            ),
+          ),
+          OutlinedButton.icon(
+            onPressed: () => Get.toNamed(Routes.profileEdit),
+            icon: const Icon(Icons.edit_rounded, size: 16),
+            label: Text(
+              tr("edit_profile"),
+              style: const TextStyle(fontWeight: FontWeight.w600, fontFamily: 'PoppinsSB'),
+            ),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: textPrim,
+              side: BorderSide(color: border, width: 1.2),
+              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ── Header for Phone (Centered layout) ──────────────────────────────────────
+  Widget _buildPhoneHeader(
+    BuildContext context, {
+    required Map<String, dynamic> data,
+    required User? currentUser,
+    required bool isEmailVerified,
+    required Color border,
+    required Color textPrim,
+    required Color textSec,
+    required Color textTert,
+  }) {
+    final authProvider = Provider.of<SignInProvider>(context, listen: false);
+    final dbProfileId = data['profile_id']?.toString();
+    final authProfileId = authProvider.profileId?.toString();
+    final avatarId = (dbProfileId != null && dbProfileId.isNotEmpty)
+        ? dbProfileId
+        : (authProfileId != null && authProfileId.isNotEmpty ? authProfileId : '0');
+
+    return Column(
+      children: [
+        Container(
+          width: 96,
+          height: 96,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(color: border, width: 2),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.1),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: (data['image_url'] != null && data['image_url'].toString().isNotEmpty)
+              ? CachedNetworkImage(
+                  imageUrl: data['image_url'],
+                  imageBuilder: (_, imageProvider) => CircleAvatar(
+                    backgroundImage: imageProvider,
+                    radius: 48,
+                  ),
+                  memCacheWidth: 192,
+                  memCacheHeight: 192,
+                  errorWidget: (_, __, ___) => const Icon(Icons.person, size: 48),
+                )
+              : Image.asset(
+                  'assets/images/profiles/$avatarId.png',
+                  width: 96,
+                  height: 96,
+                  fit: BoxFit.cover,
+                ),
+        ),
+        const SizedBox(height: 16),
+        Text(
+          data['name'] ?? data['username'] ?? 'caffeineUser123',
+          style: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.w700,
+            color: textPrim,
+            fontFamily: 'PoppinsSB',
+          ),
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 4),
+        Text(
+          '${tr('joined')}: ${month ?? ''} ${year ?? ''}',
+          style: TextStyle(
+            fontSize: 13,
+            color: textTert,
+            fontFamily: 'Poppins',
+          ),
+        ),
+        const SizedBox(height: 4),
+        Wrap(
+          spacing: 6,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          alignment: WrapAlignment.center,
+          children: [
+            Text(
+              data['email'] ?? currentUser?.email ?? '',
+              style: TextStyle(
+                fontSize: 13,
+                color: textSec,
+                fontFamily: 'Poppins',
+              ),
+            ),
+            if (isEmailVerified)
+              const Icon(
+                Icons.verified_rounded,
+                size: 18,
+                color: _C.primary,
+              ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  // ── Watch Stats Card ───────────────────────────────────────────────────────
+  Widget _buildWatchStatsCard({
+    required Color elevated,
+    required Color border,
+    required Color textPrim,
+    required String moviesFormatted,
+    required String tvFormatted,
+    required bool isDark,
+  }) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: elevated,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: border, width: 1),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(
+                Icons.history_rounded,
+                size: 20,
+                color: _C.secondary,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                tr('last_2_weeks'),
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: textPrim,
+                  fontFamily: 'PoppinsSB',
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: WatchStatCard(
+                  icon: Icons.movie_creation_rounded,
+                  label: tr('movies'),
+                  value: moviesFormatted,
+                  isDark: isDark,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: WatchStatCard(
+                  icon: Icons.live_tv_rounded,
+                  label: tr('tv_series'),
+                  value: tvFormatted,
+                  isDark: isDark,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ── Settings List ──────────────────────────────────────────────────────────
+  Widget _buildSettingsList(
+    AppDependencyProvider appDep,
+    Color elevated,
+    Color border,
+    Color textPrim,
+    Color textSec,
+    Color textTert,
+  ) {
+    final showActivateTv = appDep.isFeatureEnabled('toggle_tv_activate_button', defaultValue: true);
+    final filteredSettings = settingdata.where((item) => showActivateTv || item.tital != tr("pair_tv")).toList();
+    return Container(
+      decoration: BoxDecoration(
+        color: elevated,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: border, width: 1),
+      ),
+      child: ListView.separated(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: filteredSettings.length,
+        separatorBuilder: (_, __) => Divider(
+          height: 1,
+          color: border,
+          indent: 56,
+          endIndent: 16,
+        ),
+        itemBuilder: (context, i) {
+          return InkWell(
+            onTap: filteredSettings[i].onTap,
+            borderRadius: BorderRadius.circular(18),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 14,
+              ),
+              child: Row(
+                children: [
+                  SvgPicture.asset(
+                    filteredSettings[i].iconImage,
+                    colorFilter: ColorFilter.mode(
+                      textPrim,
+                      BlendMode.srcIn,
+                    ),
+                    height: 22,
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Text(
+                      filteredSettings[i].tital,
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                        color: textPrim,
+                        fontFamily: 'PoppinsSB',
+                      ),
+                    ),
+                  ),
+                  if (filteredSettings[i].subTital != null)
+                    Text(
+                      '${filteredSettings[i].subTital}',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: textSec,
+                      ),
+                    ),
+                  const SizedBox(width: 8),
+                  Icon(
+                    Icons.arrow_forward_ios_rounded,
+                    size: 14,
+                    color: textTert,
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  // ── Sign Out Button ────────────────────────────────────────────────────────
+  Widget _buildSignOutButton(BuildContext context, SignInProvider sp) {
+    return InkWell(
+      onTap: () => SignOutBottomSheet.show(context, sp),
+      borderRadius: BorderRadius.circular(12),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 12),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SvgPicture.asset(
+              MovixIcon.logOut,
+              colorFilter: const ColorFilter.mode(
+                _C.primary,
+                BlendMode.srcIn,
+              ),
+              height: 20,
+            ),
+            const SizedBox(width: 10),
+            Text(
+              tr('sign_out'),
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+                color: _C.primary,
+                fontFamily: 'PoppinsSB',
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

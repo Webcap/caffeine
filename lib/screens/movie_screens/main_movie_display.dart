@@ -180,21 +180,24 @@ class _MainMoviesDisplayState extends State<MainMoviesDisplay>
       settings.enableProxy,
       appDep.tmdbProxy,
     ).then((movies) {
-      if (mounted) setState(() => _trendingMovies = movies);
+      if (mounted) {
+        setState(() => _trendingMovies = movies);
+        _buildHeroSlides();
+      }
     }).catchError((_) {});
   }
 
-  // Merge hero slides: discovery featured + sports events
+  // Merge hero slides: featured sports events + featured / trending movies
   void _buildHeroSlides() {
     final appDep = context.read<AppDependencyProvider>();
-    final slides = <_HeroSlide>[];
+    final movieSlides = <_MovieSlide>[];
 
-    // Discovery featured movies
+    // 1. Extract featured movies from discovery feed
     if (_feed != null) {
       final featuredRow = _feed!.rowByType(['featured', 'now_playing', 'popular']);
-      if (featuredRow != null) {
+      if (featuredRow != null && featuredRow.items.isNotEmpty) {
         for (final item in featuredRow.items.take(10)) {
-          slides.add(_MovieSlide(Movie(
+          movieSlides.add(_MovieSlide(Movie(
             id: item.tmdbId,
             title: item.title,
             posterPath: item.posterPath,
@@ -213,19 +216,29 @@ class _MainMoviesDisplayState extends State<MainMoviesDisplay>
       }
     }
 
-    // Inject sports slides when OTT is enabled
-    if (appDep.displayOTTDrawer) {
+    // 2. If discovery feed has no featured movies, fallback to trending movies
+    if (movieSlides.isEmpty && _trendingMovies != null && _trendingMovies!.isNotEmpty) {
+      for (final movie in _trendingMovies!.take(10)) {
+        movieSlides.add(_MovieSlide(movie));
+      }
+    }
+
+    final slides = <_HeroSlide>[];
+
+    // 3. Inject featured sports slides when OTT/Sports is enabled
+    if (appDep.displayOTTDrawer && appDep.featuredEvents.isNotEmpty) {
       final sportsSlides = appDep.featuredEvents
           .where((e) => !appDep.isSportRowHidden(e.sport, title: e.title))
           .take(3)
           .map((e) => _SportsSlide(e))
           .toList();
-      slides.insertAll(0, sportsSlides);
+      slides.addAll(sportsSlides);
     }
 
+    // 4. Append movies so the hero carousel features both sports and top movies
+    slides.addAll(movieSlides);
+
     if (mounted) {
-      // Always set _heroSlides — even an empty list — so the carousel exits
-      // the shimmer state and renders the TMDB fallback widget instead.
       setState(() => _heroSlides = slides);
     }
   }
@@ -401,8 +414,8 @@ class _HeroCarousel extends StatelessWidget {
     final screenWidth = MediaQuery.sizeOf(context).width;
     final isTablet = screenWidth >= 600;
     final isLargeTablet = screenWidth >= 1000;
-    final double carouselHeight = isLargeTablet ? 420.0 : (isTablet ? 340.0 : 230.0);
-    final double viewportFraction = isLargeTablet ? 0.68 : (isTablet ? 0.78 : 0.88);
+    final double carouselHeight = isLargeTablet ? 380.0 : (isTablet ? 340.0 : 230.0);
+    final double viewportFraction = isLargeTablet ? 0.94 : (isTablet ? 0.92 : 0.88);
 
     // Loading
     if (!feedLoaded || slides == null) {
@@ -429,7 +442,7 @@ class _HeroCarousel extends StatelessWidget {
             height: carouselHeight,
             viewportFraction: viewportFraction,
             enlargeCenterPage: true,
-            enlargeFactor: isTablet ? 0.15 : 0.12,
+            enlargeFactor: isTablet ? 0.12 : 0.10,
             enableInfiniteScroll: slideList.length > 2,
             autoPlay: slideList.length > 1,
             autoPlayInterval: const Duration(seconds: 5),
@@ -438,7 +451,19 @@ class _HeroCarousel extends StatelessWidget {
           ),
           itemBuilder: (context, index, _) {
             final slide = slideList[index];
-            return _buildSlide(context, slide, isTablet);
+            if (slide is _SportsSlide) {
+              return _SportHeroSlide(event: slide.event, isTablet: isTablet);
+            }
+            final movie = (slide as _MovieSlide).movie;
+            return _MovieHeroSlide(
+              movie: movie,
+              heroId: 'hero-${movie.id}-$index',
+              themeMode: themeMode,
+              imageQuality: imageQuality,
+              isProxyEnabled: isProxyEnabled,
+              proxyUrl: proxyUrl,
+              isTablet: isTablet,
+            );
           },
         ),
         const SizedBox(height: 10),
@@ -465,16 +490,48 @@ class _HeroCarousel extends StatelessWidget {
       ],
     );
   }
+}
 
-  Widget _buildSlide(BuildContext context, _HeroSlide slide, bool isTablet) {
-    if (slide is _SportsSlide) {
-      return _SportHeroSlide(event: slide.event, isTablet: isTablet);
-    }
-    final movie = (slide as _MovieSlide).movie;
+// ─────────────────────────────────────────────────────────────────────────────
+// Cinematic Movie Hero Slide
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _MovieHeroSlide extends StatelessWidget {
+  final Movie movie;
+  final String heroId;
+  final String themeMode;
+  final String imageQuality;
+  final bool isProxyEnabled;
+  final String proxyUrl;
+  final bool isTablet;
+
+  const _MovieHeroSlide({
+    required this.movie,
+    required this.heroId,
+    required this.themeMode,
+    required this.imageQuality,
+    required this.isProxyEnabled,
+    required this.proxyUrl,
+    required this.isTablet,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     final imgBase = buildImageUrl(tmdbBaseImageUrl, proxyUrl, isProxyEnabled, context);
-    final backdropUrl = movie.backdropPath != null
+    // Prioritize 16:9 landscape backdrop
+    final backdropUrl = (movie.backdropPath != null && movie.backdropPath!.isNotEmpty)
         ? '$imgBase$imageQuality${movie.backdropPath}'
-        : (movie.posterPath != null ? '$imgBase$imageQuality${movie.posterPath}' : '');
+        : (movie.posterPath != null && movie.posterPath!.isNotEmpty
+            ? '$imgBase$imageQuality${movie.posterPath}'
+            : '');
+
+    final releaseYear = movie.releaseDate != null && movie.releaseDate!.length >= 4
+        ? movie.releaseDate!.substring(0, 4)
+        : '';
+    final rating = movie.voteAverage != null && movie.voteAverage! > 0
+        ? movie.voteAverage!.toStringAsFixed(1)
+        : '';
+    final overview = movie.overview?.trim() ?? '';
 
     return GestureDetector(
       onTap: () => Navigator.push(
@@ -482,61 +539,274 @@ class _HeroCarousel extends StatelessWidget {
         MaterialPageRoute(
           builder: (_) => MovieDetailPage(
             movie: movie,
-            heroId: 'hero-${movie.id}',
+            heroId: heroId,
           ),
         ),
       ),
       child: Hero(
-        tag: 'hero-${movie.id}',
+        tag: heroId,
         child: ClipRRect(
           borderRadius: BorderRadius.circular(isTablet ? 20 : 16),
           child: Stack(
             fit: StackFit.expand,
             children: [
+              // 1. Backdrop image
               backdropUrl.isEmpty
                   ? Image.asset('assets/images/na_logo.png', fit: BoxFit.cover)
                   : CachedNetworkImage(
                       imageUrl: backdropUrl,
                       fit: BoxFit.cover,
                       cacheManager: cacheProp(),
-                      placeholder: (_, __) =>
-                          discoverImageShimmer(themeMode),
+                      placeholder: (_, __) => discoverImageShimmer(themeMode),
                       errorWidget: (_, __, ___) => Image.asset(
                         'assets/images/na_logo.png',
                         fit: BoxFit.cover,
                       ),
                     ),
-              // Gradient overlay
+
+              // 2. Multi-layer Dark Gradient for high readability & depth
               Positioned.fill(
                 child: DecoratedBox(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
                         Colors.transparent,
-                        Colors.black.withValues(alpha: 0.82),
+                        Colors.black.withValues(alpha: isTablet ? 0.45 : 0.4),
+                        Colors.black.withValues(alpha: isTablet ? 0.92 : 0.88),
                       ],
+                      stops: const [0.0, 0.45, 1.0],
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                     ),
                   ),
                 ),
               ),
-              // Title at bottom
-              Positioned(
-                left: isTablet ? 20 : 14,
-                right: isTablet ? 20 : 14,
-                bottom: isTablet ? 18 : 14,
-                child: Text(
-                  movie.title ?? '',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: isTablet ? 22 : 17,
-                    fontWeight: FontWeight.w800,
-                    fontFamily: 'PoppinsSB',
-                    shadows: const [Shadow(color: Colors.black87, blurRadius: 6)],
+              if (isTablet)
+                Positioned.fill(
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          Colors.black.withValues(alpha: 0.82),
+                          Colors.black.withValues(alpha: 0.45),
+                          Colors.transparent,
+                        ],
+                        stops: const [0.0, 0.55, 1.0],
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                      ),
+                    ),
                   ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
+                ),
+
+              // 3. Foreground Content (Badges + Title + Metadata + Overview + Buttons)
+              Positioned(
+                left: isTablet ? 24 : 16,
+                right: isTablet ? 24 : 16,
+                bottom: isTablet ? 22 : 14,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Badge: FEATURED + Rating + Year
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: isTablet ? 10 : 8,
+                            vertical: isTablet ? 4 : 3,
+                          ),
+                          decoration: BoxDecoration(
+                            color: _C.primary.withValues(alpha: 0.25),
+                            borderRadius: BorderRadius.circular(6),
+                            border: Border.all(
+                              color: _C.primary.withValues(alpha: 0.6),
+                              width: 1,
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                width: isTablet ? 7 : 6,
+                                height: isTablet ? 7 : 6,
+                                decoration: const BoxDecoration(
+                                  color: _C.primary,
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                              SizedBox(width: isTablet ? 6 : 5),
+                              Text(
+                                'FEATURED',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: isTablet ? 11 : 10,
+                                  fontWeight: FontWeight.w800,
+                                  letterSpacing: 0.8,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        if (rating.isNotEmpty) ...[
+                          const SizedBox(width: 8),
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: isTablet ? 8 : 6,
+                              vertical: isTablet ? 4 : 3,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.black.withValues(alpha: 0.5),
+                              borderRadius: BorderRadius.circular(6),
+                              border: Border.all(
+                                color: const Color(0xFFFACC15).withValues(alpha: 0.4),
+                                width: 0.8,
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.star_rounded,
+                                  size: isTablet ? 14 : 12,
+                                  color: const Color(0xFFFACC15),
+                                ),
+                                const SizedBox(width: 3),
+                                Text(
+                                  rating,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: isTablet ? 11 : 10,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                        if (releaseYear.isNotEmpty) ...[
+                          const SizedBox(width: 8),
+                          Text(
+                            releaseYear,
+                            style: TextStyle(
+                              color: Colors.white70,
+                              fontSize: isTablet ? 12 : 11,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                    SizedBox(height: isTablet ? 8 : 6),
+
+                    // Title
+                    Text(
+                      movie.title ?? '',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: isTablet ? 26 : 18,
+                        fontWeight: FontWeight.w800,
+                        fontFamily: 'PoppinsSB',
+                        letterSpacing: -0.3,
+                        shadows: const [Shadow(color: Colors.black87, blurRadius: 8)],
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+
+                    // Overview on tablets / larger screens
+                    if (isTablet && overview.isNotEmpty) ...[
+                      const SizedBox(height: 6),
+                      ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 580),
+                        child: Text(
+                          overview,
+                          style: const TextStyle(
+                            color: Color(0xCCFFFFFF),
+                            fontSize: 13,
+                            height: 1.35,
+                            fontWeight: FontWeight.w400,
+                            shadows: [Shadow(color: Colors.black54, blurRadius: 4)],
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+
+                    // Action buttons (Watch Now + Details)
+                    if (isTablet) ...[
+                      const SizedBox(height: 14),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 8,
+                            ),
+                            decoration: BoxDecoration(
+                              color: _C.primary,
+                              borderRadius: BorderRadius.circular(20),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: _C.primary.withValues(alpha: 0.4),
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 3),
+                                ),
+                              ],
+                            ),
+                            child: const Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.play_arrow_rounded, color: Colors.white, size: 20),
+                                SizedBox(width: 6),
+                                Text(
+                                  'Watch Now',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 14,
+                              vertical: 8,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.15),
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: Colors.white30,
+                                width: 1,
+                              ),
+                            ),
+                            child: const Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.info_outline_rounded, color: Colors.white, size: 17),
+                                SizedBox(width: 6),
+                                Text(
+                                  'Details',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ],
                 ),
               ),
             ],
@@ -643,11 +913,11 @@ class _SportHeroSlide extends StatelessWidget {
                 ),
               ),
 
-              // LIVE badge + title + tag
+              // LIVE badge + title + tag + action button
               Positioned(
-                left: isTablet ? 20 : 14,
-                right: isTablet ? 20 : 14,
-                bottom: isTablet ? 18 : 14,
+                left: isTablet ? 24 : 16,
+                right: isTablet ? 24 : 16,
+                bottom: isTablet ? 22 : 14,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
@@ -699,7 +969,7 @@ class _SportHeroSlide extends StatelessWidget {
                       event.title,
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: isTablet ? 20 : 16,
+                        fontSize: isTablet ? 24 : 16,
                         fontWeight: FontWeight.w800,
                         fontFamily: 'PoppinsSB',
                         shadows: const [Shadow(color: Colors.black87, blurRadius: 6)],
@@ -707,6 +977,41 @@ class _SportHeroSlide extends StatelessWidget {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
+                    if (isTablet) ...[
+                      const SizedBox(height: 12),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          color: theme.accentColor,
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: theme.accentColor.withValues(alpha: 0.4),
+                              blurRadius: 10,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.play_arrow_rounded, color: Colors.white, size: 20),
+                            SizedBox(width: 6),
+                            Text(
+                              'Watch Stream',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w700,
+                                fontSize: 13,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ),
@@ -1300,6 +1605,7 @@ class _DiscoverFallbackCarouselState
     extends State<_DiscoverFallbackCarousel>
     with AutomaticKeepAliveClientMixin {
   List<Movie>? _movies;
+  int _currentPage = 0;
 
   @override
   void initState() {
@@ -1330,69 +1636,88 @@ class _DiscoverFallbackCarouselState
     super.build(context);
     final settings = context.watch<SettingsProvider>();
     final appDep = context.watch<AppDependencyProvider>();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final themeMode = settings.appTheme;
     final imageQuality = settings.imageQuality;
     final isProxyEnabled = settings.enableProxy;
     final proxyUrl = appDep.tmdbProxy;
     final screenWidth = MediaQuery.sizeOf(context).width;
     final isTablet = screenWidth >= 600;
-    final double carouselHeight = isTablet ? 380 : 350;
-    final double viewportFraction = isTablet ? 0.48 : 0.6;
+    final isLargeTablet = screenWidth >= 1000;
+    final double carouselHeight = isLargeTablet ? 380.0 : (isTablet ? 340.0 : 230.0);
+    final double viewportFraction = isLargeTablet ? 0.94 : (isTablet ? 0.92 : 0.88);
 
     if (_movies == null) {
       return SizedBox(height: carouselHeight, child: discoverMoviesAndTVShimmer(themeMode));
     }
-    if (_movies!.isEmpty) return const SizedBox.shrink();
+    final sportsSlides = (appDep.displayOTTDrawer && appDep.featuredEvents.isNotEmpty)
+        ? appDep.featuredEvents
+            .where((e) => !appDep.isSportRowHidden(e.sport, title: e.title))
+            .take(3)
+            .toList()
+        : <FeaturedEvent>[];
 
-    return SizedBox(
-      height: 350,
-      child: CarouselSlider.builder(
-        options: CarouselOptions(
-          disableCenter: true,
-          viewportFraction: 0.6,
-          enlargeCenterPage: true,
-          autoPlay: true,
+    final moviesList = _movies!.take(8).toList();
+    final totalCount = sportsSlides.length + moviesList.length;
+
+    if (totalCount == 0) return const SizedBox.shrink();
+
+    return Column(
+      children: [
+        CarouselSlider.builder(
+          options: CarouselOptions(
+            height: carouselHeight,
+            viewportFraction: viewportFraction,
+            enlargeCenterPage: true,
+            enlargeFactor: isTablet ? 0.12 : 0.10,
+            enableInfiniteScroll: totalCount > 2,
+            autoPlay: totalCount > 1,
+            autoPlayInterval: const Duration(seconds: 5),
+            autoPlayCurve: Curves.easeInOut,
+            onPageChanged: (i, _) => setState(() => _currentPage = i),
+          ),
+          itemCount: totalCount,
+          itemBuilder: (context, index, _) {
+            if (index < sportsSlides.length) {
+              return _SportHeroSlide(
+                event: sportsSlides[index],
+                isTablet: isTablet,
+              );
+            }
+            final movie = moviesList[index - sportsSlides.length];
+            return _MovieHeroSlide(
+              movie: movie,
+              heroId: 'fbhero-${movie.id}-$index',
+              themeMode: themeMode,
+              imageQuality: imageQuality,
+              isProxyEnabled: isProxyEnabled,
+              proxyUrl: proxyUrl,
+              isTablet: isTablet,
+            );
+          },
         ),
-        itemCount: _movies!.length,
-        itemBuilder: (context, index, _) {
-          final movie = _movies![index];
-          final imgBase = buildImageUrl(
-              tmdbBaseImageUrl, proxyUrl, isProxyEnabled, context);
-          final url = movie.posterPath != null
-              ? '$imgBase$imageQuality${movie.posterPath}'
-              : '';
-          return GestureDetector(
-            onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => MovieDetailPage(
-                  movie: movie,
-                  heroId: 'fbcarousel-${movie.id}-$index',
-                ),
+        const SizedBox(height: 10),
+        // Page indicator dots
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: List.generate(totalCount, (i) {
+            final active = i == _currentPage;
+            return AnimatedContainer(
+              duration: const Duration(milliseconds: 260),
+              margin: const EdgeInsets.symmetric(horizontal: 3),
+              width: active ? (isTablet ? 26 : 20) : (isTablet ? 8 : 6),
+              height: isTablet ? 8 : 6,
+              decoration: BoxDecoration(
+                color: active
+                    ? _C.primary
+                    : (isDark ? Colors.white30 : Colors.black26),
+                borderRadius: BorderRadius.circular(999),
               ),
-            ),
-            child: Hero(
-              tag: 'fbcarousel-${movie.id}-$index',
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: url.isEmpty
-                    ? Image.asset('assets/images/na_logo.png', fit: BoxFit.cover)
-                    : CachedNetworkImage(
-                        cacheManager: cacheProp(),
-                        imageUrl: url,
-                        fit: BoxFit.cover,
-                        placeholder: (_, __) =>
-                            discoverImageShimmer(themeMode),
-                        errorWidget: (_, __, ___) => Image.asset(
-                          'assets/images/na_logo.png',
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-              ),
-            ),
-          );
-        },
-      ),
+            );
+          }),
+        ),
+        const SizedBox(height: 12),
+      ],
     );
   }
 
