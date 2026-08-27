@@ -215,7 +215,11 @@ class _MainMoviesDisplayState extends State<MainMoviesDisplay>
 
     // Inject sports slides when OTT is enabled
     if (appDep.displayOTTDrawer) {
-      final sportsSlides = appDep.featuredEvents.take(3).map((e) => _SportsSlide(e)).toList();
+      final sportsSlides = appDep.featuredEvents
+          .where((e) => !appDep.isSportRowHidden(e.sport, title: e.title))
+          .take(3)
+          .map((e) => _SportsSlide(e))
+          .toList();
       slides.insertAll(0, sportsSlides);
     }
 
@@ -394,12 +398,18 @@ class _HeroCarousel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.sizeOf(context).width;
+    final isTablet = screenWidth >= 600;
+    final isLargeTablet = screenWidth >= 1000;
+    final double carouselHeight = isLargeTablet ? 420.0 : (isTablet ? 340.0 : 230.0);
+    final double viewportFraction = isLargeTablet ? 0.68 : (isTablet ? 0.78 : 0.88);
+
     // Loading
     if (!feedLoaded || slides == null) {
       return Column(
         children: [
           SizedBox(
-            height: 220,
+            height: carouselHeight,
             child: discoverMoviesAndTVShimmer(themeMode),
           ),
         ],
@@ -416,10 +426,10 @@ class _HeroCarousel extends StatelessWidget {
         CarouselSlider.builder(
           itemCount: slideList.length,
           options: CarouselOptions(
-            height: 220,
-            viewportFraction: 0.88,
+            height: carouselHeight,
+            viewportFraction: viewportFraction,
             enlargeCenterPage: true,
-            enlargeFactor: 0.12,
+            enlargeFactor: isTablet ? 0.15 : 0.12,
             enableInfiniteScroll: slideList.length > 2,
             autoPlay: slideList.length > 1,
             autoPlayInterval: const Duration(seconds: 5),
@@ -428,7 +438,7 @@ class _HeroCarousel extends StatelessWidget {
           ),
           itemBuilder: (context, index, _) {
             final slide = slideList[index];
-            return _buildSlide(context, slide);
+            return _buildSlide(context, slide, isTablet);
           },
         ),
         const SizedBox(height: 10),
@@ -440,8 +450,8 @@ class _HeroCarousel extends StatelessWidget {
             return AnimatedContainer(
               duration: const Duration(milliseconds: 260),
               margin: const EdgeInsets.symmetric(horizontal: 3),
-              width: active ? 20 : 6,
-              height: 6,
+              width: active ? (isTablet ? 26 : 20) : (isTablet ? 8 : 6),
+              height: isTablet ? 8 : 6,
               decoration: BoxDecoration(
                 color: active
                     ? _C.primary
@@ -456,9 +466,9 @@ class _HeroCarousel extends StatelessWidget {
     );
   }
 
-  Widget _buildSlide(BuildContext context, _HeroSlide slide) {
+  Widget _buildSlide(BuildContext context, _HeroSlide slide, bool isTablet) {
     if (slide is _SportsSlide) {
-      return _SportHeroSlide(event: slide.event);
+      return _SportHeroSlide(event: slide.event, isTablet: isTablet);
     }
     final movie = (slide as _MovieSlide).movie;
     final imgBase = buildImageUrl(tmdbBaseImageUrl, proxyUrl, isProxyEnabled, context);
@@ -479,7 +489,7 @@ class _HeroCarousel extends StatelessWidget {
       child: Hero(
         tag: 'hero-${movie.id}',
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(isTablet ? 20 : 16),
           child: Stack(
             fit: StackFit.expand,
             children: [
@@ -503,7 +513,7 @@ class _HeroCarousel extends StatelessWidget {
                     gradient: LinearGradient(
                       colors: [
                         Colors.transparent,
-                        Colors.black.withValues(alpha: 0.78),
+                        Colors.black.withValues(alpha: 0.82),
                       ],
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
@@ -513,17 +523,17 @@ class _HeroCarousel extends StatelessWidget {
               ),
               // Title at bottom
               Positioned(
-                left: 14,
-                right: 14,
-                bottom: 14,
+                left: isTablet ? 20 : 14,
+                right: isTablet ? 20 : 14,
+                bottom: isTablet ? 18 : 14,
                 child: Text(
                   movie.title ?? '',
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: Colors.white,
-                    fontSize: 17,
+                    fontSize: isTablet ? 22 : 17,
                     fontWeight: FontWeight.w800,
                     fontFamily: 'PoppinsSB',
-                    shadows: [Shadow(color: Colors.black54, blurRadius: 4)],
+                    shadows: const [Shadow(color: Colors.black87, blurRadius: 6)],
                   ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
@@ -540,7 +550,8 @@ class _HeroCarousel extends StatelessWidget {
 // Sports hero slide
 class _SportHeroSlide extends StatelessWidget {
   final FeaturedEvent event;
-  const _SportHeroSlide({required this.event});
+  final bool isTablet;
+  const _SportHeroSlide({required this.event, this.isTablet = false});
 
   @override
   Widget build(BuildContext context) {
@@ -568,7 +579,7 @@ class _SportHeroSlide extends StatelessWidget {
       ),
       child: Container(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(isTablet ? 20 : 16),
           gradient: LinearGradient(
             colors: theme.gradientColors,
             begin: Alignment.topLeft,
@@ -587,7 +598,7 @@ class _SportHeroSlide extends StatelessWidget {
           ],
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(15),
+          borderRadius: BorderRadius.circular(isTablet ? 19 : 15),
           child: Stack(
             fit: StackFit.expand,
             children: [
@@ -610,7 +621,7 @@ class _SportHeroSlide extends StatelessWidget {
                   opacity: 0.12,
                   child: Icon(
                     theme.icon,
-                    size: 150,
+                    size: isTablet ? 200 : 150,
                     color: Colors.white,
                   ),
                 ),
@@ -634,9 +645,9 @@ class _SportHeroSlide extends StatelessWidget {
 
               // LIVE badge + title + tag
               Positioned(
-                left: 14,
-                right: 14,
-                bottom: 14,
+                left: isTablet ? 20 : 14,
+                right: isTablet ? 20 : 14,
+                bottom: isTablet ? 18 : 14,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
@@ -645,32 +656,35 @@ class _SportHeroSlide extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: isTablet ? 10 : 8,
+                            vertical: isTablet ? 4 : 3,
+                          ),
                           decoration: BoxDecoration(
-                            color: Colors.black.withValues(alpha: 0.4),
+                            color: theme.accentColor.withValues(alpha: 0.25),
                             borderRadius: BorderRadius.circular(6),
                             border: Border.all(
                               color: theme.accentColor.withValues(alpha: 0.6),
-                              width: 0.8,
+                              width: 1,
                             ),
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Container(
-                                width: 6,
-                                height: 6,
+                                width: isTablet ? 8 : 6,
+                                height: isTablet ? 8 : 6,
                                 decoration: BoxDecoration(
                                   color: theme.accentColor,
                                   shape: BoxShape.circle,
                                 ),
                               ),
-                              const SizedBox(width: 5),
+                              SizedBox(width: isTablet ? 7 : 5),
                               Text(
                                 '${theme.label} · LIVE NOW',
-                                style: const TextStyle(
+                                style: TextStyle(
                                   color: Colors.white,
-                                  fontSize: 10,
+                                  fontSize: isTablet ? 12 : 10,
                                   fontWeight: FontWeight.w800,
                                   letterSpacing: 0.6,
                                 ),
@@ -683,12 +697,12 @@ class _SportHeroSlide extends StatelessWidget {
                     const SizedBox(height: 6),
                     Text(
                       event.title,
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: Colors.white,
-                        fontSize: 16,
+                        fontSize: isTablet ? 20 : 16,
                         fontWeight: FontWeight.w800,
                         fontFamily: 'PoppinsSB',
-                        shadows: [Shadow(color: Colors.black87, blurRadius: 6)],
+                        shadows: const [Shadow(color: Colors.black87, blurRadius: 6)],
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -744,13 +758,16 @@ class _ContinueWatchingRowState extends State<_ContinueWatchingRow> {
   @override
   Widget build(BuildContext context) {
     final textPrim = widget.isDark ? _C.textPrimDark : _C.textPrimLight;
+    final isTablet = MediaQuery.sizeOf(context).width >= 600;
+    final cardWidth = isTablet ? 250.0 : 200.0;
+    final cardHeight = isTablet ? 155.0 : 130.0;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Section header
         Padding(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 10),
+          padding: EdgeInsets.fromLTRB(isTablet ? 20 : 16, 8, isTablet ? 20 : 16, 10),
           child: Row(
             children: [
               Container(
@@ -765,7 +782,7 @@ class _ContinueWatchingRowState extends State<_ContinueWatchingRow> {
               Text(
                 tr('recently_watched'),
                 style: TextStyle(
-                  fontSize: 17,
+                  fontSize: isTablet ? 19 : 17,
                   fontWeight: FontWeight.w700,
                   color: textPrim,
                   fontFamily: 'PoppinsSB',
@@ -777,11 +794,11 @@ class _ContinueWatchingRowState extends State<_ContinueWatchingRow> {
 
         // Wide cards horizontal list
         SizedBox(
-          height: 130,
+          height: cardHeight,
           child: ListView.builder(
             physics: const BouncingScrollPhysics(),
             scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 12),
+            padding: EdgeInsets.symmetric(horizontal: isTablet ? 20 : 12),
             itemCount: widget.movies.length,
             itemBuilder: (context, index) {
               final movie = widget.movies[index];
@@ -800,7 +817,7 @@ class _ContinueWatchingRowState extends State<_ContinueWatchingRow> {
                       : '');
 
               return Padding(
-                padding: const EdgeInsets.only(right: 10),
+                padding: EdgeInsets.only(right: isTablet ? 14 : 10),
                 child: GestureDetector(
                   onLongPress: () {
                     _suppressTap();
@@ -825,11 +842,11 @@ class _ContinueWatchingRowState extends State<_ContinueWatchingRow> {
                       ],
                     );
                   },
-                  onTap: () async {
+                  onTap: () {
                     if (_lockTap) return;
-                    final connected = await checkConnection();
-                    if (!context.mounted) return;
-                    if (connected) {
+                    if (Provider.of<AppDependencyProvider>(context,
+                            listen: false)
+                        .displayWatchNowButton) {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -866,24 +883,24 @@ class _ContinueWatchingRowState extends State<_ContinueWatchingRow> {
                     }
                   },
                   child: SizedBox(
-                    width: 200,
+                    width: cardWidth,
                     child: Stack(
                       children: [
                         // Backdrop/poster image
                         ClipRRect(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(isTablet ? 16 : 12),
                           child: imageUrl.isEmpty
                               ? Image.asset(
                                   'assets/images/na_logo.png',
-                                  width: 200,
-                                  height: 130,
+                                  width: cardWidth,
+                                  height: cardHeight,
                                   fit: BoxFit.cover,
                                 )
                               : CachedNetworkImage(
                                   cacheManager: cacheProp(),
                                   imageUrl: imageUrl,
-                                  width: 200,
-                                  height: 130,
+                                  width: cardWidth,
+                                  height: cardHeight,
                                   fit: BoxFit.cover,
                                   placeholder: (_, __) =>
                                       scrollingImageShimmer(widget.themeMode),
@@ -896,7 +913,7 @@ class _ContinueWatchingRowState extends State<_ContinueWatchingRow> {
                         // Dark gradient overlay — must be direct Stack child (not inside ClipRRect)
                         Positioned.fill(
                           child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(isTablet ? 16 : 12),
                             child: DecoratedBox(
                               decoration: BoxDecoration(
                                 gradient: LinearGradient(
@@ -937,18 +954,18 @@ class _ContinueWatchingRowState extends State<_ContinueWatchingRow> {
                         // Play icon overlay
                         Center(
                           child: Container(
-                            width: 36,
-                            height: 36,
+                            width: isTablet ? 44 : 36,
+                            height: isTablet ? 44 : 36,
                             decoration: BoxDecoration(
                               color: Colors.white.withValues(alpha: 0.25),
                               shape: BoxShape.circle,
                               border: Border.all(
                                   color: Colors.white54, width: 1.5),
                             ),
-                            child: const Icon(
+                            child: Icon(
                               Icons.play_arrow_rounded,
                               color: Colors.white,
-                              size: 22,
+                              size: isTablet ? 26 : 22,
                             ),
                           ),
                         ),
@@ -962,9 +979,9 @@ class _ContinueWatchingRowState extends State<_ContinueWatchingRow> {
                             children: [
                               Text(
                                 movie.title ?? '',
-                                style: const TextStyle(
+                                style: TextStyle(
                                   color: Colors.white,
-                                  fontSize: 11,
+                                  fontSize: isTablet ? 13 : 11,
                                   fontWeight: FontWeight.w600,
                                   fontFamily: 'PoppinsSB',
                                 ),
@@ -1007,8 +1024,8 @@ class _ContinueWatchingRowState extends State<_ContinueWatchingRow> {
         Divider(
           color: widget.isDark ? Colors.white12 : Colors.black12,
           thickness: 1,
-          endIndent: 20,
-          indent: 10,
+          endIndent: isTablet ? 24 : 20,
+          indent: isTablet ? 24 : 10,
         ),
       ],
     );
@@ -1043,13 +1060,17 @@ class _TrendingNowRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textPrim = isDark ? _C.textPrimDark : _C.textPrimLight;
+    final isTablet = MediaQuery.sizeOf(context).width >= 600;
+    final cardWidth = isTablet ? 140.0 : 115.0;
+    final posterHeight = cardWidth * 1.5; // True 2:3 cinematic poster ratio
+    final rowHeight = posterHeight + (isTablet ? 48.0 : 40.0);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Header row
         Padding(
-          padding: const EdgeInsets.fromLTRB(16, 8, 8, 10),
+          padding: EdgeInsets.fromLTRB(isTablet ? 20 : 16, 8, isTablet ? 20 : 8, 10),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -1067,7 +1088,7 @@ class _TrendingNowRow extends StatelessWidget {
                   Text(
                     tr('trending_this_week'),
                     style: TextStyle(
-                      fontSize: 17,
+                      fontSize: isTablet ? 19 : 17,
                       fontWeight: FontWeight.w700,
                       color: textPrim,
                       fontFamily: 'PoppinsSB',
@@ -1101,9 +1122,9 @@ class _TrendingNowRow extends StatelessWidget {
                 ),
                 child: Text(
                   tr('view_all'),
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.w600,
-                    fontSize: 13,
+                    fontSize: isTablet ? 14 : 13,
                   ),
                 ),
               ),
@@ -1111,15 +1132,15 @@ class _TrendingNowRow extends StatelessWidget {
           ),
         ),
 
-        // Cards
+        // Cards (2:3 true aspect ratio)
         SizedBox(
-          height: 215,
+          height: rowHeight,
           child: movies == null
               ? scrollingMoviesAndTVShimmer(themeMode)
               : ListView.builder(
                   physics: const BouncingScrollPhysics(),
                   scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  padding: EdgeInsets.symmetric(horizontal: isTablet ? 20 : 12),
                   itemCount: movies!.length,
                   itemBuilder: (context, index) {
                     final movie = movies![index];
@@ -1130,7 +1151,7 @@ class _TrendingNowRow extends StatelessWidget {
                         : '';
 
                     return Padding(
-                      padding: const EdgeInsets.only(right: 10),
+                      padding: EdgeInsets.only(right: isTablet ? 14 : 10),
                       child: GestureDetector(
                         onTap: () => Navigator.push(
                           context,
@@ -1142,20 +1163,22 @@ class _TrendingNowRow extends StatelessWidget {
                           ),
                         ),
                         child: SizedBox(
-                          width: 110,
+                          width: cardWidth,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
                             children: [
-                              // Poster with rating badge
-                              Expanded(
-                                flex: 6,
+                              // Poster with 2:3 aspect ratio & rating badge
+                              SizedBox(
+                                width: cardWidth,
+                                height: posterHeight,
                                 child: Hero(
                                   tag: 'trending-${movie.id}-$index',
                                   child: Stack(
                                     children: [
                                       ClipRRect(
                                         borderRadius:
-                                            BorderRadius.circular(10),
+                                            BorderRadius.circular(isTablet ? 12 : 10),
                                         child: posterUrl.isEmpty
                                             ? Image.asset(
                                                 'assets/images/na_logo.png',
@@ -1221,20 +1244,17 @@ class _TrendingNowRow extends StatelessWidget {
                                 ),
                               ),
                               // Title
-                              Expanded(
-                                flex: 2,
-                                child: Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(2, 5, 2, 0),
-                                  child: Text(
-                                    movie.title ?? '',
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.w600,
-                                      color: textPrim,
-                                    ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(2, 6, 2, 0),
+                                child: Text(
+                                  movie.title ?? '',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontSize: isTablet ? 13 : 11,
+                                    fontWeight: FontWeight.w600,
+                                    color: textPrim,
                                   ),
                                 ),
                               ),
@@ -1250,8 +1270,8 @@ class _TrendingNowRow extends StatelessWidget {
         Divider(
           color: isDark ? Colors.white12 : Colors.black12,
           thickness: 1,
-          endIndent: 20,
-          indent: 10,
+          endIndent: isTablet ? 24 : 20,
+          indent: isTablet ? 24 : 10,
         ),
       ],
     );
@@ -1314,9 +1334,13 @@ class _DiscoverFallbackCarouselState
     final imageQuality = settings.imageQuality;
     final isProxyEnabled = settings.enableProxy;
     final proxyUrl = appDep.tmdbProxy;
+    final screenWidth = MediaQuery.sizeOf(context).width;
+    final isTablet = screenWidth >= 600;
+    final double carouselHeight = isTablet ? 380 : 350;
+    final double viewportFraction = isTablet ? 0.48 : 0.6;
 
     if (_movies == null) {
-      return SizedBox(height: 350, child: discoverMoviesAndTVShimmer(themeMode));
+      return SizedBox(height: carouselHeight, child: discoverMoviesAndTVShimmer(themeMode));
     }
     if (_movies!.isEmpty) return const SizedBox.shrink();
 
@@ -1405,6 +1429,10 @@ class _DiscoveryRowWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final textPrim = isDark ? _C.textPrimDark : _C.textPrimLight;
     final items = row.items;
+    final isTablet = MediaQuery.sizeOf(context).width >= 600;
+    final cardWidth = isTablet ? 140.0 : 115.0;
+    final posterHeight = cardWidth * 1.5; // True 2:3 aspect ratio
+    final rowHeight = posterHeight + (isTablet ? 48.0 : 40.0);
 
     if (items.isEmpty) return const SizedBox.shrink();
 
@@ -1413,7 +1441,7 @@ class _DiscoveryRowWidget extends StatelessWidget {
       children: [
         // Header row
         Padding(
-          padding: const EdgeInsets.fromLTRB(16, 8, 8, 10),
+          padding: EdgeInsets.fromLTRB(isTablet ? 20 : 16, 8, isTablet ? 20 : 8, 10),
           child: Row(
             children: [
               Container(
@@ -1429,7 +1457,7 @@ class _DiscoveryRowWidget extends StatelessWidget {
                 child: Text(
                   row.title,
                   style: TextStyle(
-                    fontSize: 17,
+                    fontSize: isTablet ? 19 : 17,
                     fontWeight: FontWeight.w700,
                     color: textPrim,
                     fontFamily: 'PoppinsSB',
@@ -1440,13 +1468,13 @@ class _DiscoveryRowWidget extends StatelessWidget {
           ),
         ),
 
-        // Cards
+        // Cards (True 2:3 aspect ratio)
         SizedBox(
-          height: 215,
+          height: rowHeight,
           child: ListView.builder(
             physics: const BouncingScrollPhysics(),
             scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 12),
+            padding: EdgeInsets.symmetric(horizontal: isTablet ? 20 : 12),
             itemCount: items.length,
             itemBuilder: (context, index) {
               final item = items[index];
@@ -1457,7 +1485,7 @@ class _DiscoveryRowWidget extends StatelessWidget {
                   : '';
 
               return Padding(
-                padding: const EdgeInsets.only(right: 10),
+                padding: EdgeInsets.only(right: isTablet ? 14 : 10),
                 child: GestureDetector(
                   onTap: () {
                     final heroId = '${row.id}-${item.tmdbId}-$index';
@@ -1512,19 +1540,21 @@ class _DiscoveryRowWidget extends StatelessWidget {
                     }
                   },
                   child: SizedBox(
-                    width: 110,
+                    width: cardWidth,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        // Poster with rating badge
-                        Expanded(
-                          flex: 6,
+                        // Poster with rating badge (True 2:3 aspect ratio)
+                        SizedBox(
+                          width: cardWidth,
+                          height: posterHeight,
                           child: Hero(
                             tag: '${row.id}-${item.tmdbId}-$index',
                             child: Stack(
                               children: [
                                 ClipRRect(
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(isTablet ? 12 : 10),
                                   child: posterUrl.isEmpty
                                       ? Image.asset(
                                           'assets/images/na_logo.png',
@@ -1587,19 +1617,16 @@ class _DiscoveryRowWidget extends StatelessWidget {
                           ),
                         ),
                         // Title
-                        Expanded(
-                          flex: 2,
-                          child: Padding(
-                            padding: const EdgeInsets.fromLTRB(2, 5, 2, 0),
-                            child: Text(
-                              item.title ?? '',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w600,
-                                color: textPrim,
-                              ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(2, 6, 2, 0),
+                          child: Text(
+                            item.title ?? '',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: isTablet ? 13 : 11,
+                              fontWeight: FontWeight.w600,
+                              color: textPrim,
                             ),
                           ),
                         ),
@@ -1615,8 +1642,8 @@ class _DiscoveryRowWidget extends StatelessWidget {
         Divider(
           color: isDark ? Colors.white12 : Colors.black12,
           thickness: 1,
-          endIndent: 20,
-          indent: 10,
+          endIndent: isTablet ? 24 : 20,
+          indent: isTablet ? 24 : 10,
         ),
       ],
     );

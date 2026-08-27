@@ -91,6 +91,11 @@ class DiscoverTVState extends State<DiscoverTV>
     final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     final isProxyEnabled = Provider.of<SettingsProvider>(context).enableProxy;
     final proxyUrl = Provider.of<AppDependencyProvider>(context).tmdbProxy;
+    final screenWidth = MediaQuery.sizeOf(context).width;
+    final isTablet = screenWidth >= 600;
+    final double carouselHeight = isTablet ? 380.0 : 350.0;
+    final double viewportFraction = isTablet ? 0.48 : 0.6;
+
     return Column(
       children: <Widget>[
         Row(
@@ -98,7 +103,7 @@ class DiscoverTVState extends State<DiscoverTV>
           children: <Widget>[
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: EdgeInsets.all(isTablet ? 12.0 : 8.0),
                 child: Row(
                   children: [
                     const LeadingDot(),
@@ -116,7 +121,7 @@ class DiscoverTVState extends State<DiscoverTV>
         ),
         SizedBox(
           width: double.infinity,
-          height: 350,
+          height: carouselHeight,
           child: tvList == null
               ? discoverMoviesAndTVShimmer(themeMode)
               : tvList!.isEmpty
@@ -129,7 +134,7 @@ class DiscoverTVState extends State<DiscoverTV>
                   : CarouselSlider.builder(
                       options: CarouselOptions(
                         disableCenter: true,
-                        viewportFraction: 0.6,
+                        viewportFraction: viewportFraction,
                         enlargeCenterPage: true,
                         autoPlay: true,
                       ),
@@ -149,7 +154,7 @@ class DiscoverTVState extends State<DiscoverTV>
                           child: Hero(
                             tag: heroTag,
                             child: ClipRRect(
-                              borderRadius: BorderRadius.circular(8.0),
+                              borderRadius: BorderRadius.circular(isTablet ? 14.0 : 8.0),
                               child: CachedPosterImage(
                                 cacheManager: cacheProp(),
                                 preset: CachePreset.posterLarge,

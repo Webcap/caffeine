@@ -227,8 +227,12 @@ class ChannelListState extends State<ChannelList> {
   /// Unique sports from ESPN events, sorted.
   List<String> get _sportFilters {
     if (_todayEvents == null) return [];
+    final appDep = Provider.of<AppDependencyProvider>(context, listen: false);
     final set = <String>{};
     for (final e in _todayEvents!) {
+      if (appDep.isSportRowHidden(e.sport, league: e.league, title: e.game.name, game: e.game)) {
+        continue;
+      }
       final s = e.sport.trim();
       if (s.isNotEmpty) set.add(s.toUpperCase());
     }
@@ -238,7 +242,10 @@ class ChannelListState extends State<ChannelList> {
 
   List<EspnListEvent> get _filteredEvents {
     if (_todayEvents == null) return [];
-    var list = _todayEvents!;
+    final appDep = Provider.of<AppDependencyProvider>(context, listen: false);
+    var list = _todayEvents!
+        .where((e) => !appDep.isSportRowHidden(e.sport, league: e.league, title: e.game.name, game: e.game))
+        .toList();
     if (_sportFilter != null && _sportFilter!.isNotEmpty) {
       final sportLower = _sportFilter!.toLowerCase();
       list = list.where((e) => e.sport.toLowerCase() == sportLower).toList();
@@ -347,6 +354,10 @@ class ChannelListState extends State<ChannelList> {
   }
 
   Widget _buildBody(bool isDark) {
+    final appDep = Provider.of<AppDependencyProvider>(context);
+    if (!appDep.displayOTTDrawer) {
+      return _buildEmptyState(isDark, "Live sports are currently disabled");
+    }
     if (_loadFailed) {
       return _buildErrorCard(isDark);
     }
@@ -364,14 +375,15 @@ class ChannelListState extends State<ChannelList> {
     }
     final cats = _categorizedEvents;
     final dateStr = DateFormat('EEEE, MMMM d').format(DateTime.now());
-    final featuredEvent =
-        Provider.of<AppDependencyProvider>(context).featuredEvent;
+    final featuredEvent = appDep.featuredEvent;
+    final showFeatured = featuredEvent != null &&
+        !appDep.isSportRowHidden(featuredEvent.sport, title: featuredEvent.title);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         const _BannerWrapper(),
-        if (featuredEvent != null) FeaturedMatchCard(event: featuredEvent),
+        if (showFeatured) FeaturedMatchCard(event: featuredEvent),
         Padding(
           padding: const EdgeInsets.only(bottom: 16, top: 8),
           child: Text(

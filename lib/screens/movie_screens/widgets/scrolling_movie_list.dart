@@ -112,6 +112,10 @@ class ScrollingMoviesState extends State<ScrollingMovies>
     final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     final isProxyEnabled = Provider.of<SettingsProvider>(context).enableProxy;
     final proxyUrl = Provider.of<AppDependencyProvider>(context).tmdbProxy;
+    final isTablet = MediaQuery.sizeOf(context).width >= 600;
+    final cardWidth = isTablet ? 140.0 : 115.0;
+    final posterHeight = cardWidth * 1.5;
+    final rowHeight = posterHeight + (isTablet ? 56.0 : 48.0);
     if (moviesList != null && moviesList!.isEmpty) {
       return const SizedBox.shrink();
     }
@@ -166,7 +170,7 @@ class ScrollingMoviesState extends State<ScrollingMovies>
         ),
         SizedBox(
           width: double.infinity,
-          height: 250,
+          height: rowHeight,
           child: moviesList == null || widget.includeAdult == null
               ? scrollingMoviesAndTVShimmer(themeMode)
               : Row(
@@ -175,6 +179,7 @@ class ScrollingMoviesState extends State<ScrollingMovies>
                       child: ListView.builder(
                         controller: _scrollController,
                         physics: const BouncingScrollPhysics(),
+                        padding: EdgeInsets.symmetric(horizontal: isTablet ? 16 : 8),
                         itemCount: (() {
                           final appDep = Provider.of<AppDependencyProvider>(context, listen: false);
                           final ads = appDep.initialAds.where((a) => a.matchesPlacement('poster')).toList();
@@ -185,8 +190,7 @@ class ScrollingMoviesState extends State<ScrollingMovies>
                           final appDep = Provider.of<AppDependencyProvider>(context, listen: false);
                           final posterAds = appDep.initialAds.where((a) => a.matchesPlacement('poster')).toList();
                           
-                          // Decide ad position based on row title
-                          int adPos = 5; // Default for others
+                          int adPos = 5;
                           if (widget.title.toLowerCase().contains('trending')) adPos = 3;
                           if (widget.title.toLowerCase().contains('popular')) adPos = 1;
 
@@ -200,7 +204,10 @@ class ScrollingMoviesState extends State<ScrollingMovies>
                           final movie = moviesList![movieIndex];
 
                           return Padding(
-                            padding: const EdgeInsets.all(8.0),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: isTablet ? 6.0 : 4.0,
+                              vertical: 2.0,
+                            ),
                             child: GestureDetector(
                               onTap: () {
                                 Navigator.push(
@@ -212,11 +219,14 @@ class ScrollingMoviesState extends State<ScrollingMovies>
                                                 '${movie.id}-${widget.title}-${widget.discoverType}-$index')));
                               },
                               child: SizedBox(
-                                width: 100,
+                                width: cardWidth,
                                 child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
                                   children: <Widget>[
-                                    Expanded(
-                                      flex: 6,
+                                    SizedBox(
+                                      width: cardWidth,
+                                      height: posterHeight,
                                       child: Hero(
                                         tag:
                                             '${movie.id}-${widget.title}-${widget.discoverType}-$index',
@@ -227,10 +237,8 @@ class ScrollingMoviesState extends State<ScrollingMovies>
                                             children: [
                                               ClipRRect(
                                                 borderRadius:
-                                                    BorderRadius.circular(8.0),
-                                                child: movie
-                                                            .posterPath ==
-                                                        null
+                                                    BorderRadius.circular(isTablet ? 12.0 : 8.0),
+                                                child: movie.posterPath == null
                                                     ? Image.asset(
                                                         'assets/images/na_logo.png',
                                                         fit: BoxFit.cover,
@@ -251,9 +259,7 @@ class ScrollingMoviesState extends State<ScrollingMovies>
                                                                     700),
                                                         fadeInCurve:
                                                             Curves.easeIn,
-                                                        imageUrl: movie
-                                                                    .posterPath ==
-                                                                null
+                                                        imageUrl: movie.posterPath == null
                                                             ? ''
                                                             : buildImageUrl(
                                                                     tmdbBaseImageUrl,
@@ -261,21 +267,10 @@ class ScrollingMoviesState extends State<ScrollingMovies>
                                                                     isProxyEnabled,
                                                                     context) +
                                                                 imageQuality +
-                                                                movie
-                                                                    .posterPath!,
-                                                        imageBuilder: (context,
-                                                                imageProvider) =>
-                                                            Container(
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            image:
-                                                                DecorationImage(
-                                                              image:
-                                                                  imageProvider,
-                                                              fit: BoxFit.cover,
-                                                            ),
-                                                          ),
-                                                        ),
+                                                                movie.posterPath!,
+                                                        fit: BoxFit.cover,
+                                                        width: double.infinity,
+                                                        height: double.infinity,
                                                         placeholder: (context,
                                                                 url) =>
                                                             scrollingImageShimmer(
@@ -283,63 +278,64 @@ class ScrollingMoviesState extends State<ScrollingMovies>
                                                         errorWidget: (context,
                                                                 url, error) =>
                                                             Image.asset(
-                                                                'assets/images/na_logo.png',
-                                                                fit: BoxFit
-                                                                    .cover,
-                                                                width: double
-                                                                    .infinity,
-                                                                height: double
-                                                                    .infinity),
+                                                          'assets/images/na_logo.png',
+                                                          fit: BoxFit
+                                                              .cover,
+                                                          width: double
+                                                              .infinity,
+                                                          height: double
+                                                              .infinity),
                                                       ),
                                               ),
-                                              Positioned(
-                                                top: 0,
-                                                left: 0,
-                                                child: Container(
-                                                  margin:
-                                                      const EdgeInsets.all(3),
-                                                  alignment: Alignment.topLeft,
-                                                  width: 50,
-                                                  height: 25,
-                                                  decoration: BoxDecoration(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              8),
-                                                      color:
-                                                          themeMode == "dark" ||
-                                                                  themeMode ==
-                                                                      "amoled"
-                                                              ? Colors.black45
-                                                              : Colors.white60),
-                                                  child: Row(
-                                                    children: [
-                                                      const Icon(
-                                                        Icons.star_rounded,
-                                                      ),
-                                                      Text(movie
-                                                          .voteAverage!
-                                                          .toStringAsFixed(1))
-                                                    ],
+                                              if (movie.voteAverage != null)
+                                                Positioned(
+                                                  top: 4,
+                                                  left: 4,
+                                                  child: Container(
+                                                    padding: const EdgeInsets.symmetric(
+                                                        horizontal: 5, vertical: 2),
+                                                    decoration: BoxDecoration(
+                                                      borderRadius: BorderRadius.circular(6),
+                                                      color: Colors.black.withValues(alpha: 0.65),
+                                                    ),
+                                                    child: Row(
+                                                      mainAxisSize: MainAxisSize.min,
+                                                      children: [
+                                                        const Icon(
+                                                          Icons.star_rounded,
+                                                          size: 11,
+                                                          color: Color(0xFFFACC15),
+                                                        ),
+                                                        const SizedBox(width: 2),
+                                                        Text(
+                                                          movie.voteAverage!.toStringAsFixed(1),
+                                                          style: const TextStyle(
+                                                            color: Colors.white,
+                                                            fontSize: 10,
+                                                            fontWeight: FontWeight.w700,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
                                             ],
                                           ),
                                         ),
                                       ),
                                     ),
-                                    Expanded(
-                                      flex: 3,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Text(
-                                          movie.title!,
-                                          maxLines: 2,
-                                          textAlign: TextAlign.center,
-                                          overflow: TextOverflow.ellipsis,
+                                    Padding(
+                                      padding: const EdgeInsets.fromLTRB(2, 6, 2, 0),
+                                      child: Text(
+                                        movie.title ?? '',
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          fontSize: isTablet ? 12 : 11,
+                                          fontWeight: FontWeight.w600,
                                         ),
                                       ),
-                                    )
+                                    ),
                                   ],
                                 ),
                               ),
@@ -351,7 +347,7 @@ class ScrollingMoviesState extends State<ScrollingMovies>
                     Visibility(
                       visible: isLoading,
                       child: SizedBox(
-                        width: 110,
+                        width: cardWidth,
                         child: horizontalLoadMoreShimmer(themeMode),
                       ),
                     ),
@@ -361,8 +357,8 @@ class ScrollingMoviesState extends State<ScrollingMovies>
         Divider(
           color: themeMode == "light" ? Colors.black54 : Colors.white54,
           thickness: 1,
-          endIndent: 20,
-          indent: 10,
+          endIndent: isTablet ? 24 : 20,
+          indent: isTablet ? 24 : 10,
         ),
       ],
     );

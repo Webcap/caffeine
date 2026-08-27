@@ -54,8 +54,11 @@ class _MainTVDisplayState extends State<MainTVDisplay> {
     final rEpisodes = Provider.of<RecentProvider>(context).upNextEpisodes;
     final inProgress = Provider.of<RecentProvider>(context).inProgressEpisodes;
     final lang = settings.appLanguage;
-    final featuredEvent =
-        Provider.of<AppDependencyProvider>(context).featuredEvent;
+    final appDep = Provider.of<AppDependencyProvider>(context);
+    final featuredEvent = appDep.featuredEvent;
+    final showFeatured = appDep.displayOTTDrawer &&
+        featuredEvent != null &&
+        !appDep.isSportRowHidden(featuredEvent.sport, title: featuredEvent.title);
 
     return RefreshIndicator(
       onRefresh: _refreshData,
@@ -66,7 +69,7 @@ class _MainTVDisplayState extends State<MainTVDisplay> {
           parent: BouncingScrollPhysics(),
         ),
         children: [
-          if (featuredEvent != null)
+          if (showFeatured)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
               child: FeaturedMatchCard(event: featuredEvent),

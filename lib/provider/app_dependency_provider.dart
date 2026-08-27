@@ -2,11 +2,13 @@ import 'package:reelriot/utils/constant.dart';
 import 'package:reelriot/utils/constant.dart' as constants;
 import 'package:flutter/foundation.dart';
 import 'package:reelriot/models/live_tv.dart';
+import 'package:reelriot/models/espn_scoreboard.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../preferences/app_dependency_preferences.dart';
 import '../services/ad_service.dart';
 import '../models/ad.dart';
 import '../utils/flavor_config.dart';
+import '../utils/sports_helpers.dart';
 
 import '../services/analytics_service.dart';
 
@@ -253,6 +255,18 @@ class AppDependencyProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  List<String> _hiddenSportsRows = [];
+  List<String> get hiddenSportsRows => _hiddenSportsRows;
+  set hiddenSportsRows(List<String> value) {
+    _hiddenSportsRows = value;
+    notifyListeners();
+  }
+
+  /// Checks if a sport/league/title is hidden by admin config
+  bool isSportRowHidden(String? sport, {String? league, String? title, EspnScoreboardGame? game}) {
+    return isSportHidden(sport, _hiddenSportsRows, league: league, title: title, game: game);
+  }
+
   bool _enableADS = true;
   bool get enableADS {
     if (getFlag<bool>('simulate_ads', false)) return true;
@@ -426,6 +440,30 @@ class AppDependencyProvider extends ChangeNotifier {
   Future<void> fetchSportsStreams() async {
     try {
       final supabase = Supabase.instance.client;
+
+      // Sync latest app_config (hidden_sports_rows & enable_live_sports) from Supabase
+      try {
+        final configRes = await supabase
+            .from('app_config')
+            .select('config')
+            .eq('id', '00000000-0000-0000-0000-000000000001')
+            .maybeSingle();
+        if (configRes != null && configRes['config'] is Map) {
+          final cfg = configRes['config'] as Map;
+          if (cfg['hidden_sports_rows'] is List) {
+            _hiddenSportsRows =
+                (cfg['hidden_sports_rows'] as List).map((e) => e.toString()).toList();
+          }
+          if (cfg['enable_live_sports'] != null) {
+            final v = cfg['enable_live_sports'];
+            _displayOTTDrawer = v == true || v.toString().toLowerCase() == 'true';
+            _prefs.setEnableOtt(_displayOTTDrawer);
+          }
+        }
+      } catch (e) {
+        debugPrint('Error syncing app_config for sports from Supabase: $e');
+      }
+
       final response = await supabase
           .from('live_streams')
           .select()
@@ -434,7 +472,7 @@ class AppDependencyProvider extends ChangeNotifier {
           .neq('video_url', '')
           .order('updated_at', ascending: false);
 
-      _featuredEvents = (response as List)
+      final mapped = (response as List)
           .map((e) => FeaturedEvent(
                 id: e['id']?.toString() ?? '',
                 title: e['title'] ?? '',
@@ -445,14 +483,22 @@ class AppDependencyProvider extends ChangeNotifier {
               ))
           .toList();
 
+      // Filter out events whose sport row is hidden
+      _featuredEvents = mapped
+          .where((e) => !isSportRowHidden(e.sport, title: e.title))
+          .toList();
+
       if (_featuredEvents.isNotEmpty) {
         _featuredEvent = _featuredEvents.first;
+      } else {
+        _featuredEvent = null;
       }
       notifyListeners();
     } catch (e) {
       debugPrint('Error fetching sports streams from Supabase: $e');
     }
   }
+
 
   // --- Misc (stored, rarely used) ---
   String _caffieneLogo = 'default';

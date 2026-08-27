@@ -108,6 +108,11 @@ class ScrollingTVState extends State<ScrollingTV>
     final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     final isProxyEnabled = Provider.of<SettingsProvider>(context).enableProxy;
     final proxyUrl = Provider.of<AppDependencyProvider>(context).tmdbProxy;
+    final isTablet = MediaQuery.sizeOf(context).width >= 600;
+    final cardWidth = isTablet ? 140.0 : 115.0;
+    final posterHeight = cardWidth * 1.5; // True 2:3 aspect ratio
+    final rowHeight = posterHeight + (isTablet ? 56.0 : 48.0);
+
     return Column(
       children: <Widget>[
         Row(
@@ -115,7 +120,7 @@ class ScrollingTVState extends State<ScrollingTV>
           children: <Widget>[
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: EdgeInsets.all(isTablet ? 12.0 : 8.0),
                 child: Row(
                   children: [
                     const LeadingDot(),
@@ -158,7 +163,7 @@ class ScrollingTVState extends State<ScrollingTV>
         ),
         SizedBox(
           width: double.infinity,
-          height: 250,
+          height: rowHeight,
           child: tvList == null
               ? scrollingMoviesAndTVShimmer(themeMode)
               : Row(
@@ -167,11 +172,15 @@ class ScrollingTVState extends State<ScrollingTV>
                       child: ListView.builder(
                         controller: _scrollController,
                         physics: const BouncingScrollPhysics(),
+                        padding: EdgeInsets.symmetric(horizontal: isTablet ? 16 : 8),
                         itemCount: tvList!.length,
                         scrollDirection: Axis.horizontal,
                         itemBuilder: (BuildContext context, int index) {
                           return Padding(
-                            padding: const EdgeInsets.all(8.0),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: isTablet ? 6.0 : 4.0,
+                              vertical: 2.0,
+                            ),
                             child: GestureDetector(
                               onTap: () {
                                 Navigator.push(
@@ -183,11 +192,14 @@ class ScrollingTVState extends State<ScrollingTV>
                                                 '${tvList![index].id}-${widget.title}-${widget.discoverType}-$index')));
                               },
                               child: SizedBox(
-                                width: 100,
+                                width: cardWidth,
                                 child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
                                   children: <Widget>[
-                                    Expanded(
-                                      flex: 6,
+                                    SizedBox(
+                                      width: cardWidth,
+                                      height: posterHeight,
                                       child: Hero(
                                         tag:
                                             '${tvList![index].id}-${widget.title}-${widget.discoverType}-$index',
@@ -198,10 +210,8 @@ class ScrollingTVState extends State<ScrollingTV>
                                             children: [
                                               ClipRRect(
                                                 borderRadius:
-                                                    BorderRadius.circular(8.0),
-                                                child: tvList![index]
-                                                            .posterPath ==
-                                                        null
+                                                    BorderRadius.circular(isTablet ? 12.0 : 8.0),
+                                                child: tvList![index].posterPath == null
                                                     ? Image.asset(
                                                         'assets/images/na_logo.png',
                                                         fit: BoxFit.cover,
@@ -234,19 +244,9 @@ class ScrollingTVState extends State<ScrollingTV>
                                                                 imageQuality +
                                                                 tvList![index]
                                                                     .posterPath!,
-                                                        imageBuilder: (context,
-                                                                imageProvider) =>
-                                                            Container(
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            image:
-                                                                DecorationImage(
-                                                              image:
-                                                                  imageProvider,
-                                                              fit: BoxFit.cover,
-                                                            ),
-                                                          ),
-                                                        ),
+                                                        fit: BoxFit.cover,
+                                                        width: double.infinity,
+                                                        height: double.infinity,
                                                         placeholder: (context,
                                                                 url) =>
                                                             scrollingImageShimmer(
@@ -263,54 +263,55 @@ class ScrollingTVState extends State<ScrollingTV>
                                                                     .infinity),
                                                       ),
                                               ),
-                                              Positioned(
-                                                top: 0,
-                                                left: 0,
-                                                child: Container(
-                                                  margin:
-                                                      const EdgeInsets.all(3),
-                                                  alignment: Alignment.topLeft,
-                                                  width: 50,
-                                                  height: 25,
-                                                  decoration: BoxDecoration(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              8),
-                                                      color:
-                                                          themeMode == "dark" ||
-                                                                  themeMode ==
-                                                                      "amoled"
-                                                              ? Colors.black45
-                                                              : Colors.white60),
-                                                  child: Row(
-                                                    children: [
-                                                      const Icon(
-                                                        Icons.star_rounded,
-                                                      ),
-                                                      Text(tvList![index]
-                                                          .voteAverage!
-                                                          .toStringAsFixed(1))
-                                                    ],
+                                              if (tvList![index].voteAverage != null)
+                                                Positioned(
+                                                  top: 4,
+                                                  left: 4,
+                                                  child: Container(
+                                                    padding: const EdgeInsets.symmetric(
+                                                        horizontal: 5, vertical: 2),
+                                                    decoration: BoxDecoration(
+                                                      borderRadius: BorderRadius.circular(6),
+                                                      color: Colors.black.withValues(alpha: 0.65),
+                                                    ),
+                                                    child: Row(
+                                                      mainAxisSize: MainAxisSize.min,
+                                                      children: [
+                                                        const Icon(
+                                                          Icons.star_rounded,
+                                                          size: 11,
+                                                          color: Color(0xFFFACC15),
+                                                        ),
+                                                        const SizedBox(width: 2),
+                                                        Text(
+                                                          tvList![index].voteAverage!.toStringAsFixed(1),
+                                                          style: const TextStyle(
+                                                            color: Colors.white,
+                                                            fontSize: 10,
+                                                            fontWeight: FontWeight.w700,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
                                             ],
                                           ),
                                         ),
                                       ),
                                     ),
-                                    Expanded(
-                                      flex: 3,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Text(
-                                          tvList![index].name!,
-                                          maxLines: 2,
-                                          textAlign: TextAlign.center,
-                                          overflow: TextOverflow.ellipsis,
+                                    Padding(
+                                      padding: const EdgeInsets.fromLTRB(2, 6, 2, 0),
+                                      child: Text(
+                                        tvList![index].name ?? '',
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          fontSize: isTablet ? 12 : 11,
+                                          fontWeight: FontWeight.w600,
                                         ),
                                       ),
-                                    )
+                                    ),
                                   ],
                                 ),
                               ),
@@ -322,7 +323,7 @@ class ScrollingTVState extends State<ScrollingTV>
                     Visibility(
                       visible: isLoading,
                       child: SizedBox(
-                        width: 110,
+                        width: cardWidth,
                         child: horizontalLoadMoreShimmer(themeMode),
                       ),
                     ),
@@ -332,8 +333,8 @@ class ScrollingTVState extends State<ScrollingTV>
         Divider(
           color: themeMode == "light" ? Colors.black54 : Colors.white54,
           thickness: 1,
-          endIndent: 20,
-          indent: 10,
+          endIndent: isTablet ? 24 : 20,
+          indent: isTablet ? 24 : 10,
         ),
       ],
     );
