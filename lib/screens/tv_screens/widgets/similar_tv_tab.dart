@@ -89,6 +89,10 @@ class SimilarTVTabState extends State<SimilarTVTab>
     super.build(context);
     final themeMode = Provider.of<SettingsProvider>(context).appTheme;
     final imageQuality = Provider.of<SettingsProvider>(context).imageQuality;
+    final isTablet = MediaQuery.sizeOf(context).width >= 600;
+    final cardWidth = isTablet ? 140.0 : 115.0;
+    final posterHeight = cardWidth * 1.5;
+    final rowHeight = posterHeight + (isTablet ? 56.0 : 48.0);
     return Column(
       children: <Widget>[
         Row(
@@ -117,7 +121,7 @@ class SimilarTVTabState extends State<SimilarTVTab>
           ),
           SizedBox(
             width: double.infinity,
-            height: 250,
+            height: rowHeight,
             child: tvList == null || widget.includeAdult == null
                 ? scrollingMoviesAndTVShimmer(themeMode)
                 : tvList!.isEmpty
