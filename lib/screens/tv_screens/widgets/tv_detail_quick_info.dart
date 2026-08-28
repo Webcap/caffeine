@@ -81,7 +81,13 @@ class TVDetailQuickInfo extends StatelessWidget {
     final iconBg = isDark ? _C.iconBgDark : _C.iconBgLight;
     final border = isDark ? _C.borderDark : _C.borderLight;
 
-    final heroHeight = MediaQuery.of(context).size.height * 0.55;
+    final screenWidth = MediaQuery.sizeOf(context).width;
+    final screenHeight = MediaQuery.sizeOf(context).height;
+    final isTablet = screenWidth >= 600;
+
+    final heroHeight = isTablet
+        ? (screenWidth > screenHeight ? 420.0 : 480.0)
+        : screenHeight * 0.55;
     final imageUrl = tvSeries.backdropPath ?? tvSeries.posterPath;
     final baseUrl =
         buildImageUrl(tmdbBaseImageUrl, proxyUrl, isProxy, context);
@@ -139,48 +145,58 @@ class TVDetailQuickInfo extends StatelessWidget {
           // ── Top overlay controls ──────────────────────────────────────
           SafeArea(
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  _GlassButton(
-                    icon: Icons.arrow_back_rounded,
-                    onTap: () => Navigator.pop(context),
-                    iconBg: iconBg,
-                    border: border,
-                    textColor: textPrim,
-                  ),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
+              padding: EdgeInsets.fromLTRB(
+                isTablet ? 32 : 12,
+                8,
+                isTablet ? 32 : 12,
+                0,
+              ),
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 1200),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.only(right: 8),
-                        child: WatchProvidersButton(
-                          country: watchCountry,
-                          api: Endpoints.getTVWatchProviders(
-                              tvSeries.id!, appLang),
-                          onTap: () {
-                            showModalBottomSheet(
-                              context: context,
-                              builder: (builder) => WatchProvidersDetails(
-                                country: watchCountry,
-                                api: Endpoints.getTVWatchProviders(
-                                    tvSeries.id!, appLang),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
                       _GlassButton(
-                        icon: Icons.share_rounded,
-                        onTap: () => _shareTV(context),
+                        icon: Icons.arrow_back_ios_new_rounded,
+                        onTap: () => Navigator.pop(context),
                         iconBg: iconBg,
                         border: border,
                         textColor: textPrim,
                       ),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(right: 8),
+                            child: WatchProvidersButton(
+                              country: watchCountry,
+                              api: Endpoints.getTVWatchProviders(
+                                  tvSeries.id!, appLang),
+                              onTap: () {
+                                showModalBottomSheet(
+                                  context: context,
+                                  builder: (builder) => WatchProvidersDetails(
+                                    country: watchCountry,
+                                    api: Endpoints.getTVWatchProviders(
+                                        tvSeries.id!, appLang),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                          _GlassButton(
+                            icon: Icons.share_rounded,
+                            onTap: () => _shareTV(context),
+                            iconBg: iconBg,
+                            border: border,
+                            textColor: textPrim,
+                          ),
+                        ],
+                      ),
                     ],
                   ),
-                ],
+                ),
               ),
             ),
           ),
@@ -192,63 +208,68 @@ class TVDetailQuickInfo extends StatelessWidget {
 
           // ── TV title + year (anchored at bottom of hero) ───────────────
           Positioned(
-            left: 16,
-            right: 16,
-            bottom: 24,
-            child: Hero(
-              tag: heroId,
-              child: Material(
-                type: MaterialType.transparency,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        tvSeries.firstAirDate != null &&
-                                tvSeries.firstAirDate!.isNotEmpty
-                            ? '${tvSeries.name} (${DateTime.tryParse(tvSeries.firstAirDate!)?.year ?? ''})'
-                            : tvSeries.name ?? '—',
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w800,
-                          color: textPrim,
-                          height: 1.2,
-                          letterSpacing: 0.2,
-                          fontFamily: 'PoppinsSB',
-                        ),
-                      ),
-                    ),
-                    if (isWatched) ...[
-                      const SizedBox(width: 8),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 6, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: Colors.green.withValues(alpha: 0.2),
-                          borderRadius: BorderRadius.circular(4),
-                          border: Border.all(color: Colors.green, width: 1),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(Icons.check_circle_rounded,
-                                color: Colors.green, size: 14),
-                            const SizedBox(width: 4),
-                            Text(
-                              tr('Watched'),
-                              style: const TextStyle(
-                                color: Colors.green,
-                                fontSize: 10,
-                                fontWeight: FontWeight.bold,
-                              ),
+            left: isTablet ? 32 : 16,
+            right: isTablet ? 32 : 16,
+            bottom: isTablet ? 32 : 24,
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 1200),
+                child: Hero(
+                  tag: heroId,
+                  child: Material(
+                    type: MaterialType.transparency,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            tvSeries.firstAirDate != null &&
+                                    tvSeries.firstAirDate!.isNotEmpty
+                                ? '${tvSeries.name} (${DateTime.tryParse(tvSeries.firstAirDate!)?.year ?? ''})'
+                                : tvSeries.name ?? '—',
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: isTablet ? 30 : 24,
+                              fontWeight: FontWeight.w800,
+                              color: textPrim,
+                              height: 1.2,
+                              letterSpacing: 0.2,
+                              fontFamily: 'PoppinsSB',
                             ),
-                          ],
+                          ),
                         ),
-                      ),
-                    ],
-                  ],
+                        if (isWatched) ...[
+                          const SizedBox(width: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: Colors.green.withValues(alpha: 0.2),
+                              borderRadius: BorderRadius.circular(4),
+                              border: Border.all(color: Colors.green, width: 1),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(Icons.check_circle_rounded,
+                                    color: Colors.green, size: 14),
+                                const SizedBox(width: 4),
+                                Text(
+                                  tr('Watched'),
+                                  style: const TextStyle(
+                                    color: Colors.green,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ),

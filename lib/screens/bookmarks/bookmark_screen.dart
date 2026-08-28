@@ -1,6 +1,5 @@
-// ignore_for_file: unused_field
-
 import 'package:reelriot/provider/bookmarks_provider.dart';
+import 'package:reelriot/provider/settings_provider.dart';
 import 'package:reelriot/screens/bookmarks/bookmark_tv_screen.dart';
 import 'package:reelriot/screens/bookmarks/movie_bookmark_tab.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -14,11 +13,10 @@ class _C {
   static const secondary = Color(0xFF7C3AED);
 
   static const bgCanvasDark = Color(0xFF030712);
-  static const bgSurfaceDark = Color(0xFF0B0F14);
-  static const bgElevatedDark = Color(0xFF111827);
-
   static const bgCanvasLight = Color(0xFFF8FAFC);
+  static const bgSurfaceDark = Color(0xFF0B0F14);
   static const bgSurfaceLight = Color(0xFFFFFFFF);
+  static const bgElevatedDark = Color(0xFF111827);
   static const bgElevatedLight = Color(0xFFF1F5F9);
 
   static const borderDark = Color(0x14FFFFFF);
@@ -65,14 +63,21 @@ class _BookmarkScreenState extends State<BookmarkScreen>
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<BookmarksProvider>();
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final themeMode = Provider.of<SettingsProvider>(context).appTheme;
+    final isDark = themeMode == 'dark' || themeMode == 'amoled';
 
     final bg = isDark ? _C.bgCanvasDark : _C.bgCanvasLight;
     final surface = isDark ? _C.bgSurfaceDark : _C.bgSurfaceLight;
     final elevated = isDark ? _C.bgElevatedDark : _C.bgElevatedLight;
     final border = isDark ? _C.borderDark : _C.borderLight;
     final textPrim = isDark ? _C.textPrimDark : _C.textPrimLight;
-    final textTert = isDark ? _C.textTertDark : _C.textTertLight;
+    final textSec = isDark ? _C.textSecDark : _C.textSecLight;
+
+    final screenWidth = MediaQuery.sizeOf(context).width;
+    final isTablet = screenWidth >= 600;
+
+    final movieCount = provider.movies?.length ?? 0;
+    final tvCount = provider.tvList?.length ?? 0;
 
     if (provider.errorMessage != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -87,128 +92,128 @@ class _BookmarkScreenState extends State<BookmarkScreen>
 
     return Scaffold(
       backgroundColor: bg,
-      body: SafeArea(
-        child: Column(
-          children: [
-            // ── Cinematic header ─────────────────────────────────────────────
-            Container(
-              color: surface,
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(12, 12, 12, 8),
-                    child: Row(
-                      children: [
-                        GestureDetector(
-                          onTap: () => Navigator.pop(context),
-                          child: Container(
-                            width: 42,
-                            height: 42,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: elevated,
-                              border: Border.all(color: border, width: 1),
-                            ),
-                            child: Icon(
-                              Icons.arrow_back_rounded,
-                              size: 20,
-                              color: textPrim,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 14),
-                        Expanded(
-                          child: ShaderMask(
-                            blendMode: BlendMode.srcIn,
-                            shaderCallback: (bounds) => const LinearGradient(
-                              colors: [_C.secondary, _C.primary],
-                              begin: Alignment.centerLeft,
-                              end: Alignment.centerRight,
-                            ).createShader(bounds),
-                            child: Text(
-                              tr('bookmarks'),
-                              style: const TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w700,
-                                color: Colors.white,
-                                fontFamily: 'PoppinsSB',
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+      appBar: AppBar(
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        backgroundColor: surface,
+        centerTitle: isTablet,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios_new_rounded, color: textPrim, size: 20),
+          onPressed: () => Navigator.maybePop(context),
+          tooltip: tr("back"),
+        ),
+        title: Text(
+          tr('bookmarks'),
+          style: TextStyle(
+            color: textPrim,
+            fontSize: isTablet ? 20 : 18,
+            fontWeight: FontWeight.w700,
+            fontFamily: 'PoppinsSB',
+          ),
+        ),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(48),
+          child: Container(
+            decoration: BoxDecoration(
+              color: elevated,
+              border: Border(
+                top: BorderSide(color: border, width: 1),
+                bottom: BorderSide(color: border, width: 1),
+              ),
+            ),
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 880),
+                child: TabBar(
+                  controller: tabController,
+                  indicatorColor: _C.primary,
+                  indicatorWeight: 3,
+                  indicatorSize: TabBarIndicatorSize.tab,
+                  labelColor: _C.primary,
+                  unselectedLabelColor: textSec,
+                  labelStyle: const TextStyle(
+                    fontSize: 13.5,
+                    fontWeight: FontWeight.w700,
+                    fontFamily: 'PoppinsSB',
                   ),
-                  // Tab bar
-                  Container(
-                    decoration: BoxDecoration(
-                      color: elevated,
-                      border: Border(
-                        top: BorderSide(color: border, width: 1),
-                      ),
-                    ),
-                    child: TabBar(
-                      controller: tabController,
-                      indicatorColor: _C.primary,
-                      indicatorWeight: 3,
-                      indicatorSize: TabBarIndicatorSize.tab,
-                      labelColor: _C.primary,
-                      unselectedLabelColor: textTert,
-                      labelStyle: const TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        fontFamily: 'PoppinsSB',
-                      ),
-                      unselectedLabelStyle: const TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500,
-                      ),
-                      tabs: [
-                        Tab(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Padding(
-                                padding: EdgeInsets.only(right: 8),
-                                child: FaIcon(
-                                  FontAwesomeIcons.clapperboard,
-                                  size: 16,
+                  unselectedLabelStyle: const TextStyle(
+                    fontSize: 13.5,
+                    fontWeight: FontWeight.w500,
+                    fontFamily: 'Poppins',
+                  ),
+                  tabs: [
+                    Tab(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const FaIcon(
+                            FontAwesomeIcons.clapperboard,
+                            size: 14,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(tr('movies')),
+                          if (movieCount > 0) ...[
+                            const SizedBox(width: 6),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: _C.primary.withValues(alpha: 0.15),
+                                borderRadius: BorderRadius.circular(999),
+                              ),
+                              child: Text(
+                                '$movieCount',
+                                style: const TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w700,
+                                  color: _C.primary,
                                 ),
                               ),
-                              Text(tr('movies')),
-                            ],
-                          ),
-                        ),
-                        Tab(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Padding(
-                                padding: EdgeInsets.only(right: 8),
-                                child: Icon(Icons.live_tv_rounded, size: 18),
-                              ),
-                              Text(tr('tv_series')),
-                            ],
-                          ),
-                        ),
-                      ],
+                            ),
+                          ],
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                    Tab(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.live_tv_rounded, size: 17),
+                          const SizedBox(width: 8),
+                          Text(tr('tv_series')),
+                          if (tvCount > 0) ...[
+                            const SizedBox(width: 6),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: _C.primary.withValues(alpha: 0.15),
+                                borderRadius: BorderRadius.circular(999),
+                              ),
+                              child: Text(
+                                '$tvCount',
+                                style: const TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w700,
+                                  color: _C.primary,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-
-            Expanded(
-              child: TabBarView(
-                controller: tabController,
-                children: [
-                  MovieBookmark(movieList: provider.movies),
-                  TVBookmark(tvList: provider.tvList),
-                ],
-              ),
-            ),
-          ],
+          ),
         ),
+      ),
+      body: TabBarView(
+        controller: tabController,
+        children: [
+          MovieBookmark(movieList: provider.movies),
+          TVBookmark(tvList: provider.tvList),
+        ],
       ),
     );
   }

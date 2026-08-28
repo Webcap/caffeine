@@ -143,12 +143,7 @@ class _ProfileEditState extends State<ProfileEdit> {
     final user = _auth.currentUser;
     _uid = user?.id;
 
-    if (user == null) {
-      if (mounted) setState(() => _userAnonymous = null);
-      return;
-    }
-
-    if (user.isAnonymous) {
+    if (user == null || user.isAnonymous) {
       if (mounted) {
         setState(() {
           _userAnonymous = true;
@@ -350,6 +345,9 @@ class _ProfileEditState extends State<ProfileEdit> {
     required Color textPrim,
     required Color textSec,
   }) {
+    final screenWidth = MediaQuery.sizeOf(context).width;
+    final isTablet = screenWidth >= 600;
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -360,132 +358,138 @@ class _ProfileEditState extends State<ProfileEdit> {
       ),
       builder: (sheetContext) {
         return DraggableScrollableSheet(
-          initialChildSize: 0.75,
+          initialChildSize: isTablet ? 0.65 : 0.75,
           minChildSize: 0.5,
           maxChildSize: 0.95,
           expand: false,
           builder: (_, scrollController) {
             final allProfiles = _profileImages.profile();
-            return Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: _Design.screenPadH,
-                vertical: _Design.space4,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Center(
-                    child: Container(
-                      width: 40,
-                      height: 4,
-                      decoration: BoxDecoration(
-                        color: textSec.withValues(alpha: 0.3),
-                        borderRadius: BorderRadius.circular(2),
-                      ),
-                    ),
+            return Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 720),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: isTablet ? 28 : _Design.screenPadH,
+                    vertical: _Design.space4,
                   ),
-                  const SizedBox(height: _Design.space4),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Text(
-                        tr("select_avatar"),
-                        style: TextStyle(
-                          color: textPrim,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
+                      Center(
+                        child: Container(
+                          width: 40,
+                          height: 4,
+                          decoration: BoxDecoration(
+                            color: textSec.withValues(alpha: 0.3),
+                            borderRadius: BorderRadius.circular(2),
+                          ),
                         ),
                       ),
-                      IconButton(
-                        icon: Icon(Icons.close_rounded, color: textSec),
-                        onPressed: () => Navigator.of(sheetContext).pop(),
+                      const SizedBox(height: _Design.space4),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            tr("select_avatar"),
+                            style: TextStyle(
+                              color: textPrim,
+                              fontSize: isTablet ? 20 : 18,
+                              fontWeight: FontWeight.w700,
+                              fontFamily: 'PoppinsSB',
+                            ),
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.close_rounded, color: textSec),
+                            onPressed: () => Navigator.of(sheetContext).pop(),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: _Design.space3),
+                      Expanded(
+                        child: GridView.builder(
+                          controller: scrollController,
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: isTablet ? 6 : 4,
+                            crossAxisSpacing: isTablet ? 18 : 14,
+                            mainAxisSpacing: isTablet ? 18 : 14,
+                          ),
+                          itemCount: allProfiles.length,
+                          itemBuilder: (context, index) {
+                            final profile = allProfiles[index];
+                            final isSelected = _selectedProfileId == profile.index;
+                            return InkWell(
+                              onTap: () {
+                                HapticFeedback.selectionClick();
+                                setState(() {
+                                  _selectedProfileId = profile.index;
+                                });
+                                Navigator.of(sheetContext).pop();
+                              },
+                              borderRadius: BorderRadius.circular(999),
+                              child: AnimatedContainer(
+                                duration: const Duration(milliseconds: 200),
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: isSelected ? _Design.primary : border,
+                                    width: isSelected ? 3.0 : 1.0,
+                                  ),
+                                  boxShadow: isSelected
+                                      ? [
+                                          BoxShadow(
+                                            color: _Design.primary
+                                                .withValues(alpha: 0.4),
+                                            blurRadius: 10,
+                                            spreadRadius: 1,
+                                          ),
+                                        ]
+                                      : null,
+                                ),
+                                padding: const EdgeInsets.all(2),
+                                child: Stack(
+                                  fit: StackFit.expand,
+                                  children: [
+                                    ClipOval(
+                                      child: Image.asset(
+                                        'assets/images/profiles/${profile.index}.png',
+                                        fit: BoxFit.cover,
+                                        errorBuilder: (_, __, ___) => Container(
+                                          color: cardBg,
+                                          child: const Icon(
+                                            Icons.person_rounded,
+                                            color: _Design.primary,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    if (isSelected)
+                                      Positioned(
+                                        bottom: 0,
+                                        right: 0,
+                                        child: Container(
+                                          padding: const EdgeInsets.all(2),
+                                          decoration: const BoxDecoration(
+                                            color: _Design.primary,
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: const Icon(
+                                            Icons.check_rounded,
+                                            color: Colors.white,
+                                            size: 14,
+                                          ),
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: _Design.space3),
-                  Expanded(
-                    child: GridView.builder(
-                      controller: scrollController,
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 4,
-                        crossAxisSpacing: 14,
-                        mainAxisSpacing: 14,
-                      ),
-                      itemCount: allProfiles.length,
-                      itemBuilder: (context, index) {
-                        final profile = allProfiles[index];
-                        final isSelected = _selectedProfileId == profile.index;
-                        return InkWell(
-                          onTap: () {
-                            HapticFeedback.selectionClick();
-                            setState(() {
-                              _selectedProfileId = profile.index;
-                            });
-                            Navigator.of(sheetContext).pop();
-                          },
-                          borderRadius: BorderRadius.circular(999),
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 200),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: isSelected ? _Design.primary : border,
-                                width: isSelected ? 3.0 : 1.0,
-                              ),
-                              boxShadow: isSelected
-                                  ? [
-                                      BoxShadow(
-                                        color: _Design.primary
-                                            .withValues(alpha: 0.4),
-                                        blurRadius: 10,
-                                        spreadRadius: 1,
-                                      ),
-                                    ]
-                                  : null,
-                            ),
-                            padding: const EdgeInsets.all(2),
-                            child: Stack(
-                              fit: StackFit.expand,
-                              children: [
-                                ClipOval(
-                                  child: Image.asset(
-                                    'assets/images/profiles/${profile.index}.png',
-                                    fit: BoxFit.cover,
-                                    errorBuilder: (_, __, ___) => Container(
-                                      color: cardBg,
-                                      child: const Icon(
-                                        Icons.person_rounded,
-                                        color: _Design.primary,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                if (isSelected)
-                                  Positioned(
-                                    bottom: 0,
-                                    right: 0,
-                                    child: Container(
-                                      padding: const EdgeInsets.all(2),
-                                      decoration: const BoxDecoration(
-                                        color: _Design.primary,
-                                        shape: BoxShape.circle,
-                                      ),
-                                      child: const Icon(
-                                        Icons.check_rounded,
-                                        color: Colors.white,
-                                        size: 14,
-                                      ),
-                                    ),
-                                  ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ],
+                ),
               ),
             );
           },
@@ -493,8 +497,6 @@ class _ProfileEditState extends State<ProfileEdit> {
       },
     );
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -508,10 +510,13 @@ class _ProfileEditState extends State<ProfileEdit> {
     final border = isDark ? _Design.borderDark : _Design.borderLight;
     final iconBg = isDark ? _Design.iconBgDark : _Design.borderLight;
 
+    final screenWidth = MediaQuery.sizeOf(context).width;
+    final isTablet = screenWidth >= 600;
+
     if (_isLoading) {
       return Scaffold(
         backgroundColor: bg,
-        appBar: _buildAppBar(context, textPrim, iconBg, surface),
+        appBar: _buildAppBar(context, textPrim, iconBg, surface, isTablet),
         body: const Center(
           child: CircularProgressIndicator(
             color: _Design.primary,
@@ -524,7 +529,7 @@ class _ProfileEditState extends State<ProfileEdit> {
     if (_userAnonymous == true) {
       return Scaffold(
         backgroundColor: bg,
-        appBar: _buildAppBar(context, textPrim, iconBg, surface),
+        appBar: _buildAppBar(context, textPrim, iconBg, surface, isTablet),
         body: Center(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: _Design.screenPadH),
@@ -549,65 +554,122 @@ class _ProfileEditState extends State<ProfileEdit> {
       },
       child: Scaffold(
         backgroundColor: bg,
-        appBar: _buildAppBar(context, textPrim, iconBg, surface),
+        appBar: _buildAppBar(context, textPrim, iconBg, surface, isTablet),
         bottomNavigationBar: _buildStickyBottomBar(
           surface: surface,
           border: border,
           textPrim: textPrim,
           textSec: textSec,
+          isTablet: isTablet,
         ),
         body: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(
-            horizontal: _Design.screenPadH,
-            vertical: _Design.space4,
+          padding: EdgeInsets.symmetric(
+            horizontal: isTablet ? 32 : _Design.screenPadH,
+            vertical: isTablet ? 24 : _Design.space4,
           ),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // ─── Hero Avatar Preview & Picker ─────────────────────────────
-                _buildHeroAvatarSection(
-                  context: context,
-                  surface: surface,
-                  cardBg: cardBg,
-                  border: border,
-                  textPrim: textPrim,
-                  textSec: textSec,
-                ),
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 880),
+              child: Form(
+                key: _formKey,
+                child: isTablet
+                    ? Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Left Column: Avatar Preview + Account Info Card
+                          Expanded(
+                            flex: 5,
+                            child: Column(
+                              children: [
+                                _buildHeroAvatarSection(
+                                  context: context,
+                                  surface: surface,
+                                  cardBg: cardBg,
+                                  border: border,
+                                  textPrim: textPrim,
+                                  textSec: textSec,
+                                ),
+                                const SizedBox(height: _Design.space5),
+                                _buildAccountInfoCard(
+                                  surface: surface,
+                                  border: border,
+                                  textPrim: textPrim,
+                                  textSec: textSec,
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 20),
+                          // Right Column: Email Card + Security Card
+                          Expanded(
+                            flex: 6,
+                            child: Column(
+                              children: [
+                                _buildEmailCard(
+                                  surface: surface,
+                                  border: border,
+                                  textPrim: textPrim,
+                                  textSec: textSec,
+                                ),
+                                const SizedBox(height: _Design.space5),
+                                _buildSecurityCard(
+                                  surface: surface,
+                                  border: border,
+                                  textPrim: textPrim,
+                                  textSec: textSec,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      )
+                    : Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          // ─── Hero Avatar Preview & Picker ─────────────────────────
+                          _buildHeroAvatarSection(
+                            context: context,
+                            surface: surface,
+                            cardBg: cardBg,
+                            border: border,
+                            textPrim: textPrim,
+                            textSec: textSec,
+                          ),
 
-                const SizedBox(height: _Design.space5),
+                          const SizedBox(height: _Design.space5),
 
-                // ─── Standard Email Input Card ────────────────────────────────
-                _buildEmailCard(
-                  surface: surface,
-                  border: border,
-                  textPrim: textPrim,
-                  textSec: textSec,
-                ),
+                          // ─── Standard Email Input Card ────────────────────────────
+                          _buildEmailCard(
+                            surface: surface,
+                            border: border,
+                            textPrim: textPrim,
+                            textSec: textSec,
+                          ),
 
-                const SizedBox(height: _Design.space5),
+                          const SizedBox(height: _Design.space5),
 
-                // ─── Account Info Card ────────────────────────────────────────
-                _buildAccountInfoCard(
-                  surface: surface,
-                  border: border,
-                  textPrim: textPrim,
-                  textSec: textSec,
-                ),
+                          // ─── Account Info Card ────────────────────────────────────
+                          _buildAccountInfoCard(
+                            surface: surface,
+                            border: border,
+                            textPrim: textPrim,
+                            textSec: textSec,
+                          ),
 
-                const SizedBox(height: _Design.space5),
+                          const SizedBox(height: _Design.space5),
 
-                // ─── Security & Management Actions ────────────────────────────
-                _buildSecurityCard(
-                  surface: surface,
-                  border: border,
-                  textPrim: textPrim,
-                  textSec: textSec,
-                ),
+                          // ─── Security & Management Actions ────────────────────────
+                          _buildSecurityCard(
+                            surface: surface,
+                            border: border,
+                            textPrim: textPrim,
+                            textSec: textSec,
+                          ),
 
-                const SizedBox(height: 30),
-              ],
+                          const SizedBox(height: 30),
+                        ],
+                      ),
+              ),
             ),
           ),
         ),
@@ -620,33 +682,36 @@ class _ProfileEditState extends State<ProfileEdit> {
     Color textPrim,
     Color iconBg,
     Color surface,
+    bool isTablet,
   ) {
     return AppBar(
       elevation: 0,
       scrolledUnderElevation: 0,
       backgroundColor: surface,
-      leading: Padding(
-        padding: const EdgeInsets.only(left: _Design.space2),
-        child: _CircleIconButton(
-          icon: Icons.arrow_back_rounded,
-          onTap: () async {
-            if (_isDirty) {
-              final shouldPop = await _handlePopScope();
-              if (shouldPop && context.mounted) Navigator.pop(context);
-            } else {
-              Navigator.pop(context);
-            }
-          },
-          iconColor: textPrim,
-          bgColor: iconBg,
+      centerTitle: isTablet,
+      leading: IconButton(
+        icon: Icon(
+          Icons.arrow_back_ios_new_rounded,
+          color: textPrim,
+          size: 20,
         ),
+        onPressed: () async {
+          if (_isDirty) {
+            final shouldPop = await _handlePopScope();
+            if (shouldPop && context.mounted) Navigator.pop(context);
+          } else {
+            Navigator.pop(context);
+          }
+        },
+        tooltip: tr("back"),
       ),
       title: Text(
         tr("edit_profile"),
         style: TextStyle(
           color: textPrim,
-          fontSize: 18,
-          fontWeight: FontWeight.w600,
+          fontSize: isTablet ? 20 : 18,
+          fontWeight: FontWeight.w700,
+          fontFamily: 'PoppinsSB',
         ),
       ),
     );
@@ -836,8 +901,6 @@ class _ProfileEditState extends State<ProfileEdit> {
       ),
     );
   }
-
-
 
   Widget _buildEmailCard({
     required Color surface,
@@ -1083,87 +1146,70 @@ class _ProfileEditState extends State<ProfileEdit> {
     required Color border,
     required Color textPrim,
     required Color textSec,
+    required bool isTablet,
   }) {
-    return SafeArea(
-      child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: _Design.screenPadH,
-          vertical: _Design.space3,
-        ),
-        decoration: BoxDecoration(
-          color: surface,
-          border: Border(top: BorderSide(color: border)),
-          boxShadow: const [_Design.shadowCard],
-        ),
-        child: SizedBox(
-          height: _Design.ctaHeight,
-          child: ElevatedButton(
-            onPressed: (_isDirty && !_isSaving) ? _saveProfile : null,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: _Design.primary,
-              foregroundColor: Colors.white,
-              disabledBackgroundColor: _Design.primary.withValues(alpha: 0.35),
-              disabledForegroundColor: Colors.white.withValues(alpha: 0.4),
-              elevation: 0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(_Design.radiusMd),
+    return Container(
+      decoration: BoxDecoration(
+        color: surface,
+        border: Border(top: BorderSide(color: border)),
+        boxShadow: const [_Design.shadowCard],
+      ),
+      child: SafeArea(
+        top: false,
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: isTablet ? 32 : _Design.screenPadH,
+            vertical: _Design.space3,
+          ),
+          child: Align(
+            alignment: Alignment.center,
+            heightFactor: 1.0,
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 880),
+              child: SizedBox(
+                width: double.infinity,
+                height: _Design.ctaHeight,
+                child: ElevatedButton(
+                  onPressed: (_isDirty && !_isSaving) ? _saveProfile : null,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: _Design.primary,
+                    foregroundColor: Colors.white,
+                    disabledBackgroundColor:
+                        _Design.primary.withValues(alpha: 0.35),
+                    disabledForegroundColor:
+                        Colors.white.withValues(alpha: 0.4),
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(_Design.radiusMd),
+                    ),
+                  ),
+                  child: _isSaving
+                      ? const SizedBox(
+                          height: 24,
+                          width: 24,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
+                      : Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(Icons.check_rounded, size: 20),
+                            const SizedBox(width: _Design.space2),
+                            Text(
+                              tr("save_changes"),
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                ),
               ),
             ),
-            child: _isSaving
-                ? const SizedBox(
-                    height: 24,
-                    width: 24,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: Colors.white,
-                    ),
-                  )
-                : Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.check_rounded, size: 20),
-                      const SizedBox(width: _Design.space2),
-                      Text(
-                        tr("save_changes"),
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class _CircleIconButton extends StatelessWidget {
-  final IconData icon;
-  final VoidCallback onTap;
-  final Color iconColor;
-  final Color bgColor;
-
-  const _CircleIconButton({
-    required this.icon,
-    required this.onTap,
-    required this.iconColor,
-    required this.bgColor,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: bgColor,
-      shape: const CircleBorder(),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: onTap,
-        customBorder: const CircleBorder(),
-        child: Padding(
-          padding: const EdgeInsets.all(10),
-          child: Icon(icon, size: 22, color: iconColor),
         ),
       ),
     );

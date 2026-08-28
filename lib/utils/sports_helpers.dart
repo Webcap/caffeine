@@ -190,3 +190,58 @@ SportTheme resolveSportTheme({
     icon: Icons.live_tv_rounded,
   );
 }
+
+/// Normalizes any sport string/league/title to canonical key matching Admin config
+/// (e.g. 'NBA', 'WNBA', 'MLB', 'NFL', 'NHL', 'Soccer', 'UFC')
+String normalizeSportKey(String? sport, {String? league, String? title, EspnScoreboardGame? game}) {
+  if (sport == null || sport.trim().isEmpty) return "All";
+  final s = sport.trim().toUpperCase();
+  final l = (league ?? '').trim().toUpperCase();
+  final t = (title ?? '').trim().toUpperCase();
+
+  // WNBA before NBA
+  if (s == 'WNBA' || s.contains('WNBA') || l == 'WNBA' || t.contains('WNBA')) {
+    return 'WNBA';
+  }
+  if (s == 'NBA' || s.startsWith('NBA') || s == 'BASKETBALL' || s.contains('BASKETBALL') || l == 'NBA' || t.contains('NBA')) {
+    return 'NBA';
+  }
+  if (s == 'NFL' || s.startsWith('NFL') || s == 'FOOTBALL' || s.contains('FOOTBALL') || l == 'NFL' || t.contains('NFL')) {
+    return 'NFL';
+  }
+  if (s == 'MLB' || s.startsWith('MLB') || s == 'BASEBALL' || s.contains('BASEBALL') || l == 'MLB' || t.contains('MLB')) {
+    return 'MLB';
+  }
+  if (s == 'NHL' || s.startsWith('NHL') || s == 'HOCKEY' || s.contains('HOCKEY') || l == 'NHL' || t.contains('NHL')) {
+    return 'NHL';
+  }
+  if (isMmaEvent(sport: sport, league: league, title: title, game: game)) {
+    return 'UFC';
+  }
+  if (s == 'SOCCER' || s.contains('SOCCER') || l == 'EPL' || s.contains('.') || l.contains('SOCCER') || l.contains('EPL')) {
+    return 'Soccer';
+  }
+  return sport.trim();
+}
+
+/// Checks if a sport/league/title matches any key in hiddenSportsRows
+bool isSportHidden(
+  String? sport,
+  List<String> hiddenRows, {
+  String? league,
+  String? title,
+  EspnScoreboardGame? game,
+}) {
+  if (hiddenRows.isEmpty) return false;
+  final key = normalizeSportKey(sport, league: league, title: title, game: game);
+  final keyLower = key.toLowerCase();
+
+  for (final hidden in hiddenRows) {
+    final hLower = hidden.trim().toLowerCase();
+    if (hLower == keyLower) return true;
+    if (sport != null && hLower == sport.trim().toLowerCase()) return true;
+    if (league != null && hLower == league.trim().toLowerCase()) return true;
+  }
+  return false;
+}
+

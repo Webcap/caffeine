@@ -126,26 +126,37 @@ class _MovieDetailOptionsState extends State<MovieDetailOptions> {
               runtimeStr = '${h}h ${m}m';
             }
 
-            return Padding(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // ── Genres Row ────────────────────────────────────────────
-                  if (genres != null && genres.isNotEmpty)
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 12),
-                      child: Text(
-                        genres,
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500,
-                          color: textSec,
-                          fontFamily: 'Poppins',
-                          letterSpacing: 0.3,
+            final screenWidth = MediaQuery.sizeOf(context).width;
+            final isTablet = screenWidth >= 600;
+
+            return Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 1200),
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(
+                    isTablet ? 32 : 16,
+                    12,
+                    isTablet ? 32 : 16,
+                    8,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // ── Genres Row ────────────────────────────────────────────
+                      if (genres != null && genres.isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: Text(
+                            genres,
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                              color: textSec,
+                              fontFamily: 'Poppins',
+                              letterSpacing: 0.3,
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
                     
                   // ── Meta Row + Heart ──────────────────────────────────────
                   Row(
@@ -272,17 +283,19 @@ class _MovieDetailOptionsState extends State<MovieDetailOptions> {
                         color: isWatched ? Colors.green : textSec,
                       ),
                     ),
-                      ),
-                    ],
                   ),
                 ],
               ),
-            );
-          },
-        );
-      },
+            ],
+          ),
+        ),
+      ),
     );
-  }
+  },
+);
+},
+);
+}
 }
 
 class _Badge extends StatelessWidget {

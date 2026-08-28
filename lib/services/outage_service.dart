@@ -126,8 +126,7 @@ class OutageService {
       // 2. API Status Check (Secondary)
       final base = caffeineApiUrl.replaceFirst(RegExp(r'/$'), '');
       final platform = defaultTargetPlatform == TargetPlatform.android ? 'android' : 'ios';
-      final env = FlavorConfig.isDev ? 'dev' : 'prod';
-      final uri = Uri.parse('$base/v1/feature-flags?platform=$platform&env=$env'); 
+      final uri = Uri.parse('$base/status'); 
       
       final apiRes = await http.get(uri, headers: {
         'x-platform': platform,

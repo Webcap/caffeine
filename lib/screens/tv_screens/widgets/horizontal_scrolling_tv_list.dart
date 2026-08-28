@@ -69,8 +69,15 @@ class HorizontalTVListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final heroId = '${heroPrefix}_${tv.id}';
+    final isTablet = MediaQuery.sizeOf(context).width >= 600;
+    final cardWidth = isTablet ? 140.0 : 115.0;
+    final posterHeight = cardWidth * 1.5;
+
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: EdgeInsets.symmetric(
+        horizontal: isTablet ? 6.0 : 4.0,
+        vertical: 2.0,
+      ),
       child: GestureDetector(
         onTap: () {
           Navigator.push(
@@ -80,11 +87,14 @@ class HorizontalTVListItem extends StatelessWidget {
                       TVDetailPage(tvSeries: tv, heroId: heroId)));
         },
         child: SizedBox(
-          width: 100,
+          width: cardWidth,
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              Expanded(
-                flex: 6,
+              SizedBox(
+                width: cardWidth,
+                height: posterHeight,
                 child: Hero(
                   tag: heroId,
                   child: Material(
@@ -93,7 +103,7 @@ class HorizontalTVListItem extends StatelessWidget {
                       alignment: Alignment.center,
                       children: [
                         ClipRRect(
-                          borderRadius: BorderRadius.circular(8.0),
+                          borderRadius: BorderRadius.circular(isTablet ? 12.0 : 8.0),
                           child: tv.posterPath == null
                               ? Image.asset('assets/images/na_logo.png',
                                   fit: BoxFit.cover,
@@ -120,44 +130,51 @@ class HorizontalTVListItem extends StatelessWidget {
                                   ),
                                 ),
                         ),
-                        Positioned(
-                          top: 0,
-                          left: 0,
-                          child: Container(
-                            margin: const EdgeInsets.all(3),
-                            alignment: Alignment.topLeft,
-                            width: 50,
-                            height: 25,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8),
-                                color:
-                                    themeMode == "dark" || themeMode == "amoled"
-                                        ? Colors.black45
-                                        : Colors.white60),
-                            child: Row(
-                              children: [
-                                const Icon(
-                                  Icons.star_rounded,
-                                ),
-                                Text((tv.voteAverage ?? 0.0).toStringAsFixed(1))
-                              ],
+                        if (tv.voteAverage != null)
+                          Positioned(
+                            top: 4,
+                            left: 4,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 5, vertical: 2),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(6),
+                                  color: Colors.black.withValues(alpha: 0.65)),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(
+                                    Icons.star_rounded,
+                                    size: 11,
+                                    color: Color(0xFFFACC15),
+                                  ),
+                                  const SizedBox(width: 2),
+                                  Text(
+                                    (tv.voteAverage ?? 0.0).toStringAsFixed(1),
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
                       ],
                     ),
                   ),
                 ),
               ),
-              Expanded(
-                flex: 3,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    tv.name!,
-                    maxLines: 2,
-                    textAlign: TextAlign.center,
-                    overflow: TextOverflow.ellipsis,
+              Padding(
+                padding: const EdgeInsets.fromLTRB(2, 6, 2, 0),
+                child: Text(
+                  tv.name ?? '',
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: isTablet ? 12 : 11,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               )

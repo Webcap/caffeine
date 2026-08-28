@@ -176,6 +176,7 @@ class _HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     // Show personalized greeting only on the Movies tab (index 0)
     final showGreeting = selectedIndex == 0;
+    final isTablet = MediaQuery.sizeOf(context).width >= 600;
 
     return AppBar(
       elevation: 0,
@@ -189,7 +190,7 @@ class _HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
       title: showGreeting
           ? _GreetingTitle(isDark: isDark, scaffoldKey: scaffoldKey)
           : Padding(
-              padding: const EdgeInsets.only(left: 12),
+              padding: EdgeInsets.only(left: isTablet ? 20 : 12),
               child: Row(
                 children: [
                   _CircleIconButton(
@@ -209,7 +210,7 @@ class _HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
           isDark: isDark,
           onTap: onSearchTap,
         ),
-        const SizedBox(width: 8),
+        SizedBox(width: isTablet ? 20 : 8),
       ],
     );
   }
@@ -232,17 +233,24 @@ class _GreetingTitle extends StatelessWidget {
     final displayName = signIn.username ?? signIn.name ?? 'Guest';
     final textPrim = isDark ? _C.textPrimDark : _C.textPrimLight;
     final textSec = isDark ? const Color(0xB8FFFFFF) : const Color(0xFF64748B);
+    final isTablet = MediaQuery.sizeOf(context).width >= 600;
+
+    final avatarSize = isTablet ? 48.0 : 42.0;
+    final isSignedIn = signIn.isSignedIn;
+    final hasCustomImage =
+        isSignedIn && (signIn.imageUrl != null && signIn.imageUrl!.isNotEmpty);
+    final hasProfileAvatar = isSignedIn && (signIn.profileId != null);
 
     return Padding(
-      padding: const EdgeInsets.only(left: 4),
+      padding: EdgeInsets.only(left: isTablet ? 16 : 4),
       child: Row(
         children: [
           // Avatar / drawer opener
           GestureDetector(
             onTap: () => scaffoldKey.currentState?.openDrawer(),
             child: Container(
-              width: 42,
-              height: 42,
+              width: avatarSize,
+              height: avatarSize,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: _C.primary.withValues(alpha: 0.15),
@@ -251,96 +259,85 @@ class _GreetingTitle extends StatelessWidget {
                   width: 1.5,
                 ),
               ),
-              child: ClipOval(
-                child: _buildAvatar(signIn),
-              ),
+              child: hasCustomImage
+                  ? ClipOval(
+                      child: CachedNetworkImage(
+                        imageUrl: signIn.imageUrl!,
+                        fit: BoxFit.cover,
+                        errorWidget: (_, __, ___) => Center(
+                          child: Icon(
+                            Icons.person_rounded,
+                            size: isTablet ? 24 : 20,
+                            color: _C.primary,
+                          ),
+                        ),
+                      ),
+                    )
+                  : hasProfileAvatar
+                      ? ClipOval(
+                          child: Image.asset(
+                            'assets/images/profiles/${signIn.profileId}.png',
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, __, ___) => Center(
+                              child: Icon(
+                                Icons.person_rounded,
+                                size: isTablet ? 24 : 20,
+                                color: _C.primary,
+                              ),
+                            ),
+                          ),
+                        )
+                      : Center(
+                          child: Icon(
+                            Icons.person_rounded,
+                            size: isTablet ? 24 : 20,
+                            color: _C.primary,
+                          ),
+                        ),
             ),
           ),
-          const SizedBox(width: 10),
+          const SizedBox(width: 12),
           // Greeting text
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                children: [
-                  Text(
-                    'Hi Welcome',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: textSec,
-                      fontWeight: FontWeight.w500,
-                      fontFamily: 'Poppins',
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      'Hi Welcome',
+                      style: TextStyle(
+                        fontSize: isTablet ? 13 : 11,
+                        color: textSec,
+                        fontWeight: FontWeight.w400,
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 4),
-                  const Text('👋', style: TextStyle(fontSize: 12)),
-                ],
-              ),
-              Text(
-                displayName,
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w700,
-                  color: textPrim,
-                  fontFamily: 'PoppinsSB',
+                    const SizedBox(width: 4),
+                    Text('👋', style: TextStyle(fontSize: isTablet ? 14 : 11)),
+                  ],
                 ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
+                Text(
+                  displayName,
+                  style: TextStyle(
+                    fontSize: isTablet ? 17 : 14,
+                    fontWeight: FontWeight.w700,
+                    color: textPrim,
+                    letterSpacing: -0.2,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
           ),
         ],
       ),
     );
   }
-
-  /// Mirrors the avatar resolution in ProfilePage:
-  ///   1. OAuth / external image_url  → CachedNetworkImage
-  ///   2. Numeric profileId           → assets/images/profiles/{id}.png
-  ///   3. Fallback                    → generic icon
-  Widget _buildAvatar(SignInProvider signIn) {
-    final imageUrl = signIn.imageUrl ?? '';
-    if (imageUrl.isNotEmpty) {
-      return CachedNetworkImage(
-        imageUrl: imageUrl,
-        width: 42,
-        height: 42,
-        fit: BoxFit.cover,
-        memCacheWidth: 84,
-        memCacheHeight: 84,
-        placeholder: (_, __) => _AvatarFallback(),
-        errorWidget: (_, __, ___) => _AvatarFallback(),
-      );
-    }
-
-    // Use the numeric profile avatar chosen by the user in edit_profile
-    final profileId = signIn.profileId;
-    if (profileId != null && profileId != 0) {
-      return Image.asset(
-        'assets/images/profiles/$profileId.png',
-        width: 42,
-        height: 42,
-        fit: BoxFit.cover,
-        errorBuilder: (_, __, ___) => _AvatarFallback(),
-      );
-    }
-
-    return _AvatarFallback();
-  }
 }
 
-class _AvatarFallback extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: _C.primary.withValues(alpha: 0.2),
-      child: const Icon(Icons.person_rounded, color: _C.primary, size: 22),
-    );
-  }
-}
-
-// ─── Brand wordmark with crimson↔violet gradient ──────────────────────────
+// ─── Wordmark for TV/Profile tab appbars ──────────────────────────────────────
 
 class _GradientWordmark extends StatelessWidget {
   final bool isDark;
@@ -351,17 +348,16 @@ class _GradientWordmark extends StatelessWidget {
     return ShaderMask(
       blendMode: BlendMode.srcIn,
       shaderCallback: (bounds) => const LinearGradient(
-        colors: [_C.secondary, _C.primaryLight],
+        colors: [_C.secondary, Color(0xFFEF4444)],
         begin: Alignment.centerLeft,
         end: Alignment.centerRight,
       ).createShader(bounds),
       child: const Text(
         'Reelriot',
         style: TextStyle(
-          fontSize: 20,
-          fontWeight: FontWeight.w700,
-          letterSpacing: 0.4,
-          color: Colors.white,
+          fontSize: 22,
+          fontWeight: FontWeight.w800,
+          letterSpacing: 0.2,
           fontFamily: 'PoppinsSB',
         ),
       ),
@@ -369,12 +365,13 @@ class _GradientWordmark extends StatelessWidget {
   }
 }
 
-// ─── Translucent circular icon button (design.json: topOverlayControls) ───
+// ─── Circular icon button ──────────────────────────────────────────────────
 
 class _CircleIconButton extends StatelessWidget {
   final IconData icon;
   final bool isDark;
   final VoidCallback onTap;
+
   const _CircleIconButton({
     required this.icon,
     required this.isDark,
@@ -383,19 +380,25 @@ class _CircleIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isTablet = MediaQuery.sizeOf(context).width >= 600;
+    final size = isTablet ? 46.0 : 38.0;
+
     return Padding(
-      padding: const EdgeInsets.all(8),
+      padding: const EdgeInsets.symmetric(horizontal: 4),
       child: Material(
         color: Colors.transparent,
+        shape: const CircleBorder(),
         child: InkWell(
+          customBorder: const CircleBorder(),
           onTap: onTap,
-          borderRadius: BorderRadius.circular(999),
+          splashColor: _C.primary.withValues(alpha: 0.12),
+          highlightColor: _C.primary.withValues(alpha: 0.06),
           child: Container(
-            width: 40,
-            height: 40,
+            width: size,
+            height: size,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: isDark ? _C.iconBgDark : _C.iconBgLight,
+              color: isDark ? _C.bgSurfaceDark : _C.bgSurfaceLight,
               border: Border.all(
                 color: isDark ? _C.borderDark : _C.borderLight,
                 width: 1,
@@ -403,7 +406,7 @@ class _CircleIconButton extends StatelessWidget {
             ),
             child: Icon(
               icon,
-              size: 16,
+              size: isTablet ? 20 : 16,
               color: isDark ? _C.textPrimDark : _C.textPrimLight,
             ),
           ),
@@ -438,12 +441,14 @@ class _CinematicTabBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isTablet = MediaQuery.sizeOf(context).width >= 600;
+
     return Container(
       decoration: BoxDecoration(
         color: isDark ? _C.tabBarDark : _C.tabBarLight,
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(24),
-          topRight: Radius.circular(24),
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(isTablet ? 32 : 24),
+          topRight: Radius.circular(isTablet ? 32 : 24),
         ),
         border: Border(
           top: BorderSide(
@@ -465,9 +470,12 @@ class _CinematicTabBar extends StatelessWidget {
           alignment: Alignment.bottomCenter,
           heightFactor: 1.0,
           child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 560),
+            constraints: BoxConstraints(maxWidth: isTablet ? 740 : 560),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+              padding: EdgeInsets.symmetric(
+                horizontal: isTablet ? 16 : 8,
+                vertical: isTablet ? 12 : 10,
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: List.generate(tabs.length, (i) {
@@ -475,6 +483,7 @@ class _CinematicTabBar extends StatelessWidget {
                     meta: tabs[i],
                     isActive: i == selectedIndex,
                     isDark: isDark,
+                    isTablet: isTablet,
                     onTap: () => onTabChange(i),
                   );
                 }),
@@ -493,12 +502,14 @@ class _TabButton extends StatelessWidget {
   final _TabMeta meta;
   final bool isActive;
   final bool isDark;
+  final bool isTablet;
   final VoidCallback onTap;
 
   const _TabButton({
     required this.meta,
     required this.isActive,
     required this.isDark,
+    required this.isTablet,
     required this.onTap,
   });
 
@@ -512,10 +523,19 @@ class _TabButton extends StatelessWidget {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 260),
         curve: Curves.easeInOut,
-        constraints: const BoxConstraints(minHeight: 44, minWidth: 44),
+        constraints: BoxConstraints(
+          minHeight: isTablet ? 52 : 44,
+          minWidth: isTablet ? 52 : 44,
+        ),
         padding: isActive
-            ? const EdgeInsets.symmetric(horizontal: 18, vertical: 9)
-            : const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+            ? EdgeInsets.symmetric(
+                horizontal: isTablet ? 24 : 18,
+                vertical: isTablet ? 12 : 9,
+              )
+            : EdgeInsets.symmetric(
+                horizontal: isTablet ? 18 : 14,
+                vertical: isTablet ? 12 : 9,
+              ),
         decoration: BoxDecoration(
           color: isActive
               ? _C.primary.withValues(alpha: 0.14)
@@ -525,11 +545,68 @@ class _TabButton extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              meta.icon,
-              size: 18,
-              color: isActive ? _C.primary : inactiveColor,
-            ),
+            if (meta.label == 'Profile') ...[
+              Builder(
+                builder: (context) {
+                  final signIn = context.watch<SignInProvider>();
+                  final iconSize = isTablet ? 23.0 : 19.0;
+                  final isSignedIn = signIn.isSignedIn;
+                  final hasCustomImage = isSignedIn &&
+                      (signIn.imageUrl != null && signIn.imageUrl!.isNotEmpty);
+                  final hasProfileAvatar =
+                      isSignedIn && (signIn.profileId != null);
+
+                  if (hasCustomImage || hasProfileAvatar) {
+                    return Container(
+                      width: iconSize,
+                      height: iconSize,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: isActive
+                              ? _C.primary
+                              : inactiveColor.withValues(alpha: 0.6),
+                          width: isActive ? 1.5 : 1.0,
+                        ),
+                      ),
+                      child: ClipOval(
+                        child: hasCustomImage
+                            ? CachedNetworkImage(
+                                imageUrl: signIn.imageUrl!,
+                                fit: BoxFit.cover,
+                                errorWidget: (_, __, ___) => Icon(
+                                  Icons.person_rounded,
+                                  size: iconSize * 0.7,
+                                  color: isActive ? _C.primary : inactiveColor,
+                                ),
+                              )
+                            : Image.asset(
+                                'assets/images/profiles/${signIn.profileId}.png',
+                                fit: BoxFit.cover,
+                                errorBuilder: (_, __, ___) => Icon(
+                                  Icons.person_rounded,
+                                  size: iconSize * 0.7,
+                                  color: isActive ? _C.primary : inactiveColor,
+                                ),
+                              ),
+                      ),
+                    );
+                  }
+
+                  return Icon(
+                    meta.icon,
+                    size: isTablet ? 23 : 18,
+                    color: isActive ? _C.primary : inactiveColor,
+                  );
+                },
+              ),
+            ] else ...[
+              Icon(
+                meta.icon,
+                size: isTablet ? 23 : 18,
+                color: isActive ? _C.primary : inactiveColor,
+              ),
+            ],
             AnimatedSize(
               duration: const Duration(milliseconds: 260),
               curve: Curves.easeInOut,

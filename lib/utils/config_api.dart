@@ -56,6 +56,10 @@ Future<void> fetchConfigFromApi(
       setBool('enable_stream',
           (v) => appDependencyProvider.displayWatchNowButton = v);
       setBool('enable_live_sports', (v) => appDependencyProvider.displayOTTDrawer = v);
+      if (data['hidden_sports_rows'] != null && data['hidden_sports_rows'] is List) {
+        appDependencyProvider.hiddenSportsRows =
+            (data['hidden_sports_rows'] as List).map((e) => e.toString()).toList();
+      }
       setBool('disable_revenuecat',
           (v) => appDependencyProvider.disableRevenueCat = v);
       setBool('enable_anonymous_signin',

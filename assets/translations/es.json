@@ -157,6 +157,7 @@
     "login_anonymously": "¿Iniciar sesión de forma anónima?",
     "login_anon_question": "¿Desea iniciar sesión de forma anónima? Perderá la función de sincronización de marcadores, inicie sesión o regístrese en Reelriot en su lugar",
     "go_back": "Regresar",
+    "back": "Atrás",
     "on": "en",
     "anon_login": "Inicio de sesión anónimo",
     "proceed_anon": "Proceder de forma anónima",
@@ -609,5 +610,13 @@
     "system_offline": "SISTEMA FUERA DE LÍNEA",
     "retry_connection": "REINTENTAR CONEXIÓN",
     "outage_default_message": "El servicio no está disponible actualmente. Estamos trabajando para restablecerlo.",
-    "terms_privacy_agreement": "Al registrarte aceptas los Términos de servicio y la Política de privacidad."
+    "terms_privacy_agreement": "Al registrarte aceptas los Términos de servicio y la Política de privacidad.",
+    "guest_user": "Usuario invitado",
+    "guest_mode_subtitle": "Usando ReelRiot en modo invitado",
+    "sync_across_devices": "Sincronizar entre dispositivos",
+    "sync_devices_desc": "Inicia sesión para respaldar tu historial y lista de seguimiento.",
+    "sign_in_or_create_account": "Iniciar sesión o crear cuenta",
+    "sign_in_to_track": "INICIA SESIÓN PARA REGISTRAR",
+    "track_viewing_habits": "Registra tus hábitos de visualización",
+    "track_viewing_habits_desc": "Inicia sesión o crea una cuenta para desbloquear tus estadísticas personales de tiempo de reproducción, registros de episodios e historial de visualización en todos tus dispositivos."
 }

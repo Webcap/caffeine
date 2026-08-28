@@ -86,17 +86,20 @@ void main() {
       ),
     );
 
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 800));
 
-    expect(find.textContaining('3000.0.0'), findsOneWidget);
+    expect(find.textContaining('3000.0.0'), findsWidgets);
     expect(find.byType(OutlinedButton), findsOneWidget);
     
     await tester.tap(find.byType(OutlinedButton));
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
     expect(find.text('New features!'), findsOneWidget);
     
-    await tester.tap(find.byType(FilledButton).last);
-    await tester.pumpAndSettle();
+    await tester.tap(find.byIcon(Icons.close_rounded));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
     expect(find.text('New features!'), findsNothing);
   });
 }

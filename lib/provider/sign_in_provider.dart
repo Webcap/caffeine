@@ -1,5 +1,6 @@
 import 'package:reelriot/main.dart';
 import 'package:reelriot/provider/bookmarks_provider.dart';
+import 'package:reelriot/provider/recently_watched_provider.dart';
 import 'package:reelriot/services/auth_service.dart';
 import 'package:reelriot/services/analytics_service.dart';
 import 'package:reelriot/controller/bookmark_database_controller.dart';
@@ -120,12 +121,8 @@ class SignInProvider extends ChangeNotifier {
         break;
 
       case AuthChangeEvent.signedOut:
-        if (_authService.currentSession == null && _isSignedIn) {
-          debugPrint('[Auth] 🔑 Real sign-out detected');
-          _handleSignOut();
-        } else {
-          debugPrint('[Auth] ℹ️ signedOut event ignored — session still present');
-        }
+        debugPrint('[Auth] 🔑 Real sign-out detected');
+        _handleSignOut();
         break;
 
       case AuthChangeEvent.passwordRecovery:
@@ -342,6 +339,7 @@ class SignInProvider extends ChangeNotifier {
   }
 
   Future<void> userSignOut() async {
+    await clearStoredData();
     await _authService.signOut();
     _handleSignOut();
   }
@@ -364,14 +362,22 @@ class SignInProvider extends ChangeNotifier {
     await s.remove('last_synced_bookmark_uid');
 
     // Clear local watch data and bookmark SQLite tables
-    await RecentlyWatchedMoviesController().clearAllMovies();
-    await RecentlyWatchedEpisodeController().clearAllEpisodes();
-    await MovieDatabaseController().clearAll();
-    await TVDatabaseController().clearAll();
+    try {
+      await RecentlyWatchedMoviesController().clearAllMovies();
+    } catch (_) {}
+    try {
+      await RecentlyWatchedEpisodeController().clearAllEpisodes();
+    } catch (_) {}
+    try {
+      await MovieDatabaseController().clearAll();
+    } catch (_) {}
+    try {
+      await TVDatabaseController().clearAll();
+    } catch (_) {}
 
     // Clear in-memory providers so active screens don't retain previous user data
     try {
-      await recentProvider.clearLocalData();
+      await RecentProvider.instance.clearLocalData();
     } catch (_) {}
 
     try {

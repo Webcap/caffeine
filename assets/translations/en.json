@@ -157,6 +157,7 @@
     "login_anonymously": "Login anonymously?",
     "login_anon_question": "Do you want to Login anonymously? You'll lose bookmark syncing feature, login or signup to  instead",
     "go_back": "Go back",
+    "back": "Back",
     "on": "on",
     "anon_login": "Anonymous Login",
     "proceed_anon": "Proceed anonymously",
@@ -612,5 +613,13 @@
     "system_offline": "SYSTEM OFFLINE",
     "retry_connection": "RETRY CONNECTION",
     "outage_default_message": "The service is currently unavailable. We are working to bring it back online.",
-    "terms_privacy_agreement": "By signing up you agree to the Terms of Service and Privacy Policy."
+    "terms_privacy_agreement": "By signing up you agree to the Terms of Service and Privacy Policy.",
+    "guest_user": "Guest User",
+    "guest_mode_subtitle": "Using ReelRiot in Guest Mode",
+    "sync_across_devices": "Sync Across Devices",
+    "sync_devices_desc": "Sign in to backup your watch history and watchlist.",
+    "sign_in_or_create_account": "Sign In or Create Account",
+    "sign_in_to_track": "SIGN IN TO TRACK",
+    "track_viewing_habits": "Track Your Viewing Habits",
+    "track_viewing_habits_desc": "Sign in or create an account to unlock your personal watch time statistics, episode logs, and viewing history across all your devices."
 }
