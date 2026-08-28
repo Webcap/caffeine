@@ -1,5 +1,6 @@
 import 'package:reelriot/models/recently_watched.dart';
 import 'package:reelriot/provider/recently_watched_provider.dart';
+import 'package:reelriot/provider/sign_in_provider.dart';
 import 'package:reelriot/screens/tv_screens/widgets/scrolling_recent_tv_episode.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -51,6 +52,8 @@ class _MainTVDisplayState extends State<MainTVDisplay> {
   Widget build(BuildContext context) {
     final settings = Provider.of<SettingsProvider>(context);
     final isDark = settings.appTheme == 'dark' || settings.appTheme == 'amoled';
+    final signIn = Provider.of<SignInProvider>(context);
+    final isSignedIn = signIn.isSignedIn;
     final rEpisodes = Provider.of<RecentProvider>(context).upNextEpisodes;
     final inProgress = Provider.of<RecentProvider>(context).inProgressEpisodes;
     final lang = settings.appLanguage;
@@ -73,12 +76,12 @@ class _MainTVDisplayState extends State<MainTVDisplay> {
                 discoverType: 'discover',
               ),
               const UpdateBottom(),
-              if (inProgress.isNotEmpty)
+              if (isSignedIn && inProgress.isNotEmpty)
                 ScrollingRecentEpisodes(
                   episodesList: inProgress,
                   title: tr("recently_watched"),
                 ),
-              if (rEpisodes.isNotEmpty)
+              if (isSignedIn && rEpisodes.isNotEmpty)
                 ScrollingRecentEpisodes(
                   episodesList: rEpisodes,
                   title: tr("up_next"),

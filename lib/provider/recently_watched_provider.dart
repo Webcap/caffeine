@@ -15,7 +15,11 @@ import 'package:reelriot/functions/network.dart';
 import 'package:reelriot/api/endpoints.dart';
 
 class RecentProvider extends ChangeNotifier {
+  static RecentProvider? _instance;
+  static RecentProvider get instance => _instance ??= RecentProvider();
+
   RecentProvider() {
+    _instance = this;
     _loadCachedWatchStats();
   }
 

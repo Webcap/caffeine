@@ -253,6 +253,8 @@ class _MainMoviesDisplayState extends State<MainMoviesDisplay>
     final region = settings.defaultCountry;
     final includeAdult = settings.isAdult;
     final themeMode = settings.appTheme;
+    final signIn = context.watch<SignInProvider>();
+    final isSignedIn = signIn.isSignedIn;
     final rMovies = context.watch<RecentProvider>().continueWatchingMovies;
 
     // Re-build hero slides reactively when sports events load
@@ -292,7 +294,7 @@ class _MainMoviesDisplayState extends State<MainMoviesDisplay>
         const UpdateBottom(),
 
         // ── 2. Continue Watching ─────────────────────────────────────────────
-        if (rMovies.isNotEmpty)
+        if (isSignedIn && rMovies.isNotEmpty)
           _ContinueWatchingRow(
             movies: rMovies,
             isDark: isDark,
