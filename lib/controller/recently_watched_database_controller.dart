@@ -20,6 +20,7 @@ class RecentlyWatchedMoviesController {
   String dateTimeCol = 'date_watched';
   String posterPathCol = 'poster_path';
   String backdropPathCol = 'backdrop_path';
+  String watchEventsTable = 'movie_watch_events';
   String? get uid => _auth.currentUser?.id;
 
   RecentlyWatchedMoviesController._createInstance();
@@ -44,8 +45,8 @@ class RecentlyWatchedMoviesController {
         await File(legacyPath).copy(properPath);
       } catch (_) {}
     }
-    var recentMoviesDatabase =
-        await openDatabase(properPath, version: 1, onCreate: _createDb);
+    var recentMoviesDatabase = await openDatabase(properPath,
+        version: 2, onCreate: _createDb, onUpgrade: _onUpgrade);
     return recentMoviesDatabase;
   }
 
@@ -57,6 +58,18 @@ class RecentlyWatchedMoviesController {
   void _createDb(Database db, int newVersion) async {
     await db.execute(
         'CREATE TABLE $tableName($colId INTEGER PRIMARY KEY, $colTitle TEXT, $posterPathCol TEXT, $backdropPathCol TEXT, $colReleaseYear INTEGER, $elapsedCol NUMERIC, $remainingCol NUMERIC, $dateTimeCol TEXT)');
+    await _createWatchEventsTable(db);
+  }
+
+  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      await _createWatchEventsTable(db);
+    }
+  }
+
+  Future<void> _createWatchEventsTable(Database db) async {
+    await db.execute(
+        'CREATE TABLE IF NOT EXISTS $watchEventsTable(event_id TEXT PRIMARY KEY, movie_id INTEGER NOT NULL, watched_at TEXT NOT NULL, synced INTEGER NOT NULL DEFAULT 0)');
   }
 
   Future<List<Map<String, dynamic>>> getMovieMapList() async {
@@ -202,9 +215,113 @@ class RecentlyWatchedMoviesController {
     return true; // Deprecated single blob validation
   }
 
+  /// Inserts a new watch event (a "play") for [movieId] and fires the cloud sync.
+  /// Unlike [insertMovie], this never replaces an existing row — every call adds a
+  /// new event, powering rewatch counts.
+  Future<void> insertWatchEvent(WatchEvent event, {
+    required String? title,
+    String? posterPath,
+    String? backdropPath,
+  }) async {
+    final db = await database;
+    await db.insert(watchEventsTable, event.toMap()..['movie_id'] = event.mediaId,
+        conflictAlgorithm: ConflictAlgorithm.replace);
+    await addWatchEventToCloud(event,
+        title: title, posterPath: posterPath, backdropPath: backdropPath);
+  }
+
+  Future<List<WatchEvent>> getWatchEvents(int movieId) async {
+    final db = await database;
+    final rows = await db.query(watchEventsTable,
+        where: 'movie_id = ?', whereArgs: [movieId], orderBy: 'watched_at DESC');
+    return rows
+        .map((m) => WatchEvent.fromMapObject(m, idColumn: 'movie_id'))
+        .toList();
+  }
+
+  Future<int> getWatchCount(int movieId) async {
+    final db = await database;
+    final x = await db.rawQuery(
+        'SELECT COUNT (*) from $watchEventsTable WHERE movie_id = ?', [movieId]);
+    return Sqflite.firstIntValue(x) ?? 0;
+  }
+
+  Future<void> deleteWatchEvent(String eventId) async {
+    final db = await database;
+    await db.delete(watchEventsTable, where: 'event_id = ?', whereArgs: [eventId]);
+    await removeWatchEventFromCloud(eventId);
+  }
+
+  Future<void> deleteAllWatchEvents(int movieId) async {
+    final db = await database;
+    await db.delete(watchEventsTable, where: 'movie_id = ?', whereArgs: [movieId]);
+  }
+
+  /// Creates a new watch event on the Caffeine API. Unlike [addWatchedMovietoFirebase]
+  /// (which upserts the progress row), this always creates a new history entry.
+  ///
+  /// Contract (to be implemented server-side):
+  ///   POST /v1/user/{uid}/history/watches
+  ///   body: {event_id, media_type: 'movie', media_id, title, poster_path?,
+  ///          backdrop_path?, watched_at, platform}
+  ///   -> {success, watch_id, watch_count}
+  /// The server should dedupe on event_id so retried requests don't double-count.
+  Future<void> addWatchEventToCloud(WatchEvent event, {
+    required String? title,
+    String? posterPath,
+    String? backdropPath,
+  }) async {
+    if (uid == null) return;
+    try {
+      final base = caffeineApiUrl.replaceAll(RegExp(r'/+$'), '');
+      final url = Uri.parse('$base/v1/user/$uid/history/watches');
+      final payload = {
+        'event_id': event.eventId,
+        'media_type': 'movie',
+        'media_id': event.mediaId,
+        'title': title,
+        'poster_path': posterPath,
+        'backdrop_path': backdropPath,
+        // Empty string means the user picked "Unknown date" — send null so the
+        // server can distinguish "no date" from an actual timestamp.
+        'watched_at': event.watchedAt.isEmpty ? null : event.watchedAt,
+        'platform': Platform.isAndroid
+            ? 'mobile_android'
+            : (Platform.isIOS ? 'mobile_ios' : 'mobile'),
+      };
+      await http
+          .post(
+            url,
+            headers: {
+              ...caffeineApiHeaders,
+              'Content-Type': 'application/json',
+            },
+            body: jsonEncode(payload),
+          )
+          .timeout(const Duration(seconds: 6));
+    } catch (e) {
+      debugPrint('[WatchHistory] ❌ Watch event API sync error: $e');
+    }
+  }
+
+  /// Contract: DELETE /v1/user/{uid}/history/watches/{eventId} -> {success, watch_count}
+  Future<void> removeWatchEventFromCloud(String eventId) async {
+    if (uid == null) return;
+    try {
+      final base = caffeineApiUrl.replaceAll(RegExp(r'/+$'), '');
+      final url = Uri.parse('$base/v1/user/$uid/history/watches/$eventId');
+      await http
+          .delete(url, headers: caffeineApiHeaders)
+          .timeout(const Duration(seconds: 6));
+    } catch (e) {
+      debugPrint('[WatchHistory] ❌ Watch event API delete error: $e');
+    }
+  }
+
   Future<void> clearAllMovies() async {
     final db = await database;
     await db.delete(tableName);
+    await db.delete(watchEventsTable);
   }
 
   Future<void> replaceAllMovies(List<RecentMovie> movies) async {
@@ -235,6 +352,7 @@ class RecentlyWatchedEpisodeController {
   String colRemaining = 'remaining';
   String colDateAdded = 'date_added';
   String colSeriesId = 'series_id';
+  String watchEventsTable = 'episode_watch_events';
   RecentlyWatchedEpisodeController._createInstance();
   String? get uid => _auth.currentUser?.id;
 
@@ -259,8 +377,8 @@ class RecentlyWatchedEpisodeController {
         await File(legacyPath).copy(properPath);
       } catch (_) {}
     }
-    var episodesDatabase =
-        await openDatabase(properPath, version: 1, onCreate: _createDb);
+    var episodesDatabase = await openDatabase(properPath,
+        version: 2, onCreate: _createDb, onUpgrade: _onUpgrade);
     return episodesDatabase;
   }
 
@@ -272,6 +390,18 @@ class RecentlyWatchedEpisodeController {
   void _createDb(Database db, int newVersion) async {
     await db.execute(
         'CREATE TABLE $tableName($colId INTEGER PRIMARY KEY, $colSeriesId INTEGER, $colTitle TEXT, $colEpisodeTitle TEXT, $colEpisodeNum INTEGER, $colSeasonNum INTEGER, $colElapsed NUMERIC, $colRemaining NUMERIC, $colPosterPath TEXT, $colDateAdded TEXT)');
+    await _createWatchEventsTable(db);
+  }
+
+  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      await _createWatchEventsTable(db);
+    }
+  }
+
+  Future<void> _createWatchEventsTable(Database db) async {
+    await db.execute(
+        'CREATE TABLE IF NOT EXISTS $watchEventsTable(event_id TEXT PRIMARY KEY, series_id INTEGER, episode_id INTEGER, season_num INTEGER, episode_num INTEGER, watched_at TEXT NOT NULL, synced INTEGER NOT NULL DEFAULT 0)');
   }
 
   //this function will return all the tv in the database.
@@ -430,9 +560,131 @@ class RecentlyWatchedEpisodeController {
     // No-op: uid dynamically retrieves _auth.currentUser?.id
   }
 
+  /// Inserts a new watch event (a "play") for the given series/season/episode and
+  /// fires the cloud sync. Unlike [insertTV], this never replaces an existing row —
+  /// every call adds a new event, powering rewatch counts.
+  Future<void> insertWatchEvent(WatchEvent event, {
+    required int? seriesId,
+    required int? episodeId,
+    required String? seriesName,
+    String? episodeName,
+    String? posterPath,
+  }) async {
+    final db = await database;
+    final map = event.toMap()
+      ..['series_id'] = seriesId
+      ..['episode_id'] = episodeId;
+    await db.insert(watchEventsTable, map,
+        conflictAlgorithm: ConflictAlgorithm.replace);
+    await addWatchEventToCloud(event,
+        seriesId: seriesId,
+        seriesName: seriesName,
+        episodeName: episodeName,
+        posterPath: posterPath);
+  }
+
+  Future<List<WatchEvent>> getWatchEvents(
+      int seriesId, int seasonNum, int episodeNum) async {
+    final db = await database;
+    final rows = await db.query(watchEventsTable,
+        where: 'series_id = ? AND season_num = ? AND episode_num = ?',
+        whereArgs: [seriesId, seasonNum, episodeNum],
+        orderBy: 'watched_at DESC');
+    return rows
+        .map((m) => WatchEvent.fromMapObject(m, idColumn: 'series_id'))
+        .toList();
+  }
+
+  Future<int> getWatchCount(int seriesId, int seasonNum, int episodeNum) async {
+    final db = await database;
+    final x = await db.rawQuery(
+        'SELECT COUNT (*) from $watchEventsTable WHERE series_id = ? AND season_num = ? AND episode_num = ?',
+        [seriesId, seasonNum, episodeNum]);
+    return Sqflite.firstIntValue(x) ?? 0;
+  }
+
+  Future<void> deleteWatchEvent(String eventId) async {
+    final db = await database;
+    await db.delete(watchEventsTable, where: 'event_id = ?', whereArgs: [eventId]);
+    await removeWatchEventFromCloud(eventId);
+  }
+
+  Future<void> deleteAllWatchEvents(
+      int seriesId, int seasonNum, int episodeNum) async {
+    final db = await database;
+    await db.delete(watchEventsTable,
+        where: 'series_id = ? AND season_num = ? AND episode_num = ?',
+        whereArgs: [seriesId, seasonNum, episodeNum]);
+  }
+
+  /// Creates a new watch event on the Caffeine API. Unlike [addWatchedTVtoFirebase]
+  /// (which upserts the progress row), this always creates a new history entry.
+  ///
+  /// Contract (to be implemented server-side):
+  ///   POST /v1/user/{uid}/history/watches
+  ///   body: {event_id, media_type: 'tv', media_id, season_num, episode_num, title,
+  ///          episode_name?, poster_path?, watched_at, platform}
+  ///   -> {success, watch_id, watch_count}
+  /// The server should dedupe on event_id so retried requests don't double-count.
+  Future<void> addWatchEventToCloud(WatchEvent event, {
+    required int? seriesId,
+    required String? seriesName,
+    String? episodeName,
+    String? posterPath,
+  }) async {
+    if (uid == null) return;
+    try {
+      final base = caffeineApiUrl.replaceAll(RegExp(r'/+$'), '');
+      final url = Uri.parse('$base/v1/user/$uid/history/watches');
+      final payload = {
+        'event_id': event.eventId,
+        'media_type': 'tv',
+        'media_id': seriesId ?? event.mediaId,
+        'season_num': event.seasonNum,
+        'episode_num': event.episodeNum,
+        'title': seriesName,
+        'episode_name': episodeName,
+        'poster_path': posterPath,
+        // Empty string means the user picked "Unknown date" — send null so the
+        // server can distinguish "no date" from an actual timestamp.
+        'watched_at': event.watchedAt.isEmpty ? null : event.watchedAt,
+        'platform': Platform.isAndroid
+            ? 'mobile_android'
+            : (Platform.isIOS ? 'mobile_ios' : 'mobile'),
+      };
+      await http
+          .post(
+            url,
+            headers: {
+              ...caffeineApiHeaders,
+              'Content-Type': 'application/json',
+            },
+            body: jsonEncode(payload),
+          )
+          .timeout(const Duration(seconds: 6));
+    } catch (e) {
+      debugPrint('[WatchHistory] ❌ Watch event API sync error: $e');
+    }
+  }
+
+  /// Contract: DELETE /v1/user/{uid}/history/watches/{eventId} -> {success, watch_count}
+  Future<void> removeWatchEventFromCloud(String eventId) async {
+    if (uid == null) return;
+    try {
+      final base = caffeineApiUrl.replaceAll(RegExp(r'/+$'), '');
+      final url = Uri.parse('$base/v1/user/$uid/history/watches/$eventId');
+      await http
+          .delete(url, headers: caffeineApiHeaders)
+          .timeout(const Duration(seconds: 6));
+    } catch (e) {
+      debugPrint('[WatchHistory] ❌ Watch event API delete error: $e');
+    }
+  }
+
   Future<void> clearAllEpisodes() async {
     final db = await database;
     await db.delete(tableName);
+    await db.delete(watchEventsTable);
   }
 
   Future<void> replaceAllEpisodes(List<RecentEpisode> episodes) async {

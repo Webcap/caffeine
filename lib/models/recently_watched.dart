@@ -1,3 +1,5 @@
+import 'dart:math';
+
 /// Progress threshold: items at or above this % are hidden from continue watching.
 const int continueWatchingProgressThreshold = 90;
 
@@ -14,6 +16,17 @@ bool shouldShowInContinueWatching(int? elapsed, int? remaining) {
   // If we don't have progress info yet, or it's within the threshold, show it.
   return progressPercent(elapsed, remaining) <
       continueWatchingProgressThreshold;
+}
+
+/// True once progress reaches [continueWatchingProgressThreshold].
+bool isWatchedProgress(int? elapsed, int? remaining) =>
+    !shouldShowInContinueWatching(elapsed, remaining);
+
+/// Generates a client-side id for a [WatchEvent], used as both the local
+/// primary key and the idempotency key sent to the Caffeine API.
+String generateWatchEventId() {
+  final rand = Random().nextInt(1 << 32).toRadixString(16);
+  return '${DateTime.now().microsecondsSinceEpoch}-$rand';
 }
 
 class RecentMovie {
@@ -141,5 +154,48 @@ class RecentEpisode {
     sessionId = map['session_id'];
     startedAt = map['started_at'];
     completedAt = map['completed_at'];
+  }
+}
+
+/// A single logged watch event (a "play"), distinct from the mutable
+/// progress row used for continue-watching. Multiple [WatchEvent]s can
+/// exist for the same media item to represent rewatches, Trakt-style.
+class WatchEvent {
+  WatchEvent({
+    required this.eventId,
+    required this.mediaId,
+    required this.watchedAt,
+    this.seasonNum,
+    this.episodeNum,
+    this.synced = false,
+  });
+
+  String eventId;
+  int mediaId;
+  int? seasonNum;
+  int? episodeNum;
+  String watchedAt;
+  bool synced;
+
+  Map<String, dynamic> toMap() {
+    final map = <String, dynamic>{
+      'event_id': eventId,
+      'watched_at': watchedAt,
+      'synced': synced ? 1 : 0,
+    };
+    if (seasonNum != null) map['season_num'] = seasonNum;
+    if (episodeNum != null) map['episode_num'] = episodeNum;
+    return map;
+  }
+
+  factory WatchEvent.fromMapObject(Map<String, dynamic> map, {required String idColumn}) {
+    return WatchEvent(
+      eventId: map['event_id'],
+      mediaId: map[idColumn],
+      seasonNum: map['season_num'],
+      episodeNum: map['episode_num'],
+      watchedAt: map['watched_at'],
+      synced: (map['synced'] as int?) == 1,
+    );
   }
 }
