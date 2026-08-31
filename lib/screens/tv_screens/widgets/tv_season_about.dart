@@ -65,7 +65,8 @@ class _TVSeasonAboutState extends State<TVSeasonAbout> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: ReadMoreText(
-                widget.season.overview!.isEmpty
+                (widget.season.overview == null ||
+                        widget.season.overview!.isEmpty)
                     ? tr("no_season_overview")
                     : widget.season.overview!,
                 trimLines: 4,

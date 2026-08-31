@@ -15,6 +15,7 @@ abstract class LocaleKeys {
   static const in_production = 'in_production';
   static const ended = 'ended';
   static const cancelled = 'cancelled';
+  static const watch_next = 'watch_next';
   static const pilot = 'pilot';
   static const action = 'action';
   static const adventure = 'adventure';

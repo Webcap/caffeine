@@ -43,8 +43,8 @@ class _TVAboutState extends State<TVAbout> {
                   horizontal: isTablet ? 32.0 : 16.0,
                   vertical: 8.0,
                 ),
-                child: widget.tvSeries.overview!.isEmpty ||
-                        widget.tvSeries.overview == null
+                child: (widget.tvSeries.overview == null ||
+                        widget.tvSeries.overview!.isEmpty)
                   ? Text(tr("no_overview_tv"))
                   : ReadMoreText(
                       widget.tvSeries.overview!,

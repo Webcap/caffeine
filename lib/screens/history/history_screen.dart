@@ -954,16 +954,17 @@ class _ResponsiveHistoryGrid extends StatelessWidget {
             : '${(progress * 100).toInt()}% • ${recentPrv.formatWatchTime(elapsed ~/ 60000)} / ${recentPrv.formatWatchTime(total ~/ 60000)}',
         isDark: isDark,
         onTap: () {
+          final targetId = ep.seriesId ?? ep.id;
           Navigator.push(
             context,
             MaterialPageRoute(
               builder: (_) => TVDetailPage(
                 tvSeries: TV(
-                  id: ep.seriesId,
+                  id: targetId,
                   name: ep.seriesName,
                   posterPath: ep.posterPath,
                 ),
-                heroId: 'history_tv_${ep.seriesId}',
+                heroId: 'history_tv_$targetId',
               ),
             ),
           );
