@@ -290,14 +290,6 @@ class AppDependencyProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  bool _disableRevenueCat = false;
-  bool get disableRevenueCat => getFlag<bool>('disable_revenuecat', _disableRevenueCat);
-  set disableRevenueCat(bool value) {
-    _disableRevenueCat = value;
-    _prefs.setDisableRevenueCat(value);
-    notifyListeners();
-  }
-
   bool _enableAnonymousSignIn = false;
   bool get enableAnonymousSignIn => getFlag<bool>('enable_anonymous_signin', _enableAnonymousSignIn);
   set enableAnonymousSignIn(bool value) {
@@ -323,17 +315,6 @@ class AppDependencyProvider extends ChangeNotifier {
     if (_mixpanelToken == value) return;
     _mixpanelToken = value;
     _prefs.setMixpanelToken(value);
-    notifyListeners();
-  }
-
-  bool _displayPremiumBanner = true;
-  bool get displayPremiumBanner => 
-      getFlag<bool>('display_premium_banner', 
-      getFlag<bool>('display_mobile_banner', _displayPremiumBanner));
-  set displayPremiumBanner(bool value) {
-    if (_displayPremiumBanner == value) return;
-    _displayPremiumBanner = value;
-    _prefs.setDisplayPremiumBanner(value);
     notifyListeners();
   }
 
@@ -377,32 +358,6 @@ class AppDependencyProvider extends ChangeNotifier {
   FeaturedEvent? get featuredEvent => _featuredEvent;
   set featuredEvent(FeaturedEvent? value) {
     _featuredEvent = value;
-    notifyListeners();
-  }
-
-  // --- RevenueCat Config (fetched from API) ---
-  String _revenueCatApiKeyAndroid = constants.revenueCatApiKeyAndroid;
-  String get revenueCatApiKeyAndroid => _revenueCatApiKeyAndroid.isEmpty
-      ? constants.revenueCatApiKeyAndroid
-      : _revenueCatApiKeyAndroid;
-  set revenueCatApiKeyAndroid(String value) {
-    _revenueCatApiKeyAndroid = value;
-    notifyListeners();
-  }
-
-  String _revenueCatApiKeyIOS = constants.revenueCatApiKeyIOS;
-  String get revenueCatApiKeyIOS => _revenueCatApiKeyIOS.isEmpty
-      ? constants.revenueCatApiKeyIOS
-      : _revenueCatApiKeyIOS;
-  set revenueCatApiKeyIOS(String value) {
-    _revenueCatApiKeyIOS = value;
-    notifyListeners();
-  }
-
-  String _revenueCatEntitlementId = 'premium';
-  String get revenueCatEntitlementId => _revenueCatEntitlementId;
-  set revenueCatEntitlementId(String value) {
-    _revenueCatEntitlementId = value;
     notifyListeners();
   }
 
@@ -533,11 +488,9 @@ class AppDependencyProvider extends ChangeNotifier {
     }
     _caffieneLogo = await _prefs.getCaffieneLogo();
     _displayOTTDrawer = await _prefs.getEnableOtt();
-    _disableRevenueCat = await _prefs.getDisableRevenueCat();
     _enableAnonymousSignIn = await _prefs.getEnableAnonymousSignIn();
     _enableGoogleSignIn = await _prefs.getEnableGoogleSignIn();
     _mixpanelToken = await _prefs.getMixpanelToken();
-    _displayPremiumBanner = await _prefs.getDisplayPremiumBanner();
     
     // Fetch native ads in background
     fetchAds();

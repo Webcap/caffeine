@@ -6,7 +6,6 @@ import 'package:reelriot/services/analytics_service.dart';
 import 'package:reelriot/controller/bookmark_database_controller.dart';
 import 'package:reelriot/controller/recently_watched_database_controller.dart';
 import 'package:reelriot/provider/app_dependency_provider.dart';
-import 'package:reelriot/services/purchase_service.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -113,7 +112,6 @@ class SignInProvider extends ChangeNotifier {
           } catch (e) {
             debugPrint('[Auth] ⚠️ Could not fetch profile (offline?): $e');
           }
-          _initRevenueCat(session.user.id);
           AnalyticsService.instance.identify(session.user.id);
         } else if (event == AuthChangeEvent.initialSession) {
            debugPrint('[Auth] ℹ️ Initial session was null');
@@ -179,17 +177,6 @@ class SignInProvider extends ChangeNotifier {
     });
   }
 
-  void _initRevenueCat(String userId) {
-    if (appDependencyProvider == null) return;
-    PurchaseService.init(
-      userId,
-      androidKey: appDependencyProvider!.revenueCatApiKeyAndroid,
-      iosKey: appDependencyProvider!.revenueCatApiKeyIOS,
-      entitlementId: appDependencyProvider!.revenueCatEntitlementId,
-      disabled: appDependencyProvider!.disableRevenueCat,
-    );
-  }
-
   void _handleSignOut() async {
     _isSignedIn = false;
     _uid = null;
@@ -201,16 +188,6 @@ class SignInProvider extends ChangeNotifier {
     notifyListeners();
     await clearStoredData();
 
-    // Initialize RevenueCat anonymously after sign-out.
-    if (appDependencyProvider != null) {
-      PurchaseService.init(
-        null,
-        androidKey: appDependencyProvider!.revenueCatApiKeyAndroid,
-        iosKey: appDependencyProvider!.revenueCatApiKeyIOS,
-        entitlementId: appDependencyProvider!.revenueCatEntitlementId,
-        disabled: appDependencyProvider!.disableRevenueCat,
-      );
-    }
     AnalyticsService.instance.trackEvent('Signed Out');
     AnalyticsService.instance.reset();
 

@@ -58,13 +58,6 @@ Map<String, String> get caffeineApiHeaders {
 
 String get vidSrcApi => dotenv.env['VIDSRC_API'] ?? '';
 
-// RevenueCat (Keys now provided via API config)
-String get revenueCatApiKeyAndroid =>
-    dotenv.env['REVENUECAT_PUBLIC_SDK_KEY_ANDROID'] ?? '';
-String get revenueCatApiKeyIOS =>
-    dotenv.env['REVENUECAT_PUBLIC_SDK_KEY_IOS'] ?? '';
-String get revenueCatEntitlementId =>
-    dotenv.env['REVENUECAT_ENTITLEMENT_ID'] ?? 'premium';
 
 /// FlixAPI is fully merged into Caffeine API; always use the main API URL.
 String get flixApiUrl => caffeineApiUrl;

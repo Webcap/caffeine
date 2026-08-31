@@ -60,15 +60,11 @@ Future<void> fetchConfigFromApi(
         appDependencyProvider.hiddenSportsRows =
             (data['hidden_sports_rows'] as List).map((e) => e.toString()).toList();
       }
-      setBool('disable_revenuecat',
-          (v) => appDependencyProvider.disableRevenueCat = v);
       setBool('enable_anonymous_signin',
           (v) => appDependencyProvider.enableAnonymousSignIn = v);
       setBool('enable_google_signin',
           (v) => appDependencyProvider.enableGoogleSignIn = v);
       setString('mixpanel_token', (v) => appDependencyProvider.mixpanelToken = v);
-      setBool('display_premium_banner',
-          (v) => appDependencyProvider.displayPremiumBanner = v);
       setString('caffeine_api_url', (v) {
         if (isCaffeineApiPreviewUrl(v)) return;
         // In debug, don't overwrite with localhost (API default); keep .env URL.
@@ -105,12 +101,6 @@ Future<void> fetchConfigFromApi(
           'animekai_server', (v) => appDependencyProvider.animekaiServer = v);
       setString(
           'hianime_server', (v) => appDependencyProvider.hianimeServer = v);
-      setString('revenuecat_public_sdk_key_android',
-          (v) => appDependencyProvider.revenueCatApiKeyAndroid = v);
-      setString('revenuecat_public_sdk_key_ios',
-          (v) => appDependencyProvider.revenueCatApiKeyIOS = v);
-      setString('revenuecat_entitlement_id',
-          (v) => appDependencyProvider.revenueCatEntitlementId = v);
           
       // Success: Now fetch feature flags and provider health in background
       await fetchFeatureFlagsFromApi(appDependencyProvider);
