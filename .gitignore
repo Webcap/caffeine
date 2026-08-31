@@ -51,3 +51,4 @@ scratch/discord_reaction_roles.js
 dist/
 tools/adi_*
 android/app/src/main/assets/adi-registration.properties
+/.claude
