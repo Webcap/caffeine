@@ -203,7 +203,7 @@ class TVDetailQuickInfo extends StatelessWidget {
 
           // ── Centered Play Button (Watch Now / Continue) ────────────────────────
           Center(
-            child: _WatchNowButton(tvSeries: tvSeries),
+            child: TVWatchNowCircleButton(tvSeries: tvSeries),
           ),
 
           // ── TV title + year (anchored at bottom of hero) ───────────────
@@ -292,9 +292,9 @@ class TVDetailQuickInfo extends StatelessWidget {
   }
 }
 
-class _WatchNowButton extends StatelessWidget {
+class TVWatchNowCircleButton extends StatelessWidget {
   final TV tvSeries;
-  const _WatchNowButton({required this.tvSeries});
+  const TVWatchNowCircleButton({super.key, required this.tvSeries});
 
   @override
   Widget build(BuildContext context) {

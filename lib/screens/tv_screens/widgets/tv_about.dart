@@ -16,10 +16,21 @@ import 'package:provider/provider.dart';
 import 'package:readmore/readmore.dart';
 
 class TVAbout extends StatefulWidget {
-  const TVAbout({super.key, required this.tvSeries, this.videosKey});
+  const TVAbout({
+    super.key,
+    required this.tvSeries,
+    this.videosKey,
+    this.scrollable = true,
+  });
 
   final TV tvSeries;
   final GlobalKey? videosKey;
+
+  /// When false, renders its content directly (no SingleChildScrollView) so
+  /// a caller can place it inside a scroll region it already owns — used by
+  /// the expanded (tablet-landscape) layout, which shares one scroll view
+  /// across the title block, ratings, and this content.
+  final bool scrollable;
 
   @override
   State<TVAbout> createState() => _TVAboutState();
@@ -32,8 +43,7 @@ class _TVAboutState extends State<TVAbout> {
     final screenWidth = MediaQuery.sizeOf(context).width;
     final isTablet = screenWidth >= 600;
 
-    return SingleChildScrollView(
-      child: Center(
+    final content = Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 1200),
           child: Column(
@@ -130,7 +140,8 @@ class _TVAboutState extends State<TVAbout> {
           ],
         ),
       ),
-    ),
-  );
-}
+    );
+
+    return widget.scrollable ? SingleChildScrollView(child: content) : content;
+  }
 }

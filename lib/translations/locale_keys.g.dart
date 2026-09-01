@@ -544,4 +544,5 @@ abstract class LocaleKeys {
   static const newest = 'newest';
   static const install_permission_title = 'install_permission_title';
   static const install_permission_msg = 'install_permission_msg';
+  static const season = 'season';
 }

@@ -25,6 +25,7 @@ class TVEpisodeOptions extends StatelessWidget {
     final elevated = isDark ? _C.bgElevatedDark : _C.bgElevatedLight;
     final border = isDark ? _C.borderDark : _C.borderLight;
     final textSec = isDark ? _C.textSecDark : _C.textSecLight;
+    final isTablet = MediaQuery.sizeOf(context).width >= 600;
 
     final avg = episodeList.voteAverage;
     final ratingStr = avg != null && avg > 0
@@ -35,13 +36,18 @@ class TVEpisodeOptions extends StatelessWidget {
     final voteCount = episodeList.voteCount ?? 0;
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+      padding: EdgeInsets.fromLTRB(
+        isTablet ? 24 : 16,
+        isTablet ? 16 : 12,
+        isTablet ? 24 : 16,
+        isTablet ? 12 : 8,
+      ),
       child: Row(
         children: [
           Expanded(
             child: Wrap(
-              spacing: 8,
-              runSpacing: 8,
+              spacing: isTablet ? 10 : 8,
+              runSpacing: isTablet ? 10 : 8,
               children: [
                 if (ratingStr != null)
                   _RatingChip(

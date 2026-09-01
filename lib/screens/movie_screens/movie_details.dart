@@ -5,6 +5,7 @@ import 'package:reelriot/models/movie_models.dart';
 import 'package:reelriot/provider/app_dependency_provider.dart';
 import 'package:reelriot/provider/settings_provider.dart';
 import 'package:reelriot/screens/movie_screens/widgets/movie_about.dart';
+import 'package:reelriot/screens/movie_screens/widgets/movie_detail_expanded_layout.dart';
 import 'package:reelriot/screens/movie_screens/widgets/movie_detail_quick_info.dart';
 import 'package:reelriot/screens/movie_screens/widgets/movie_details_options.dart';
 import 'package:reelriot/widgets/watch_now_button.dart';
@@ -101,9 +102,17 @@ class MovieDetailPageState extends State<MovieDetailPage>
         ? DateTime.tryParse(_movie.releaseDate!)
         : null;
 
+    final isExpanded = MediaQuery.sizeOf(context).width >= 840;
+
     return Scaffold(
       backgroundColor: bg,
-      body: CustomScrollView(
+      body: isExpanded
+          ? MovieDetailExpandedLayout(
+              movie: _movie,
+              heroId: widget.heroId,
+              onTrailerTap: _scrollToVideos,
+            )
+          : CustomScrollView(
         controller: _scrollController,
         physics: const BouncingScrollPhysics(),
         slivers: [

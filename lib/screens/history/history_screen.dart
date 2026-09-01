@@ -13,6 +13,7 @@ import 'package:reelriot/provider/recently_watched_provider.dart';
 import 'package:reelriot/provider/settings_provider.dart';
 import 'package:reelriot/provider/sign_in_provider.dart';
 import 'package:reelriot/screens/movie_screens/movie_details.dart';
+import 'package:reelriot/screens/tv_screens/episode_detail_page.dart';
 import 'package:reelriot/screens/tv_screens/tv_detail_page.dart';
 import 'package:reelriot/utils/config.dart';
 import 'package:reelriot/utils/constant.dart';
@@ -954,17 +955,22 @@ class _ResponsiveHistoryGrid extends StatelessWidget {
             : '${(progress * 100).toInt()}% • ${recentPrv.formatWatchTime(elapsed ~/ 60000)} / ${recentPrv.formatWatchTime(total ~/ 60000)}',
         isDark: isDark,
         onTap: () {
-          final targetId = ep.seriesId ?? ep.id;
+          final targetTvId = (ep.seriesId != null && ep.seriesId != 0) ? ep.seriesId : ep.id;
+          final episodeList = EpisodeList(
+            episodeId: ep.id,
+            name: ep.episodeName,
+            episodeNumber: ep.episodeNum,
+            seasonNumber: ep.seasonNum,
+            stillPath: ep.posterPath,
+          );
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (_) => TVDetailPage(
-                tvSeries: TV(
-                  id: targetId,
-                  name: ep.seriesName,
-                  posterPath: ep.posterPath,
-                ),
-                heroId: 'history_tv_$targetId',
+              builder: (_) => EpisodeDetailPage(
+                episodeList: episodeList,
+                tvId: targetTvId,
+                seriesName: ep.seriesName,
+                posterPath: ep.posterPath ?? '',
               ),
             ),
           );

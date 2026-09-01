@@ -5,6 +5,7 @@ import 'package:reelriot/functions/network.dart';
 import 'package:reelriot/provider/app_dependency_provider.dart';
 import 'package:reelriot/provider/settings_provider.dart';
 import 'package:reelriot/screens/tv_screens/widgets/tv_about.dart';
+import 'package:reelriot/screens/tv_screens/widgets/tv_detail_expanded_layout.dart';
 import 'package:reelriot/screens/tv_screens/widgets/tv_detail_options.dart';
 import 'package:reelriot/screens/tv_screens/widgets/tv_detail_quick_info.dart';
 import 'package:reelriot/screens/tv_screens/widgets/tv_widgets.dart';
@@ -95,10 +96,17 @@ class TVDetailPageState extends State<TVDetailPage>
     super.build(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? _C.bgCanvasDark : _C.bgCanvasLight;
+    final isExpanded = MediaQuery.sizeOf(context).width >= 840;
 
     return Scaffold(
       backgroundColor: bg,
-      body: CustomScrollView(
+      body: isExpanded
+          ? TVDetailExpandedLayout(
+              tvSeries: _tvSeries,
+              heroId: widget.heroId,
+              onVideosTap: _scrollToVideos,
+            )
+          : CustomScrollView(
         controller: _scrollController,
         physics: const BouncingScrollPhysics(),
         slivers: [
