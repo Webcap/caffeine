@@ -454,7 +454,11 @@ class _EspnLeagueConfig {
 
 const List<_EspnLeagueConfig> _espnLeagues = [
   _EspnLeagueConfig('basketball', 'nba', 'Basketball', 'NBA'),
+  _EspnLeagueConfig('basketball', 'wnba', 'Basketball', 'WNBA'),
+  _EspnLeagueConfig('basketball', 'mens-college-basketball', 'Basketball', 'NCAAM'),
+  _EspnLeagueConfig('basketball', 'womens-college-basketball', 'Basketball', 'NCAAW'),
   _EspnLeagueConfig('football', 'nfl', 'American Football', 'NFL'),
+  _EspnLeagueConfig('football', 'college-football', 'American Football', 'NCAAF'),
   _EspnLeagueConfig('baseball', 'mlb', 'Baseball', 'MLB'),
   _EspnLeagueConfig('hockey', 'nhl', 'Hockey', 'NHL'),
   _EspnLeagueConfig('mma', 'ufc', 'MMA', 'UFC'),
