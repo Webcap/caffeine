@@ -2,6 +2,8 @@ import 'dart:ui';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:reelriot/models/recently_watched.dart';
+import 'package:reelriot/utils/theme/app_colors.dart';
+import 'package:shimmer/shimmer.dart';
 
 /// Trakt-style watch history: shows every logged watch event for one movie
 /// or episode, each removable. Reused by both the movie detail "watched"
@@ -134,10 +136,7 @@ class _WatchHistorySheetBodyState extends State<_WatchHistorySheetBody> {
             const Divider(height: 1),
             Flexible(
               child: _events == null
-                  ? const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 32),
-                      child: Center(child: CircularProgressIndicator()),
-                    )
+                  ? _buildSkeletonList(isDark)
                   : _events!.isEmpty
                       ? Padding(
                           padding: const EdgeInsets.symmetric(vertical: 32),
@@ -160,15 +159,15 @@ class _WatchHistorySheetBodyState extends State<_WatchHistorySheetBody> {
                             return ListTile(
                               contentPadding:
                                   const EdgeInsets.symmetric(horizontal: 24, vertical: 4),
-                              leading: Icon(Icons.check_circle_rounded,
-                                  color: Colors.green, size: 20),
+                              leading: const Icon(Icons.check_circle_rounded,
+                                  color: AppSemanticColors.successDefault, size: 20),
                               title: Text(
                                 formatted,
                                 style: TextStyle(fontSize: 15, color: textColor),
                               ),
                               trailing: IconButton(
                                 icon: const Icon(Icons.delete_outline_rounded,
-                                    color: Colors.redAccent),
+                                    color: AppSemanticColors.dangerDefault),
                                 tooltip: tr("remove_watch"),
                                 onPressed: () => _remove(event),
                               ),
@@ -178,6 +177,61 @@ class _WatchHistorySheetBodyState extends State<_WatchHistorySheetBody> {
             ),
             const SizedBox(height: 16),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSkeletonList(bool isDark) {
+    final baseColor = isDark
+        ? Colors.white.withValues(alpha: 0.05)
+        : Colors.black.withValues(alpha: 0.04);
+    final highlightColor = isDark
+        ? Colors.white.withValues(alpha: 0.12)
+        : Colors.black.withValues(alpha: 0.10);
+    final placeholderColor = isDark ? Colors.white12 : Colors.black12;
+
+    return Shimmer.fromColors(
+      baseColor: baseColor,
+      highlightColor: highlightColor,
+      child: ListView.separated(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: 3,
+        separatorBuilder: (context, index) => const Divider(height: 1),
+        itemBuilder: (context, index) => Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+          child: Row(
+            children: [
+              Container(
+                width: 20,
+                height: 20,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: placeholderColor,
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Container(
+                  height: 14,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(4),
+                    color: placeholderColor,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 24),
+              Container(
+                width: 20,
+                height: 20,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(4),
+                  color: placeholderColor,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
