@@ -204,7 +204,7 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     ),
                     icon: const Icon(Icons.arrow_back_rounded),
                   ),
-                  const SizedBox(height: 28),
+                  const SizedBox(height: 20),
                   const Text(
                     'Reset Password',
                     style: TextStyle(
@@ -214,16 +214,7 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       height: 1.05,
                     ),
                   ),
-                  const SizedBox(height: 10),
-                  const Text(
-                    'Enter the email connected to your account and we will send you reset instructions.',
-                    style: TextStyle(
-                      color: _textSecondary,
-                      fontSize: 15,
-                      height: 1.5,
-                    ),
-                  ),
-                  const SizedBox(height: 28),
+                  const SizedBox(height: 20),
                   Container(
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
@@ -251,16 +242,7 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                               fontWeight: FontWeight.w700,
                             ),
                           ),
-                          const SizedBox(height: 6),
-                          const Text(
-                            'We will email you a secure link to update your password.',
-                            style: TextStyle(
-                              color: _textSecondary,
-                              fontSize: 13,
-                              height: 1.45,
-                            ),
-                          ),
-                          const SizedBox(height: 20),
+                          const SizedBox(height: 16),
                           TextFormField(
                             key: const ValueKey('email'),
                             validator: (value) {

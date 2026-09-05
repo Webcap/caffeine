@@ -506,22 +506,12 @@ class _SignupScreenState extends State<SignupScreen> {
                                 height: 1.05,
                               ),
                             ),
-                            const SizedBox(height: 8),
-                            Text(
-                              tr("signup_to_sync"),
-                              maxLines: 4,
-                              style: const TextStyle(
-                                color: _textSecondary,
-                                fontSize: 14,
-                                height: 1.45,
-                              ),
-                            ),
                           ],
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 28),
+                  const SizedBox(height: 20),
                   Container(
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
