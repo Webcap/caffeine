@@ -16,3 +16,6 @@
 
 ### 1.2. Offline & Sync Optimization
 * [ ] Optimize background synchronization for multi-device bookmark updates.
+
+### 1.3. UI & Feature Deprecation / Cleanup
+* [ ] Remove "Check Server" status page (`lib/screens/common/server_status_screen.dart`) and its corresponding entry point in profile tab preferences.

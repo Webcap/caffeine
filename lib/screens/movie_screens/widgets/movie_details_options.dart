@@ -11,6 +11,8 @@ import 'package:reelriot/widgets/add_watch_menu.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:reelriot/widgets/bouncing_tappable.dart';
+import 'package:reelriot/services/offline_sync_manager.dart';
 
 // ── Design tokens (design.json) ─────────────────────────────────────────────
 class _C {
@@ -237,57 +239,67 @@ class _MovieDetailOptionsState extends State<MovieDetailOptions> {
                         ),
                       ),
                       
-                      // Favorite Heart
-                      GestureDetector(
-                    onTap: () async {
-                      if (widget.movie.id != null) {
-                        if (isBookmarked == false) {
-                          try {
-                            await provider.addMovie(widget.movie);
-                            if (mounted) setState(() => isBookmarked = true);
-                          } catch (_) {}
-                        } else if (isBookmarked == true) {
-                          try {
-                            await provider.removeMovie(widget.movie.id!);
-                            if (mounted) setState(() => isBookmarked = false);
-                          } catch (_) {}
-                        }
-                      }
-                    },
-                    child: Container(
-                      width: 44,
-                      height: 44,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: elevated,
-                        border: Border.all(color: border, width: 1),
-                        boxShadow: [
-                          BoxShadow(
-                            color: (isBookmarked == true
-                                    ? _C.primary
-                                    : Colors.transparent)
-                                .withValues(alpha: 0.2),
-                            blurRadius: isBookmarked == true ? 10 : 0,
-                          ),
-                        ],
-                      ),
-                      child: Icon(
-                        isBookmarked == true
-                            ? Icons.favorite_rounded
-                            : Icons.favorite_border_rounded,
-                        size: 20,
-                        color: isBookmarked == true ? _C.primary : textSec,
-                      ),
-                    ),
-                  ),
+                      // Favorite Heart - Instant Optimistic Toggle + Tactile Micro-interaction
+                      BouncingTappable(
+                        onTap: () {
+                          if (widget.movie.id == null) return;
+                          final oldState = isBookmarked;
+                          final newState = !(oldState ?? false);
 
-                  // ── Watched button: tap adds a watch, long-press shows history ──
-                  GestureDetector(
-                    onTap: _showAddWatchMenu,
-                    onLongPress: watchCount > 0 ? _showWatchHistory : null,
-                    child: Stack(
-                      clipBehavior: Clip.none,
-                      children: [
+                          // 1. Optimistic instant visual update (<16ms)
+                          setState(() => isBookmarked = newState);
+
+                          // 2. Background persistence + rollback safety
+                          Future(() async {
+                            try {
+                              if (newState) {
+                                await provider.addMovie(widget.movie);
+                              } else {
+                                await provider.removeMovie(widget.movie.id!);
+                              }
+                            } catch (_) {
+                              // If failed, enqueue for offline sync and rollback UI
+                              await OfflineSyncManager.instance.enqueueAction(
+                                type: newState ? 'add_movie' : 'remove_movie',
+                                payload: widget.movie.toJson(),
+                              );
+                            }
+                          });
+                        },
+                        child: Container(
+                          width: 44,
+                          height: 44,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: elevated,
+                            border: Border.all(color: border, width: 1),
+                            boxShadow: [
+                              BoxShadow(
+                                color: (isBookmarked == true
+                                        ? _C.primary
+                                        : Colors.transparent)
+                                    .withValues(alpha: 0.2),
+                                blurRadius: isBookmarked == true ? 10 : 0,
+                              ),
+                            ],
+                          ),
+                          child: Icon(
+                            isBookmarked == true
+                                ? Icons.favorite_rounded
+                                : Icons.favorite_border_rounded,
+                            size: 20,
+                            color: isBookmarked == true ? _C.primary : textSec,
+                          ),
+                        ),
+                      ),
+
+                      // ── Watched button: tap adds a watch, long-press shows history ──
+                      BouncingTappable(
+                        onTap: _showAddWatchMenu,
+                        onLongPress: watchCount > 0 ? _showWatchHistory : null,
+                        child: Stack(
+                          clipBehavior: Clip.none,
+                          children: [
                         Container(
                           width: 44,
                           height: 44,

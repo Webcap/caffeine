@@ -13,6 +13,22 @@ class BookmarksProvider extends ChangeNotifier {
 
   BookmarksProvider() {
     _instance = this;
+    _preloadFromCache();
+  }
+
+  /// Preloads cached bookmarks from SQLite immediately so screens open with content
+  Future<void> _preloadFromCache() async {
+    try {
+      final cachedMovies = await _movieDb.getMovieList();
+      final cachedTV = await _tvDb.getTVList();
+      if (_movies == null || _movies!.isEmpty) {
+        _movies = cachedMovies;
+      }
+      if (_tvList == null || _tvList!.isEmpty) {
+        _tvList = cachedTV;
+      }
+      notifyListeners();
+    } catch (_) {}
   }
 
   final MovieDatabaseController _movieDb = MovieDatabaseController();
@@ -56,9 +72,12 @@ class BookmarksProvider extends ChangeNotifier {
   }
 
   Future<void> fetchMovies() async {
-    _isLoading = true;
-    _errorMessage = null;
-    notifyListeners();
+    // Only flag loading if we don't have cached data yet (Stale-While-Revalidate)
+    if (_movies == null || _movies!.isEmpty) {
+      _isLoading = true;
+      _errorMessage = null;
+      notifyListeners();
+    }
     try {
       final list = await _movieDb.getMovieList();
       _movies = list;
@@ -74,9 +93,12 @@ class BookmarksProvider extends ChangeNotifier {
   }
 
   Future<void> fetchTV() async {
-    _isLoading = true;
-    _errorMessage = null;
-    notifyListeners();
+    // Only flag loading if we don't have cached data yet (Stale-While-Revalidate)
+    if (_tvList == null || _tvList!.isEmpty) {
+      _isLoading = true;
+      _errorMessage = null;
+      notifyListeners();
+    }
     try {
       final list = await _tvDb.getTVList();
       _tvList = list;

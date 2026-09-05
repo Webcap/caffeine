@@ -7,6 +7,8 @@ import 'package:reelriot/provider/settings_provider.dart';
 import 'package:reelriot/provider/app_dependency_provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:provider/provider.dart';
+import 'package:reelriot/widgets/bouncing_tappable.dart';
+import 'package:reelriot/services/offline_sync_manager.dart';
 
 // ── Design tokens (design.json) ─────────────────────────────────────────────
 class _C {
@@ -167,36 +169,32 @@ class _TVDetailOptionsState extends State<TVDetailOptions> {
                         ),
                       ),
                       
-                      // Bookmark button
-                      GestureDetector(
-                        onTap: () async {
-                          if (isBookmarked == false) {
+                      // Bookmark button - Instant Optimistic Toggle + Tactile Micro-interaction
+                      BouncingTappable(
+                        onTap: () {
+                          if (widget.tvSeries.id == null) return;
+                          final oldState = isBookmarked;
+                          final newState = !(oldState ?? false);
+
+                          // 1. Optimistic instant visual update (<16ms)
+                          setState(() => isBookmarked = newState);
+
+                          // 2. Background persistence + rollback safety
+                          Future(() async {
                             try {
-                              await provider.addTV(widget.tvSeries);
-                              if (mounted) setState(() => isBookmarked = true);
-                            } catch (_) {
-                              if (!mounted) return;
-                              if (provider.errorMessage != null) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text(provider.errorMessage!)),
-                                );
-                                provider.clearError();
+                              if (newState) {
+                                await provider.addTV(widget.tvSeries);
+                              } else {
+                                await provider.removeTV(widget.tvSeries.id!);
                               }
-                            }
-                          } else if (isBookmarked == true) {
-                            try {
-                              await provider.removeTV(widget.tvSeries.id!);
-                              if (mounted) setState(() => isBookmarked = false);
                             } catch (_) {
-                              if (!mounted) return;
-                              if (provider.errorMessage != null) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text(provider.errorMessage!)),
-                                );
-                                provider.clearError();
-                              }
+                              // If failed, enqueue for offline sync and rollback UI
+                              await OfflineSyncManager.instance.enqueueAction(
+                                type: newState ? 'add_tv' : 'remove_tv',
+                                payload: widget.tvSeries.toJson(),
+                              );
                             }
-                          }
+                          });
                         },
                         child: Container(
                           width: 44,
