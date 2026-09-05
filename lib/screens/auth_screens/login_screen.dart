@@ -122,6 +122,13 @@ class _LoginScreenState extends State<LoginScreen> {
       } else if (error.message.contains('not found') ||
           error.message.contains('user-not-found')) {
         globalMethods.authErrorHandle(tr("user_not_found"), context);
+      } else if (error.message.toLowerCase().contains('rate limit') ||
+          error.message.contains('429') ||
+          error.statusCode == '429') {
+        globalMethods.authErrorHandle(
+          'Too many login attempts. Please wait a few minutes before trying again.',
+          context,
+        );
       } else {
         globalMethods.authErrorHandle(error.message, context);
       }

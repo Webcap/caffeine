@@ -5,6 +5,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:reelriot/utils/pwned_password.dart';
+
 
 // ─── Design tokens (design.json) ─────────────────────────────────────────────
 class _Design {
@@ -143,6 +145,16 @@ class _PasswordChangeScreenState extends State<PasswordChangeScreen> {
     setState(() => _isLoading = true);
 
     try {
+      final pwnedResult = await checkPwnedPassword(newPassword);
+      if (pwnedResult.isPwned) {
+        if (!mounted) return;
+        _globalMethods.authErrorHandle(
+          'This password has appeared in a known public data breach (${pwnedResult.breachCount} times). Please choose a different password.',
+          context,
+        );
+        return;
+      }
+
       // Re-auth with current password so Supabase allows password change
       await _auth.signInWithPassword(
         email: email,
