@@ -57,7 +57,7 @@ class CaffieneHomePage extends StatefulWidget {
 }
 
 class _CaffieneHomePageState extends State<CaffieneHomePage> {
-  late int selectedIndex;
+  int selectedIndex = 0;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   static const List<_TabMeta> _tabs = [

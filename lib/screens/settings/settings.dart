@@ -341,7 +341,7 @@ class _SettingsState extends State<Settings> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               _buildSectionTitle(
-                                tr("appearance") != "appearance" ? tr("appearance") : "APPEARANCE & DISPLAY",
+                                tr("appearance"),
                                 Icons.palette_outlined,
                                 textSec,
                               ),
@@ -349,7 +349,7 @@ class _SettingsState extends State<Settings> {
                               appearanceCard,
                               const SizedBox(height: 24),
                               _buildSectionTitle(
-                                tr("language_region") != "language_region" ? tr("language_region") : "LOCALIZATION & REGION",
+                                tr("language_region"),
                                 Icons.language_rounded,
                                 textSec,
                               ),
@@ -365,7 +365,7 @@ class _SettingsState extends State<Settings> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               _buildSectionTitle(
-                                tr("playback") != "playback" ? tr("playback") : "PLAYBACK & STREAMING",
+                                tr("playback"),
                                 Icons.play_circle_outline_rounded,
                                 textSec,
                               ),
@@ -373,7 +373,7 @@ class _SettingsState extends State<Settings> {
                               playbackCard,
                               const SizedBox(height: 24),
                               _buildSectionTitle(
-                                tr("device_storage") != "device_storage" ? tr("device_storage") : "DEVICE & STORAGE",
+                                tr("device_storage"),
                                 Icons.devices_other_rounded,
                                 textSec,
                               ),
@@ -388,7 +388,7 @@ class _SettingsState extends State<Settings> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         _buildSectionTitle(
-                          tr("appearance") != "appearance" ? tr("appearance") : "APPEARANCE & DISPLAY",
+                          tr("appearance"),
                           Icons.palette_outlined,
                           textSec,
                         ),
@@ -397,7 +397,7 @@ class _SettingsState extends State<Settings> {
                         const SizedBox(height: 20),
 
                         _buildSectionTitle(
-                          tr("playback") != "playback" ? tr("playback") : "PLAYBACK & STREAMING",
+                          tr("playback"),
                           Icons.play_circle_outline_rounded,
                           textSec,
                         ),
@@ -406,7 +406,7 @@ class _SettingsState extends State<Settings> {
                         const SizedBox(height: 20),
 
                         _buildSectionTitle(
-                          tr("language_region") != "language_region" ? tr("language_region") : "LOCALIZATION & REGION",
+                          tr("language_region"),
                           Icons.language_rounded,
                           textSec,
                         ),
@@ -415,7 +415,7 @@ class _SettingsState extends State<Settings> {
                         const SizedBox(height: 20),
 
                         _buildSectionTitle(
-                          tr("device_storage") != "device_storage" ? tr("device_storage") : "DEVICE & STORAGE",
+                          tr("device_storage"),
                           Icons.devices_other_rounded,
                           textSec,
                         ),
