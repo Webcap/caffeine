@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:reelriot/provider/app_dependency_provider.dart';
 import 'package:reelriot/provider/bookmarks_provider.dart';
+import 'package:reelriot/provider/ratings_provider.dart';
 import 'package:reelriot/provider/sign_in_provider.dart';
 import 'package:reelriot/screens/common/update_screen.dart';
 import 'package:reelriot/screens/profile/profile_page.dart';
@@ -71,6 +72,7 @@ class _CaffieneHomePageState extends State<CaffieneHomePage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       checkForcedUpdate();
       Provider.of<BookmarksProvider>(context, listen: false).syncIfNeeded();
+      RatingsProvider.instance.fetchRatings();
     });
     super.initState();
   }

@@ -127,7 +127,11 @@ class EpisodeDetailPageState extends State<EpisodeDetailPage>
                   ),
                 ),
                 SliverToBoxAdapter(
-                  child: TVEpisodeOptions(episodeList: _currentEpisode),
+                  child: TVEpisodeOptions(
+                    episodeList: _currentEpisode,
+                    tvId: widget.tvId,
+                    seriesName: widget.seriesName,
+                  ),
                 ),
                 SliverToBoxAdapter(
                   child: EpisodeAbout(

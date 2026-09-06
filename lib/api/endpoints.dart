@@ -438,5 +438,39 @@ class Endpoints {
     final query = params.isEmpty ? '' : '?${params.join('&')}';
     return '${b}v1/discovery$query';
   }
+
+  // ─── User Ratings ──────────────────────────────────────────────────────────
+  /// GET /v1/user/:userId/ratings?media_type=movie|tv
+  static String userRatingsUrl(String baseUrl, String userId, {String? mediaType}) {
+    final b = _b(baseUrl);
+    final query = (mediaType != null && mediaType.isNotEmpty) ? '?media_type=$mediaType' : '';
+    return '${b}v1/user/$userId/ratings$query';
+  }
+
+  /// PUT /v1/user/:userId/ratings
+  static String userRatingsPutUrl(String baseUrl, String userId) {
+    final b = _b(baseUrl);
+    return '${b}v1/user/$userId/ratings';
+  }
+
+  /// DELETE /v1/user/:userId/ratings?media_type=...&media_id=...
+  static String userRatingsDeleteUrl(
+    String baseUrl,
+    String userId, {
+    required String mediaType,
+    required int mediaId,
+    int? seasonNum,
+    int? episodeNum,
+  }) {
+    final b = _b(baseUrl);
+    final params = <String>[
+      'media_type=$mediaType',
+      'media_id=$mediaId',
+    ];
+    if (seasonNum != null) params.add('season_num=$seasonNum');
+    if (episodeNum != null) params.add('episode_num=$episodeNum');
+    return '${b}v1/user/$userId/ratings?${params.join('&')}';
+  }
 }
+
 

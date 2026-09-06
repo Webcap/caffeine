@@ -1,5 +1,6 @@
 import 'package:reelriot/main.dart';
 import 'package:reelriot/provider/bookmarks_provider.dart';
+import 'package:reelriot/provider/ratings_provider.dart';
 import 'package:reelriot/provider/recently_watched_provider.dart';
 import 'package:reelriot/services/auth_service.dart';
 import 'package:reelriot/services/analytics_service.dart';
@@ -174,6 +175,9 @@ class SignInProvider extends ChangeNotifier {
           recentProvider.clearLocalData();
         } catch (_) {}
       }
+      try {
+        RatingsProvider.instance.fetchRatings();
+      } catch (_) {}
     });
   }
 
@@ -359,6 +363,10 @@ class SignInProvider extends ChangeNotifier {
 
     try {
       await BookmarksProvider.instance.clearAllLocalBookmarks();
+    } catch (_) {}
+
+    try {
+      RatingsProvider.instance.clearLocalRatings();
     } catch (_) {}
 
     // Flush Flutter in-memory image cache

@@ -12,6 +12,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:reelriot/widgets/bouncing_tappable.dart';
+import 'package:reelriot/widgets/user_rating_widget.dart';
 import 'package:reelriot/services/offline_sync_manager.dart';
 
 // ── Design tokens (design.json) ─────────────────────────────────────────────
@@ -234,6 +235,13 @@ class _MovieDetailOptionsState extends State<MovieDetailOptions> {
                                     fontFamily: 'PoppinsSB',
                                   ),
                                 ),
+                              ),
+
+                            if (widget.movie.id != null)
+                              UserRatingButton(
+                                mediaType: 'movie',
+                                mediaId: widget.movie.id!,
+                                title: widget.movie.title ?? 'Movie',
                               ),
                           ],
                         ),

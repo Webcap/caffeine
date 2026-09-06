@@ -235,7 +235,11 @@ class EpisodeDetailExpandedLayout extends StatelessWidget {
                       ),
                     ],
                     const SizedBox(height: 4),
-                    TVEpisodeOptions(episodeList: episodeList),
+                    TVEpisodeOptions(
+                      episodeList: episodeList,
+                      tvId: tvId,
+                      seriesName: seriesName,
+                    ),
                     EpisodeAbout(
                       episodeList: episodeList,
                       episodes: episodes,

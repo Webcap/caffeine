@@ -8,6 +8,7 @@ import 'package:reelriot/provider/app_dependency_provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:provider/provider.dart';
 import 'package:reelriot/widgets/bouncing_tappable.dart';
+import 'package:reelriot/widgets/user_rating_widget.dart';
 import 'package:reelriot/services/offline_sync_manager.dart';
 
 // ── Design tokens (design.json) ─────────────────────────────────────────────
@@ -164,6 +165,13 @@ class _TVDetailOptionsState extends State<TVDetailOptions> {
                                     fontFamily: 'PoppinsSB',
                                   ),
                                 ),
+                              ),
+
+                            if (widget.tvSeries.id != null)
+                              UserRatingButton(
+                                mediaType: 'tv',
+                                mediaId: widget.tvSeries.id!,
+                                title: widget.tvSeries.name ?? 'TV Series',
                               ),
                           ],
                         ),

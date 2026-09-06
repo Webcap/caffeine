@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:reelriot/models/tv.dart';
+import 'package:reelriot/widgets/user_rating_widget.dart';
 
 // ── Design tokens (design.json) ─────────────────────────────────────────────
 class _C {
@@ -15,9 +16,16 @@ class _C {
 }
 
 class TVEpisodeOptions extends StatelessWidget {
-  const TVEpisodeOptions({super.key, required this.episodeList});
+  const TVEpisodeOptions({
+    super.key,
+    required this.episodeList,
+    this.tvId,
+    this.seriesName,
+  });
 
   final EpisodeList episodeList;
+  final int? tvId;
+  final String? seriesName;
 
   @override
   Widget build(BuildContext context) {
@@ -66,6 +74,14 @@ class TVEpisodeOptions extends StatelessWidget {
                   border: border,
                   textSec: textSec,
                 ),
+                if (tvId != null)
+                  UserRatingButton(
+                    mediaType: 'tv',
+                    mediaId: tvId!,
+                    seasonNum: episodeList.seasonNumber,
+                    episodeNum: episodeList.episodeNumber,
+                    title: '${seriesName ?? 'Episode'} S${episodeList.seasonNumber ?? 1} E${episodeList.episodeNumber ?? 1}',
+                  ),
               ],
             ),
           ),

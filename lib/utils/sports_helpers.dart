@@ -143,7 +143,7 @@ SportTheme resolveSportTheme({
   }
 
   // 5. Football / NFL
-  if (s == 'FOOTBALL' || s == 'NFL' || l == 'NFL' || t.contains('NFL') || t.contains('CHIEFS') || t.contains('COWBOYS') || t.contains('PATRIOTS')) {
+  if (s == 'FOOTBALL' || s == 'NFL' || s == 'AMERICAN FOOTBALL' || s == 'AMERICAN-FOOTBALL' || l == 'NFL' || t.contains('NFL') || t.contains('CHIEFS') || t.contains('COWBOYS') || t.contains('PATRIOTS')) {
     return const SportTheme(
       label: 'NFL',
       sportKey: 'FOOTBALL',

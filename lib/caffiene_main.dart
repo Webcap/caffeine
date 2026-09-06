@@ -1,6 +1,7 @@
 import 'package:reelriot/functions/functions.dart';
 import 'package:reelriot/provider/app_dependency_provider.dart';
 import 'package:reelriot/provider/bookmarks_provider.dart';
+import 'package:reelriot/provider/ratings_provider.dart';
 import 'package:reelriot/provider/recently_watched_provider.dart';
 import 'package:reelriot/provider/settings_provider.dart';
 import 'package:reelriot/provider/sign_in_provider.dart';
@@ -81,6 +82,7 @@ class _CaffeineState extends State<Caffeine>
         }),
         ChangeNotifierProvider(create: (_) => CastService()),
         ChangeNotifierProvider(create: (_) => BookmarksProvider()),
+        ChangeNotifierProvider(create: (_) => RatingsProvider()),
         ChangeNotifierProvider.value(value: AdService.instance),
       ],
       child: Consumer3<SettingsProvider, AppDependencyProvider, RecentProvider>(
