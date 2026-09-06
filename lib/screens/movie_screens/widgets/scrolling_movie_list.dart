@@ -15,6 +15,7 @@ import 'package:provider/provider.dart';
 import 'package:reelriot/utils/constant.dart';
 import 'package:reelriot/models/ad.dart';
 import 'package:reelriot/widgets/native_ad_poster_card.dart';
+import 'package:reelriot/widgets/quality_badge.dart';
 
 class ScrollingMovies extends StatefulWidget {
   final String api, title;
@@ -319,6 +320,15 @@ class ScrollingMoviesState extends State<ScrollingMovies>
                                                     ),
                                                   ),
                                                 ),
+                                              Positioned(
+                                                top: 4,
+                                                right: 4,
+                                                child: QualityBadge(
+                                                  mediaId: movie.id,
+                                                  mediaType: 'movie',
+                                                  releaseDate: movie.releaseDate,
+                                                ),
+                                              ),
                                             ],
                                           ),
                                         ),
