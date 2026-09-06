@@ -191,7 +191,6 @@ abstract class LocaleKeys {
   static const list_view_type = 'list_view_type';
   static const list = 'list';
   static const grid = 'grid';
-  static const default_home_screen = 'default_home_screen';
   static const discover = 'discover';
   static const profile = 'profile';
   static const watch_country = 'watch_country';

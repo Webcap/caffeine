@@ -515,26 +515,6 @@ class _SettingsState extends State<Settings> {
             textSec: textSec,
           ),
         ),
-        const _Divider(),
-        _SettingsTile(
-          icon: Icons.home_rounded,
-          title: tr("default_home_screen"),
-          textPrim: textPrim,
-          textSec: textSec,
-          trailing: StyledDropdown<int>(
-            value: sv.defaultValue,
-            items: const [0, 1, 2, 3],
-            labels: [
-              tr("movies"),
-              tr("tv_shows"),
-              tr("discover"),
-              tr("profile"),
-            ],
-            onChanged: (v) => setState(() => sv.defaultValue = v!),
-            textPrim: textPrim,
-            textSec: textSec,
-          ),
-        ),
       ],
     );
   }

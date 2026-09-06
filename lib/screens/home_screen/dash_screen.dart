@@ -68,19 +68,12 @@ class _CaffieneHomePageState extends State<CaffieneHomePage> {
 
   @override
   void initState() {
-    defHome();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       checkForcedUpdate();
       Provider.of<BookmarksProvider>(context, listen: false).syncIfNeeded();
       RatingsProvider.instance.fetchRatings();
     });
     super.initState();
-  }
-
-  void defHome() {
-    final defaultHome =
-        Provider.of<SettingsProvider>(context, listen: false).defaultValue;
-    setState(() => selectedIndex = defaultHome >= _tabs.length ? 0 : defaultHome);
   }
 
   Future<void> checkForcedUpdate() async {
