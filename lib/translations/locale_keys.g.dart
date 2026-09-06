@@ -15,6 +15,7 @@ abstract class LocaleKeys {
   static const in_production = 'in_production';
   static const ended = 'ended';
   static const cancelled = 'cancelled';
+  static const watch_next = 'watch_next';
   static const pilot = 'pilot';
   static const action = 'action';
   static const adventure = 'adventure';
@@ -543,4 +544,5 @@ abstract class LocaleKeys {
   static const newest = 'newest';
   static const install_permission_title = 'install_permission_title';
   static const install_permission_msg = 'install_permission_msg';
+  static const season = 'season';
 }

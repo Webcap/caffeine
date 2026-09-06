@@ -122,6 +122,13 @@ class _LoginScreenState extends State<LoginScreen> {
       } else if (error.message.contains('not found') ||
           error.message.contains('user-not-found')) {
         globalMethods.authErrorHandle(tr("user_not_found"), context);
+      } else if (error.message.toLowerCase().contains('rate limit') ||
+          error.message.contains('429') ||
+          error.statusCode == '429') {
+        globalMethods.authErrorHandle(
+          'Too many login attempts. Please wait a few minutes before trying again.',
+          context,
+        );
       } else {
         globalMethods.authErrorHandle(error.message, context);
       }
@@ -274,7 +281,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 28),
+                      const SizedBox(height: 24),
                       const Text(
                         'Welcome Back',
                         style: TextStyle(
@@ -284,16 +291,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           height: 1.05,
                         ),
                       ),
-                      const SizedBox(height: 10),
-                      Text(
-                        'Sign in to continue your cinematic streaming experience.',
-                        style: TextStyle(
-                          color: _textSecondary,
-                          fontSize: 15,
-                          height: 1.5,
-                        ),
-                      ),
-                      const SizedBox(height: 28),
+                      const SizedBox(height: 20),
                       Container(
                         padding: const EdgeInsets.all(20),
                         decoration: BoxDecoration(
@@ -323,16 +321,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   fontWeight: FontWeight.w700,
                                 ),
                               ),
-                              const SizedBox(height: 6),
-                              Text(
-                                'Use your email and password to access your watchlist, bookmarks, and synced history.',
-                                style: TextStyle(
-                                  color: _textSecondary,
-                                  fontSize: 13,
-                                  height: 1.45,
-                                ),
-                              ),
-                              const SizedBox(height: 20),
+                              const SizedBox(height: 16),
                               TextFormField(
                                 key: const ValueKey('email'),
                                 autofillHints: const [AutofillHints.email],

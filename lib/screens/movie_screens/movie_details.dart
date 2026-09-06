@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:reelriot/api/endpoints.dart';
+import 'package:reelriot/functions/network.dart';
 import 'package:reelriot/models/movie_models.dart';
 import 'package:reelriot/provider/app_dependency_provider.dart';
 import 'package:reelriot/provider/settings_provider.dart';
 import 'package:reelriot/screens/movie_screens/widgets/movie_about.dart';
+import 'package:reelriot/screens/movie_screens/widgets/movie_detail_expanded_layout.dart';
 import 'package:reelriot/screens/movie_screens/widgets/movie_detail_quick_info.dart';
 import 'package:reelriot/screens/movie_screens/widgets/movie_details_options.dart';
 import 'package:reelriot/widgets/watch_now_button.dart';
@@ -34,9 +36,43 @@ class MovieDetailPageState extends State<MovieDetailPage>
     with AutomaticKeepAliveClientMixin<MovieDetailPage> {
   final _scrollController = ScrollController();
   final _videosKey = GlobalKey();
+  late Movie _movie;
 
   @override
   bool get wantKeepAlive => true;
+
+  @override
+  void initState() {
+    super.initState();
+    _movie = widget.movie;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadFullDetailsIfNeeded();
+    });
+  }
+
+  Future<void> _loadFullDetailsIfNeeded() async {
+    if (_movie.id == null) return;
+    if (_movie.overview == null ||
+        _movie.overview!.isEmpty ||
+        _movie.backdropPath == null ||
+        _movie.releaseDate == null ||
+        _movie.voteAverage == null) {
+      final lang = Provider.of<SettingsProvider>(context, listen: false).appLanguage;
+      final isProxy = Provider.of<SettingsProvider>(context, listen: false).enableProxy;
+      final proxyUrl = Provider.of<AppDependencyProvider>(context, listen: false).tmdbProxy;
+      final api = Endpoints.movieDetailsUrl(_movie.id!, lang);
+      try {
+        final fullMovie = await getMovie(api, isProxy, proxyUrl);
+        if (mounted) {
+          setState(() {
+            _movie = fullMovie;
+          });
+        }
+      } catch (e) {
+        debugPrint('[MovieDetailPage] Error fetching full details: $e');
+      }
+    }
+  }
 
   void _scrollToVideos() {
     final ctx = context;
@@ -62,9 +98,21 @@ class MovieDetailPageState extends State<MovieDetailPage>
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? _C.bgCanvasDark : _C.bgCanvasLight;
 
+    final parsedReleaseDate = _movie.releaseDate != null && _movie.releaseDate!.isNotEmpty
+        ? DateTime.tryParse(_movie.releaseDate!)
+        : null;
+
+    final isExpanded = MediaQuery.sizeOf(context).width >= 840;
+
     return Scaffold(
       backgroundColor: bg,
-      body: CustomScrollView(
+      body: isExpanded
+          ? MovieDetailExpandedLayout(
+              movie: _movie,
+              heroId: widget.heroId,
+              onTrailerTap: _scrollToVideos,
+            )
+          : CustomScrollView(
         controller: _scrollController,
         physics: const BouncingScrollPhysics(),
         slivers: [
@@ -72,21 +120,20 @@ class MovieDetailPageState extends State<MovieDetailPage>
           SliverToBoxAdapter(
             child: MovieDetailQuickInfo(
               heroId: widget.heroId,
-              movie: widget.movie,
+              movie: _movie,
               onTrailerTap: _scrollToVideos,
             ),
           ),
 
           // ── Compact ratings + favorite heart ────────────────────────
           SliverToBoxAdapter(
-            child: MovieDetailOptions(movie: widget.movie),
+            child: MovieDetailOptions(movie: _movie),
           ),
 
           // ── Full-width "Watch now" pill (primary CTA) ───────────────
-          if (widget.movie.releaseDate?.isNotEmpty == true &&
+          if (parsedReleaseDate != null &&
               appDep.displayWatchNowButton &&
-              DateTime.tryParse(widget.movie.releaseDate!)!
-                  .isBefore(DateTime.now()))
+              parsedReleaseDate.isBefore(DateTime.now()))
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
@@ -97,15 +144,14 @@ class MovieDetailPageState extends State<MovieDetailPage>
                       width: double.infinity,
                       height: 52,
                       child: WatchNowButton(
-                        releaseYear:
-                            DateTime.tryParse(widget.movie.releaseDate!)!.year,
-                        movieId: widget.movie.id!,
-                        movieName: widget.movie.title,
-                        adult: widget.movie.adult,
-                        posterPath: widget.movie.posterPath,
-                        backdropPath: widget.movie.backdropPath,
-                        api: Endpoints.movieDetailsUrl(widget.movie.id!, lang),
-                        releaseDate: widget.movie.releaseDate,
+                        releaseYear: parsedReleaseDate.year,
+                        movieId: _movie.id!,
+                        movieName: _movie.title,
+                        adult: _movie.adult,
+                        posterPath: _movie.posterPath,
+                        backdropPath: _movie.backdropPath,
+                        api: Endpoints.movieDetailsUrl(_movie.id!, lang),
+                        releaseDate: _movie.releaseDate,
                       ),
                     ),
                   ),
@@ -116,7 +162,7 @@ class MovieDetailPageState extends State<MovieDetailPage>
           // ── Synopsis + content ─────────────────────────────────────
           SliverToBoxAdapter(
             child: MovieAbout(
-              movie: widget.movie,
+              movie: _movie,
               videosKey: _videosKey,
             ),
           ),

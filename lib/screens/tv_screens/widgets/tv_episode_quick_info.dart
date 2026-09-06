@@ -89,7 +89,15 @@ class TVEpisodeQuickInfo extends StatelessWidget {
       }
     }
 
-    final heroHeight = MediaQuery.of(context).size.height * 0.45;
+    final screenWidth = MediaQuery.sizeOf(context).width;
+    final screenHeight = MediaQuery.sizeOf(context).height;
+    final isTablet = screenWidth >= 600;
+
+    // Responsive hero height: capped on tablets, matching the pattern used
+    // by movie/TV-show detail (movie_detail_quick_info.dart, tv_detail_quick_info.dart).
+    final heroHeight = isTablet
+        ? (screenWidth > screenHeight ? 340.0 : 380.0)
+        : screenHeight * 0.45;
     final imageUrl = episodeList.stillPath;
     final baseUrl =
         buildImageUrl(tmdbBaseImageUrl, proxyUrl, isProxy, context);
@@ -143,7 +151,12 @@ class TVEpisodeQuickInfo extends StatelessWidget {
           // ── Top overlay: back + open season ────────────────────────────────
           SafeArea(
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
+              padding: EdgeInsets.fromLTRB(
+                isTablet ? 24 : 12,
+                isTablet ? 16 : 8,
+                isTablet ? 24 : 12,
+                0,
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -153,6 +166,7 @@ class TVEpisodeQuickInfo extends StatelessWidget {
                     iconBg: iconBg,
                     border: border,
                     textColor: textPrim,
+                    size: isTablet ? 48 : 42,
                   ),
                   _GlassButton(
                     icon: Icons.list_rounded,
@@ -160,6 +174,7 @@ class TVEpisodeQuickInfo extends StatelessWidget {
                     iconBg: iconBg,
                     border: border,
                     textColor: textPrim,
+                    size: isTablet ? 48 : 42,
                   ),
                 ],
               ),
@@ -168,10 +183,10 @@ class TVEpisodeQuickInfo extends StatelessWidget {
 
           // ── S00E00 chip (lower-left) ──────────────────────────────────────
           Positioned(
-            left: 16,
-            bottom: 90,
+            left: isTablet ? 24 : 16,
+            bottom: isTablet ? 112 : 90,
             child: Container(
-              height: 28,
+              height: isTablet ? 32 : 28,
               padding: const EdgeInsets.symmetric(horizontal: 10),
               decoration: BoxDecoration(
                 color: Colors.black.withValues(alpha: 0.5),
@@ -194,9 +209,9 @@ class TVEpisodeQuickInfo extends StatelessWidget {
 
           // ── Episode title + series name (bottom) ───────────────────────────
           Positioned(
-            left: 16,
-            right: 16,
-            bottom: 24,
+            left: isTablet ? 24 : 16,
+            right: isTablet ? 24 : 16,
+            bottom: isTablet ? 32 : 24,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -210,7 +225,7 @@ class TVEpisodeQuickInfo extends StatelessWidget {
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          fontSize: 20,
+                          fontSize: isTablet ? 26 : 20,
                           fontWeight: FontWeight.w700,
                           color: textPrim,
                           height: 1.2,
@@ -224,7 +239,7 @@ class TVEpisodeQuickInfo extends StatelessWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                            fontSize: 13,
+                            fontSize: isTablet ? 15 : 13,
                             color: textTert,
                             fontFamily: 'Poppins',
                           ),
@@ -277,6 +292,7 @@ class _GlassButton extends StatelessWidget {
     required this.iconBg,
     required this.border,
     required this.textColor,
+    this.size = 42,
   });
 
   final IconData icon;
@@ -284,20 +300,21 @@ class _GlassButton extends StatelessWidget {
   final Color iconBg;
   final Color border;
   final Color textColor;
+  final double size;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 42,
-        height: 42,
+        width: size,
+        height: size,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           color: iconBg,
           border: Border.all(color: border, width: 1),
         ),
-        child: Icon(icon, size: 20, color: textColor),
+        child: Icon(icon, size: size * 0.48, color: textColor),
       ),
     );
   }

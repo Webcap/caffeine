@@ -334,7 +334,13 @@ class CaffeinePlayerController extends ChangeNotifier {
 
   Future<void> play() => player.play();
   Future<void> pause() => player.pause();
-  Future<void> seekTo(Duration position) => player.seek(position);
+  Future<void> seekTo(Duration position) {
+    // Emit the seek target synchronously so listeners (e.g. _PlayerState) can
+    // update _lastKnownPositionMs before the player enters its buffering gap,
+    // preventing stale pre-rewind positions from being saved on exit.
+    _emit(CaffeinePlayerEventType.seek, position: position);
+    return player.seek(position);
+  }
 
   bool isPlaying() => player.state.playing;
   bool isBuffering() => _isBuffering;

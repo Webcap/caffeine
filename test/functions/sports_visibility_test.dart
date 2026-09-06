@@ -11,6 +11,11 @@ void main() {
       expect(normalizeSportKey('BASKETBALL', league: 'WNBA'), 'WNBA');
       expect(normalizeSportKey('FOOTBALL', league: 'NFL'), 'NFL');
       expect(normalizeSportKey('NFL'), 'NFL');
+      expect(normalizeSportKey('American Football', league: 'NFL'), 'NFL');
+      expect(normalizeSportKey('FOOTBALL', league: 'college-football'), 'NCAAF');
+      expect(normalizeSportKey('COLLEGE-FOOTBALL'), 'NCAAF');
+      expect(normalizeSportKey('NCAAF'), 'NCAAF');
+      expect(normalizeSportKey('American Football', league: 'college-football'), 'NCAAF');
       expect(normalizeSportKey('BASEBALL', league: 'MLB'), 'MLB');
       expect(normalizeSportKey('MLB'), 'MLB');
       expect(normalizeSportKey('HOCKEY', league: 'NHL'), 'NHL');

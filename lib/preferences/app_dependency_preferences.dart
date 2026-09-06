@@ -20,11 +20,9 @@ class AppDependencies {
   static const ANIMEKAI_SERVER = "animekai_server";
   static const HIANIME_SERVER = "hianime_server";
   static const ENABLE_LIVE_SPORTS = "enable_live_sports";
-  static const DISABLE_REVENUECAT = "disableRevenueCat";
   static const String ENABLE_ANONYMOUS_SIGNIN = 'enable_anonymous_signin';
   static const String ENABLE_GOOGLE_SIGNIN = 'enable_google_signin';
   static const String MIXPANEL_TOKEN = 'mixpanel_token';
-  static const String DISPLAY_PREMIUM_BANNER = "display_premium_banner";
   static const String ANONYMOUS_ID = "anonymous_id";
 
   Future<String> getAnonymousId() async {
@@ -49,10 +47,6 @@ class AppDependencies {
     await sharedPrefsSingleton.setString(MIXPANEL_TOKEN, value);
   }
 
-  Future<void> setDisplayPremiumBanner(bool value) async {
-    await sharedPrefsSingleton.setBool(DISPLAY_PREMIUM_BANNER, value);
-  }
-
   Future<bool> getEnableAnonymousSignIn() async {
     return sharedPrefsSingleton.getBool(ENABLE_ANONYMOUS_SIGNIN) ?? false;
   }
@@ -63,18 +57,6 @@ class AppDependencies {
 
   Future<String> getMixpanelToken() async {
     return sharedPrefsSingleton.getString(MIXPANEL_TOKEN) ?? '';
-  }
-
-  Future<bool> getDisplayPremiumBanner() async {
-    return sharedPrefsSingleton.getBool(DISPLAY_PREMIUM_BANNER) ?? true;
-  }
-
-  Future<void> setDisableRevenueCat(bool value) async {
-    sharedPrefsSingleton.setBool(DISABLE_REVENUECAT, value);
-  }
-
-  Future<bool> getDisableRevenueCat() async {
-    return sharedPrefsSingleton.getBool(DISABLE_REVENUECAT) ?? false;
   }
 
   Future<void> setEnableOtt(bool value) async {

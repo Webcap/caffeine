@@ -10,7 +10,6 @@ import 'package:reelriot/screens/auth_screens/welcome.dart';
 import 'package:reelriot/utils/app_images.dart';
 import 'package:reelriot/utils/config_api.dart';
 import 'package:reelriot/utils/routes/app_pages.dart';
-import 'package:reelriot/widgets/premium_banner.dart';
 import 'package:reelriot/widgets/watch_stat_card.dart';
 import 'package:reelriot/widgets/guest_profile_content.dart';
 import 'package:reelriot/widgets/sign_out_sheet.dart';
@@ -38,7 +37,7 @@ class _C {
   static const textPrimDark = Color(0xFFFFFFFF);
   static const textPrimLight = Color(0xFF0B0F14);
   static const textSecDark = Color(0xB8FFFFFF);
-  static const textSecLight = Color(0xFF64748B);
+  static const textSecLight = Color(0xFF475569);
   static const textTertDark = Color(0x80FFFFFF);
   static const textTertLight = Color(0xFF94A3B8);
 }
@@ -51,31 +50,22 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  final _auth = Supabase.instance.client.auth;
   final _supabase = Supabase.instance.client;
-  String? uid;
-  bool? userAnonymous;
+  GoTrueClient get _auth => _supabase.auth;
+
+  Stream<Map<String, dynamic>>? _profileStream;
   Map<String, dynamic>? profileData;
   String? month;
   int? year;
-  Stream<Map<String, dynamic>?>? _profileStream;
-  StreamSubscription<AuthState>? _authSubscription;
+  String? uid;
+  bool userAnonymous = false;
 
   @override
   void initState() {
     super.initState();
     _initProfileStream();
     getData();
-    
-    // Auth listener for basic state (login/logout)
-    _authSubscription = _auth.onAuthStateChange.listen((data) {
-      if (data.event == AuthChangeEvent.signedIn || 
-          data.event == AuthChangeEvent.signedOut) {
-        _initProfileStream();
-        getData();
-      }
-    });
-
+    // Proactively refresh remote config and caffeine-api watch stats on open
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted || !context.mounted) return;
       final appDep = Provider.of<AppDependencyProvider>(context, listen: false);
@@ -114,11 +104,11 @@ class _ProfilePageState extends State<ProfilePage> {
               return data.first;
             }
             debugPrint('[Avatar Sync] ⚠️ Received empty profile update');
-            return profileData;
+            return profileData!;
           })
           .handleError((error) {
             debugPrint('[Avatar Sync] ⚠️ Stream error: $error');
-            return profileData;
+            return profileData!;
           });
     });
   }
@@ -143,29 +133,19 @@ class _ProfilePageState extends State<ProfilePage> {
           });
         }
       } catch (e) {
-        debugPrint('[ProfilePage] getData failed: $e');
+        debugPrint('[ProfilePage] Error fetching profile: $e');
       }
     }
   }
 
   @override
-  void dispose() {
-    _authSubscription?.cancel();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final sp = Provider.of<SignInProvider>(context);
+    final appDep = Provider.of<AppDependencyProvider>(context);
+    final recent = Provider.of<RecentProvider>(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final sp = context.watch<SignInProvider>();
-    final recent = context.watch<RecentProvider>();
-    final settings = context.watch<SettingsProvider>();
-    final appDep = context.watch<AppDependencyProvider>();
 
     final bg = isDark ? _C.bgCanvasDark : _C.bgCanvasLight;
-
-    final bool isGuest = !sp.isSignedIn || userAnonymous == true || _auth.currentUser == null;
-
     final surface = isDark ? _C.bgSurfaceDark : _C.bgSurfaceLight;
     final elevated = isDark ? _C.bgElevatedDark : _C.bgElevatedLight;
     final border = isDark ? _C.borderDark : _C.borderLight;
@@ -173,30 +153,28 @@ class _ProfilePageState extends State<ProfilePage> {
     final textSec = isDark ? _C.textSecDark : _C.textSecLight;
     final textTert = isDark ? _C.textTertDark : _C.textTertLight;
 
-    if (isGuest) {
-      return GuestProfileContent(
-        isDark: isDark,
-        bg: bg,
-        surface: surface,
-        elevated: elevated,
-        border: border,
-        textPrim: textPrim,
-        textSec: textSec,
-        textTert: textTert,
-        appDep: appDep,
+    if (!sp.isSignedIn || userAnonymous) {
+      return Scaffold(
+        backgroundColor: bg,
+        body: GuestProfileContent(
+          isDark: isDark,
+          bg: bg,
+          surface: surface,
+          elevated: elevated,
+          border: border,
+          textPrim: textPrim,
+          textSec: textSec,
+          textTert: textTert,
+          appDep: appDep,
+        ),
       );
     }
 
-    return StreamBuilder<Map<String, dynamic>?>(
+    return StreamBuilder<Map<String, dynamic>>(
       stream: _profileStream,
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting && snapshot.data == null) {
-          return Scaffold(
-            backgroundColor: bg,
-            body: Center(
-              child: CircularProgressIndicator(color: _C.primary),
-            ),
-          );
+        if (snapshot.hasError) {
+          debugPrint('[Avatar Sync] Stream error in UI: ${snapshot.error}');
         }
         final data = snapshot.data ??
             profileData ??
@@ -267,33 +245,17 @@ class _ProfilePageState extends State<ProfilePage> {
                           textTert: textTert,
                         ),
 
-                      // ── 2. Premium Banner (if enabled on mobile/tablet) ───
-                      if (!isTablet && appDep.displayPremiumBanner) ...[
-                        const SizedBox(height: 20),
-                        PremiumBanner(
-                          onTap: () => Get.toNamed(Routes.premium),
-                          isDark: isDark,
-                        ),
-                      ],
-
-                      // ── 3. Main Content (Dual-column on tablet, Single on phone) ──
+                      // ── 2. Main Content (Dual-column on tablet, Single on phone) ──
                       SizedBox(height: isTablet ? 24 : 24),
                       if (isTablet)
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // Left Column: Premium + Watch Stats
+                            // Left Column: Watch Stats
                             Expanded(
                               flex: 5,
                               child: Column(
                                 children: [
-                                  if (appDep.displayPremiumBanner) ...[
-                                    PremiumBanner(
-                                      onTap: () => Get.toNamed(Routes.premium),
-                                      isDark: isDark,
-                                    ),
-                                    const SizedBox(height: 20),
-                                  ],
                                   _buildWatchStatsCard(
                                     elevated: elevated,
                                     border: border,

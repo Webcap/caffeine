@@ -262,7 +262,16 @@ class _PlayerState extends State<Player> with WidgetsBindingObserver {
       if (event.type == CaffeinePlayerEventType.pause) {
         pauseDurationTimer();
       }
-      
+
+      // Immediately track the user's seek target so _currentElapsedMs falls
+      // back to the intended position during the seek-buffering gap (when
+      // statePos is transiently 0), not the stale pre-rewind position.
+      // We allow 0 here because seeking to the very beginning is intentional.
+      if (event.type == CaffeinePlayerEventType.seek &&
+          event.position != null) {
+        _lastKnownPositionMs = event.position!.inMilliseconds;
+      }
+
       // Update duration when it becomes available or changes
       if (mounted) {
         final newDuration = _betterPlayerController.duration.inMilliseconds;

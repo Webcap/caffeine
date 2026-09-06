@@ -1030,7 +1030,7 @@ class _MatchCard extends StatelessWidget {
                       const SizedBox(height: 12),
                       // Footer: league / sport / type
                       Text(
-                        '${event.league} · ${event.sport}${g.competitionType != null ? " · ${g.competitionType}" : ""}'
+                        '${event.league.trim().toUpperCase() == event.sport.trim().toUpperCase() ? event.league : "${event.league} · ${event.sport}"}${g.competitionType != null ? " · ${g.competitionType}" : ""}'
                             .toUpperCase(),
                         style: TextStyle(
                           color: isDark

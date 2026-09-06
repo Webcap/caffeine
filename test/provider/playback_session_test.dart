@@ -79,5 +79,68 @@ void main() {
       expect(progressPercent(9500, 500), equals(95.0));
       expect(shouldShowInContinueWatching(9500, 500), isFalse);
     });
+
+    test('isWatchedProgress mirrors the inverse of shouldShowInContinueWatching', () {
+      expect(isWatchedProgress(8000, 2000), isFalse);
+      expect(isWatchedProgress(9000, 1000), isTrue);
+      expect(isWatchedProgress(null, null), isFalse);
+    });
+
+    test('generateWatchEventId produces unique, non-empty ids', () {
+      final a = generateWatchEventId();
+      final b = generateWatchEventId();
+      expect(a, isNotEmpty);
+      expect(b, isNotEmpty);
+      expect(a, isNot(equals(b)));
+    });
+
+    test('WatchEvent round-trips through toMap/fromMapObject for a movie', () {
+      final event = WatchEvent(
+        eventId: 'evt-1',
+        mediaId: 550,
+        watchedAt: '2026-08-28T12:00:00.000Z',
+      );
+
+      final map = event.toMap()..['movie_id'] = event.mediaId;
+      expect(map['event_id'], equals('evt-1'));
+      expect(map['watched_at'], equals('2026-08-28T12:00:00.000Z'));
+      expect(map['synced'], equals(0));
+
+      final restored = WatchEvent.fromMapObject(map, idColumn: 'movie_id');
+      expect(restored.eventId, equals('evt-1'));
+      expect(restored.mediaId, equals(550));
+      expect(restored.watchedAt, equals('2026-08-28T12:00:00.000Z'));
+      expect(restored.synced, isFalse);
+    });
+
+    test('WatchEvent round-trips through toMap/fromMapObject for an episode', () {
+      final event = WatchEvent(
+        eventId: 'evt-2',
+        mediaId: 1399,
+        seasonNum: 1,
+        episodeNum: 1,
+        watchedAt: '2026-08-28T12:00:00.000Z',
+      );
+
+      final map = event.toMap()
+        ..['series_id'] = event.mediaId
+        ..['episode_id'] = 101;
+      expect(map['season_num'], equals(1));
+      expect(map['episode_num'], equals(1));
+
+      final restored = WatchEvent.fromMapObject(map, idColumn: 'series_id');
+      expect(restored.mediaId, equals(1399));
+      expect(restored.seasonNum, equals(1));
+      expect(restored.episodeNum, equals(1));
+    });
+
+    test('Unknown-date watch events serialize as an empty string, not null', () {
+      final event = WatchEvent(
+        eventId: 'evt-3',
+        mediaId: 550,
+        watchedAt: '',
+      );
+      expect(event.toMap()['watched_at'], equals(''));
+    });
   });
 }

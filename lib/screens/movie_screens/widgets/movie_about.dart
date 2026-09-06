@@ -22,9 +22,16 @@ class MovieAbout extends StatefulWidget {
     super.key,
     required this.movie,
     this.videosKey,
+    this.scrollable = true,
   });
   final Movie movie;
   final GlobalKey? videosKey;
+
+  /// When false, renders its content directly (no SingleChildScrollView) so
+  /// a caller can place it inside a scroll region it already owns — used by
+  /// the expanded (tablet-landscape) layout, which shares one scroll view
+  /// across the title block, ratings, watch-now button, and this content.
+  final bool scrollable;
 
   @override
   State<MovieAbout> createState() => _MovieAboutState();
@@ -42,8 +49,7 @@ class _MovieAboutState extends State<MovieAbout> {
     final screenWidth = MediaQuery.sizeOf(context).width;
     final isTablet = screenWidth >= 600;
 
-    return SingleChildScrollView(
-      child: Center(
+    final content = Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 1200),
           child: Column(
@@ -138,7 +144,8 @@ class _MovieAboutState extends State<MovieAbout> {
           ],
         ),
       ),
-    ),
-  );
-}
+    );
+
+    return widget.scrollable ? SingleChildScrollView(child: content) : content;
+  }
 }

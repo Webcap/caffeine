@@ -310,6 +310,7 @@ class DeleteAccountScreenState extends State<DeleteAccountScreen> {
         }
 
         await safeDelete('continue_watching_history', 'user_id', _uid!);
+        await safeDelete('playback_history_events', 'user_id', _uid!);
         await safeDelete('completed_watch_history', 'user_id', _uid!);
         await safeDelete('bookmarks', 'user_id', _uid!);
         await safeDelete('usernames', 'user_id', _uid!);

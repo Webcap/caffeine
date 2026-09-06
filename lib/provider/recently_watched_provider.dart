@@ -35,6 +35,17 @@ class RecentProvider extends ChangeNotifier {
 
   List<RecentMovie> _movies = [];
   List<RecentMovie> get movies => _movies;
+
+  /// Rewatch counts, keyed by movie id. Refreshed whenever [_movies] refreshes.
+  final Map<int, int> _movieWatchCounts = {};
+  int movieWatchCount(int movieId) => _movieWatchCounts[movieId] ?? 0;
+
+  /// Rewatch counts, keyed by "seriesId_seasonNum_episodeNum".
+  final Map<String, int> _episodeWatchCounts = {};
+  String _episodeWatchKey(int seriesId, int seasonNum, int episodeNum) =>
+      '${seriesId}_${seasonNum}_$episodeNum';
+  int episodeWatchCount(int seriesId, int seasonNum, int episodeNum) =>
+      _episodeWatchCounts[_episodeWatchKey(seriesId, seasonNum, episodeNum)] ?? 0;
   List<RecentMovie> get continueWatchingMovies => _movies
       .where((m) => shouldShowInContinueWatching(m.elapsed, m.remaining))
       .toList();
@@ -74,7 +85,7 @@ class RecentProvider extends ChangeNotifier {
 
   final SupabaseClient _supabase = Supabase.instance.client;
 
-  /// Subscribes to INSERT/UPDATE events on [completed_watch_history] for the
+  /// Subscribes to INSERT/UPDATE events on [playback_history_events] for the
   /// current user and triggers a debounced [syncFromCloud] on each event.
   void _subscribeRealtime(String uid) {
     if (_realtimeSubscribed) return;
@@ -85,7 +96,7 @@ class RecentProvider extends ChangeNotifier {
         .onPostgresChanges(
           event: PostgresChangeEvent.all,
           schema: 'public',
-          table: 'completed_watch_history',
+          table: 'playback_history_events',
           filter: PostgresChangeFilter(
             type: PostgresChangeFilterType.eq,
             column: 'user_id',
@@ -129,6 +140,8 @@ class RecentProvider extends ChangeNotifier {
   Future<void> clearLocalData() async {
     _movies = [];
     _episodes = [];
+    _movieWatchCounts.clear();
+    _episodeWatchCounts.clear();
     _apiMovieWatchTimeMinutes = null;
     _apiTvWatchTimeMinutes = null;
     await _movieController.clearAllMovies();
@@ -315,12 +328,61 @@ class RecentProvider extends ChangeNotifier {
 
   Future<void> fetchMovies() async {
     _movies = await _movieController.getRecentMovieList();
+    for (final m in _movies) {
+      if (m.id == null) continue;
+      _movieWatchCounts[m.id!] = await _movieController.getWatchCount(m.id!);
+    }
     notifyListeners();
   }
 
   Future<void> addMovie(RecentMovie movie) async {
     await _movieController.insertMovie(movie);
     await fetchMovies();
+  }
+
+  /// Trakt-style "add a watch": logs a new watch event for [movie] every time
+  /// it's called, incrementing its rewatch count. If the movie isn't already
+  /// marked watched, it's also upserted into the progress table first so it
+  /// shows as watched immediately (mirrors the previous single-tap behavior).
+  Future<void> addMovieWatch(RecentMovie movie, {String? watchedAt}) async {
+    if (movie.id == null) return;
+    final matches = _movies.where((m) => m.id == movie.id);
+    final alreadyWatched = matches.isNotEmpty &&
+        isWatchedProgress(matches.first.elapsed, matches.first.remaining);
+    if (!alreadyWatched) {
+      await _movieController.insertMovie(movie);
+    }
+
+    final event = WatchEvent(
+      eventId: generateWatchEventId(),
+      mediaId: movie.id!,
+      watchedAt: watchedAt ?? DateTime.now().toIso8601String(),
+    );
+    await _movieController.insertWatchEvent(
+      event,
+      title: movie.title,
+      posterPath: movie.posterPath,
+      backdropPath: movie.backdropPath,
+    );
+
+    await fetchMovies();
+    await invalidateAndRefreshWatchStats();
+  }
+
+  Future<List<WatchEvent>> getMovieWatchHistory(int movieId) =>
+      _movieController.getWatchEvents(movieId);
+
+  /// Removes a single logged watch. If no watches remain, the movie reverts
+  /// to unwatched (matches the pre-rewatch "unmark as watched" behavior).
+  Future<void> removeMovieWatchEvent(int movieId, String eventId) async {
+    await _movieController.deleteWatchEvent(eventId);
+    final remaining = await _movieController.getWatchCount(movieId);
+    _movieWatchCounts[movieId] = remaining;
+    if (remaining == 0) {
+      await deleteMovie(movieId);
+    } else {
+      notifyListeners();
+    }
   }
 
   Future<void> updateMovie(RecentMovie movie, int id) async {
@@ -361,6 +423,15 @@ class RecentProvider extends ChangeNotifier {
     if (language != null) _language = language;
 
     _episodes = await _episodeController.getEpisodeList();
+    for (final e in _episodes) {
+      final seriesId = e.seriesId ?? e.id;
+      if (seriesId == null || e.seasonNum == null || e.episodeNum == null) {
+        continue;
+      }
+      _episodeWatchCounts[_episodeWatchKey(seriesId, e.seasonNum!, e.episodeNum!)] =
+          await _episodeController.getWatchCount(
+              seriesId, e.seasonNum!, e.episodeNum!);
+    }
     await _calculateUpNext();
     notifyListeners();
   }
@@ -514,6 +585,74 @@ class RecentProvider extends ChangeNotifier {
   Future<void> addEpisode(RecentEpisode episode) async {
     await _episodeController.insertTV(episode);
     await fetchEpisodes();
+  }
+
+  /// Trakt-style "add a watch" for an episode: logs a new watch event every
+  /// time it's called, incrementing its rewatch count. If the episode isn't
+  /// already marked watched, it's also upserted into the progress table first.
+  Future<void> addEpisodeWatch(RecentEpisode episode, {String? watchedAt}) async {
+    final seriesId = episode.seriesId ?? episode.id;
+    if (seriesId == null ||
+        episode.seasonNum == null ||
+        episode.episodeNum == null) {
+      return;
+    }
+
+    final matches = _episodes.where((e) =>
+        (e.seriesId ?? e.id) == seriesId &&
+        e.seasonNum == episode.seasonNum &&
+        e.episodeNum == episode.episodeNum);
+    final alreadyWatched = matches.isNotEmpty &&
+        isWatchedProgress(matches.first.elapsed, matches.first.remaining);
+    if (!alreadyWatched) {
+      await _episodeController.insertTV(episode);
+    }
+
+    final event = WatchEvent(
+      eventId: generateWatchEventId(),
+      mediaId: seriesId,
+      seasonNum: episode.seasonNum,
+      episodeNum: episode.episodeNum,
+      watchedAt: watchedAt ?? DateTime.now().toIso8601String(),
+    );
+    await _episodeController.insertWatchEvent(
+      event,
+      seriesId: seriesId,
+      episodeId: episode.id,
+      seriesName: episode.seriesName,
+      episodeName: episode.episodeName,
+      posterPath: episode.posterPath,
+    );
+
+    await fetchEpisodes();
+    await invalidateAndRefreshWatchStats();
+  }
+
+  Future<List<WatchEvent>> getEpisodeWatchHistory(
+          int seriesId, int seasonNum, int episodeNum) =>
+      _episodeController.getWatchEvents(seriesId, seasonNum, episodeNum);
+
+  /// Removes a single logged watch. If no watches remain, the episode reverts
+  /// to unwatched (matches the pre-rewatch "unmark as watched" behavior).
+  Future<void> removeEpisodeWatchEvent(RecentEpisode episode, String eventId) async {
+    final seriesId = episode.seriesId ?? episode.id;
+    if (seriesId == null ||
+        episode.seasonNum == null ||
+        episode.episodeNum == null ||
+        episode.id == null) {
+      return;
+    }
+    await _episodeController.deleteWatchEvent(eventId);
+    final remaining = await _episodeController.getWatchCount(
+        seriesId, episode.seasonNum!, episode.episodeNum!);
+    _episodeWatchCounts[
+            _episodeWatchKey(seriesId, episode.seasonNum!, episode.episodeNum!)] =
+        remaining;
+    if (remaining == 0) {
+      await deleteEpisode(episode.id!, episode.episodeNum!, episode.seasonNum!);
+    } else {
+      notifyListeners();
+    }
   }
 
   Future<void> updateEpisode(

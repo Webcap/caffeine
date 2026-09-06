@@ -17,11 +17,18 @@ class TVSeasonAbout extends StatefulWidget {
     required this.season,
     required this.tvDetails,
     required this.seriesName,
+    this.scrollable = true,
   });
 
   final Seasons season;
   final TVDetails tvDetails;
   final String? seriesName;
+
+  /// When false, renders its content directly (no SingleChildScrollView) so
+  /// a caller can place it inside a scroll region it already owns — used by
+  /// the expanded (tablet-landscape) layout, which shares one scroll view
+  /// across the title block and this content.
+  final bool scrollable;
 
   @override
   State<TVSeasonAbout> createState() => _TVSeasonAboutState();
@@ -31,8 +38,7 @@ class _TVSeasonAboutState extends State<TVSeasonAbout> {
   @override
   Widget build(BuildContext context) {
     final lang = Provider.of<SettingsProvider>(context).appLanguage;
-    return SingleChildScrollView(
-      child: Container(
+    final content = Container(
         decoration: const BoxDecoration(
             borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(8.0),
@@ -65,7 +71,8 @@ class _TVSeasonAboutState extends State<TVSeasonAbout> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: ReadMoreText(
-                widget.season.overview!.isEmpty
+                (widget.season.overview == null ||
+                        widget.season.overview!.isEmpty)
                     ? tr("no_season_overview")
                     : widget.season.overview!,
                 trimLines: 4,
@@ -146,7 +153,8 @@ class _TVSeasonAboutState extends State<TVSeasonAbout> {
             // ),
           ],
         ),
-      ),
-    );
+      );
+
+    return widget.scrollable ? SingleChildScrollView(child: content) : content;
   }
 }

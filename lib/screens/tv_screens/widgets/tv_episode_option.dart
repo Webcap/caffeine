@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:reelriot/models/tv.dart';
+import 'package:reelriot/widgets/user_rating_widget.dart';
 
 // ── Design tokens (design.json) ─────────────────────────────────────────────
 class _C {
@@ -15,9 +16,16 @@ class _C {
 }
 
 class TVEpisodeOptions extends StatelessWidget {
-  const TVEpisodeOptions({super.key, required this.episodeList});
+  const TVEpisodeOptions({
+    super.key,
+    required this.episodeList,
+    this.tvId,
+    this.seriesName,
+  });
 
   final EpisodeList episodeList;
+  final int? tvId;
+  final String? seriesName;
 
   @override
   Widget build(BuildContext context) {
@@ -25,6 +33,7 @@ class TVEpisodeOptions extends StatelessWidget {
     final elevated = isDark ? _C.bgElevatedDark : _C.bgElevatedLight;
     final border = isDark ? _C.borderDark : _C.borderLight;
     final textSec = isDark ? _C.textSecDark : _C.textSecLight;
+    final isTablet = MediaQuery.sizeOf(context).width >= 600;
 
     final avg = episodeList.voteAverage;
     final ratingStr = avg != null && avg > 0
@@ -35,13 +44,18 @@ class TVEpisodeOptions extends StatelessWidget {
     final voteCount = episodeList.voteCount ?? 0;
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+      padding: EdgeInsets.fromLTRB(
+        isTablet ? 24 : 16,
+        isTablet ? 16 : 12,
+        isTablet ? 24 : 16,
+        isTablet ? 12 : 8,
+      ),
       child: Row(
         children: [
           Expanded(
             child: Wrap(
-              spacing: 8,
-              runSpacing: 8,
+              spacing: isTablet ? 10 : 8,
+              runSpacing: isTablet ? 10 : 8,
               children: [
                 if (ratingStr != null)
                   _RatingChip(
@@ -60,6 +74,14 @@ class TVEpisodeOptions extends StatelessWidget {
                   border: border,
                   textSec: textSec,
                 ),
+                if (tvId != null)
+                  UserRatingButton(
+                    mediaType: 'tv',
+                    mediaId: tvId!,
+                    seasonNum: episodeList.seasonNumber,
+                    episodeNum: episodeList.episodeNumber,
+                    title: '${seriesName ?? 'Episode'} S${episodeList.seasonNumber ?? 1} E${episodeList.episodeNumber ?? 1}',
+                  ),
               ],
             ),
           ),

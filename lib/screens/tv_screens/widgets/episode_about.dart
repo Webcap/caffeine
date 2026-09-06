@@ -25,12 +25,19 @@ class EpisodeAbout extends StatefulWidget {
     this.tvId,
     required this.posterPath,
     this.seriesName,
+    this.scrollable = true,
   });
   final EpisodeList episodeList;
   final List<EpisodeList>? episodes;
   final int? tvId;
   final String? seriesName;
   final String? posterPath;
+
+  /// When false, renders its content directly (no SingleChildScrollView) so
+  /// a caller can place it inside a scroll region it already owns — used by
+  /// the expanded (tablet-landscape) layout, which shares one scroll view
+  /// across the title block, ratings, and this content.
+  final bool scrollable;
 
   @override
   State<EpisodeAbout> createState() => _EpisodeAboutState();
@@ -42,8 +49,7 @@ class _EpisodeAboutState extends State<EpisodeAbout> {
   @override
   Widget build(BuildContext context) {
     final lang = Provider.of<SettingsProvider>(context).appLanguage;
-    return SingleChildScrollView(
-      child: Column(
+    final content = Column(
           children: <Widget>[
             Row(
               children: <Widget>[
@@ -95,7 +101,8 @@ class _EpisodeAboutState extends State<EpisodeAbout> {
                       const EdgeInsets.only(left: 8.0, bottom: 4.0, right: 8.0),
                   child: Text(
                     widget.episodeList.airDate == null ||
-                            widget.episodeList.airDate!.isEmpty
+                            widget.episodeList.airDate!.isEmpty ||
+                            DateTime.tryParse(widget.episodeList.airDate!) == null
                         ? tr("episode_air_empty")
                         : '${tr("episode_air")}  ${DateTime.parse(widget.episodeList.airDate!).day} ${DateFormat("MMMM").format(DateTime.parse(widget.episodeList.airDate!))}, ${DateTime.parse(widget.episodeList.airDate!).year}',
                     style: const TextStyle(
@@ -110,46 +117,45 @@ class _EpisodeAboutState extends State<EpisodeAbout> {
               appDependency.displayWatchNowButton &&
                       (widget.episodeList.airDate == null ||
                           widget.episodeList.airDate!.isEmpty ||
-                          DateTime.tryParse(widget.episodeList.airDate!)!
-                              .isBefore(DateTime.now().add(const Duration(days: 1))))
+                          (DateTime.tryParse(widget.episodeList.airDate!) != null &&
+                              DateTime.tryParse(widget.episodeList.airDate!)!
+                                  .isBefore(DateTime.now().add(const Duration(days: 1)))))
                   ? WatchNowButtonTV(
                       episode: widget.episodeList,
-                      seriesName: widget.seriesName!,
-                      tvId: widget.tvId!,
+                      seriesName: widget.seriesName ?? '',
+                      tvId: widget.tvId ?? 0,
                       posterPath: widget.posterPath ?? '',
                     )
                   : Container(),
             ]),
 
             const SizedBox(height: 15),
-            ScrollingTVEpisodeCasts(
-              passedFrom: 'episode_detail',
-              seasonNumber: widget.episodeList.seasonNumber!,
-              episodeNumber: widget.episodeList.episodeNumber!,
-              id: widget.tvId,
-              api: Endpoints.getEpisodeCredits(
-                  widget.tvId!,
-                  widget.episodeList.seasonNumber!,
-                  widget.episodeList.episodeNumber!,
-                  lang),
-            ),
-            TVEpisodeImagesDisplay(
-              title: tr("images"),
-              name: '${widget.seriesName}_${widget.episodeList.name}',
-              api: Endpoints.getTVEpisodeImagesUrl(
-                  widget.tvId!,
-                  widget.episodeList.seasonNumber!,
-                  widget.episodeList.episodeNumber!),
-            ),
-            // TVVideosDisplay(
-            //   api: Endpoints.getTVEpisodeVideosUrl(
-            //       widget.tvId!,
-            //       widget.episodeList.seasonNumber!,
-            //       widget.episodeList.episodeNumber!),
-            //   title: 'Videos',
-            // ),
+            if (widget.tvId != null &&
+                widget.episodeList.seasonNumber != null &&
+                widget.episodeList.episodeNumber != null) ...[
+              ScrollingTVEpisodeCasts(
+                passedFrom: 'episode_detail',
+                seasonNumber: widget.episodeList.seasonNumber!,
+                episodeNumber: widget.episodeList.episodeNumber!,
+                id: widget.tvId,
+                api: Endpoints.getEpisodeCredits(
+                    widget.tvId!,
+                    widget.episodeList.seasonNumber!,
+                    widget.episodeList.episodeNumber!,
+                    lang),
+              ),
+              TVEpisodeImagesDisplay(
+                title: tr("images"),
+                name: '${widget.seriesName ?? ''}_${widget.episodeList.name ?? ''}',
+                api: Endpoints.getTVEpisodeImagesUrl(
+                    widget.tvId!,
+                    widget.episodeList.seasonNumber!,
+                    widget.episodeList.episodeNumber!),
+              ),
+            ],
           ],
-        ),
-      );
+        );
+
+    return widget.scrollable ? SingleChildScrollView(child: content) : content;
   }
 }

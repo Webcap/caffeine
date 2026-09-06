@@ -14,6 +14,8 @@ import 'package:reelriot/utils/config.dart';
 import 'package:reelriot/utils/globlal_methods.dart';
 import 'package:reelriot/utils/routes/app_pages.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:reelriot/utils/pwned_password.dart';
+
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -223,6 +225,18 @@ class _SignupScreenState extends State<SignupScreen> {
         if (!mounted) return;
         _globalMethods.authErrorHandle(
           tr("username_exists").toString(),
+          context,
+        );
+        return;
+      }
+
+      debugPrint('[Signup] Checking password against HaveIBeenPwned...');
+      final pwnedResult = await checkPwnedPassword(_password.trim());
+      if (pwnedResult.isPwned) {
+        debugPrint('[Signup] Password breached ${pwnedResult.breachCount} times');
+        if (!mounted) return;
+        _globalMethods.authErrorHandle(
+          'This password has appeared in a known public data breach (${pwnedResult.breachCount} times). Please choose a different password.',
           context,
         );
         return;
@@ -492,22 +506,12 @@ class _SignupScreenState extends State<SignupScreen> {
                                 height: 1.05,
                               ),
                             ),
-                            const SizedBox(height: 8),
-                            Text(
-                              tr("signup_to_sync"),
-                              maxLines: 4,
-                              style: const TextStyle(
-                                color: _textSecondary,
-                                fontSize: 14,
-                                height: 1.45,
-                              ),
-                            ),
                           ],
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 28),
+                  const SizedBox(height: 20),
                   Container(
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(

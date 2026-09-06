@@ -30,8 +30,9 @@ class TVSeasonDetailQuickInfo extends StatelessWidget {
     final appLang = Provider.of<SettingsProvider>(context).appLanguage;
     final isProxyEnabled = Provider.of<SettingsProvider>(context).enableProxy;
     final proxyUrl = Provider.of<AppDependencyProvider>(context).tmdbProxy;
+    final isTablet = MediaQuery.sizeOf(context).width >= 600;
     return SizedBox(
-      height: 310,
+      height: isTablet ? 380 : 310,
       width: double.infinity,
       child: Stack(
         clipBehavior: Clip.none,
@@ -65,7 +66,7 @@ class TVSeasonDetailQuickInfo extends StatelessWidget {
                           Border(bottom: BorderSide(color: Colors.transparent)),
                     ),
                     child: SizedBox(
-                      height: 220,
+                      height: isTablet ? 280 : 220,
                       child: Stack(
                         children: [
                           PageView.builder(
@@ -124,7 +125,7 @@ class TVSeasonDetailQuickInfo extends StatelessWidget {
               left: 0,
               right: 0,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
+                padding: EdgeInsets.symmetric(horizontal: isTablet ? 24 : 12),
                 child: Row(children: [
                   // poster
                   Hero(
@@ -136,8 +137,8 @@ class TVSeasonDetailQuickInfo extends StatelessWidget {
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(8),
                             child: SizedBox(
-                              width: 94,
-                              height: 140,
+                              width: isTablet ? 132 : 94,
+                              height: isTablet ? 198 : 140,
                               child: season.posterPath == null
                                   ? Image.asset(
                                       'assets/images/na_logo.png',

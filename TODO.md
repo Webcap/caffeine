@@ -16,3 +16,9 @@
 
 ### 1.2. Offline & Sync Optimization
 * [ ] Optimize background synchronization for multi-device bookmark updates.
+
+### 1.3. UI & Feature Deprecation / Cleanup
+* [ ] Remove "Check Server" status page (`lib/screens/common/server_status_screen.dart`) and its corresponding entry point in profile tab preferences.
+
+### 1.4. Security & Authentication
+* [ ] **Password Hardening & Entropy Validation:** Enforce advanced client-side password strength requirements (minimum 12 characters, uppercase/lowercase/numbers/symbols complexity validation, and sequential character rejection) in `register_screen.dart` and `password_change.dart`.

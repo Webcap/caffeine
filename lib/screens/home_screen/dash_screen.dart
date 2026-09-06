@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:reelriot/provider/app_dependency_provider.dart';
 import 'package:reelriot/provider/bookmarks_provider.dart';
+import 'package:reelriot/provider/ratings_provider.dart';
 import 'package:reelriot/provider/sign_in_provider.dart';
 import 'package:reelriot/screens/common/update_screen.dart';
 import 'package:reelriot/screens/profile/profile_page.dart';
@@ -16,6 +17,7 @@ import 'package:reelriot/screens/movie_screens/main_movie_display.dart';
 import 'package:reelriot/screens/search/search_view.dart' show SearchPage;
 import 'package:reelriot/screens/tv_screens/tv_screen.dart';
 import 'package:reelriot/widgets/drawer_widget.dart';
+import 'package:reelriot/widgets/offline_indicator_banner.dart';
 import 'package:provider/provider.dart';
 
 // ─── Design token constants (mirrors design.json) ────────────────────────────
@@ -70,6 +72,7 @@ class _CaffieneHomePageState extends State<CaffieneHomePage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       checkForcedUpdate();
       Provider.of<BookmarksProvider>(context, listen: false).syncIfNeeded();
+      RatingsProvider.instance.fetchRatings();
     });
     super.initState();
   }
@@ -141,12 +144,19 @@ class _CaffieneHomePageState extends State<CaffieneHomePage> {
           onTabChange: (i) => setState(() => selectedIndex = i),
         ),
 
-        body: IndexedStack(
-          index: selectedIndex,
-          children: const <Widget>[
-            MainMoviesDisplay(),
-            MainTVDisplay(),
-            ProfilePage(),
+        body: Column(
+          children: [
+            const OfflineIndicatorBanner(),
+            Expanded(
+              child: IndexedStack(
+                index: selectedIndex,
+                children: const <Widget>[
+                  MainMoviesDisplay(),
+                  MainTVDisplay(),
+                  ProfilePage(),
+                ],
+              ),
+            ),
           ],
         ),
       ),

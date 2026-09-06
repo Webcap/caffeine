@@ -1,3 +1,4 @@
+import 'package:reelriot/screens/tv_screens/widgets/season_detail_expanded_layout.dart';
 import 'package:reelriot/screens/tv_screens/widgets/tv_season_about.dart';
 import 'package:reelriot/screens/tv_screens/widgets/tv_season_details_quickinfo.dart';
 import 'package:flutter/material.dart';
@@ -43,6 +44,20 @@ class SeasonsDetailState extends State<SeasonsDetail>
   Widget build(BuildContext context) {
     super.build(context);
     final themeMode = Provider.of<SettingsProvider>(context).appTheme;
+    final isExpanded = MediaQuery.sizeOf(context).width >= 840;
+
+    if (isExpanded) {
+      return Scaffold(
+        body: SeasonDetailExpandedLayout(
+          season: widget.seasons,
+          heroId: widget.heroId,
+          tvDetails: widget.tvDetails,
+          seriesName: widget.seriesName,
+          tvId: widget.tvId,
+        ),
+      );
+    }
+
     return Scaffold(
       body: CustomScrollView(
         controller: scrollController,

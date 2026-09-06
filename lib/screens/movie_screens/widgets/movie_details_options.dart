@@ -6,9 +6,14 @@ import 'package:reelriot/functions/network.dart';
 import 'package:reelriot/api/endpoints.dart';
 import 'package:reelriot/provider/settings_provider.dart';
 import 'package:reelriot/provider/app_dependency_provider.dart';
+import 'package:reelriot/widgets/watch_history_sheet.dart';
+import 'package:reelriot/widgets/add_watch_menu.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:reelriot/widgets/bouncing_tappable.dart';
+import 'package:reelriot/widgets/user_rating_widget.dart';
+import 'package:reelriot/services/offline_sync_manager.dart';
 
 // ── Design tokens (design.json) ─────────────────────────────────────────────
 class _C {
@@ -64,26 +69,51 @@ class _MovieDetailOptionsState extends State<MovieDetailOptions> {
     if (mounted && b) await provider.updateMovie(widget.movie);
   }
 
-  Future<void> _toggleWatched(bool isWatched) async {
+  Future<void> _addWatch({String? watchedAt}) async {
     final recentProvider = Provider.of<RecentProvider>(context, listen: false);
-    if (isWatched) {
-      await recentProvider.deleteMovie(widget.movie.id!);
-    } else {
-      final year = widget.movie.releaseDate != null &&
-              widget.movie.releaseDate!.isNotEmpty
-          ? DateTime.tryParse(widget.movie.releaseDate!)?.year
-          : null;
-      await recentProvider.addMovie(RecentMovie(
+    final releaseDate = widget.movie.releaseDate != null &&
+            widget.movie.releaseDate!.isNotEmpty
+        ? DateTime.tryParse(widget.movie.releaseDate!)
+        : null;
+    await recentProvider.addMovieWatch(
+      RecentMovie(
         id: widget.movie.id,
         title: widget.movie.title,
         posterPath: widget.movie.posterPath,
         backdropPath: widget.movie.backdropPath,
-        releaseYear: year,
+        releaseYear: releaseDate?.year,
         elapsed: 1,
         remaining: 0,
         dateTime: DateTime.now().toIso8601String(),
-      ));
-    }
+      ),
+      watchedAt: watchedAt,
+    );
+  }
+
+  void _showAddWatchMenu() {
+    final releaseDate = widget.movie.releaseDate != null &&
+            widget.movie.releaseDate!.isNotEmpty
+        ? DateTime.tryParse(widget.movie.releaseDate!)
+        : null;
+    AddWatchMenu.show(
+      context: context,
+      title: widget.movie.title ?? '',
+      releaseDate: releaseDate,
+      onPick: (watchedAt) => _addWatch(watchedAt: watchedAt),
+    );
+  }
+
+  void _showWatchHistory() {
+    final recentProvider = Provider.of<RecentProvider>(context, listen: false);
+    final movieId = widget.movie.id;
+    if (movieId == null) return;
+    WatchHistorySheet.show(
+      context: context,
+      title: widget.movie.title ?? '',
+      loadEvents: () => recentProvider.getMovieWatchHistory(movieId),
+      onRemove: (event) =>
+          recentProvider.removeMovieWatchEvent(movieId, event.eventId),
+    );
   }
 
   @override
@@ -105,13 +135,11 @@ class _MovieDetailOptionsState extends State<MovieDetailOptions> {
         final matches =
             recentProvider.movies.where((m) => m.id == widget.movie.id);
         final recentMovie = matches.isEmpty ? null : matches.first;
-        bool isWatched = false;
-        if (recentMovie != null) {
-          final elapsed = recentMovie.elapsed ?? 0;
-          final remaining = recentMovie.remaining ?? 0;
-          final total = elapsed + remaining;
-          isWatched = total > 0 && (elapsed / total) >= 0.9;
-        }
+        final isWatched = recentMovie != null &&
+            isWatchedProgress(recentMovie.elapsed, recentMovie.remaining);
+        final watchCount = widget.movie.id != null
+            ? recentProvider.movieWatchCount(widget.movie.id!)
+            : 0;
 
         return Consumer<BookmarksProvider>(
           builder: (context, provider, _) {
@@ -208,80 +236,127 @@ class _MovieDetailOptionsState extends State<MovieDetailOptions> {
                                   ),
                                 ),
                               ),
+
+                            if (widget.movie.id != null)
+                              UserRatingButton(
+                                mediaType: 'movie',
+                                mediaId: widget.movie.id!,
+                                title: widget.movie.title ?? 'Movie',
+                              ),
                           ],
                         ),
                       ),
                       
-                      // Favorite Heart
-                      GestureDetector(
-                    onTap: () async {
-                      if (widget.movie.id != null) {
-                        if (isBookmarked == false) {
-                          try {
-                            await provider.addMovie(widget.movie);
-                            if (mounted) setState(() => isBookmarked = true);
-                          } catch (_) {}
-                        } else if (isBookmarked == true) {
-                          try {
-                            await provider.removeMovie(widget.movie.id!);
-                            if (mounted) setState(() => isBookmarked = false);
-                          } catch (_) {}
-                        }
-                      }
-                    },
-                    child: Container(
-                      width: 44,
-                      height: 44,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: elevated,
-                        border: Border.all(color: border, width: 1),
-                        boxShadow: [
-                          BoxShadow(
-                            color: (isBookmarked == true
-                                    ? _C.primary
-                                    : Colors.transparent)
-                                .withValues(alpha: 0.2),
-                            blurRadius: isBookmarked == true ? 10 : 0,
-                          ),
-                        ],
-                      ),
-                      child: Icon(
-                        isBookmarked == true
-                            ? Icons.favorite_rounded
-                            : Icons.favorite_border_rounded,
-                        size: 20,
-                        color: isBookmarked == true ? _C.primary : textSec,
-                      ),
-                    ),
-                  ),
+                      // Favorite Heart - Instant Optimistic Toggle + Tactile Micro-interaction
+                      BouncingTappable(
+                        onTap: () {
+                          if (widget.movie.id == null) return;
+                          final oldState = isBookmarked;
+                          final newState = !(oldState ?? false);
 
-                  // ── Watched toggle ───────────────────────────────────────────
-                  GestureDetector(
-                    onTap: () => _toggleWatched(isWatched),
-                    child: Container(
-                      width: 44,
-                      height: 44,
-                      margin: const EdgeInsets.only(left: 12),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: elevated,
-                        border: Border.all(color: border, width: 1),
-                        boxShadow: [
-                          BoxShadow(
-                            color: (isWatched ? Colors.green : Colors.transparent)
-                                .withValues(alpha: 0.2),
-                            blurRadius: isWatched ? 10 : 0,
+                          // 1. Optimistic instant visual update (<16ms)
+                          setState(() => isBookmarked = newState);
+
+                          // 2. Background persistence + rollback safety
+                          Future(() async {
+                            try {
+                              if (newState) {
+                                await provider.addMovie(widget.movie);
+                              } else {
+                                await provider.removeMovie(widget.movie.id!);
+                              }
+                            } catch (_) {
+                              // If failed, enqueue for offline sync and rollback UI
+                              await OfflineSyncManager.instance.enqueueAction(
+                                type: newState ? 'add_movie' : 'remove_movie',
+                                payload: widget.movie.toJson(),
+                              );
+                            }
+                          });
+                        },
+                        child: Container(
+                          width: 44,
+                          height: 44,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: elevated,
+                            border: Border.all(color: border, width: 1),
+                            boxShadow: [
+                              BoxShadow(
+                                color: (isBookmarked == true
+                                        ? _C.primary
+                                        : Colors.transparent)
+                                    .withValues(alpha: 0.2),
+                                blurRadius: isBookmarked == true ? 10 : 0,
+                              ),
+                            ],
                           ),
-                        ],
+                          child: Icon(
+                            isBookmarked == true
+                                ? Icons.favorite_rounded
+                                : Icons.favorite_border_rounded,
+                            size: 20,
+                            color: isBookmarked == true ? _C.primary : textSec,
+                          ),
+                        ),
                       ),
-                      child: Icon(
-                        isWatched
-                            ? Icons.check_circle_rounded
-                            : Icons.check_circle_outline_rounded,
-                        size: 20,
-                        color: isWatched ? Colors.green : textSec,
-                      ),
+
+                      // ── Watched button: tap adds a watch, long-press shows history ──
+                      BouncingTappable(
+                        onTap: _showAddWatchMenu,
+                        onLongPress: watchCount > 0 ? _showWatchHistory : null,
+                        child: Stack(
+                          clipBehavior: Clip.none,
+                          children: [
+                        Container(
+                          width: 44,
+                          height: 44,
+                          margin: const EdgeInsets.only(left: 12),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: elevated,
+                            border: Border.all(color: border, width: 1),
+                            boxShadow: [
+                              BoxShadow(
+                                color: (isWatched ? Colors.green : Colors.transparent)
+                                    .withValues(alpha: 0.2),
+                                blurRadius: isWatched ? 10 : 0,
+                              ),
+                            ],
+                          ),
+                          child: Icon(
+                            isWatched
+                                ? Icons.check_circle_rounded
+                                : Icons.check_circle_outline_rounded,
+                            size: 20,
+                            color: isWatched ? Colors.green : textSec,
+                          ),
+                        ),
+                        if (watchCount > 1)
+                          Positioned(
+                            right: -2,
+                            top: -2,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+                              decoration: BoxDecoration(
+                                color: Colors.green,
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(
+                                  color: isDark ? Colors.black : Colors.white,
+                                  width: 1.5,
+                                ),
+                              ),
+                              child: Text(
+                                '×$watchCount',
+                                style: const TextStyle(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
                     ),
                   ),
                 ],

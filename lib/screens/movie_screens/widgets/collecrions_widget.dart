@@ -298,7 +298,7 @@ class CollectionOverviewWidgetState extends State<CollectionOverviewWidget> {
           boxShadow: const [_ColDesign.shadowCard],
         ),
         child: Text(
-          collectionDetails!.overview!,
+          collectionDetails?.overview ?? '',
           style: TextStyle(
             color: textSec,
             fontSize: 14,

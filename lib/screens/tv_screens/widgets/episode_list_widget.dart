@@ -11,6 +11,8 @@ import 'package:reelriot/models/recently_watched.dart';
 import 'package:reelriot/widgets/common_widgets.dart';
 import 'package:reelriot/provider/recently_watched_provider.dart';
 import 'package:reelriot/widgets/mobile_context_menu.dart';
+import 'package:reelriot/widgets/watch_history_sheet.dart';
+import 'package:reelriot/widgets/add_watch_menu.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -279,25 +281,93 @@ class EpisodeListWidgetState extends State<EpisodeListWidget>
                                               'S${ep.seasonNumber} | E${ep.episodeNumber}',
                                           items: [
                                             MobileContextMenuItem(
-                                              label: tr("mark_as_completed"),
+                                              label: tr("add_another_watch"),
                                               icon: Icons.check_circle_outline,
                                               onTap: () {
-                                                final recentEp = RecentEpisode(
-                                                  dateTime: DateTime.now()
-                                                      .toIso8601String(),
-                                                  elapsed: 3600,
-                                                  episodeName: ep.name,
-                                                  episodeNum: ep.episodeNumber,
-                                                  id: ep.episodeId,
-                                                  posterPath: widget.posterPath,
-                                                  remaining: 0,
-                                                  seasonNum: ep.seasonNumber,
-                                                  seriesName: widget.seriesName,
-                                                  seriesId: widget.tvId,
+                                                AddWatchMenu.show(
+                                                  context: context,
+                                                  title: ep.name ??
+                                                      'Episode ${ep.episodeNumber}',
+                                                  subtitle:
+                                                      'S${ep.seasonNumber} | E${ep.episodeNumber}',
+                                                  releaseDate: ep.airDate !=
+                                                              null &&
+                                                          ep.airDate!.isNotEmpty
+                                                      ? DateTime.tryParse(
+                                                          ep.airDate!)
+                                                      : null,
+                                                  onPick: (watchedAt) {
+                                                    final recentEp =
+                                                        RecentEpisode(
+                                                      dateTime: DateTime.now()
+                                                          .toIso8601String(),
+                                                      elapsed: 3600,
+                                                      episodeName: ep.name,
+                                                      episodeNum:
+                                                          ep.episodeNumber,
+                                                      id: ep.episodeId,
+                                                      posterPath:
+                                                          widget.posterPath,
+                                                      remaining: 0,
+                                                      seasonNum:
+                                                          ep.seasonNumber,
+                                                      seriesName:
+                                                          widget.seriesName,
+                                                      seriesId: widget.tvId,
+                                                    );
+                                                    recentProvider.addEpisodeWatch(
+                                                        recentEp,
+                                                        watchedAt: watchedAt);
+                                                  },
                                                 );
-                                                recentProvider
-                                                    .markEpisodeAsCompleted(
-                                                        recentEp);
+                                              },
+                                            ),
+                                            MobileContextMenuItem(
+                                              label: tr("watch_history"),
+                                              icon: Icons.history_rounded,
+                                              onTap: () {
+                                                final seriesId =
+                                                    widget.tvId ?? ep.episodeId;
+                                                if (seriesId == null ||
+                                                    ep.seasonNumber == null ||
+                                                    ep.episodeNumber == null) {
+                                                  return;
+                                                }
+                                                WatchHistorySheet.show(
+                                                  context: context,
+                                                  title: ep.name ??
+                                                      'Episode ${ep.episodeNumber}',
+                                                  subtitle:
+                                                      'S${ep.seasonNumber} | E${ep.episodeNumber}',
+                                                  loadEvents: () => recentProvider
+                                                      .getEpisodeWatchHistory(
+                                                          seriesId,
+                                                          ep.seasonNumber!,
+                                                          ep.episodeNumber!),
+                                                  onRemove: (event) {
+                                                    final recentEp = RecentEpisode(
+                                                      dateTime: DateTime.now()
+                                                          .toIso8601String(),
+                                                      elapsed: 3600,
+                                                      episodeName: ep.name,
+                                                      episodeNum:
+                                                          ep.episodeNumber,
+                                                      id: ep.episodeId,
+                                                      posterPath:
+                                                          widget.posterPath,
+                                                      remaining: 0,
+                                                      seasonNum:
+                                                          ep.seasonNumber,
+                                                      seriesName:
+                                                          widget.seriesName,
+                                                      seriesId: widget.tvId,
+                                                    );
+                                                    return recentProvider
+                                                        .removeEpisodeWatchEvent(
+                                                            recentEp,
+                                                            event.eventId);
+                                                  },
+                                                );
                                               },
                                             ),
                                             MobileContextMenuItem(

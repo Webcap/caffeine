@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'package:reelriot/utils/globlal_methods.dart';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -25,6 +27,31 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final _auth = Supabase.instance.client.auth;
   final GlobalMethods _globalMethods = GlobalMethods();
   bool _isLoading = false;
+  int _cooldownSeconds = 0;
+  Timer? _cooldownTimer;
+
+  @override
+  void dispose() {
+    _cooldownTimer?.cancel();
+    super.dispose();
+  }
+
+  void _startCooldown([int seconds = 60]) {
+    _cooldownTimer?.cancel();
+    setState(() => _cooldownSeconds = seconds);
+    _cooldownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (!mounted) {
+        timer.cancel();
+        return;
+      }
+      if (_cooldownSeconds <= 1) {
+        timer.cancel();
+        setState(() => _cooldownSeconds = 0);
+      } else {
+        setState(() => _cooldownSeconds--);
+      }
+    });
+  }
 
   InputDecoration _inputDecoration() {
     return InputDecoration(
@@ -57,6 +84,14 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   }
 
   void _submitForm() async {
+    if (_cooldownSeconds > 0) {
+      _globalMethods.authErrorHandle(
+        'Please wait $_cooldownSeconds second${_cooldownSeconds == 1 ? '' : 's'} before requesting another reset link.',
+        context,
+      );
+      return;
+    }
+
     final isValid = _formKey.currentState!.validate();
     FocusScope.of(context).unfocus();
     if (!isValid) return;
@@ -68,11 +103,20 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     try {
       await _auth.resetPasswordForEmail(_emailAddress.trim().toLowerCase());
       if (mounted) {
+        _startCooldown(60);
         _globalMethods.checkMessage(tr("reset_sent"), context);
       }
     } on AuthException catch (e) {
       if (mounted) {
-        if (e.message.contains('user-not-found') ||
+        if (e.message.toLowerCase().contains('rate limit') ||
+            e.message.contains('429') ||
+            e.statusCode == '429') {
+          _startCooldown(120);
+          _globalMethods.authErrorHandle(
+            'Rate limit reached. Please wait a couple minutes before trying again.',
+            context,
+          );
+        } else if (e.message.contains('user-not-found') ||
             e.message.contains('not found')) {
           _globalMethods.authErrorHandle(tr("no_account"), context);
         } else {
@@ -160,7 +204,7 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     ),
                     icon: const Icon(Icons.arrow_back_rounded),
                   ),
-                  const SizedBox(height: 28),
+                  const SizedBox(height: 20),
                   const Text(
                     'Reset Password',
                     style: TextStyle(
@@ -170,16 +214,7 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       height: 1.05,
                     ),
                   ),
-                  const SizedBox(height: 10),
-                  const Text(
-                    'Enter the email connected to your account and we will send you reset instructions.',
-                    style: TextStyle(
-                      color: _textSecondary,
-                      fontSize: 15,
-                      height: 1.5,
-                    ),
-                  ),
-                  const SizedBox(height: 28),
+                  const SizedBox(height: 20),
                   Container(
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
@@ -207,16 +242,7 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                               fontWeight: FontWeight.w700,
                             ),
                           ),
-                          const SizedBox(height: 6),
-                          const Text(
-                            'We will email you a secure link to update your password.',
-                            style: TextStyle(
-                              color: _textSecondary,
-                              fontSize: 13,
-                              height: 1.45,
-                            ),
-                          ),
-                          const SizedBox(height: 20),
+                          const SizedBox(height: 16),
                           TextFormField(
                             key: const ValueKey('email'),
                             validator: (value) {

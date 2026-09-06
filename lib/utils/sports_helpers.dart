@@ -116,8 +116,34 @@ SportTheme resolveSportTheme({
     );
   }
 
-  // 4. Football / NFL
-  if (s == 'FOOTBALL' || s == 'NFL' || l == 'NFL' || t.contains('NFL') || t.contains('CHIEFS') || t.contains('COWBOYS') || t.contains('PATRIOTS')) {
+  // 4. College Football / NCAA Football
+  if (s == 'COLLEGE-FOOTBALL' ||
+      s == 'COLLEGE_FOOTBALL' ||
+      s == 'NCAAF' ||
+      s == 'NCAA-FOOTBALL' ||
+      s == 'NCAA FOOTBALL' ||
+      s == 'COLLEGE FOOTBALL' ||
+      s == 'CFB' ||
+      l == 'COLLEGE-FOOTBALL' ||
+      l == 'NCAAF' ||
+      t.contains('COLLEGE FOOTBALL') ||
+      t.contains('NCAA FOOTBALL') ||
+      t.contains('NCAAF')) {
+    return const SportTheme(
+      label: 'NCAA Football',
+      sportKey: 'NCAAF',
+      gradientColors: [
+        Color(0xFF4C1D95), // violet-900
+        Color(0xFF3B0764),
+        Color(0xFF0F172A),
+      ],
+      accentColor: Color(0xFF8B5CF6),
+      icon: Icons.sports_football_rounded,
+    );
+  }
+
+  // 5. Football / NFL
+  if (s == 'FOOTBALL' || s == 'NFL' || s == 'AMERICAN FOOTBALL' || s == 'AMERICAN-FOOTBALL' || l == 'NFL' || t.contains('NFL') || t.contains('CHIEFS') || t.contains('COWBOYS') || t.contains('PATRIOTS')) {
     return const SportTheme(
       label: 'NFL',
       sportKey: 'FOOTBALL',
@@ -131,7 +157,7 @@ SportTheme resolveSportTheme({
     );
   }
 
-  // 5. Soccer / Football (EPL, La Liga, Champions League)
+  // 6. Soccer / Football (EPL, La Liga, Champions League)
   if (s == 'SOCCER' || l == 'EPL' || l == 'SOCCER' || t.contains('FC') || t.contains('UNITED') || t.contains('REAL MADRID') || t.contains('BARCELONA') || t.contains('PREMIER LEAGUE')) {
     return const SportTheme(
       label: 'SOCCER',
@@ -146,7 +172,7 @@ SportTheme resolveSportTheme({
     );
   }
 
-  // 6. Hockey / NHL
+  // 7. Hockey / NHL
   if (s == 'HOCKEY' || s == 'NHL' || l == 'NHL' || t.contains('NHL') || t.contains('HOCKEY')) {
     return const SportTheme(
       label: 'NHL',
@@ -161,7 +187,7 @@ SportTheme resolveSportTheme({
     );
   }
 
-  // 7. Motorsport / F1 / NASCAR
+  // 8. Motorsport / F1 / NASCAR
   if (s == 'RACING' || s == 'F1' || l == 'F1' || t.contains('FORMULA 1') || t.contains('GRAND PRIX') || t.contains('NASCAR')) {
     return const SportTheme(
       label: 'F1 / RACING',
@@ -192,7 +218,7 @@ SportTheme resolveSportTheme({
 }
 
 /// Normalizes any sport string/league/title to canonical key matching Admin config
-/// (e.g. 'NBA', 'WNBA', 'MLB', 'NFL', 'NHL', 'Soccer', 'UFC')
+/// (e.g. 'NBA', 'WNBA', 'MLB', 'NFL', 'NHL', 'Soccer', 'UFC', 'NCAAF')
 String normalizeSportKey(String? sport, {String? league, String? title, EspnScoreboardGame? game}) {
   if (sport == null || sport.trim().isEmpty) return "All";
   final s = sport.trim().toUpperCase();
@@ -205,6 +231,21 @@ String normalizeSportKey(String? sport, {String? league, String? title, EspnScor
   }
   if (s == 'NBA' || s.startsWith('NBA') || s == 'BASKETBALL' || s.contains('BASKETBALL') || l == 'NBA' || t.contains('NBA')) {
     return 'NBA';
+  }
+  // NCAA Football / College Football before NFL
+  if (s == 'COLLEGE-FOOTBALL' ||
+      s == 'COLLEGE_FOOTBALL' ||
+      s == 'NCAAF' ||
+      s == 'NCAA-FOOTBALL' ||
+      s == 'NCAA FOOTBALL' ||
+      s == 'COLLEGE FOOTBALL' ||
+      s == 'CFB' ||
+      l == 'COLLEGE-FOOTBALL' ||
+      l == 'NCAAF' ||
+      t.contains('COLLEGE FOOTBALL') ||
+      t.contains('NCAA FOOTBALL') ||
+      t.contains('NCAAF')) {
+    return 'NCAAF';
   }
   if (s == 'NFL' || s.startsWith('NFL') || s == 'FOOTBALL' || s.contains('FOOTBALL') || l == 'NFL' || t.contains('NFL')) {
     return 'NFL';
