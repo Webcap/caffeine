@@ -132,7 +132,7 @@ class _MainMoviesDisplayState extends State<MainMoviesDisplay>
       // feed came back empty or has no trending row.
       _buildTrendingMovies(feed);
       if (feed.rows.isEmpty ||
-          feed.rowByType(['trending', 'community_trending', 'social_buzz']) == null) {
+          feed.rowByType(['trending', 'community', 'social', 'tmdb']) == null) {
         _loadTrendingFallback();
       }
     } else {
@@ -146,7 +146,7 @@ class _MainMoviesDisplayState extends State<MainMoviesDisplay>
 
   // Build trending Movie list from discovery items (best-effort, no detail fetch)
   void _buildTrendingMovies(DiscoveryFeed feed) {
-    final trendingRow = feed.rowByType(['trending', 'community_trending', 'social_buzz']);
+    final trendingRow = feed.rowByType(['trending', 'community', 'social', 'tmdb']);
     if (trendingRow == null || trendingRow.items.isEmpty) return;
 
     final movies = trendingRow.items.map((item) {
@@ -194,7 +194,7 @@ class _MainMoviesDisplayState extends State<MainMoviesDisplay>
 
     // 1. Extract featured movies from discovery feed
     if (_feed != null) {
-      final featuredRow = _feed!.rowByType(['featured', 'now_playing', 'popular']);
+      final featuredRow = _feed!.rowByType(['featured', 'holiday', 'dynamic', 'popular', 'social', 'tmdb']);
       if (featuredRow != null && featuredRow.items.isNotEmpty) {
         for (final item in featuredRow.items.take(10)) {
           movieSlides.add(_MovieSlide(Movie(

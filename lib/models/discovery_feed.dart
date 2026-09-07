@@ -14,7 +14,7 @@ class DiscoveryFeed {
 
   factory DiscoveryFeed.fromJson(dynamic json) {
     if (json is Map<String, dynamic>) {
-      final rawRows = json['rows'];
+      final rawRows = json['rows'] ?? json['sections'];
       if (rawRows is List) {
         return DiscoveryFeed(
           rows: rawRows
